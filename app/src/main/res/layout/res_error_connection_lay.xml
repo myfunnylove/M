@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/connectAgain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:visibility="gone"
+    >
+
+   <android.support.v7.widget.AppCompatImageView
+       android:id="@+id/errorIcon"
+       android:layout_width="100dp"
+       android:layout_height="100dp"
+       android:layout_centerInParent="true"
+       app:srcCompat="@drawable/network_error"
+       />
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/errorIcon"
+        style="@style/HeaderText"
+        android:text="@string/internet_conn_error"
+        android:gravity="center_horizontal"
+        android:textColor="@color/silver"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        />
+    <Button
+
+        android:id="@+id/errorButton"
+        android:layout_width="150dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/try_again"
+        android:background="@drawable/gray_button"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/errorText"
+        />
+</RelativeLayout>

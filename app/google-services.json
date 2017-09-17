@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "354709392269",
+    "firebase_url": "https://locidnet-marvarid.firebaseio.com",
+    "project_id": "locidnet-marvarid",
+    "storage_bucket": "locidnet-marvarid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354709392269:android:759a1ba23ac220bf",
+        "android_client_info": {
+          "package_name": "locidnet.com.marvarid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354709392269-ovdlj8637vcs0r34net4jo6mprd32ek0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "locidnet.com.marvarid",
+            "certificate_hash": "351e56afaedec14b008986fb3507a68d3d681d7a"
+          }
+        },
+        {
+          "client_id": "354709392269-l0pif2f20niglokg2p963c2adefsc4fq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIhZGV_vIS7cunCmc4F0h7SSvlAJwOZC8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354709392269-l0pif2f20niglokg2p963c2adefsc4fq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
