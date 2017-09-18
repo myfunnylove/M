@@ -97,6 +97,7 @@ class VKoAuth private constructor(builder: Builder) :SocialNetwork{
             vkUser.token = vkAccessToken
             vkUser.phoneOrMail = vkEmail
             vkUser.profilPhoto = if (vkObj.has("photo_200_orig")) vkObj.optString("photo_200_orig") else ""
+            vkUser.userMail = vkEmail
             Base.get.prefs.setUser(vkUser)
 
 //            val sendObj = JSONObject()

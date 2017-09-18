@@ -140,11 +140,11 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                                     log.e(fail.toString())
                                                   view.hideProgress()
                                when (fail) {
-                                   is SocketTimeoutException ->  view.onFailure("",Base.get.resources.getString(R.string.internet_conn_error))
-                                   is UnknownHostException ->    view.onFailure("",Base.get.resources.getString(R.string.internet_conn_error))
-                                   is HttpException ->           view.onFailure("",Base.get.resources.getString(R.string.internet_conn_error))
+                                   is SocketTimeoutException ->  view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
+                                   is UnknownHostException ->    view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
+                                   is HttpException ->           view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
                                    else -> {
-                                       view.onFailure("",Base.get.resources.getString(R.string.error_something))
+                                       view.onFailure(cmd,Base.get.resources.getString(R.string.error_something))
                                    }
                                }
                              })

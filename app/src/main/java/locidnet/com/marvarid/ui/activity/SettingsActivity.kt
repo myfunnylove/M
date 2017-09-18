@@ -2,6 +2,7 @@ package locidnet.com.marvarid.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -27,8 +28,12 @@ import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.pattern.builder.SessionOut
 import locidnet.com.marvarid.pattern.signInUpBridge.SimpleoAuth
+import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.ui.fragment.MailFormFragment
+import locidnet.com.marvarid.ui.fragment.PhoneFormFragment
 import locidnet.com.marvarid.ui.fragment.YesNoFragment
 import retrofit2.Call
 import retrofit2.Callback
@@ -39,7 +44,7 @@ import javax.inject.Inject
 /**
  * Created by Sarvar on 10.08.2017.
  */
-class SettingsActivity : BaseActivity() ,Viewer{
+class SettingsActivity : BaseActivity() ,Viewer {
 
 
     val userData = Base.get.prefs.getUser()
@@ -47,7 +52,8 @@ class SettingsActivity : BaseActivity() ,Viewer{
     var changed = false
     val map = hashMapOf(0 to "N", 1 to "F", 2 to "M")
     val model                 = Model()
-
+    var changePhoneDialog: PhoneFormFragment? = null
+    var changeMailDialog: MailFormFragment? = null
     @Inject
     lateinit var presenter:Presenter
 
@@ -57,7 +63,7 @@ class SettingsActivity : BaseActivity() ,Viewer{
     override fun getLayout(): Int = R.layout.activity_settings
 
     override fun initView() {
-        log.d("close profile: ${userData.close}")
+        log.d("userdata: ${userData}")
         DaggerMVPComponent
                 .builder()
                 .mVPModule(MVPModule(this, Model(),this))
@@ -76,22 +82,128 @@ class SettingsActivity : BaseActivity() ,Viewer{
 
         }
 
+        /*FIRST LAST NAME AND USERNAME*/
         name.setText("${userData.first_name} ${userData.last_name}")
         username.setText(userData.userName)
+        name.addTextChangedListener(textwatcher)
+        username.addTextChangedListener(textwatcher)
+        /*FIRST LAST NAME AND USERNAME*/
 
-        phone.text = if (!userData.phoneOrMail.contains("@") && userData.phoneOrMail != "") userData.phoneOrMail else resources.getString(R.string.addPhone)
-        mail.text  = if (userData.phoneOrMail.contains("@") && userData.phoneOrMail != "") userData.phoneOrMail else resources.getString(R.string.addMail)
+        /*PHONE AND MAIL*/
+        phone.text = if (!userData.userPhone.isNullOrEmpty()) userData.userPhone else resources.getString(R.string.addPhone)
+        mail.text  = if (!userData.userMail.isNullOrEmpty()) userData.userMail else resources.getString(R.string.addMail)
+        phone.setOnClickListener{
+            changePhoneDialog = PhoneFormFragment.instance()
+            changePhoneDialog!!.setDialogClickListener(object : PhoneFormFragment.DialogClickListener{
+                override fun click(whichButton: Int) {
+                    log.d("$whichButton")
+                    if (whichButton == PhoneFormFragment.GET_SMS){
 
+                            if (Functions.clearEdit(changePhoneDialog!!.phone).length != 9){
+
+                                changePhoneDialog!!.phone.error = resources.getString(R.string.error_incorrect_phone)
+
+
+                            }else{
+
+                                val js = JSONObject()
+                                js.put("user_id",userData.userId)
+                                js.put("session",userData.session)
+                                val phoneStr = "998${Functions.clearEdit(changePhoneDialog!!.phone)}"
+                                js.put("phone",phoneStr)
+                                changePhoneDialog!!.setVisibility(true)
+
+                                presenter.requestAndResponse(js, Http.CMDS.CHANGE_PHONE_NUMBER)
+                            }
+
+
+
+                    }else{
+                        if (changePhoneDialog!!.smsCode.text.toString().trim().length == 6){
+
+                            val js = JSONObject()
+                            js.put("user_id",userData.userId)
+                            js.put("session",userData.session)
+                            val phoneStr = "998${Functions.clearEdit(changePhoneDialog!!.phone)}"
+                            js.put("phone",phoneStr)
+                            js.put("code",changePhoneDialog!!.smsCode.text.toString().trim())
+                            changePhoneDialog!!.setVisibility(true)
+                            presenter.requestAndResponse(js, Http.CMDS.ACCEPT_CHANGE_PHONE)
+
+
+                        }else{
+                            changePhoneDialog!!.smsCode.error = resources.getString(R.string.sms_code_error)
+
+                        }
+
+                    }
+                }
+
+            })
+
+            changePhoneDialog!!.show(supportFragmentManager,YesNoFragment.TAG)
+        }
+        mail.setOnClickListener{
+
+
+            changeMailDialog = MailFormFragment.instance()
+            changeMailDialog!!.setDialogClickListener(object : MailFormFragment.DialogClickListener{
+                override fun click(whichButton: Int) {
+
+                    if (whichButton == PhoneFormFragment.GET_SMS){
+
+                        if (!Const.VALID_EMAIL_ADDRESS_REGEX.matcher(changeMailDialog!!.mail.text.toString()).find()){
+                            changeMailDialog!!.mail.error = resources.getString(R.string.error_incorrect_mail)
+                        }else{
+                            val js = JSONObject()
+                            js.put("user_id",userData.userId)
+                            js.put("session",userData.session)
+                            val phoneStr = changeMailDialog!!.mail.text.toString()
+                            js.put("mail",phoneStr)
+                            changeMailDialog!!.setVisibility(true)
+
+                            presenter.requestAndResponse(js, Http.CMDS.CHANGE_MAIL)
+                        }
+
+
+
+                    }else{
+
+                        if (changeMailDialog!!.smsCode.text.toString().trim().length == 6){
+
+                            val js = JSONObject()
+                            js.put("user_id",userData.userId)
+                            js.put("session",userData.session)
+                            js.put("mail",changeMailDialog!!.mail)
+                            js.put("code",changeMailDialog!!.smsCode.text.toString().trim())
+                            changeMailDialog!!.setVisibility(true)
+                            presenter.requestAndResponse(js, Http.CMDS.ACCEPT_MAIL)
+
+
+                        }else{
+                            changePhoneDialog!!.smsCode.error = resources.getString(R.string.sms_code_error)
+
+                        }
+
+
+                    }
+                }
+
+            })
+
+            changeMailDialog!!.show(supportFragmentManager,YesNoFragment.TAG)
+        }
+        /*PHONE AND MAIL*/
+
+
+        /*GENDER*/
         val genderAdapter = ArrayAdapter<String>(this,R.layout.white_textview,sex)
         genderAdapter.setDropDownViewResource(R.layout.white_textview_adapter)
         gender.adapter = genderAdapter
         gender.setSelection(if (userData.gender == "N") 0
                             else if(userData.gender == "F") 1
                             else 2)
-
-        name.addTextChangedListener(textwatcher)
-        username.addTextChangedListener(textwatcher)
-
+        /*GENDER*/
         switchCloseAccount.isChecked = if(Base.get.prefs.getUser().close == 1 ) true else false
         switchCloseAccount.setOnCheckedChangeListener{view, isChecked ->
             val js = JSONObject()
@@ -123,6 +235,9 @@ class SettingsActivity : BaseActivity() ,Viewer{
 
                     })
          }
+        /*GENDER*/
+
+        /*QUIT*/
         quitLay.setOnClickListener {
                 val dialog = YesNoFragment.instance()
                         dialog.setDialogClickListener(object : YesNoFragment.DialogClickListener{
@@ -157,11 +272,13 @@ class SettingsActivity : BaseActivity() ,Viewer{
                 dialog.show(supportFragmentManager,YesNoFragment.TAG)
 
         }
+        /*QUIT*/
+
     }
 
 
     override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
+        super.onActivityResult(requestCode,resultCode,data)
 
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -235,20 +352,83 @@ class SettingsActivity : BaseActivity() ,Viewer{
 
     override fun onSuccess(from: String, result: String) {
 
-        val user = Base.get.prefs.getUser()
-        user.first_name = name.text.toString()
-        user.gender = map.get(gender.selectedItemPosition)!!
-        user.userName = username.text.toString()
 
-        Base.get.prefs.setUser(user)
+        when(from){
+            Http.CMDS.CHANGE_PHONE_NUMBER -> {
+                val response = JSONObject(result)
+                log.d("from change phone number -> $response")
+                changePhoneDialog!!.setVisibility(false)
+                changePhoneDialog!!.setSms("231233")
+            }
+            Http.CMDS.ACCEPT_CHANGE_PHONE -> {
+                changePhoneDialog!!.setVisibility(false)
+                userData.userPhone = Functions.clearEdit(changePhoneDialog!!.phone)
+                Prefs.Builder().setUser(userData)
+                phone.text = Prefs.Builder().getUser().userPhone
+                changePhoneDialog!!.dismiss()
+            }
 
-        Toast.makeText(Base.get.context,Base.get.context.resources.getString(R.string.saved),Toast.LENGTH_SHORT).show()
+            Http.CMDS.CHANGE_MAIL -> {
+                val response = JSONObject(result)
+                log.d("from change phone number -> $response")
+                changeMailDialog!!.setVisibility(false)
+                changeMailDialog!!.setSms("231233")
+            }
+            Http.CMDS.ACCEPT_MAIL -> {
+                changeMailDialog!!.setVisibility(false)
+                userData.userMail = changeMailDialog!!.mail.text.toString()
+                Prefs.Builder().setUser(userData)
+                mail.text = Prefs.Builder().getUser().userMail
+                changeMailDialog!!.dismiss()
+
+            }
+
+
+            Http.CMDS.CHANGE_USER_SETTINGS -> {
+                val user = Base.get.prefs.getUser()
+                user.first_name = name.text.toString()
+                user.gender = map.get(gender.selectedItemPosition)!!
+                user.userName = username.text.toString()
+
+                Base.get.prefs.setUser(user)
+
+                Toast.makeText(Base.get.context,Base.get.context.resources.getString(R.string.saved),Toast.LENGTH_SHORT).show()
+            }
+
+
+        }
+
 
     }
 
     override fun onFailure(from: String, message: String, erroCode: String) {
-        Toast.makeText(Base.get.context,message,Toast.LENGTH_SHORT).show()
+       if(from == Http.CMDS.CHANGE_PHONE_NUMBER){
+           changePhoneDialog!!.dismiss()
+       }
 
+        when(from){
+            Http.CMDS.CHANGE_PHONE_NUMBER ->{
+                changePhoneDialog!!.setVisibility(false)
+            }
+            Http.CMDS.ACCEPT_CHANGE_PHONE -> {
+                changePhoneDialog!!.setVisibility(false)
+
+            }
+            Http.CMDS.CHANGE_MAIL -> {
+                changeMailDialog!!.setVisibility(false)
+
+            }
+            Http.CMDS.ACCEPT_MAIL -> {
+                changeMailDialog!!.setVisibility(false)
+
+            }
+            Http.CMDS.CHANGE_USER_SETTINGS -> {
+                changePhoneDialog!!.setVisibility(false)
+
+            }
+
+        }
+        Toast.makeText(Base.get.context,message,Toast.LENGTH_SHORT).show()
     }
 
 
@@ -291,4 +471,6 @@ class SettingsActivity : BaseActivity() ,Viewer{
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
     }
+
+
 }

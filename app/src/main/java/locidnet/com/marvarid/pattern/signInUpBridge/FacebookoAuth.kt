@@ -93,7 +93,11 @@ class FacebookoAuth private constructor(builder: Builder) :SocialNetwork{
                                 user.optString("first_name"),
                                 user.optString("last_name"),
                                 data.optString("url"),
-                                0)
+                                0,
+                                "",
+                                user.optString("email")
+
+                                )
 
                         Base.get.prefs.setUser(fbUser)
 

@@ -23,6 +23,7 @@ import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.JavaCodes
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 class SignActivity : BaseActivity() ,Viewer{
@@ -40,6 +41,7 @@ class SignActivity : BaseActivity() ,Viewer{
 
     var phoneStr:String      = ""
     var smsStr:  String      = ""
+
     override fun initProgress() {
 
         progressLay.visibility = View.VISIBLE
@@ -73,8 +75,11 @@ class SignActivity : BaseActivity() ,Viewer{
             mail.isEnabled     = false
             selectMail.isEnabled  = false
             selectPhone.isEnabled = false
+            val phone = if(signMode == PHONE_MODE) phoneStr else ""
+            val mail = if(signMode == MAIL_MODE) phoneStr else ""
 
-            val user = User("","","","","","N",phoneStr,smsStr,"","","",signMode)
+            val user = User("","","","","","N",phoneStr,smsStr,"","","",signMode,
+                    phone,mail)
             Base.get.prefs.setUser(user)
             startActivity(Intent(this,LoginAndPassActivity().javaClass))
             this.finish()
@@ -168,10 +173,10 @@ class SignActivity : BaseActivity() ,Viewer{
                             sendObject.put("sms",smsStr)
 
 
-                            presenter!!.requestAndResponse(sendObject, Http.CMDS.SMSNI_JONATISH)
+                            presenter.requestAndResponse(sendObject, Http.CMDS.SMSNI_JONATISH)
                         }
                     }else{
-                        if (!mail.text.toString().contains("@")){
+                        if (!Const.VALID_EMAIL_ADDRESS_REGEX.matcher(mail.text.toString()).find()){
 
                             mail.error = resources.getString(R.string.error_incorrect_mail)
                         }else{

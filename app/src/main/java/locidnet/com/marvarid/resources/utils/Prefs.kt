@@ -39,11 +39,11 @@ object Prefs {
         if (user != "")
         return Gson().fromJson(user,User::class.java)
         else
-            return User("","","","","","N","","","","","",-1)
+            return User("","","","","","N","","","","","",-1,"","")
     }
     fun clearUser(){
 
-        val user = User("","","","","","N","","","","","",-1)
+        val user = User("","","","","","N","","","","","",-1,"","")
         setUser(user)
     }
 

@@ -2,6 +2,7 @@ package locidnet.com.marvarid.resources.utils
 
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.model.Color
+import java.util.regex.Pattern
 
 /**
  * Created by Michaelan on 5/19/2017.
@@ -360,4 +361,8 @@ object Const {
         val REQUESTED = 3
         val OTHER = 4
     }
+
+
+    val VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE)
+
 }

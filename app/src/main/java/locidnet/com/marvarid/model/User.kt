@@ -18,7 +18,7 @@ data class User (
         var password:String,
         @SerializedName("gender")
         var gender:String, // nothing = 0, female = 1, male = 2
-        @SerializedName("phone")
+        @SerializedName("phoneOrMail")
         var phoneOrMail:String,
         @SerializedName("smsCode")
         var smsCode:String,
@@ -30,6 +30,11 @@ data class User (
         var profilPhoto:String = "",
         @SerializedName("signType")
         var signType:Int ,// facebook = 0, vkontakte = 1,sms = 2
+
+        @SerializedName("phone")
+        var userPhone:String,
+        @SerializedName("mail")
+        var userMail:String,
         @SerializedName("close")
         var close:Int = 0 // close 1 open 0
 
