@@ -85,7 +85,15 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                                  val userInfo     = Gson().fromJson<UserInfo>(Http.getResponseData(infoUser.prms),UserInfo::class.java)
                                  user.userName    = userInfo.info.username
                                  user.profilPhoto = if (userInfo.info.photo150.isNullOrEmpty()) "" else userInfo.info.photo150
-                                 user.close       = userInfo.info.close
+                                 try{
+                                     user.close       =  userInfo.info.close
+
+                                 }catch (e:IllegalArgumentException){
+                                     user.close = 0
+                                 }
+
+                                 user.first_name  = if (userInfo.info.name.isNullOrEmpty()) "" else userInfo.info.name
+                                 user.gender      = if (userInfo.info.gender.isNullOrEmpty()) "" else userInfo.info.gender
                                          //TODO GENDER AND NAME SHOULD BE GET
                                  Base.get.prefs.setUser(user)
                                  Observable.just(infoUser)

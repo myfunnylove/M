@@ -26,12 +26,14 @@ import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.pattern.builder.SessionOut
+import locidnet.com.marvarid.pattern.signInUpBridge.SimpleoAuth
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.fragment.YesNoFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 /**
@@ -174,19 +176,25 @@ class SettingsActivity : BaseActivity() ,Viewer{
 
       if (changed || map.get(gender.selectedItemPosition) != Base.get.prefs.getUser().gender){
 
+
+
           errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
               override fun connected() {
                   log.d("connected")
 
-                  val jsObject = JSONObject()
-                  jsObject.put("user_id",Base.get.prefs.getUser().userId)
-                  jsObject.put("session",Base.get.prefs.getUser().session)
-                  jsObject.put("username",username.text.toString())
-                  jsObject.put("name",name.text.toString())
-                  jsObject.put("gender", map.get(gender.selectedItemPosition))
+                  val pattern  = Pattern.compile(SimpleoAuth.REGEXP.loginAndPasswordRegExp)
+
+                      if (username.text.toString().isEmpty() || !pattern.matcher(username.text.toString()).matches()){
+                          onFailure("1",resources.getString(R.string.error_symbol))
+                      }else{
+                          send();
 
 
-                  presenter.requestAndResponse(jsObject, Http.CMDS.CHANGE_USER_SETTINGS)
+
+                      }
+
+
+
 
               }
 
@@ -200,6 +208,19 @@ class SettingsActivity : BaseActivity() ,Viewer{
 
       }
         return true
+    }
+
+
+    fun send(){
+        val jsObject = JSONObject()
+        jsObject.put("user_id",Base.get.prefs.getUser().userId)
+        jsObject.put("session",Base.get.prefs.getUser().session)
+        jsObject.put("username",username.text.toString())
+        jsObject.put("name",name.text.trim().toString())
+        jsObject.put("gender", map.get(gender.selectedItemPosition))
+
+
+        presenter.requestAndResponse(jsObject, Http.CMDS.CHANGE_USER_SETTINGS)
     }
 
     override fun initProgress() {

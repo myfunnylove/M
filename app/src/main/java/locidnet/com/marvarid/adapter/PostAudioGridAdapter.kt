@@ -18,25 +18,23 @@ import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
+import locidnet.com.marvarid.ui.activity.MainActivity
+import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.net.URLDecoder
 
 
-class PostAudioGridAdapter(ctx:Context,list:ArrayList<Audio>,musicPlayerListener: MusicPlayerListener,model: Model) : RecyclerView.Adapter<PostAudioGridAdapter.Holder>() {
+class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,private val player: MusicPlayerListener,private val model: Model,private val isPlayList:Boolean = false) : RecyclerView.Adapter<PostAudioGridAdapter.Holder>() {
 
 
-    val context                    = ctx
-    val audios                     = list
     val inflater                   = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     val isVertical                 = true
     val PLAY                       = R.drawable.play
     val PAUSE                      = R.drawable.pause
-    val model                      = model
     var user                       = Base.get.prefs.getUser()
-
-    val player                     = musicPlayerListener
+    val audios                     = list
     val notFeatured                = VectorDrawableCompat.create(Base.get.resources,R.drawable.plus,context.theme)
     val featured                   = VectorDrawableCompat.create(Base.get.resources,R.drawable.playlist_remove,context.theme);
 
@@ -80,50 +78,66 @@ class PostAudioGridAdapter(ctx:Context,list:ArrayList<Audio>,musicPlayerListener
 
         h.addFavorite.setOnClickListener{
 
-            val reqObj = JSONObject()
+            if(!isPlayList){
 
-            reqObj.put("user_id",user.userId)
-            reqObj.put("session",user.session)
-            reqObj.put("audio",   audio.audioId)
+                try{
 
-            model.responseCall(Http.getRequestData(reqObj, Http.CMDS.ADD_SONG_TO_PLAYLIST))
-                    .enqueue(object : Callback<ResponseData>{
-                        override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
-                            log.d("from add audio from favorite $t")
+
+                        if(h.addFavorite.tag == featureMap.get(0)){
+                            h.addFavorite.setImageDrawable(featureMap.get(1))
+                            h.addFavorite.tag = featureMap.get(1)
+                            audios.get(h.adapterPosition).isFeatured = 1
+                            log.d("to notify ${h.adapterPosition}")
+
+                            notifyItemChanged(h.adapterPosition)
+                            notifyDataSetChanged()
+                        }else{
+                            h.addFavorite.setImageDrawable(featureMap.get(0))
+                            h.addFavorite.tag = featureMap.get(0)
+                            audios.get(h.adapterPosition).isFeatured = 0
+                            notifyItemChanged(h.adapterPosition)
+                            notifyDataSetChanged()
 
                         }
 
-                        override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
-                           try{
-                               val resp = response!!.body()!!
-                               log.d("from add audio from favorite $resp")
-                               if (resp.res == "0"){
-
-                                   if(h.addFavorite.tag == featureMap.get(0)){
-                                       h.addFavorite.setImageDrawable(featureMap.get(1))
-                                       h.addFavorite.tag = featureMap.get(1)
-                                       audios.get(h.adapterPosition).isFeatured = 1
-                                       log.d("to notify ${h.adapterPosition}")
-
-                                       notifyItemChanged(h.adapterPosition)
-                                       notifyDataSetChanged()
-                                   }else{
-                                       h.addFavorite.setImageDrawable(featureMap.get(0))
-                                       h.addFavorite.tag = featureMap.get(0)
-                                       audios.get(h.adapterPosition).isFeatured = 0
-                                       notifyItemChanged(h.adapterPosition)
-                                       notifyDataSetChanged()
-
-                                   }
-
-                               }
-                           }catch (e:Exception){}
-                        }
-
-                    })
 
 
-            notifyItemChanged(h.adapterPosition)
+                }catch (e:Exception){}
+            }else{
+
+               try{
+                   MainActivity.MY_POSTS_STATUS = MainActivity.FIRST_TIME
+                   audios.removeAt(h.adapterPosition)
+                   notifyItemRemoved(h.adapterPosition)
+               }catch (e:Exception){
+
+               }
+
+            }
+
+                val reqObj = JSONObject()
+
+                reqObj.put("user_id",user.userId)
+                reqObj.put("session",user.session)
+                reqObj.put("audio",   audio.audioId)
+
+                model.responseCall(Http.getRequestData(reqObj, Http.CMDS.ADD_SONG_TO_PLAYLIST))
+                        .enqueue(object : Callback<ResponseData>{
+                            override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                log.d("from add audio from favorite $t")
+
+                            }
+
+                            override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+
+
+                            }
+
+                        })
+
+
+                notifyItemChanged(h.adapterPosition)
+
         }
 
         h.play.setOnClickListener {
@@ -137,7 +151,7 @@ class PostAudioGridAdapter(ctx:Context,list:ArrayList<Audio>,musicPlayerListener
 
         h.title.text    = if(audio.artist.isNotEmpty()) URLDecoder.decode(audio.artist,"UTF-8")
                           else context.resources.getString(R.string.unknown)
-        h.songName.text = if(audio.title.isNotEmpty()) URLDecoder.decode(audio.artist,"UTF-8")
+        h.songName.text = if(audio.title.isNotEmpty()) URLDecoder.decode(audio.title,"UTF-8")
         else context.resources.getString(R.string.unknown)
         h.duration.text = "(${audio.duration})"
     }

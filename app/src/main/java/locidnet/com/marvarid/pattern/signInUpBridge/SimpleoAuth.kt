@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.support.design.widget.TextInputEditText
 import locidnet.com.marvarid.R
+import java.util.regex.Pattern
 
 /**
  * Created by Sarvar on 28.08.2017.
@@ -17,6 +18,10 @@ class SimpleoAuth private constructor(builder: Builder):SocialNetwork {
     private val passwordEdit: TextInputEditText
     private lateinit var username:String
     private lateinit var  password:String
+    object REGEXP {
+        val loginAndPasswordRegExp:String = "[a-zA-Z0-9\\._\\-]{3,}"
+    }
+
 
     class Builder(val context: Activity,val authorizeConnector: AuthorizeConnector,val loginEdit: TextInputEditText,val passwordEdit: TextInputEditText) {
 
@@ -33,13 +38,14 @@ class SimpleoAuth private constructor(builder: Builder):SocialNetwork {
 
     override fun register() {
 
-        username = loginEdit.text.toString()
-        password = passwordEdit.text.toString()
+        username = loginEdit.text.toString().trimEnd().trimStart()
+        password = passwordEdit.text.toString().trimEnd().trimStart()
 
 
     }
 
     override fun login() {
+
 
         if (username.length < 6) {
 
@@ -50,8 +56,13 @@ class SimpleoAuth private constructor(builder: Builder):SocialNetwork {
 
 
         } else {
+            val pattern  =Pattern.compile(REGEXP.loginAndPasswordRegExp)
 
+            if (pattern.matcher(username).matches() && pattern.matcher(password).matches())
             authorizeConnector.onSuccess(username,password)
+            else
+            authorizeConnector.onFailure(context.resources.getString(R.string.error_symbol))
+
 
         }
     }

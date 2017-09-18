@@ -107,6 +107,22 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
 
             />
-        <service android:name=".musicplayer.MusicService" />
+        <activity
+            android:name=".ui.activity.publish.PublishSongActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+
+
+            />
+        <service android:name=".musicplayer.MusicService" android:exported="false">
+            <intent-filter>
+
+                <action android:name="locidnet.com.marvarid.ACTION.PLAY_TOGGLE" />
+                <action android:name="locidnet.com.marvarid.ACTION.PLAY_LAST" />
+                <action android:name="locidnet.com.marvarid.ACTION.PLAY_NEXT" />
+                <action android:name="locidnet.com.marvarid.ACTION.STOP_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            </service>
+
     </application>
 </manifest>

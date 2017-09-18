@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 style="@style/LogoText"
-                android:text="App Name"
+                android:text="@string/app_name"
                 android:gravity="center"
                 />
 
@@ -57,6 +57,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:inputType="text"
+                    android:maxLength="20"
+
                     android:paddingLeft="6dp"
                     android:layout_marginBottom="8dp"
                     android:hint="@string/username"
@@ -76,7 +78,7 @@
                     android:layout_height="50dp"
                     android:inputType="textPassword"
                     android:paddingLeft="6dp"
-
+                    android:maxLength="20"
                     android:layout_marginBottom="8dp"
                     android:hint="@string/password"
                     android:textColorHint="@color/white"

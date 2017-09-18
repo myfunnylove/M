@@ -15,6 +15,7 @@ import locidnet.com.marvarid.base.BaseFragment
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.model.Action
 import locidnet.com.marvarid.model.Push
+import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
@@ -50,7 +51,7 @@ class NotificationFragment(): BaseFragment(), Viewer{
     var progressLay            by Delegates.notNull<ViewGroup>()
     var swipeRefreshLayout     by Delegates.notNull<SwipeRefreshLayout>()
     var scroll: EndlessRecyclerViewScrollListener?         = null
-    val user = Prefs.Builder().getUser()
+    lateinit var user:User
     lateinit var manager:LinearLayoutManager
 
     fun connect(connActivity: GoNext){
@@ -96,7 +97,7 @@ class NotificationFragment(): BaseFragment(), Viewer{
         //TODO TEST NOTIFICATIOn
 
         val pushes = ArrayList<Push>()
-
+        user = Prefs.Builder().getUser()
         pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
         pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
         pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName,"", Action(user.profilPhoto,"21")))

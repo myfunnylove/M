@@ -122,7 +122,7 @@
             android:layout_above="@+id/quoteSettings"
             android:layout_alignParentRight="true"
 
-            android:layout_margin="16dp"
+            android:layout_margin="8dp"
             app:fab_addButtonColorNormal="@color/colorAccent"
 
             app:fab_addButtonColorPressed="@color/colorPrimary"

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Marvarid</string>
+    <string name="app_name">MARVARID</string>
     <integer name="com_vk_sdk_AppId">6070474</integer>
     <string name="facebook_app_id">1922124241359724</string>
 
@@ -72,4 +72,7 @@
     <string name="pushFollowBody">followed you</string>
     <string name="pushRequestBody">requested you</string>
     <string name="pushCommentBody">commented your post</string>
+    <string name="error_symbol">SYMBOL ERROR</string>
+    <string name="play">PLAY</string>
+    <string name="error_empty_playlist">EMPTY PLAYLIST</string>
 </resources>

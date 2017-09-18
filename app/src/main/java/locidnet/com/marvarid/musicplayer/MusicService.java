@@ -4,15 +4,23 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import locidnet.com.marvarid.R;
+import locidnet.com.marvarid.base.Base;
 import locidnet.com.marvarid.model.Audio;
 import locidnet.com.marvarid.resources.utils.log;
 import locidnet.com.marvarid.ui.activity.MainActivity;
@@ -43,7 +51,7 @@ public class MusicService extends Service implements
     //title of current song
     private String songTitle="";
     //notification id
-    private static final int NOTIFY_ID=1;
+    private static final int NOTIFY_ID = 1;
     //shuffle flag and random
     private boolean shuffle=false;
     private Random rand;
@@ -52,7 +60,12 @@ public class MusicService extends Service implements
     public static final int PLAYING = 1;
     public static final int PAUSED = 0;
 
-    public static final String TAG = "MEDIAPLAYER_CONTROLLER";
+//    public static final String TAG = "MEDIAPLAYER_CONTROLLER";
+
+    public static final String ACTION_PLAY_TOGGLE = "locidnet.com.marvarid.ACTION.PLAY_TOGGLE";
+    public static final String ACTION_PLAY_LAST = "locidnet.com.marvarid.ACTION.PLAY_LAST";
+    public static final String ACTION_PLAY_NEXT = "locidnet.com.marvarid.ACTION.PLAY_NEXT";
+    public static final String ACTION_STOP_SERVICE = "locidnet.com.marvarid.ACTION.STOP_SERVICE";
     public void onCreate(){
         //create the service
         super.onCreate();
@@ -134,7 +147,7 @@ public class MusicService extends Service implements
             public void onPrepared(MediaPlayer mp) {
                 player.start();
                 createAndShowNotification();
-                Intent intent = new Intent(TAG);
+                Intent intent = new Intent(ACTION_PLAY_TOGGLE);
                 LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
             }
         });
@@ -169,27 +182,113 @@ public class MusicService extends Service implements
 
     }
 
-    private void createAndShowNotification(){
-        Intent notIntent = new Intent(this, MainActivity.class);
-        notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendInt = PendingIntent.getActivity(this, 0,
-                notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Notification.Builder builder = new Notification.Builder(this);
+        if (intent != null){
+            String action = intent.getAction();
+            if (ACTION_PLAY_TOGGLE.equals(action)) {
+                CONTROL_PRESSED = 1;
+                if (isPng()) {
+                    pausePlayer();
+                } else {
+                    playSong();
+                }
+            } else if (ACTION_PLAY_NEXT.equals(action)) {
+                CONTROL_PRESSED = 1;
 
-        builder.setContentIntent(pendInt)
-                .setSmallIcon(R.drawable.play)
-                .setTicker(songTitle)
-                .setOngoing(true)
-                .setContentTitle("Playing")
-                .setContentText(songTitle);
-        Notification not = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            not = builder.build();
+                playNext();
+            } else if (ACTION_PLAY_LAST.equals(action)) {
+                CONTROL_PRESSED = 1;
+
+                playPrev();
+            } else if (ACTION_STOP_SERVICE.equals(action)) {
+                CONTROL_PRESSED = 1;
+
+                if (isPng()) {
+                    pausePlayer();
+                }
+                stopForeground(true);
+            }
         }
+
+        return START_STICKY;
+    }
+
+    private void createAndShowNotification(){
+
+
+       /*
+       *
+       *  WHEN NOTIIFACTION CLICK
+       *
+       * */
+       PendingIntent pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),0);
+
+        Notification not = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setWhen(System.currentTimeMillis())
+                .setContentIntent(pendingIntent)
+                .setCustomContentView(getSmallContentView())
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setOngoing(true)
+                .build();
+
         startForeground(NOTIFY_ID, not);
     }
 
+
+    /*
+    *
+    *  NOTIFICATION VIEWS
+    *
+    *
+    * */
+    private RemoteViews mContentViewBig, mContentViewSmall;
+    private RemoteViews getSmallContentView() {
+        if (mContentViewSmall == null) {
+            mContentViewSmall = new RemoteViews(getPackageName(), R.layout.res_notification_view);
+            setUpRemoteView(mContentViewSmall);
+        }
+        updateRemoteViews(mContentViewSmall);
+        return mContentViewSmall;
+    }
+
+
+    private void setUpRemoteView(RemoteViews remoteView) {
+        remoteView.setImageViewResource(R.id.close, R.drawable.notif_close);
+        remoteView.setImageViewResource(R.id.prev, R.drawable.notif_prev);
+        remoteView.setImageViewResource(R.id.next, R.drawable.notif_next);
+        remoteView.setImageViewResource(R.id.image_view_play_toggle, isPng()
+                ? R.drawable.notif_play : R.drawable.notif_pause);
+        remoteView.setOnClickPendingIntent(R.id.btn_close, getPendingIntent(ACTION_STOP_SERVICE));
+        remoteView.setOnClickPendingIntent(R.id.btn_prev, getPendingIntent(ACTION_PLAY_LAST));
+        remoteView.setOnClickPendingIntent(R.id.btn_next, getPendingIntent(ACTION_PLAY_NEXT));
+        remoteView.setOnClickPendingIntent(R.id.btn_play, getPendingIntent(ACTION_PLAY_TOGGLE));
+    }
+
+    private void updateRemoteViews(RemoteViews remoteView) {
+        log.INSTANCE.d("notification update " + isPng());
+        Audio playSong = songs.get(songPosn);
+        if (playSong != null) {
+            remoteView.setTextColor(R.id.title, Base.Companion.getGet().getResources().getColor(R.color.headerTextColor));
+            remoteView.setTextColor(R.id.artist, Base.Companion.getGet().getResources().getColor(R.color.normalTextColor));
+            remoteView.setTextViewText(R.id.title, (playSong.getTitle().isEmpty()) ? Base.Companion.getGet().getResources().getString(R.string.unknown) : playSong.getTitle());
+            remoteView.setTextViewText(R.id.artist,(playSong.getArtist().isEmpty()) ? Base.Companion.getGet().getResources().getString(R.string.unknown) : playSong.getArtist());
+        }
+
+
+
+        remoteView.setImageViewResource(R.id.image_view_play_toggle, isPng()
+                ? R.drawable.notif_pause : R.drawable.notif_play);
+//        Bitmap album = AlbumUtils.parseAlbum(getPlayingSong());
+
+            remoteView.setImageViewResource(R.id.album, R.mipmap.ic_launcher);
+    }
+
+    private PendingIntent getPendingIntent(String action) {
+        return PendingIntent.getService(this, 0, new Intent(action), 0);
+    }
     //playback methods
     public int getPosn(){
         return player.getCurrentPosition();
@@ -209,9 +308,9 @@ public class MusicService extends Service implements
         player.pause();
         //player.release();
         PLAY_STATUS = PAUSED;
-        Intent intent = new Intent(TAG);
-        intent.putExtra(TAG,PAUSED);
-        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
+        createAndShowNotification();
+//        Intent intent = new Intent(ACTION_PLAY_TOGGLE);
+//        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
     }
 
     public void seek(int posn){
@@ -222,7 +321,7 @@ public class MusicService extends Service implements
         log.INSTANCE.d("PLAYING SONG GO");
 
         player.start();
-        Intent intent = new Intent(TAG);
+        Intent intent = new Intent(ACTION_PLAY_TOGGLE);
         LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
         PLAY_STATUS = PLAYING;
 
@@ -233,7 +332,9 @@ public class MusicService extends Service implements
         songPosn--;
         if(songPosn<0) songPosn=songs.size()-1;
         playSong();
-
+        createAndShowNotification();
+//        Intent intent = new Intent(ACTION_PLAY_LAST);
+//        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
     }
 
     //skip to next
@@ -252,7 +353,9 @@ public class MusicService extends Service implements
         }
 
         playSong();
-
+        createAndShowNotification();
+//        Intent intent = new Intent(ACTION_PLAY_NEXT);
+//        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
 
     }
 

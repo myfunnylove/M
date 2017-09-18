@@ -38,6 +38,8 @@ data class User (
 data class UserInfo(@SerializedName("info")      var info:UserData)
 
 data class UserData(@SerializedName("username")  var username:String,
+                    @SerializedName("name")  var name:String,
+                    @SerializedName("gender")  var gender:String,
                     @SerializedName("user_id")   var user_id:String,
                     @SerializedName("photo_org") var photo150:String ,
                     @SerializedName("close")     var close:Int,

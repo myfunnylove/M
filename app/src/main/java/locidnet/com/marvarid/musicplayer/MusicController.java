@@ -28,6 +28,7 @@ import android.widget.TextView;
 import locidnet.com.marvarid.R;
 import locidnet.com.marvarid.base.Base;
 import locidnet.com.marvarid.resources.utils.log;
+import locidnet.com.marvarid.ui.activity.MainActivity;
 
 import java.util.Formatter;
 import java.util.Locale;
@@ -156,7 +157,8 @@ public class MusicController extends FrameLayout {
         WindowManager.LayoutParams p = mDecorLayoutParams;
         p.width = mAnchor.getWidth();
         p.x = anchorPos[0] + (mAnchor.getWidth() - p.width) / 2;
-        p.y = anchorPos[1] + mAnchor.getHeight() - 120;
+        log.INSTANCE.d("height: "+mAnchor.getHeight());
+        p.y = anchorPos[1] + mAnchor.getHeight() - (MainActivity.MyPostOffset.getTablayoutHeight() + 32);
     }
 
     // This is called whenever mAnchor's layout bound changes

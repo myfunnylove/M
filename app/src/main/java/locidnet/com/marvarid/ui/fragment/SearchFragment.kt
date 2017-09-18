@@ -119,10 +119,12 @@ class SearchFragment : BaseFragment(), AdapterClicker{
                         val letter = s.toString().replace(pattern,"")
                         try{
                             connectActivity!!.goNext(Const.SEARCH_USER,letter)
-                        }catch (e:Exception){}
+                        }catch (e:Throwable){}
                     }else{
                         connectActivity!!.donGo(res)
                     }
+                }else{
+                // TODO CLEAR LIST
                 }
             }
 
@@ -344,9 +346,11 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
 
     fun Users.setStatusUserFactory():String{
-
+         log.d("search select user $this")
         val user = this
         var type = ""
+        if (user.close == 1 && user.follow == 0 && user.request == 0) return ProfileFragment.CLOSE
+
         if (user.follow == 0 && user.request == 0){
 
             log.d("${user.userId} -> ${user.username}ga follow qilinmagan")

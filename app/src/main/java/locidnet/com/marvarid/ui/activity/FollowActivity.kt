@@ -304,6 +304,7 @@ class FollowActivity : BaseActivity(), GoNext,Viewer {
 
     override fun onSuccess(from: String, result: String) {
 
+        log.d("Profil postlani olib kelindi profil statusi $SHOW_POST")
 
         when(from){
             Http.CMDS.MY_POSTS -> {

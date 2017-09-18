@@ -25,6 +25,7 @@ import locidnet.com.marvarid.model.Features
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
+import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.log
@@ -63,6 +64,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
     lateinit var errorConn: ErrorConnection
 
     lateinit var adapter:PostAudioGridAdapter
+    lateinit var emptyContainer: EmptyContainer
 
     override fun initProgress() {
 
@@ -70,21 +72,26 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
 
     override fun showProgress() {
         progressLay.visibility = View.VISIBLE
+        emptyContainer.hide()
+
     }
 
     override fun hideProgress() {
         progressLay.visibility = View.GONE
+        emptyContainer.hide()
 
     }
 
     override fun onSuccess(from: String, result: String) {
         log.d("from $from result $result")
+
         progressLay.visibility = View.GONE
 
-       val features = Gson().fromJson(result,Features::class.java)
-
-        adapter =  PostAudioGridAdapter(this,features.audios,this,model)
-        emptyContainer.visibility = View.GONE
+        val features = Gson().fromJson(result,Features::class.java)
+        features.audios.forEach {
+            audio -> audio.isFeatured = 1
+        }
+        adapter =  PostAudioGridAdapter(this,features.audios,this,model,true)
         setController()
         controller!!.show()
         list.adapter = adapter
@@ -93,12 +100,16 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
     override fun onFailure(from: String, message: String, erroCode: String) {
         log.d("from $from result $message errorCode $erroCode")
         progressLay.visibility = View.GONE
+        emptyContainer.show()
+
 
     }
 
     override fun getLayout(): Int  = R.layout.activity_playlist
 
     override fun initView() {
+        Const.TAG = "PlaylistActivity"
+
         DaggerMVPComponent
                 .builder()
                 .mVPModule(MVPModule(this, Model(), this))
@@ -115,7 +126,11 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
             onBackPressed()
 
         }
-        Const.TAG = "PlaylistActivity"
+        emptyContainer = EmptyContainer.Builder()
+                .setIcon(R.drawable.comment_white)
+                .setText(R.string.error_empty_playlist)
+                .initLayoutForActivity(this)
+                .build()
 
 
         list.layoutManager = LinearLayoutManager(this)
@@ -369,7 +384,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
     override fun onResume() {
         super.onResume()
         log.d("onresume")
-        LocalBroadcastManager.getInstance(this).registerReceiver(musicReceiver, IntentFilter(MusicService.TAG))
+        LocalBroadcastManager.getInstance(this).registerReceiver(musicReceiver, IntentFilter(MusicService.ACTION_PLAY_TOGGLE))
         if (paused) {
             setController()
             paused = false

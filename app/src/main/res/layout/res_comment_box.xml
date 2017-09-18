@@ -9,12 +9,12 @@
     android:background="@drawable/border_bottom"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
     android:layout_marginBottom="1dp"
     >
 
-    <org.main.socforfemale.resources.customviews.CircleImageView
+    <locidnet.com.marvarid.resources.customviews.CircleImageView
         android:id="@+id/avatar"
         android:layout_width="46dp"
         android:layout_height="46dp"
@@ -24,7 +24,7 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -45,7 +45,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
             android:textSize="13sp" />

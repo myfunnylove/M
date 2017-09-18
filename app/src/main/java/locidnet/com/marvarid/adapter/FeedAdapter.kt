@@ -369,7 +369,12 @@ class FeedAdapter(context: Activity,
                         }
 
                     },model)
-                     FeedFragment.cachedSongAdapters!!.put(i,adapter)
+                     if (FeedFragment.cachedSongAdapters != null){
+                         FeedFragment.cachedSongAdapters!!.put(i,adapter)
+                     }else{
+                         FeedFragment.cachedSongAdapters = HashMap()
+                         FeedFragment.cachedSongAdapters!!.put(i,adapter)
+                     }
 //            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
 //                override fun getSpanSize(i: Int): Int {
 //                    if (i == 0){
@@ -655,7 +660,6 @@ class FeedAdapter(context: Activity,
                                         log.d("follow on response ${postUser}")
                                         FFFFragment.OZGARGAN_USERNI_IDSI = postUser.userId.toInt()
                                         if ((h.follow.tag == ProfileFragment.UN_FOLLOW || h.follow.tag == ProfileFragment.REQUEST) && response.body()!!.res == "0"){
-                                            h.follow.tag     = ProfileFragment.FOLLOW
 
                                             /*
                                             *
@@ -670,11 +674,12 @@ class FeedAdapter(context: Activity,
                                                 SearchFragment.chooseUserFstatus = ProfileFragment.FOLLOW
                                             }
 
+                                            if (h.follow.tag != ProfileFragment.REQUEST) h.followers.text = "${h.followers.text.toString().toInt() -  1}"
                                             h.follow.text    = ProfileFragment.FOLLOW
                                             FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.FOLLOW
                                             ProfileFragment.FOLLOW_TYPE       = ProfileFragment.FOLLOW
 
-                                            h.followers.text = "${h.followers.text.toString().toInt() -  1}"
+
                                             MainActivity.MY_POSTS_STATUS = MainActivity.FIRST_TIME
                                         }else if (h.follow.tag == ProfileFragment.FOLLOW && response.body()!!.res == "0"){
 

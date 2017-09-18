@@ -475,6 +475,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         playbackPaused = true
         musicSrv!!.pausePlayer()
         if(controller != null) controller!!.setLoading(false);
+        LocalBroadcastManager.getInstance(activity).registerReceiver(musicReceiver, IntentFilter(MusicService.ACTION_PLAY_TOGGLE))
 
     }
 
@@ -484,6 +485,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
     override fun start() {
         musicSrv!!.go()
+        LocalBroadcastManager.getInstance(activity).registerReceiver(musicReceiver, IntentFilter(MusicService.ACTION_PLAY_TOGGLE))
+
     }
     override fun goPlayList() {
         startActivity(Intent(activity, PlaylistActivity::class.java))
@@ -544,13 +547,22 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
     override fun onResume() {
         super.onResume()
-        LocalBroadcastManager.getInstance(activity).registerReceiver(musicReceiver, IntentFilter(MusicService.TAG))
+        LocalBroadcastManager.getInstance(activity).registerReceiver(musicReceiver, IntentFilter(MusicService.ACTION_PLAY_TOGGLE))
         if (paused) {
             setController()
             paused = false
         }
     }
 
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (!hidden && musicSrv!!.isPng){
+            postAdapter!!.notifyDataSetChanged()
+        }
+        super.onHiddenChanged(hidden)
+
+
+    }
     val musicReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (MusicService.CONTROL_PRESSED != -1){
@@ -569,6 +581,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         }
 
     }
+
+
 
     override fun onStop() {
        if (controller != null){

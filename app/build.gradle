@@ -2,8 +2,18 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'realm-android'
+//apply plugin: 'realm-android'
 android {
+
+    signingConfigs {
+        config {
+            keyAlias 'mbank'
+            keyPassword 'So1551567'
+            storeFile file('D:/Muhammadjon/1.Rabota_MBank/Mbank_Old/mbank_key')
+            storePassword 'so1551567'
+        }
+    }
+
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -23,7 +33,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//             signingConfig signingConfigs.config
+             signingConfig signingConfigs.config
             useProguard true
 
         }

@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.main.socforfemale.resources.zoomimageview.MultiTouchViewPager
+        <locidnet.com.marvarid.resources.zoomimageview.MultiTouchViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

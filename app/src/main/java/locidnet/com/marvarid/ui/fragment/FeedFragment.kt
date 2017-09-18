@@ -401,6 +401,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicController.MediaPlayerC
     }
 
     private fun playNext() {
+
         musicSrv!!.playNext()
 
         if (playbackPaused) {
@@ -448,7 +449,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicController.MediaPlayerC
      override fun onResume() {
         super.onResume()
          log.d("onresume")
-         LocalBroadcastManager.getInstance(activity).registerReceiver(musicReceiver, IntentFilter(MusicService.TAG))
+         LocalBroadcastManager.getInstance(activity).registerReceiver(musicReceiver, IntentFilter(MusicService.ACTION_PLAY_TOGGLE))
         if (paused) {
             setController()
             paused = false
@@ -457,10 +458,12 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicController.MediaPlayerC
 
     val musicReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+
             if (MusicService.CONTROL_PRESSED != -1){
                 try {
 
                     if (FeedFragment.cachedSongAdapters != null) {
+
                         FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
                     }
                     MusicService.CONTROL_PRESSED = -1

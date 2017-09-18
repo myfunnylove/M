@@ -3,12 +3,14 @@ package locidnet.com.marvarid.ui.activity
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.google.gson.Gson
@@ -62,7 +64,6 @@ class MainActivity : BaseActivity(), GoNext, Viewer {
     lateinit var errorConn: ErrorConnection
 
     var user = Base.get.prefs.getUser()
-
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
     /*
     *
@@ -97,6 +98,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer {
 
         var COMMENT_POST_UPDATE = 0
         var COMMENT_COUNT       = 0
+
+        var tablayoutHeight = 0
+
     }
 
     override fun getLayout(): Int {
@@ -117,7 +121,18 @@ class MainActivity : BaseActivity(), GoNext, Viewer {
                 .inject(this)
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setPager()
+        tablayout.getViewTreeObserver().addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    tablayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    tablayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                tablayoutHeight = tablayout.measuredHeight
 
+            }
+
+        });
     }
 
     fun setPager(): Unit {
