@@ -56,8 +56,8 @@ class FeedAdapter(context: Activity,
                   musicPlayerListener: MusicPlayerListener,
                   profilOrFeed:Boolean = false,
                   followType:String = "",
-                  postUser:PostUser? = null
-
+                  val postUser: PostUser? = null,
+                  closedProfil:Boolean = false
                   ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var ctx                   = context
@@ -71,7 +71,6 @@ class FeedAdapter(context: Activity,
     val pOrF                  = profilOrFeed
     val FOLLOW_TYPE           = followType
     var user                  = Base.get.prefs.getUser()
-    val postUser              = postUser
     var lastAnimationPosition = -1
     var itemsCount            = 0
     var activity:Activity?    = null
@@ -79,7 +78,7 @@ class FeedAdapter(context: Activity,
     var cachedLists           = HashMap<String,String>()
     var changeId              = -1
     val player                = musicPlayerListener
-
+    var closedProfile         = closedProfil
     companion object {
 
         val ANIMATED_ITEM_COUNT        = 0
@@ -187,6 +186,8 @@ class FeedAdapter(context: Activity,
             likeAnimations.remove(h);
 
 //            h.commentCount.text = post.comments
+
+
 
             if(pOrF == true && changeId == i){
 
@@ -565,6 +566,12 @@ class FeedAdapter(context: Activity,
             h.follow.tag  = FOLLOW_TYPE
             h.follow.text = FOLLOW_TYPE
 
+            /*AGAR CLOSED PROFIL BOSA */
+            if(pOrF && closedProfile) h.closedProfilLay.visibility = View.VISIBLE
+            else h.closedProfilLay.visibility  = View.GONE
+
+
+            /*AGAR MY PROFIL BOSA PLAYLIST*/
             if(FOLLOW_TYPE == ProfileFragment.SETTINGS){
                 h.playlist.visibility = View.VISIBLE
                 h.playlist.setOnClickListener{
@@ -585,6 +592,8 @@ class FeedAdapter(context: Activity,
                 h.playlist.visibility = View.GONE
 
             }
+
+
             if (avatarUpdated == SHOW_PROGRESS){
                 h.progress.visibility = View.VISIBLE
 
@@ -623,7 +632,7 @@ class FeedAdapter(context: Activity,
             h.followers.text = feeds.followers
             h.following.text = feeds.following
             h.followersLay.setOnClickListener{   clicker.click(Const.TO_FOLLOWERS)}
-            h.followingLay.setOnClickListener{clicker.click(Const.TO_FOLLOWING)}
+            h.followingLay.setOnClickListener{   clicker.click(Const.TO_FOLLOWING)}
 
             h.avatar.setOnClickListener{
                 clicker.click(Const.CHANGE_AVATAR)
@@ -805,6 +814,7 @@ class FeedAdapter(context: Activity,
 
 
 
+            val   closedProfilLay = rootView.findViewById(R.id.closedProfilLay) as LinearLayout
             val   followersLay = rootView.findViewById(R.id.followersLay) as LinearLayout
             val   followingLay = rootView.findViewById(R.id.followingLay) as LinearLayout
             val   playlist     = rootView.findViewById(R.id.playlist)   as AppCompatImageView
