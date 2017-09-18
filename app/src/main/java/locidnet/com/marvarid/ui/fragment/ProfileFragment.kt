@@ -33,7 +33,7 @@ import locidnet.com.marvarid.ui.activity.PlaylistActivity
 import kotlin.properties.Delegates
 
 
-class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,MusicController.MediaPlayerControl,MusicPlayerListener{
+class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,MusicPlayerListener{
 
 
 
@@ -78,8 +78,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         var FOLLOWERS                     = "0"
         var FOLLOWING                     = "0"
 
-        var cachedSongAdapters:HashMap<Int, PostAudioGridAdapter>? = null
-        var playedSongPosition  = -1
+
 
     }
 
@@ -87,7 +86,11 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         connectActivity = connActivity
 
     }
+    var connectAudioList: MusicPlayerListener? = null
 
+    fun connectAudioPlayer(connAudioList: MusicPlayerListener){
+        connectAudioList = connAudioList
+    }
     override fun getFragmentView(): Int = R.layout.fragment_profil_page
 
     override fun init() {
@@ -413,294 +416,14 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
 
     }
-
-//    fun closeLoadMore() {
-//        if (oldpostList == null || oldpostList!!.posts.size <= 0){
-//            postView.visibility = View.GONE
-//            emptyContainer.visibility = View.VISIBLE
-//        }
-//        log.d("hide load more")
-//        scroll!!.resetState()
-//
-////        postView.setPullLoadMoreCompleted()
-//    }
-
-    internal enum class State {
-        EXPANDED,
-        COLLAPSED,
-        IDLE
-    }
-
-    /*
-    *
-    *
-    * MUSIC PLAYER
-    *
-    * */
-
-
-    //song list variables
-    private var songList: ArrayList<Audio>? = null
-
-    //service
-    private var musicSrv: MusicService? = null
-    private var playIntent: Intent? = null
-    //binding
-    private var musicBound = false
-
-    //controller
-    private var controller: MusicController? = null
-
-    //activity and playback pause flags
-    private var paused = false
-    var playbackPaused = false
-
-
-    //connect to the service
-    val musicConnection = object : ServiceConnection {
-
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder = service as MusicService.MusicBinder
-            //get service
-            musicSrv = binder.service
-            //pass list
-//            musicSrv!!.setList(songList)
-            musicBound = true
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            musicBound = false
-        }
-    }
-
-    //start and bind the service when the activity starts
-    override fun onStart() {
-        super.onStart()
-        if (playIntent == null) {
-
-            playIntent = Intent(activity, MusicService::class.java)
-            activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
-            activity.startService(playIntent)
-
-        }
-    }
-
-    override fun canPause(): Boolean = true
-
-    override fun canSeekBackward(): Boolean = true
-
-    override fun canSeekForward(): Boolean = true
-
-    override fun getAudioSessionId(): Int = 0
-
-    override fun getBufferPercentage(): Int = 0
-
-    override fun getCurrentPosition(): Int {
-        if (musicSrv != null && musicBound && musicSrv!!.isPng())
-            return musicSrv!!.getPosn()
-        else
-            return 0
-    }
-
-    override fun getDuration(): Int {
-        if (musicSrv != null && musicBound && musicSrv!!.isPng())
-            return musicSrv!!.getDur()
-        else
-            return 0
-    }
-
-    override fun isPlaying(): Boolean {
-        if (musicSrv != null && musicBound)
-            return musicSrv!!.isPng()
-        return false
-    }
-
-    override fun pause() {
-        playbackPaused = true
-        musicSrv!!.pausePlayer()
-        if(controller != null) controller!!.setLoading(false);
-
-    }
-
-    override fun seekTo(pos: Int) {
-        musicSrv!!.seek(pos)
-    }
-
-    override fun start() {
-        musicSrv!!.go()
-    }
-    override fun goPlayList() {
-        startActivity(Intent(activity, PlaylistActivity::class.java))
-    }
-
-    private fun setController() {
-        if (controller == null){
-            controller = MusicController(activity,false)
-            //set previous and next button listeners
-            controller!!.setPrevNextListeners({ playNext() }, { playPrev() },{ goPlayList() })
-            //set and show
-            controller!!.setMediaPlayer(this)
-            controller!!.setAnchorView(rootView.findViewById(R.id.listFeed))
-            controller!!.setEnabled(true)
-        }
-    }
-
-    private fun playNext() {
-        musicSrv!!.playNext()
-
-        if (playbackPaused) {
-            setController()
-            playbackPaused = false
-        }
-
-        controller!!.show()
-        controller!!.setLoading(true);
-
-        try {
-            if (FeedFragment.cachedSongAdapters != null) {
-                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
-            }
-        } catch (e: Exception) {
-
-        }
-    }
-
-    private fun playPrev() {
-        musicSrv!!.playPrev()
-        if (playbackPaused) {
-            setController()
-            playbackPaused = false
-        }
-        controller!!.show()
-        controller!!.setLoading(true);
-
-        try {
-
-            if (FeedFragment.cachedSongAdapters != null) {
-                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
-            }
-        } catch (e: Exception) {
-
-        }
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-        paused = true
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        LocalBroadcastManager.getInstance(activity).registerReceiver(musicReceiver, IntentFilter(MusicService.ACTION_PLAY_TOGGLE))
-        if (paused) {
-            setController()
-            paused = false
-        }
-    }
-
-    val musicReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (MusicService.CONTROL_PRESSED != -1){
-                try {
-
-                    if (FeedFragment.cachedSongAdapters != null) {
-                        FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
-                    }
-
-                    MusicService.CONTROL_PRESSED = -1
-                } catch (e: Exception) {
-
-                }
-            }
-            if(controller != null) controller!!.show(0)
-        }
-
-    }
-
-    override fun onStop() {
-       if (controller != null){
-           controller!!.hide()
-       }
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        activity.stopService(playIntent)
-        musicSrv = null
-        super.onDestroy()
-    }
-
     override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-        if (musicSrv != null){
 
-            if(musicSrv!!.isPng){
-
-                if (MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){
-                    pause()
-                }else{
-
-                    if(controller == null)
-                    {
-                        setController()
-                        controller!!.show()
-                    }
-                    controller!!.setLoading(true);
-
-                    musicSrv!!.setList(listSong)
-                    musicSrv!!.setSong(position)
-                    musicSrv!!.playSong()
-                    log.d("playbak is paused $playbackPaused")
-                    if (playbackPaused){
-                        setController()
-                        playbackPaused = false
-                    }
-//                        controller!!.show()
-                }
-            }else{
-
-                if(MusicService.PLAY_STATUS == MusicService.PAUSED && MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){
-                    start()
-                }else{
-                    if(controller == null)
-                    {
-                        setController()
-                        controller!!.show()
-                    }
-
-                    controller!!.setLoading(true);
-
-                    musicSrv!!.setList(listSong)
-                    musicSrv!!.setSong(position)
-                    musicSrv!!.playSong()
-                    log.d("playbak is paused $playbackPaused")
-                    if (playbackPaused){
-                        setController()
-                        playbackPaused = false
-                    }
-                }
-//                    controller!!.show()
-
-            }
-
-//                if (!musicSrv!!.isPng || MusicService.PLAYING_SONG_URL != listSong.get(position).middlePath){
-//                     musicSrv!!.setList(listSong)
-//                     musicSrv!!.setSong(position)
-//                     musicSrv!!.playSong()
-//                    log.d("playbak is paused $playbackPaused")
-//                    if (playbackPaused){
-//                        setController()
-//                        playbackPaused = false
-//                    }
-//                    controller!!.show()
-//                }else{
-//
-//                    pause()
-//                }
-        }else{
-            Toast.makeText(Base.get,Base.get.resources.getString(R.string.error_something), Toast.LENGTH_SHORT).show()
-        }
+        connectAudioList!!.playClick(listSong,position)
     }
+
+
+
+
+
 
 }
