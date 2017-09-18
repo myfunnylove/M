@@ -46,4 +46,14 @@ object Prefs {
         val user = User("","","","","","N","","","","","",-1)
         setUser(user)
     }
+
+    fun setTokenId(token: String) {
+        val editor = prefs!!.edit()
+        editor.putString("tokenId", token)
+        editor.commit()
+    }
+
+    fun getTokenId(): String {
+        return prefs!!.getString("tokenId", "")
+    }
 }

@@ -11,6 +11,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.LocalBroadcastManager
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
@@ -18,7 +19,6 @@ import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import me.iwf.photopicker.PhotoPicker
-import okhttp3.MultipartBody
 import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.FeedAdapter
@@ -45,9 +45,13 @@ import locidnet.com.marvarid.ui.fragment.*
 import java.io.File
 import javax.inject.Inject
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.iid.FirebaseInstanceId
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.musicplayer.MusicController
 import locidnet.com.marvarid.musicplayer.MusicService
+import locidnet.com.marvarid.resources.utils.Prefs
+import okhttp3.*
+import java.io.IOException
 
 
 class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayerControl, MusicPlayerListener {
@@ -118,7 +122,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     override fun initView() {
         Const.TAG = "MainActivity"
         startIntroAnimation()
-
+        sendDataForPush()
         DaggerMVPComponent
                 .builder()
                 .mVPModule(MVPModule(this, Model(),this))
@@ -1106,6 +1110,58 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         super.onDestroy()
     }
 
+
+    private fun sendDataForPush() {
+        try {
+
+            var token = Prefs.Builder().getTokenId()
+            log.d("Firebase da token bormi -> " + if (token!!.isEmpty()) "yo'q" else "bor -> \n" + token!!)
+
+
+            if (token!!.isEmpty()) {
+                log.d("Firebase da token yo'q -> ")
+
+                token = FirebaseInstanceId.getInstance().token!!
+                Prefs.Builder().setTokenId(token)
+                log.d("Firebase da token olindi -> " + Prefs.Builder().getTokenId())
+
+                //                Http.sendDataForPush();
+
+
+            }
+//            val body = FormBody.Builder()
+//                    .add("res", "1")
+//                    .add("device", "android")
+//                    .add("app", "uzbarcafan")
+//                    .add("imei", "0")
+//                    .add("token", token!!)
+//                    .add("version", String.valueOf(Base.getCtx().getPackageManager()
+//                            .getPackageInfo(Base.getCtx().getPackageName(), 0).versionCode))
+//
+//
+//            val builder = Request.Builder()
+//                    .post(body.build())
+//                    .url("http://test.uzbarca.net/registerToken.php")
+//
+//            val client = OkHttpClient()
+//            client.newCall(builder.build()).enqueue(object : Callback {
+//                override fun onFailure(call: Call, e: IOException) {
+//                    Log.d(Base.TAG, "xatolik: " + e.toString())
+//                }
+//
+//                @Throws(IOException::class)
+//                override fun onResponse(call: Call, response: Response) {
+//                    Log.d(Base.TAG, "Uspeshno")
+//                }
+//            })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            log.d("Firebase da tokenni olishda exception-> " + e.toString())
+
+
+        }
+
+    }
 }
 
 
