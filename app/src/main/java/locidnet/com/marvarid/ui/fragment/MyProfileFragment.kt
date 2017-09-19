@@ -24,6 +24,7 @@ import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
@@ -32,7 +33,7 @@ import locidnet.com.marvarid.ui.activity.MainActivity
 import locidnet.com.marvarid.ui.activity.PlaylistActivity
 import kotlin.properties.Delegates
 
-class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker, MusicPlayerListener {
+class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker, MusicPlayerListener,MusicControlObserver {
 
 
 
@@ -97,6 +98,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
         log.d("init profil fragment")
 
+        MainActivity.musicSubject.subscribe(this)
 
         progressLay    = rootView.findViewById(R.id.progressLay)    as ViewGroup
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout)    as SwipeRefreshLayout
@@ -399,6 +401,20 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
     fun createProgressForAvatar(status: Int) {
         postAdapter!!.swapPhotoProgress(status)
+    }
+
+    override fun playPause(id: String) {
+        try {
+//
+            log.d("PATTERN OBSERVER CALLED MY PROFILE FRAGMENT")
+
+            if (FeedFragment.cachedSongAdapters != null) {
+                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+            }
+
+        } catch (e: Exception) {
+
+        }
     }
 
 }

@@ -18,6 +18,7 @@ import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.Audio
 import locidnet.com.marvarid.model.PostList
+import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
@@ -30,7 +31,7 @@ import kotlin.properties.Delegates
 /**
  * Created by Michaelan on 5/19/2017.
  */
-class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener{
+class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicControlObserver{
 
 
 
@@ -78,6 +79,8 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener{
 
     override fun init() {
         Const.TAG = "FeedFragment"
+
+        MainActivity.musicSubject.subscribe(this)
 
         progressLay    = rootView.findViewById(R.id.progressLay)    as ViewGroup
 
@@ -308,6 +311,20 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener{
 //            }
 //        }
 //    }
+
+
+    override fun playPause(id: String) {
+        try {
+            log.d("PATTERN OBSERVER CALLED FEEDFRAGMENT")
+//
+                if (FeedFragment.cachedSongAdapters != null) {
+                    FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+                }
+
+            } catch (e: Exception) {
+
+            }
+    }
 
 
 }

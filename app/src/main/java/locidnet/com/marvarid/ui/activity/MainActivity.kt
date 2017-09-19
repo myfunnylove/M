@@ -36,6 +36,7 @@ import locidnet.com.marvarid.musicplayer.MusicService
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
+import locidnet.com.marvarid.pattern.MControlObserver.MusicSubject
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
@@ -106,6 +107,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         var COMMENT_COUNT       = 0
 
         var tablayoutHeight = 0
+        lateinit var musicSubject:MusicSubject
 
     }
 
@@ -116,7 +118,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
     override fun initView() {
         Const.TAG = "MainActivity"
+
         startIntroAnimation()
+
         DaggerMVPComponent
                 .builder()
                 .mVPModule(MVPModule(this, Model(),this))
@@ -124,6 +128,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                 .errorConnModule(ErrorConnModule(this,true))
                 .build()
                 .inject(this)
+
+        musicSubject = MusicSubject()
+
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         setPager()
         tablayout.getViewTreeObserver().addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
@@ -841,16 +848,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             setController()
             playbackPaused = false
         }
-        controller!!.show()
-        controller!!.setLoading(true);
+        musicSubject.playMeause("")
 
-        try {
-            if (FeedFragment.cachedSongAdapters != null) {
-                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
-            }
-        } catch (e: Exception) {
-
-        }
     }
 
     private fun playPrev() {
@@ -859,17 +858,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             setController()
             playbackPaused = false
         }
-        controller!!.show()
-        controller!!.setLoading(true);
-
-        try {
-
-            if (FeedFragment.cachedSongAdapters != null) {
-                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
-            }
-        } catch (e: Exception) {
-
-        }
+        musicSubject.playMeause("")
 
     }
 
@@ -1016,6 +1005,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             //pass list
 //            musicSrv!!.setList(songList)
             musicBound = true
+
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -1080,19 +1070,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         musicSrv!!.pausePlayer()
 
 
-        if(controller != null){
-            controller!!.show()
-
-            controller!!.setLoading(false)
-        }
-        try {
-
-            if (FeedFragment.cachedSongAdapters != null) {
-                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
-            }
-        } catch (e: Exception) {
-
-        }
+        musicSubject.playMeause("")
 
 
     }
@@ -1103,19 +1081,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
     override fun start() {
         musicSrv!!.go()
-
-        if(controller != null){
-            controller!!.show()
-
-        }
-        try {
-            log.d("start controller")
-            if (FeedFragment.cachedSongAdapters != null) {
-                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
-            }
-        } catch (e: Exception) {
-
-        }
+        musicSubject.playMeause("")
     }
 
     override fun goPlayList() {

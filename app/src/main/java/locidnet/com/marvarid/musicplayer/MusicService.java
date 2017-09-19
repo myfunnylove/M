@@ -22,6 +22,7 @@ import android.widget.RemoteViews;
 import locidnet.com.marvarid.R;
 import locidnet.com.marvarid.base.Base;
 import locidnet.com.marvarid.model.Audio;
+import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver;
 import locidnet.com.marvarid.resources.utils.log;
 import locidnet.com.marvarid.ui.activity.MainActivity;
 
@@ -37,7 +38,7 @@ import java.util.Random;
 
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener {
+        MediaPlayer.OnCompletionListener, MusicControlObserver {
 
     public static int CONTROL_PRESSED = -1;
     //media player
@@ -77,6 +78,8 @@ public class MusicService extends Service implements
         player = new MediaPlayer();
         //initialize
         initMusicPlayer();
+        MainActivity.musicSubject.subscribe(this);
+
     }
 
     public void initMusicPlayer(){
@@ -96,6 +99,13 @@ public class MusicService extends Service implements
     }
     public ArrayList<Audio> getSongs(){
         return songs;
+    }
+
+    @Override
+    public void playPause(String id) {
+        log.INSTANCE.d("PATTERN OBSERVER CALLED MY PROFILE MUSICSERVICE");
+
+        createAndShowNotification();
     }
 
     //binder
@@ -169,7 +179,6 @@ public class MusicService extends Service implements
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Log.v("MUSIC PLAYER", "Playback Error");
         mp.reset();
         return false;
     }
@@ -192,7 +201,7 @@ public class MusicService extends Service implements
                 if (isPng()) {
                     pausePlayer();
                 } else {
-                    playSong();
+                    go();
                 }
             } else if (ACTION_PLAY_NEXT.equals(action)) {
                 CONTROL_PRESSED = 1;
@@ -308,7 +317,7 @@ public class MusicService extends Service implements
         player.pause();
         //player.release();
         PLAY_STATUS = PAUSED;
-        createAndShowNotification();
+        MainActivity.musicSubject.playMeause("");
 //        Intent intent = new Intent(ACTION_PLAY_TOGGLE);
 //        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
     }
@@ -324,8 +333,7 @@ public class MusicService extends Service implements
 //        Intent intent = new Intent(ACTION_PLAY_TOGGLE);
 //        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
         PLAY_STATUS = PLAYING;
-        createAndShowNotification();
-
+        MainActivity.musicSubject.playMeause("");
     }
 
     //skip to previous track
@@ -333,9 +341,10 @@ public class MusicService extends Service implements
         songPosn--;
         if(songPosn<0) songPosn=songs.size()-1;
         playSong();
-        createAndShowNotification();
 //        Intent intent = new Intent(ACTION_PLAY_LAST);
 //        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
+        MainActivity.musicSubject.playMeause("");
+
     }
 
     //skip to next
@@ -354,7 +363,8 @@ public class MusicService extends Service implements
         }
 
         playSong();
-        createAndShowNotification();
+        MainActivity.musicSubject.playMeause("");
+
 //        Intent intent = new Intent(ACTION_PLAY_NEXT);
 //        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
 
@@ -370,5 +380,6 @@ public class MusicService extends Service implements
         if(shuffle) shuffle=false;
         else shuffle=true;
     }
+
 
 }

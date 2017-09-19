@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import locidnet.com.marvarid.R;
 import locidnet.com.marvarid.base.Base;
+import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver;
 import locidnet.com.marvarid.resources.utils.log;
 import locidnet.com.marvarid.ui.activity.MainActivity;
 
@@ -40,7 +41,7 @@ import java.util.Locale;
  * Sue Smith - February 2014
  */
 
-public class MusicController extends FrameLayout {
+public class MusicController extends FrameLayout implements MusicControlObserver {
 
     private MediaPlayerControl mPlayer;
     private final Context mContext;
@@ -90,7 +91,9 @@ public class MusicController extends FrameLayout {
     public MusicController(Context context, boolean isPlaylistActivity) {
         super(context);
         mContext = context;
+        MainActivity.musicSubject.subscribe(this);
         this.isPlaylistActivity = isPlaylistActivity;
+
         initFloatingWindowLayout();
         initFloatingWindow();
      //   mAccessibilityManager = AccessibilityManager.getGet(context);
@@ -724,6 +727,13 @@ public class MusicController extends FrameLayout {
                 playlistButton.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    @Override
+    public void playPause(String id) {
+        log.INSTANCE.d("PATTERN OBSERVER CALLED CONTROLLER FRAGMENT");
+
+        show();
     }
 
     public interface MediaPlayerControl {
