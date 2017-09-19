@@ -417,4 +417,9 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         }
     }
 
+    override fun onDestroy() {
+        MainActivity.musicSubject.unsubscribe(this)
+        super.onDestroy()
+    }
+
 }

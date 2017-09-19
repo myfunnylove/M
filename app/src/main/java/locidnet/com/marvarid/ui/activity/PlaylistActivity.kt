@@ -25,6 +25,7 @@ import locidnet.com.marvarid.model.Features
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
+import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.Const
@@ -37,7 +38,7 @@ import javax.inject.Inject
 /**
  * Created by Sarvar on 09.09.2017.
  */
-class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerControl, MusicPlayerListener {
+class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerControl, MusicPlayerListener,MusicControlObserver {
 
 
 
@@ -93,8 +94,10 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
             audio -> audio.isFeatured = 1
         }
         adapter =  PostAudioGridAdapter(this,features.audios,this,model,true)
-        setController()
-        controller!!.show()
+        try{
+            setController()
+            controller!!.show()
+        }catch (e:Exception){}
         list.adapter = adapter
     }
 
@@ -119,6 +122,8 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
                 .errorConnModule(ErrorConnModule(this,true))
                 .build()
                 .inject(this)
+        MainActivity.musicSubject.subscribe(this)
+
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
         supportActionBar!!.setTitle(resources.getString(R.string.my_playlist))
@@ -299,8 +304,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
         if(controller != null) controller!!.setLoading(false);
 
 
-        adapter.notifyDataSetChanged()
-
+        MainActivity.musicSubject.playMeause("")
     }
 
     override fun seekTo(pos: Int) {
@@ -312,12 +316,13 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
         if(musicSrv != null && musicSrv!!.songs != null) {
             if (musicSrv!!.songs.size > 0) {
                 musicSrv!!.go()
-                adapter.notifyDataSetChanged()
+                MainActivity.musicSubject.playMeause("")
             }
         }else{
             if (adapter != null && adapter.audios != null && adapter.audios.size > 0){
                 playClick(adapter.audios,0)
-                adapter.notifyDataSetChanged()
+                MainActivity.musicSubject.playMeause("")
+
             }
         }
     }
@@ -344,36 +349,18 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
             setController()
             playbackPaused = false
         }
-        controller!!.setLoading(true);
+        MainActivity.musicSubject.playMeause("")
 
-        controller!!.show()
-        try {
-
-            adapter.notifyDataSetChanged()
-
-
-        } catch (e: Exception) {
-
-        }
     }
 
     private fun playPrev() {
-        musicSrv!!.playPrev()
+        musicSrv!!.playNext()
+
         if (playbackPaused) {
             setController()
             playbackPaused = false
         }
-        controller!!.setLoading(true);
-
-        controller!!.show()
-        try {
-
-            adapter.notifyDataSetChanged()
-
-
-        } catch (e: Exception) {
-
-        }
+        MainActivity.musicSubject.playMeause("")
 
     }
 
@@ -420,6 +407,11 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
     override fun onDestroy() {
         stopService(playIntent)
         musicSrv = null
+        MainActivity.musicSubject.unsubscribe(this)
         super.onDestroy()
+    }
+
+    override fun playPause(id: String) {
+     adapter.notifyDataSetChanged()
     }
 }

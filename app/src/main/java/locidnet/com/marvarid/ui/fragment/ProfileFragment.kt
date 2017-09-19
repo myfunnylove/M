@@ -24,6 +24,7 @@ import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
@@ -33,7 +34,7 @@ import locidnet.com.marvarid.ui.activity.PlaylistActivity
 import kotlin.properties.Delegates
 
 
-class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,MusicPlayerListener{
+class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,MusicPlayerListener,MusicControlObserver{
 
 
 
@@ -95,7 +96,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
     override fun init() {
         Const.TAG = "ProfileFragment"
-
+        MainActivity.musicSubject.subscribe(this)
         FOLLOW_TYPE = arguments.getString(F_TYPE)
 
 
@@ -422,8 +423,25 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
     }
 
 
+    override fun onDestroy() {
+        MainActivity.musicSubject.unsubscribe(this)
 
+        super.onDestroy()
 
+    }
 
+    override fun playPause(id: String) {
+        try {
+//
+            log.d("PATTERN OBSERVER CALLED OTHER PROFILE FRAGMENT")
+
+            if (FeedFragment.cachedSongAdapters != null) {
+                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+            }
+
+        } catch (e: Exception) {
+
+        }
+    }
 
 }
