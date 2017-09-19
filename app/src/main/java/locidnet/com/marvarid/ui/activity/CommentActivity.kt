@@ -42,6 +42,7 @@ import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.Toaster
 import javax.inject.Inject
 
 
@@ -153,7 +154,8 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
                 })
             }else{
-                Toast.makeText(Base.get,Base.get.resources.getString(R.string.error_empty_comment),Toast.LENGTH_SHORT).show()
+                Toaster.info(resources.getString(R.string.error_empty_comment))
+
             }
 
         }
@@ -187,7 +189,8 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
                         })
 
                     }else{
-                        Toast.makeText(Base.get,Base.get.resources.getString(R.string.error_empty_comment),Toast.LENGTH_SHORT).show()
+                        Toaster.info(resources.getString(R.string.error_empty_comment))
+
                     }
                     return true
                 }

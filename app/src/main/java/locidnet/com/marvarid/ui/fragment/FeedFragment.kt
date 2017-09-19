@@ -1,6 +1,6 @@
 package locidnet.com.marvarid.ui.fragment
 
-import android.content.*
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -8,30 +8,23 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.FeedAdapter
+import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
+import locidnet.com.marvarid.model.Audio
 import locidnet.com.marvarid.model.PostList
+import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
 import kotlin.properties.Delegates
-import locidnet.com.marvarid.musicplayer.MusicController
-import locidnet.com.marvarid.musicplayer.MusicService
-import locidnet.com.marvarid.model.Audio
-import locidnet.com.marvarid.musicplayer.MusicService.MusicBinder
-import android.os.IBinder
-import android.support.v4.content.LocalBroadcastManager
-import locidnet.com.marvarid.adapter.PostAudioGridAdapter
-import locidnet.com.marvarid.pattern.builder.EmptyContainer
-import locidnet.com.marvarid.ui.activity.PlaylistActivity
 
 
 /**

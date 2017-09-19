@@ -80,4 +80,6 @@
     <string name="change_mail">CHANGE MAIL</string>
     <string name="change_phone">CHANGE PHONE</string>
     <string name="closed_profil">Closed profil</string>
+    <string name="addPassword">ADD PASSWORD</string>
+    <string name="allow_notification">ALLOW NOTIFICATION</string>
 </resources>

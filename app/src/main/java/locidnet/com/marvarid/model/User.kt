@@ -50,6 +50,8 @@ data class UserData(@SerializedName("username")  var username:String,
                     @SerializedName("close")     var close:Int,
                     @SerializedName("block")     var block:Int,
                     @SerializedName("follow")    var follow:Int,
-                    @SerializedName("request")    var request:Int){
+                    @SerializedName("request")    var request:Int,
+                    @SerializedName("mail")    var mail:String,
+                    @SerializedName("phone")    var phone:String){
 
 }

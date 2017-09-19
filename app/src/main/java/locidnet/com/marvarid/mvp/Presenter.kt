@@ -91,7 +91,8 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                                  }catch (e:IllegalArgumentException){
                                      user.close = 0
                                  }
-
+                                 user.userPhone   = if (userInfo.info.phone.isNullOrEmpty()) "" else userInfo.info.phone
+                                 user.userMail   = if (userInfo.info.mail.isNullOrEmpty()) "" else userInfo.info.mail
                                  user.first_name  = if (userInfo.info.name.isNullOrEmpty()) "" else userInfo.info.name
                                  user.gender      = if (userInfo.info.gender.isNullOrEmpty()) "" else userInfo.info.gender
                                          //TODO GENDER AND NAME SHOULD BE GET

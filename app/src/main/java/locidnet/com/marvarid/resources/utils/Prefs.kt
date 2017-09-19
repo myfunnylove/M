@@ -56,4 +56,14 @@ object Prefs {
     fun getTokenId(): String {
         return prefs!!.getString("tokenId", "")
     }
+
+    fun allowNotif(allow : Boolean){
+        val editor = prefs!!.edit()
+        editor.putBoolean("allowNotification", allow)
+        editor.commit()
+    }
+
+    fun isALlowNotif(): Boolean {
+        return prefs!!.getBoolean("allowNotification", true)
+    }
 }

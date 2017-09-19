@@ -14,7 +14,7 @@ import android.widget.RelativeLayout
  */
 object CustomAnim {
 
-    fun SlideToAbove(rl_footer:ViewGroup) {
+    fun SlideToAbove(rl_footer: ViewGroup) {
         var slide: Animation? = null
         slide = TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
@@ -50,14 +50,14 @@ object CustomAnim {
     }
 
 
-    fun setScaleAnimation(view: View, time:Int) {
+    fun setScaleAnimation(view: View, time: Int) {
         val anim = ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
         anim.duration = time.toLong()
         view.startAnimation(anim)
     }
 
-    fun translateBottomToTop(view: View, time:Int) {
-        val anim = TranslateAnimation(0f,0f,view.getHeight().toFloat(),0f)
+    fun translateBottomToTop(view: View, time: Int) {
+        val anim = TranslateAnimation(0f, 0f, view.getHeight().toFloat(), 0f)
         anim.duration = time.toLong()
         view.startAnimation(anim)
     }

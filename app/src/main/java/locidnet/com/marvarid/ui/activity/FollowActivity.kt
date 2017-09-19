@@ -7,10 +7,8 @@ import android.os.IBinder
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.LocalBroadcastManager
-import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_follow.*
-import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
@@ -30,12 +28,10 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.Prefs
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.fragment.*
+import org.json.JSONObject
 import javax.inject.Inject
 
 class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlayerControl, MusicPlayerListener {
@@ -385,6 +381,7 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
 
     override fun onFailure(from: String, message: String, erroCode: String) {
 
+        Toaster.errror(message)
 
         when(from ){
             Http.CMDS.MY_POSTS -> profilFragment!!.failedGetList()
@@ -543,7 +540,8 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
 //                    pause()
 //                }
         }else{
-            Toast.makeText(Base.get,Base.get.resources.getString(R.string.error_something), Toast.LENGTH_SHORT).show()
+            Toaster.errror(resources.getString(R.string.error_something))
+
         }
     }
 
@@ -643,17 +641,11 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
         return true
     }
 
-    override fun canSeekForward(): Boolean {
-        return true
-    }
+    override fun canSeekForward(): Boolean = true
 
-    override fun getAudioSessionId(): Int {
-        return 0
-    }
+    override fun getAudioSessionId(): Int = 0
 
-    override fun getBufferPercentage(): Int {
-        return 0
-    }
+    override fun getBufferPercentage(): Int = 0
 
     override fun getCurrentPosition(): Int {
         if (musicSrv != null && musicBound && musicSrv!!.isPng())
@@ -678,8 +670,11 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
     override fun pause() {
         playbackPaused = true
         musicSrv!!.pausePlayer()
-        if(controller != null) controller!!.setLoading(false);
+        if(controller != null){
+            controller!!.show()
 
+            controller!!.setLoading(false)
+        }
     }
 
     override fun seekTo(pos: Int) {

@@ -682,10 +682,10 @@ public class MusicController extends FrameLayout {
             mPrevButton.setEnabled(mPrevListener != null);
         }
 
-        if (playlistButton != null) {
-            playlistButton.setEnabled(playlistListener != null);
+//        if (playlistButton != null) {
+//            playlistButton.setEnabled(playlistListener != null);
             playlistButton.setOnClickListener(playlistListener);
-        }
+//        }
     }
 
     public void setPrevNextListeners(OnClickListener next, OnClickListener prev) {

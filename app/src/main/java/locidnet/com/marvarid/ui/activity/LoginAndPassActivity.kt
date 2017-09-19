@@ -25,6 +25,7 @@ import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import javax.inject.Inject
 
@@ -43,9 +44,7 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
     var password = ""
     var from = -1
 
-    override fun getLayout(): Int {
-        return R.layout.activity_login_and_password
-    }
+    override fun getLayout(): Int = R.layout.activity_login_and_password
 
     override fun initView() {
         Const.TAG = "LoginAndPassActivity"
@@ -116,7 +115,7 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
                             -1 -> {
                                 obj.put("phone", Base.get.prefs.getUser().phoneOrMail)
 
-                                presenter!!.requestAndResponse(obj, Http.CMDS.ROYXATDAN_OTISH)
+                                presenter.requestAndResponse(obj, Http.CMDS.ROYXATDAN_OTISH)
                             }
 
                             LoginActivity.FACEBOOK -> {
@@ -125,7 +124,7 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
                                 obj.put("id",user.userId)
                                 obj.put("token",user.token)
                                 obj.put("type","fb")
-                                presenter!!.requestAndResponse(obj, Http.CMDS.FB_VA_VK_ORQALI_REG)
+                                presenter.requestAndResponse(obj, Http.CMDS.FB_VA_VK_ORQALI_REG)
 
                             }
 
@@ -135,13 +134,13 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
                                 obj.put("id",user.userId)
                                 obj.put("token",user.token)
                                 obj.put("type","vk")
-                                presenter!!.requestAndResponse(obj, Http.CMDS.FB_VA_VK_ORQALI_REG)
+                                presenter.requestAndResponse(obj, Http.CMDS.FB_VA_VK_ORQALI_REG)
                             }
 
                             else -> {
                                 obj.put("phone", Base.get.prefs.getUser().phoneOrMail)
 
-                                presenter!!.requestAndResponse(obj, Http.CMDS.ROYXATDAN_OTISH)
+                                presenter.requestAndResponse(obj, Http.CMDS.ROYXATDAN_OTISH)
                             }
 
                         }
@@ -204,13 +203,14 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
             isLoginFree = false
             login.setLoginResult(R.drawable.close_circle_outline)
         }else{
-            errorText.visibility = View.VISIBLE
-            errorText.text = message
+//            errorText.visibility = View.VISIBLE
+//            errorText.text = message
+            Toaster.errror(message)
 
-            Handler().postDelayed({
-                errorText.text = ""
-                errorText.visibility = View.GONE
-            },3000)
+//            Handler().postDelayed({
+//                errorText.text = ""
+//                errorText.visibility = View.GONE
+//            },3000)
         }
     }
 

@@ -28,6 +28,7 @@ import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.fragment.FeedFragment
@@ -98,7 +99,8 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
     }
 
     override fun onFailure(from: String, message: String, erroCode: String) {
-        log.d("from $from result $message errorCode $erroCode")
+        Toaster.errror(message)
+
         progressLay.visibility = View.GONE
         emptyContainer.show()
 

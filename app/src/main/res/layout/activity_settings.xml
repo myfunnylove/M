@@ -374,47 +374,34 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/res_block_gray_when_select"
                 android:orientation="vertical"
-                android:paddingLeft="56dp"
-                android:paddingRight="16dp">
 
-                <TextView
-                    android:id="@+id/push"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/notifications"
-                    android:textColor="@color/asbestos"
-                    android:textSize="14sp"
-
-                    />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.50dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/clouds" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/deleteAccountLay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/res_block_gray_when_select"
-                android:orientation="vertical"
                 android:paddingLeft="56dp"
                 android:paddingRight="16dp"
-                android:paddingTop="8dp">
+
+                >
 
                 <TextView
-                    android:id="@+id/deleteAccount"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/deleteAccount"
+                    android:text="@string/allow_notification"
                     android:textColor="@color/asbestos"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
 
+                <locidnet.com.marvarid.resources.customviews.SwitchButton
+                    android:id="@+id/switchNotification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:sb_background="@color/clouds"
+                    app:sb_checked="false"
+                    app:sb_checked_color="@color/colorAccent"
+                    app:sb_shadow_effect="true"
+                    app:sb_uncheck_color="@color/silver"
+                    android:layout_marginLeft="2dp"
 
+                    />
             </LinearLayout>
+
 
             <View
                 android:layout_width="match_parent"
@@ -422,6 +409,52 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="16dp"
+                android:background="@color/silver"
+
+                />
+
+
+            <LinearLayout
+                android:id="@+id/deleteAccountlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    app:srcCompat="@drawable/exit"
+
+                    />
+
+                <TextView
+                    android:id="@+id/deleteAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:text="@string/deleteAccount"
+                    android:textColor="@color/headerTextColor"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.50dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/silver"
+
+                />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.50dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:background="@color/silver"
 
                 />
@@ -446,14 +479,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="16dp"
+                    android:gravity="center_vertical"
                     android:text="@string/quit"
                     android:textColor="@color/headerTextColor"
                     android:textSize="14sp"
-                    android:textStyle="bold"
-                android:gravity="center_vertical"
-                    />
+                    android:textStyle="bold" />
             </LinearLayout>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.50dp"
@@ -462,7 +493,6 @@
                 android:background="@color/silver"
 
                 />
-
 
             <LinearLayout
                 android:layout_width="match_parent"

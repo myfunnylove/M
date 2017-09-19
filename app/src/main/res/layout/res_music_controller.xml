@@ -54,13 +54,16 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
             <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:srcCompat="@drawable/mc_pause"
+                android:layout_centerInParent="true"
                 android:background="@android:color/transparent"
                 />
             <ProgressBar
@@ -69,6 +72,8 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:visibility="gone"
+                android:layout_centerInParent="true"
+
                 />
         </RelativeLayout>
 

@@ -28,10 +28,7 @@ import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.pattern.builder.SessionOut
 import locidnet.com.marvarid.pattern.signInUpBridge.SimpleoAuth
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.Prefs
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.fragment.MailFormFragment
 import locidnet.com.marvarid.ui.fragment.PhoneFormFragment
 import locidnet.com.marvarid.ui.fragment.YesNoFragment
@@ -174,7 +171,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
                             val js = JSONObject()
                             js.put("user_id",userData.userId)
                             js.put("session",userData.session)
-                            js.put("mail",changeMailDialog!!.mail)
+                            js.put("mail",changeMailDialog!!.mail.text.toString())
                             js.put("code",changeMailDialog!!.smsCode.text.toString().trim())
                             changeMailDialog!!.setVisibility(true)
                             presenter.requestAndResponse(js, Http.CMDS.ACCEPT_MAIL)
@@ -237,6 +234,16 @@ class SettingsActivity : BaseActivity() ,Viewer {
          }
         /*GENDER*/
 
+
+        /*PASSWORD*/
+        if (userData.password.isNullOrEmpty()){
+            password.text = resources.getString(R.string.addPassword)
+            password.tag = R.string.addPassword
+        }else{
+            password.text = resources.getString(R.string.changePassword)
+            password.tag = R.string.changePassword
+        }
+
         /*QUIT*/
         quitLay.setOnClickListener {
                 val dialog = YesNoFragment.instance()
@@ -274,6 +281,12 @@ class SettingsActivity : BaseActivity() ,Viewer {
         }
         /*QUIT*/
 
+
+
+        /*ALLOW NOTIFICATION*/
+        switchNotification.isChecked = if(Base.get.prefs.isALlowNotif()) true else false
+        switchNotification.setOnCheckedChangeListener { view, isChecked -> Base.get.prefs.allowNotif(isChecked)}
+        /*ALLOW NOTIFICATION*/
     }
 
 
@@ -358,7 +371,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
                 val response = JSONObject(result)
                 log.d("from change phone number -> $response")
                 changePhoneDialog!!.setVisibility(false)
-                changePhoneDialog!!.setSms("231233")
+                changePhoneDialog!!.setSms("")
             }
             Http.CMDS.ACCEPT_CHANGE_PHONE -> {
                 changePhoneDialog!!.setVisibility(false)
@@ -372,7 +385,8 @@ class SettingsActivity : BaseActivity() ,Viewer {
                 val response = JSONObject(result)
                 log.d("from change phone number -> $response")
                 changeMailDialog!!.setVisibility(false)
-                changeMailDialog!!.setSms("231233")
+                changeMailDialog!!.setSms("")
+
             }
             Http.CMDS.ACCEPT_MAIL -> {
                 changeMailDialog!!.setVisibility(false)
@@ -428,7 +442,8 @@ class SettingsActivity : BaseActivity() ,Viewer {
             }
 
         }
-        Toast.makeText(Base.get.context,message,Toast.LENGTH_SHORT).show()
+        Toaster.errror(message)
+
     }
 
 

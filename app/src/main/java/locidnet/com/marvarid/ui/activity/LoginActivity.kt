@@ -3,15 +3,12 @@ package locidnet.com.marvarid.ui.activity
 import android.content.Intent
 import android.os.Handler
 import android.view.View
-import android.widget.Toast
 import com.facebook.CallbackManager
 import com.vk.sdk.util.VKUtil
 import kotlinx.android.synthetic.main.activity_login.*
-import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
-import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.di.DaggerMVPComponent
 import locidnet.com.marvarid.di.modules.ErrorConnModule
 import locidnet.com.marvarid.di.modules.MVPModule
@@ -21,9 +18,9 @@ import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.pattern.signInUpBridge.*
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
+import locidnet.com.marvarid.rest.Http
+import org.json.JSONObject
 import javax.inject.Inject
 
 
@@ -38,8 +35,6 @@ class LoginActivity : BaseActivity(), Viewer {
     lateinit var vkAuth:VKoAuth
     lateinit var simpleAuth:SimpleoAuth
     lateinit var signBridge:SignBridgeConnector
-
-
     @Inject
     lateinit var presenter:Presenter
     @Inject
@@ -172,7 +167,12 @@ class LoginActivity : BaseActivity(), Viewer {
 
     override fun onSuccess(from: String, result: String) {
 
-//        if(from  == Http.CMDS.LOGIN_PAYTI){
+        if(from  == Http.CMDS.LOGIN_PAYTI) {
+            val user = Prefs.Builder().getUser()
+            user.password = password
+            user.userName = username
+        Prefs.Builder().setUser(user)
+        }
 //        Toast.makeText(this,":OK",Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity().javaClass))
         this.finish()
@@ -194,11 +194,13 @@ class LoginActivity : BaseActivity(), Viewer {
             }
 
             else -> {
-                errorText.text = message
+                Toaster.errror(message)
 
-                Handler().postDelayed({
-                    errorText.text = ""
-                }, 3000)
+//                errorText.text = message
+//
+//                Handler().postDelayed({
+//                    errorText.text = ""
+//                }, 3000)
             }
         }
 
@@ -282,11 +284,15 @@ class LoginActivity : BaseActivity(), Viewer {
             val obj = JSONObject()
             obj.put("username", idUser)
             obj.put("password", token)
+            username = idUser
+            password = token
+
             presenter.requestAndResponse(obj, Http.CMDS.LOGIN_PAYTI)
         }
 
         override fun onFailure(message: String) {
-            Toast.makeText(Base.get.context,message,Toast.LENGTH_SHORT).show()
+            Toaster.errror(message)
+
         }
 
     }
@@ -299,7 +305,7 @@ class LoginActivity : BaseActivity(), Viewer {
             }
 
             override fun disconnected() {
-                Toast.makeText(this@LoginActivity,resources.getString(R.string.internet_conn_error),Toast.LENGTH_SHORT).show()
+                Toaster.errror(resources.getString(R.string.internet_conn_error))
 
             }
 

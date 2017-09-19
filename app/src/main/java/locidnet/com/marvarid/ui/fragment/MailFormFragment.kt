@@ -58,7 +58,6 @@ class MailFormFragment : DialogFragment() {
         val view = inflater!!.inflate(R.layout.fragment_dialog_change_mail,container,false)
 
         send = view.findViewById(R.id.yes) as Button
-        send.text = Base.get.resources.getString(R.string.get_sms)
         mail = view.findViewById(R.id.phone) as TextInputEditText
 
 
@@ -95,12 +94,16 @@ class MailFormFragment : DialogFragment() {
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
-        mail.setText("")
         smsCode.setText("")
-        smsCode.visibility =View.GONE
 
-        send.tag = GET_SMS
-        send.text = Base.get.resources.getString(R.string.get_sms)
+       if (send.tag != CHANGE){
+           mail.setText("")
+
+           smsCode.visibility =View.GONE
+
+           send.tag = GET_SMS
+           send.text = Base.get.resources.getString(R.string.get_sms)
+       }
         super.onDismiss(dialog)
     }
     fun setVisibility(setVisible:Boolean) = if(setVisible) progress.visibility = View.VISIBLE

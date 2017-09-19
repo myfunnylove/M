@@ -321,9 +321,10 @@ public class MusicService extends Service implements
         log.INSTANCE.d("PLAYING SONG GO");
 
         player.start();
-        Intent intent = new Intent(ACTION_PLAY_TOGGLE);
-        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
+//        Intent intent = new Intent(ACTION_PLAY_TOGGLE);
+//        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
         PLAY_STATUS = PLAYING;
+        createAndShowNotification();
 
     }
 

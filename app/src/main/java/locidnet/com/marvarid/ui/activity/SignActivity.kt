@@ -20,9 +20,8 @@ import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.JavaCodes
+import locidnet.com.marvarid.resources.utils.*
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -75,11 +74,12 @@ class SignActivity : BaseActivity() ,Viewer{
             mail.isEnabled     = false
             selectMail.isEnabled  = false
             selectPhone.isEnabled = false
-            val phone = if(signMode == PHONE_MODE) phoneStr else ""
-            val mail = if(signMode == MAIL_MODE) phoneStr else ""
+            val phone = if(Const.ONLY_DIGITS.matcher(phoneStr).find()) phoneStr else ""
+            val mail  = if(Const.VALID_EMAIL_ADDRESS_REGEX.matcher(phoneStr).find()) phoneStr else ""
 
             val user = User("","","","","","N",phoneStr,smsStr,"","","",signMode,
                     phone,mail)
+
             Base.get.prefs.setUser(user)
             startActivity(Intent(this,LoginAndPassActivity().javaClass))
             this.finish()
@@ -91,13 +91,8 @@ class SignActivity : BaseActivity() ,Viewer{
 
     override fun onFailure(from: String, message: String, erroCode: String) {
 
-            errorText.visibility = View.VISIBLE
-            errorText.text = message
+        Toaster.errror(message)
 
-            Handler().postDelayed({
-                errorText.text = ""
-                errorText.visibility = View.GONE
-            },3000)
 
     }
 
@@ -184,7 +179,7 @@ class SignActivity : BaseActivity() ,Viewer{
                             phoneStr = mail.text.toString()
                             sendObject.put("phone",phoneStr)
 
-                            presenter!!.requestAndResponse(sendObject, Http.CMDS.TELEFONNI_JONATISH)
+                            presenter.requestAndResponse(sendObject, Http.CMDS.TELEFONNI_JONATISH)
                         }
                     }
 
@@ -207,11 +202,8 @@ class SignActivity : BaseActivity() ,Viewer{
 
     }
 
-    override fun getLayout(): Int {
-        return R.layout.activity_sign
+    override fun getLayout(): Int = R.layout.activity_sign
 
-
-    }
     private fun disableAllElements() {
 
         phone.isEnabled = false

@@ -11,47 +11,42 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.LocalBroadcastManager
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
-import me.iwf.photopicker.PhotoPicker
-import org.json.JSONObject
+import locidnet.com.marvarid.BuildConfig
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.FeedAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
-import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.GoNext
+import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.di.DaggerMVPComponent
 import locidnet.com.marvarid.di.modules.ErrorConnModule
 import locidnet.com.marvarid.di.modules.MVPModule
 import locidnet.com.marvarid.di.modules.PresenterModule
 import locidnet.com.marvarid.model.*
+import locidnet.com.marvarid.musicplayer.MusicController
+import locidnet.com.marvarid.musicplayer.MusicService
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
+import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.activity.publish.PublishSongActivity
-
 import locidnet.com.marvarid.ui.activity.publish.PublishUniversalActivity
 import locidnet.com.marvarid.ui.fragment.*
+import me.iwf.photopicker.PhotoPicker
+import okhttp3.MultipartBody
+import org.json.JSONObject
 import java.io.File
 import javax.inject.Inject
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.iid.FirebaseInstanceId
-import locidnet.com.marvarid.connectors.MusicPlayerListener
-import locidnet.com.marvarid.musicplayer.MusicController
-import locidnet.com.marvarid.musicplayer.MusicService
-import locidnet.com.marvarid.resources.utils.Prefs
-import okhttp3.*
-import java.io.IOException
 
 
 class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayerControl, MusicPlayerListener {
@@ -122,7 +117,6 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     override fun initView() {
         Const.TAG = "MainActivity"
         startIntroAnimation()
-        sendDataForPush()
         DaggerMVPComponent
                 .builder()
                 .mVPModule(MVPModule(this, Model(),this))
@@ -130,7 +124,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                 .errorConnModule(ErrorConnModule(this,true))
                 .build()
                 .inject(this)
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         setPager()
         tablayout.getViewTreeObserver().addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
             override fun onGlobalLayout() {
@@ -145,6 +139,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
         })
         setController()
+        sendDataForPush()
 
     }
 
@@ -371,7 +366,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             Const.FOLLOW -> {
                 errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                     override fun connected() {
-                        presenter!!.requestAndResponse(JSONObject(data), Http.CMDS.FOLLOW)
+                        presenter.requestAndResponse(JSONObject(data), Http.CMDS.FOLLOW)
 
 
 
@@ -759,7 +754,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     override fun onFailure(from: String, message: String, erroCode: String) {
 
         log.d("error from: $from message: $message")
-        Functions.show(message)
+       Toaster.errror(message)
+
 
 
         when(from){
@@ -884,6 +880,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             if(musicSrv!!.isPng){
                 log.d("PLAYIN SONG in fragment  2 -> ${listSong.get(position).middlePath == MusicService.PLAYING_SONG_URL}")
                 if (MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){
+                    musicSrv!!.pausePlayer()
                     pause()
                 }else{
                     if(controller == null)
@@ -907,6 +904,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             }else{
 
                 if(MusicService.PLAY_STATUS == MusicService.PAUSED && MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){
+                    musicSrv!!.go()
                     start()
                 }else{
                     if(controller == null)
@@ -1080,7 +1078,22 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     override fun pause() {
         playbackPaused = true
         musicSrv!!.pausePlayer()
-        if(controller != null) controller!!.setLoading(false);
+
+
+        if(controller != null){
+            controller!!.show()
+
+            controller!!.setLoading(false)
+        }
+        try {
+
+            if (FeedFragment.cachedSongAdapters != null) {
+                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+            }
+        } catch (e: Exception) {
+
+        }
+
 
     }
 
@@ -1090,6 +1103,19 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
     override fun start() {
         musicSrv!!.go()
+
+        if(controller != null){
+            controller!!.show()
+
+        }
+        try {
+            log.d("start controller")
+            if (FeedFragment.cachedSongAdapters != null) {
+                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+            }
+        } catch (e: Exception) {
+
+        }
     }
 
     override fun goPlayList() {
@@ -1115,7 +1141,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         try {
 
             var token = Prefs.Builder().getTokenId()
-            log.d("Firebase da token bormi -> " + if (token!!.isEmpty()) "yo'q" else "bor -> \n" + token!!)
+            log.d("Firebase da token bormi -> " + if (token!!.isEmpty()) "yo'q" else "bor -> $token ")
 
 
             if (token!!.isEmpty()) {
@@ -1129,31 +1155,20 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
 
             }
-//            val body = FormBody.Builder()
-//                    .add("res", "1")
-//                    .add("device", "android")
-//                    .add("app", "uzbarcafan")
-//                    .add("imei", "0")
-//                    .add("token", token!!)
-//                    .add("version", String.valueOf(Base.getCtx().getPackageManager()
-//                            .getPackageInfo(Base.getCtx().getPackageName(), 0).versionCode))
-//
-//
-//            val builder = Request.Builder()
-//                    .post(body.build())
-//                    .url("http://test.uzbarca.net/registerToken.php")
-//
-//            val client = OkHttpClient()
-//            client.newCall(builder.build()).enqueue(object : Callback {
-//                override fun onFailure(call: Call, e: IOException) {
-//                    Log.d(Base.TAG, "xatolik: " + e.toString())
-//                }
-//
-//                @Throws(IOException::class)
-//                override fun onResponse(call: Call, response: Response) {
-//                    Log.d(Base.TAG, "Uspeshno")
-//                }
-//            })
+
+            val tokenJs = JSONObject()
+            tokenJs.put("user_id",user.userId)
+            tokenJs.put("session",user.session)
+            tokenJs.put("token",Prefs.Builder().getTokenId())
+            tokenJs.put("device","android")
+            tokenJs.put("app","marvarid")
+            try{
+                tokenJs.put("version",BuildConfig.VERSION_NAME)
+            }catch (e:Exception){
+                tokenJs.put("version","none")
+            }
+
+            presenter.requestAndResponse(tokenJs,Http.CMDS.SET_TOKEN_DATA)
         } catch (e: Exception) {
             e.printStackTrace()
             log.d("Firebase da tokenni olishda exception-> " + e.toString())

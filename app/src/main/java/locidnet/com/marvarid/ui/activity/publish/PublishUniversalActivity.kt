@@ -12,20 +12,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import com.getbase.floatingactionbutton.FloatingActionsMenu
 import com.google.gson.Gson
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_publish_universal.*
-import me.iwf.photopicker.PhotoPicker
-import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.ColorPaletteAdapter
 import locidnet.com.marvarid.adapter.PickedPhotoAdapter
 import locidnet.com.marvarid.adapter.PickedSongAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
-import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.di.DaggerMVPComponent
 import locidnet.com.marvarid.di.modules.ErrorConnModule
@@ -38,7 +34,11 @@ import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.rest.Http
+import me.iwf.photopicker.PhotoPicker
+import org.json.JSONObject
 import java.io.File
 import javax.inject.Inject
 
@@ -105,23 +105,23 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
 
                                 presenter.requestAndResponse(JSONObject(reqJSOBJ), Http.CMDS.POST)
                             }else {
-                                Toast.makeText(this@PublishUniversalActivity,getString(R.string.error_not_loaded_yet),Toast.LENGTH_SHORT).show()
-
+                                Toaster.info(resources.getString(R.string.error_not_loaded_yet))
                             }
 
                         }
 
                         override fun disconnected() {
                             log.d("disconnected")
+                            Toaster.info(resources.getString(R.string.internet_conn_error))
 
-                            Toast.makeText(this@PublishUniversalActivity,resources.getString(R.string.internet_conn_error),Toast.LENGTH_SHORT).show()
                         }
 
                     })
 
                 }
                 else{
-                    Toast.makeText(this,getString(R.string.error_empty_quote),Toast.LENGTH_SHORT).show()
+                    Toaster.info(resources.getString(R.string.error_empty_quote))
+
                 }
 
             }

@@ -2,21 +2,17 @@ package locidnet.com.marvarid.ui.activity.publish
 
 import android.app.Activity
 import android.content.Intent
-import android.provider.MediaStore
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_publish_song.*
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.base.BaseActivity
-
 import locidnet.com.marvarid.adapter.SongAdapter
+import locidnet.com.marvarid.base.BaseActivity
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.model.Song
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.log
 
 /**
  * Created by Michaelan on 5/27/2017.
