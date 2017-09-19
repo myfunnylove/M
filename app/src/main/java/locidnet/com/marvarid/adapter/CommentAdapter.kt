@@ -3,6 +3,8 @@ package locidnet.com.marvarid.adapter
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,12 @@ import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.model.Comment
 import locidnet.com.marvarid.resources.customviews.CircleImageView
+import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Prefs
+import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.ui.activity.FollowActivity
+import locidnet.com.marvarid.ui.fragment.ProfileFragment
+import org.json.JSONObject
 
 
 class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClicker) : RecyclerView.Adapter<CommentAdapter.Holder>() {
@@ -42,7 +50,76 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
         h.comment.text  = comment.comment.replace("\\n","\n")
         h.username.text = comment.username
 
+        h.container.setOnClickListener {
 
+            val bundle = Bundle()
+            val js = JSONObject()
+
+            bundle.putString("username",comment.username)
+            bundle.putString("photo",   comment.avatar)
+            bundle.putString("userId",  comment.userId)
+            js.put("username",comment.username)
+            js.put("photo",   comment.avatar)
+            js.put("userId",  comment.userId)
+            if (comment.userId != Prefs.Builder().getUser().userId){
+
+
+
+
+
+                if (comment.follow == 0 && comment.request == 0){
+
+                    log.d("${comment.userId} -> ${comment.username} ga follow qilinmagan")
+                    bundle.putString(ProfileFragment.F_TYPE, if(comment.close == 1) ProfileFragment.CLOSE else ProfileFragment.FOLLOW)
+                    js.put(ProfileFragment.F_TYPE, if(comment.close == 1) ProfileFragment.CLOSE else ProfileFragment.FOLLOW)
+
+                }else if (comment.follow == 1 && comment.request == 0){
+
+                    log.d("${comment.userId} -> ${comment.username} ga follow qilingan")
+                    bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.UN_FOLLOW)
+                    js.put(ProfileFragment.F_TYPE, ProfileFragment.UN_FOLLOW)
+
+                }else if (comment.follow == 0 && comment.request == 1){
+
+                    log.d("${comment.userId} -> ${comment.username} ga zapros tashalgan")
+                    bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.REQUEST)
+                    js.put(ProfileFragment.F_TYPE, ProfileFragment.REQUEST)
+
+                }
+                else if(comment.close == 1){
+                    log.d("${comment.userId} -> ${comment.username} ga zapros tashalgan")
+                    bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.CLOSE)
+                    js.put(ProfileFragment.F_TYPE, ProfileFragment.CLOSE)
+                }
+                else{
+                    log.d("${comment.userId} -> ${comment.username} da xato holat ")
+                    bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.FOLLOW)
+                    js.put(ProfileFragment.F_TYPE, ProfileFragment.FOLLOW)
+
+                }
+
+                val go = Intent(ctx, FollowActivity::class.java)
+
+                go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
+                go.putExtra("close",comment.close)
+                go.putExtras(bundle)
+                js.put("close",comment.close)
+                ctx.startActivity(go)
+
+
+//            connectActivity!!.goNext(Const.PROFIL_PAGE_OTHER,js.toString())
+
+            }else{
+                val go = Intent(ctx, FollowActivity::class.java)
+                bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.SETTINGS)
+
+                go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
+                go.putExtra("close",comment.close)
+                go.putExtras(bundle)
+                js.put("close",comment.close)
+                ctx.startActivity(go)
+            }
+        }
     }
 
     override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): Holder {
