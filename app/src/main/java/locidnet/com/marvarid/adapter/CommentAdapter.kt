@@ -65,36 +65,35 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
 
 
 
+                if(comment.close == 1 && comment.follow == 0 && comment.request == 0){
+
+                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
+                    js.put(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
+
+                }else if(comment.close == 1 && comment.follow == 0 && comment.request == 1){
+
+                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
+                    js.put(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
+
+                }else if (comment.close == 1 && comment.follow == 1 && comment.request == 0){
+
+                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+                    js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+
+                }else if (comment.close == 0 && comment.follow == 0 && comment.request == 1){
+
+                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+                    js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
 
 
-                if (comment.follow == 0 && comment.request == 0){
+                }else if (comment.close == 0 && comment.follow == 1 && comment.request == 0){
 
-                    log.d("${comment.userId} -> ${comment.username} ga follow qilinmagan")
-                    bundle.putString(ProfileFragment.F_TYPE, if(comment.close == 1) ProfileFragment.CLOSE else ProfileFragment.FOLLOW)
-                    js.put(ProfileFragment.F_TYPE, if(comment.close == 1) ProfileFragment.CLOSE else ProfileFragment.FOLLOW)
+                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+                    js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
 
-                }else if (comment.follow == 1 && comment.request == 0){
-
-                    log.d("${comment.userId} -> ${comment.username} ga follow qilingan")
-                    bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.UN_FOLLOW)
-                    js.put(ProfileFragment.F_TYPE, ProfileFragment.UN_FOLLOW)
-
-                }else if (comment.follow == 0 && comment.request == 1){
-
-                    log.d("${comment.userId} -> ${comment.username} ga zapros tashalgan")
-                    bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.REQUEST)
-                    js.put(ProfileFragment.F_TYPE, ProfileFragment.REQUEST)
-
-                }
-                else if(comment.close == 1){
-                    log.d("${comment.userId} -> ${comment.username} ga zapros tashalgan")
-                    bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.CLOSE)
-                    js.put(ProfileFragment.F_TYPE, ProfileFragment.CLOSE)
-                }
-                else{
-                    log.d("${comment.userId} -> ${comment.username} da xato holat ")
-                    bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.FOLLOW)
-                    js.put(ProfileFragment.F_TYPE, ProfileFragment.FOLLOW)
+                }else{
+                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+                    js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
 
                 }
 

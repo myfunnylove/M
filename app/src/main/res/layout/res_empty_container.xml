@@ -24,7 +24,6 @@
 
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Interesting feed will be here"
         android:textColor="@color/silver" />
 
 </LinearLayout>

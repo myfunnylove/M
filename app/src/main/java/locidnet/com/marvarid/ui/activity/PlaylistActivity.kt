@@ -334,7 +334,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
         if (controller == null){
             controller = MusicController(this,true)
             //set previous and next button listeners
-            controller!!.setPrevNextListeners(View.OnClickListener { playNext() }, View.OnClickListener { playPrev() })
+            controller!!.setPrevNextListeners({ playNext() }, { playPrev() })
             //set and show
             controller!!.setMediaPlayer(this)
             controller!!.setAnchorView(findViewById(R.id.playlistRoot))

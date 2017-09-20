@@ -250,6 +250,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                     val postList: PostList = PostList(emptyPost, "0", "0", "0")
                     postAdapter = FeedAdapter(activity, postList, this, this, true, FOLLOW_TYPE, PostUser("", "", "http"))
                     postView.adapter = postAdapter
+                    emptyContainer.hide()
 
 //                    val connectErrorIcon = VectorDrawableCompat.create(Base.get.resources, R.drawable.network_error, errorImg.context.theme)
 //                    val defaultErrorIcon = VectorDrawableCompat.create(Base.get.resources, R.drawable.account_light,          errorImg.context.theme)

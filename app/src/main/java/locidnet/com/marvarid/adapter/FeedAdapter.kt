@@ -631,13 +631,22 @@ class FeedAdapter(context: Activity,
 
             h.followers.text = feeds.followers
             h.following.text = feeds.following
-            h.followersLay.setOnClickListener{   clicker.click(Const.TO_FOLLOWERS)}
-            h.followingLay.setOnClickListener{   clicker.click(Const.TO_FOLLOWING)}
 
-            h.avatar.setOnClickListener{
-                clicker.click(Const.CHANGE_AVATAR)
+            if(!closedProfile){
+                h.followersLay.setOnClickListener{
+                    clicker.click(Const.TO_FOLLOWERS)
+                }
+                h.followingLay.setOnClickListener{
 
+                    clicker.click(Const.TO_FOLLOWING)
+                }
+
+                h.avatar.setOnClickListener{
+                    clicker.click(Const.CHANGE_AVATAR)
+
+                }
             }
+
 
             h.follow.setOnClickListener {
 

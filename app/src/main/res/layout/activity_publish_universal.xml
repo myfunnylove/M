@@ -63,7 +63,7 @@
                     android:elevation="5dp"
 
                     android:gravity="left|top"
-                    android:hint="add comment"
+                    android:hint="@string/error_empty_quote"
                     android:padding="16dp"
                     android:textColor="@color/headerTextColor"
                     android:textColorHint="@color/asbestos"

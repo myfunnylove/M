@@ -349,28 +349,49 @@ class SearchFragment : BaseFragment(), AdapterClicker{
          log.d("search select user $this")
         val user = this
         var type = ""
-        if (user.close == 1 && user.follow == 0 && user.request == 0) return ProfileFragment.CLOSE
 
-        if (user.follow == 0 && user.request == 0){
 
-            log.d("${user.userId} -> ${user.username}ga follow qilinmagan")
-            type =  ProfileFragment.FOLLOW
 
-        }else if (user.follow == 1 && user.request == 0){
-
-            log.d("${user.userId} -> ${user.username}ga follow qilingan")
-            type =  ProfileFragment.UN_FOLLOW
-        }else if (user.follow == 0 && user.request == 1){
-
-            log.d("${user.userId} -> ${user.username}ga zapros tashalgan")
+        if(user.close == 1 && user.follow == 0 && user.request == 0){
+            type =  ProfileFragment.CLOSE
+        }else if(user.close == 1 && user.follow == 0 && user.request == 1){
             type =  ProfileFragment.REQUEST
 
-        }else {
-            log.d("${user.userId} -> ${user.username}da xato holat ")
+        }else if (user.close == 1 && user.follow == 1 && user.request == 0){
+            type =  ProfileFragment.UN_FOLLOW
+
+        }else if (user.close == 0 && user.follow == 0 && user.request == 1){
             type =  ProfileFragment.FOLLOW
 
+        }else if (user.close == 0 && user.follow == 1 && user.request == 0){
+            type =  ProfileFragment.UN_FOLLOW
+
+        }else{
+            type =  ProfileFragment.FOLLOW
 
         }
+
+//        if (user.close == 1 && user.follow == 0 && user.request == 0) return ProfileFragment.CLOSE
+//
+//        if (user.follow == 0 && user.request == 0){
+//
+//            log.d("${user.userId} -> ${user.username}ga follow qilinmagan")
+//
+//        }else if (user.follow == 1 && user.request == 0){
+//
+//            log.d("${user.userId} -> ${user.username}ga follow qilingan")
+//            type =  ProfileFragment.UN_FOLLOW
+//        }else if (user.follow == 0 && user.request == 1){
+//
+//            log.d("${user.userId} -> ${user.username}ga zapros tashalgan")
+//            type =  ProfileFragment.REQUEST
+//
+//        }else {
+//            log.d("${user.userId} -> ${user.username}da xato holat ")
+//            type =  ProfileFragment.FOLLOW
+//
+//
+//        }
         return type
     }
 }

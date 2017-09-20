@@ -12,7 +12,7 @@
 
         android:gravity="center_horizontal"
         android:padding="16dp"
-        android:text="ARE YOU SURE TO QUIT?"
+        android:text="@string/quitTitle"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
 
             android:background="@drawable/gray_when_select"
             style="@style/HeaderText"
-            android:text="NO"
+            android:text="@string/no"
             />
         <Button
             android:id="@+id/yes"
@@ -36,7 +36,7 @@
             android:layout_weight="1"
             android:background="@drawable/gray_when_select"
             style="@style/HeaderText"
-            android:text="YES"
+            android:text="@string/yes"
             />
 
     </LinearLayout>

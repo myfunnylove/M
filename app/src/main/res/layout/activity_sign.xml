@@ -58,7 +58,7 @@
     <LinearLayout
         android:id="@+id/edittextBlock"
         android:layout_width="match_parent"
-        android:layout_height="135dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/sign_edittext_block"
         android:padding="12dp"
@@ -133,14 +133,18 @@
         <Button
 
             android:id="@+id/signUp"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="8dp"
             android:layout_gravity="right"
             android:text="@string/Sign_up"
             android:background="@drawable/login_button"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:textColor="@color/white"
+            android:layout_marginRight="12dp"
+
             />
 
         <TextView

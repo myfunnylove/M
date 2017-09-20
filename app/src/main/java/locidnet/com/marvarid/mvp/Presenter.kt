@@ -84,7 +84,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
 
                                  val userInfo     = Gson().fromJson<UserInfo>(Http.getResponseData(infoUser.prms),UserInfo::class.java)
                                  user.userName    = userInfo.info.username
-                                 user.profilPhoto = if (userInfo.info.photo150.isNullOrEmpty()) "" else userInfo.info.photo150
+                                 user.profilPhoto = if (userInfo.info.photo150.isNullOrEmpty()) "empty" else userInfo.info.photo150
                                  try{
                                      user.close       =  userInfo.info.close
 

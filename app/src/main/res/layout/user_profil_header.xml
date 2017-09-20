@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingTop="6dp"
-                android:text="POSTS"
+                android:text="@string/feeds"
                 />
 
             <TextView
@@ -167,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingTop="6dp"
-                android:text="FOLLOWERS" />
+                android:text="@string/followers" />
 
             <TextView
                 android:id="@+id/followers"
@@ -197,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingTop="6dp"
-                android:text="FOLLOWING"
+                android:text="@string/following"
 
                 />
 

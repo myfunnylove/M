@@ -33,7 +33,6 @@
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
 
-               android:text="“Don't cry because it's over, smile because it happened.”"
                android:textColor="@color/headerTextColor"
                android:gravity="left"
 

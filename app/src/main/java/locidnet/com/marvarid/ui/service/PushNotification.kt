@@ -13,9 +13,7 @@ import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import java.util.*
 
-/**
- * Created by Sarvar on 18.09.2017.
- */
+
 class PushNotification :FirebaseMessagingService() {
 
 

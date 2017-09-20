@@ -84,27 +84,57 @@ class FollowAdapter(context:Context,
                 .into(h.img)
 
        if (which == 0 && user.userId != Base.get.prefs.getUser().userId){
-           if (user.follow == 0 && user.request == 0){
-
-               log.d("${user.userId} -> ${user.username}ga follow qilinmagan")
-               h.follow.tag  = ProfileFragment.FOLLOW
-               h.follow.text = ProfileFragment.FOLLOW
-
-           }else if (user.follow == 1 && user.request == 0){
-
-               log.d("${user.userId} -> ${user.username}ga follow qilingan")
-               h.follow.tag  = ProfileFragment.UN_FOLLOW
-               h.follow.text = ProfileFragment.UN_FOLLOW
-
-           }else if (user.follow == 0 && user.request == 1){
+           if(user.close == 1 && user.follow == 0 && user.request == 0){
 
                log.d("${user.userId} -> ${user.username}ga zapros tashalgan")
+               h.follow.tag  = ProfileFragment.FOLLOW
+               h.follow.text = ProfileFragment.FOLLOW
+               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
+
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
+
+           }else if(user.close == 1 && user.follow == 0 && user.request == 1){
+
                h.follow.tag  = ProfileFragment.REQUEST
                h.follow.text = ProfileFragment.REQUEST
-           } else{
-               log.d("${user.userId} -> ${user.username}da xato holat ")
-               h.follow.visibility = View.GONE
+               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
+
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
+
+           }else if (user.close == 1 && user.follow == 1 && user.request == 0){
+
+               h.follow.tag  = ProfileFragment.UN_FOLLOW
+               h.follow.text = ProfileFragment.UN_FOLLOW
+               h.follow.setTextColor(ctx.resources.getColor(R.color.white))
+
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
+           }else if (user.close == 0 && user.follow == 0 && user.request == 1){
+
+               h.follow.tag  = ProfileFragment.FOLLOW
+               h.follow.text = ProfileFragment.FOLLOW
+               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
+
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
+
+
+           }else if (user.close == 0 && user.follow == 1 && user.request == 0){
+
+               h.follow.tag  = ProfileFragment.UN_FOLLOW
+               h.follow.text = ProfileFragment.UN_FOLLOW
+               h.follow.setTextColor(ctx.resources.getColor(R.color.white))
+
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
+
+           }else{
+               h.follow.tag  = ProfileFragment.FOLLOW
+               h.follow.text = ProfileFragment.FOLLOW
+               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
+
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
+
            }
+
+
        }else{
            log.d("${user.userId} -> ${user.username}bir xil ")
 

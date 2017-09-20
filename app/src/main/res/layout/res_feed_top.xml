@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
 
 
-            android:text="1 hour"
+
             android:textColor="@color/silver"
             android:textSize="13sp" />
     </LinearLayout>
