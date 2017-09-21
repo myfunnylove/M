@@ -43,6 +43,7 @@ object Http {
         val USER_INFO                  = "15"
         val SEARCH_USER                = "17"
         val LIKE_BOSISH                = "11"
+        val BLOCK_USER                 = "21"
         val FEED                       = "22"
         val GET_FOLLOWERS              = "14"
         val GET_FOLLOWING              = "16"

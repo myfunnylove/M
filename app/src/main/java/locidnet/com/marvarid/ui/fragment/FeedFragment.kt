@@ -9,7 +9,8 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.adapter.FeedAdapter
+import locidnet.com.marvarid.adapter.MyFeedAdapter
+import locidnet.com.marvarid.adapter.ProfileFeedAdapter
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
@@ -35,7 +36,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
 
 
-    var feedAdapter:FeedAdapter? = null
+    var feedAdapter: MyFeedAdapter? = null
     var listFeed               by Delegates.notNull<RecyclerView>()
     var progressLay            by Delegates.notNull<ViewGroup>()
     var swipeRefreshLayout     by Delegates.notNull<SwipeRefreshLayout>()
@@ -177,7 +178,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
         progressLay.visibility = View.GONE
     }
     override fun click(position: Int) {
-        val user = feedAdapter!!.feeds.posts.get(position).user
+        val user = feedAdapter!!.feeds.posts.get(0).user
 
         if (user.userId != this.user.userId){
 
@@ -185,7 +186,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
             val bundle = Bundle()
             bundle.putString("username",user.username)
             bundle.putString("photo",   user.photo)
-            bundle.putString("userId",  user.userId)
+            bundle.putString("user_id",  user.userId)
             bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
             go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
             go.putExtras(bundle)
@@ -244,7 +245,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
             if (feedAdapter == null){
                 log.d("birinchi marta postla yuklandi")
                 cachedSongAdapters = HashMap()
-                feedAdapter = FeedAdapter(activity,postList,this,this)
+                feedAdapter = MyFeedAdapter(activity,postList,this,this)
                 feedAdapter!!.activity = activity!!
                 listFeed.adapter = feedAdapter
             }else if (postList.posts.size == 1 && (MainActivity.endFeed == 1 && MainActivity.startFeed == 0)){
@@ -258,7 +259,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 log.d("postni boshidan update qisin")
                 cachedSongAdapters = HashMap()
 
-                feedAdapter = FeedAdapter(activity,postList,this,this)
+                feedAdapter = MyFeedAdapter(activity,postList,this,this)
                 listFeed.adapter = feedAdapter
             }else if((MainActivity.endFeed == 20 && MainActivity.startFeed != 0) && feedAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")

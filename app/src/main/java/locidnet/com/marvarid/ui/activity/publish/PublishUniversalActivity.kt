@@ -91,6 +91,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
                             val logicImage = if (imageAdapter == null) true else if (imageAdapter!!.list.size == loadedImagesIds.size) true else false
                             val logicAudio = if (songAdapter == null)  true else if (songAdapter!!.list.size == loadedAudioIds.size)   true else false
 
+                            log.d("notloaded $loading $logicImage $logicAudio")
                             if (loading == false && logicImage && logicAudio){
 
                                 val quote = Quote(commentText.text.toString(), // quote text
@@ -168,9 +169,10 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
             override fun click(whichButton: Int) {
 
                 if (whichButton == YesNoFragment.NO)
-                    quitDialog.dismiss()
-                else
                     finish()
+                else
+                    quitDialog.dismiss()
+
             }
 
         })
@@ -455,13 +457,13 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
         val logicAudio = if (songAdapter == null)  true else if (songAdapter!!.list.size == loadedAudioIds.size)   true else false
 
         if(!loading && logicImage && logicAudio){
-
-            quitDialog.show(supportFragmentManager,YesNoFragment.TAG)
-
-        }else{
-
             clearCache()
             super.onBackPressed()
+
+        }else{
+            quitDialog.show(supportFragmentManager,YesNoFragment.TAG)
+
+
 
         }
 

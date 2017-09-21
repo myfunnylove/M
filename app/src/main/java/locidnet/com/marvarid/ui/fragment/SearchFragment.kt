@@ -178,7 +178,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
     fun failedGetList(error:String = ""){
 
 //        progressLay.visibility = View.GONE
-        log.e("FeedFragment => method => failedGetList errorCode => $error")
+        log.e("SearchFragment => method => failedGetList errorCode => $error")
         if (adapter != null && adapter!!.users.size != 0){
             log.e("list bor lekin xatolik shundo ozini qoldiramiz")
 
@@ -213,12 +213,18 @@ class SearchFragment : BaseFragment(), AdapterClicker{
            val go = Intent(activity,FollowActivity::class.java)
            val bundle = Bundle()
            bundle.putString("username",user.username)
-           bundle.putString("photo",   user.photo150)
-           bundle.putString("userId",  user.userId)
-           bundle.putString(ProfileFragment.F_TYPE,type)
+           bundle.putString("photo",   if (user.photo150.isNullOrEmpty()) "http" else user.photo150)
+           bundle.putString("user_id",  user.userId)
+//            bundle.putString("blockMe",user.blockMe)
+//            bundle.putString("blockIt",user.blockIt)
+            bundle.putString(ProfileFragment.F_TYPE,type)
             log.d("result from search user -> ${bundle}")
 
-            go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
+//           if (user.blockMe == "0")
+               go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
+//            else
+//               go.putExtra(FollowActivity.TYPE,FollowActivity.BLOCKED_ME)
+
            go.putExtras(bundle)
            startActivityForResult(go,Const.FROM_SEARCH_TO_PROFIL)
        }else{
@@ -375,19 +381,19 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 //
 //        if (user.follow == 0 && user.request == 0){
 //
-//            log.d("${user.userId} -> ${user.username}ga follow qilinmagan")
+//            log.d("${user.user_id} -> ${user.username}ga follow qilinmagan")
 //
 //        }else if (user.follow == 1 && user.request == 0){
 //
-//            log.d("${user.userId} -> ${user.username}ga follow qilingan")
+//            log.d("${user.user_id} -> ${user.username}ga follow qilingan")
 //            type =  ProfileFragment.UN_FOLLOW
 //        }else if (user.follow == 0 && user.request == 1){
 //
-//            log.d("${user.userId} -> ${user.username}ga zapros tashalgan")
+//            log.d("${user.user_id} -> ${user.username}ga zapros tashalgan")
 //            type =  ProfileFragment.REQUEST
 //
 //        }else {
-//            log.d("${user.userId} -> ${user.username}da xato holat ")
+//            log.d("${user.user_id} -> ${user.username}da xato holat ")
 //            type =  ProfileFragment.FOLLOW
 //
 //

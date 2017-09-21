@@ -57,52 +57,54 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
 
             bundle.putString("username",comment.username)
             bundle.putString("photo",   comment.avatar)
-            bundle.putString("userId",  comment.userId)
+            bundle.putString("user_id",  comment.userId)
             js.put("username",comment.username)
             js.put("photo",   comment.avatar)
-            js.put("userId",  comment.userId)
+            js.put("user_id",  comment.userId)
             if (comment.userId != Prefs.Builder().getUser().userId){
 
 
 
-                if(comment.close == 1 && comment.follow == 0 && comment.request == 0){
-
-                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
-                    js.put(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
-
-                }else if(comment.close == 1 && comment.follow == 0 && comment.request == 1){
-
-                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
-                    js.put(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
-
-                }else if (comment.close == 1 && comment.follow == 1 && comment.request == 0){
-
-                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-                    js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-
-                }else if (comment.close == 0 && comment.follow == 0 && comment.request == 1){
-
-                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-                    js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-
-
-                }else if (comment.close == 0 && comment.follow == 1 && comment.request == 0){
-
-                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-                    js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-
-                }else{
-                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-                    js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-
-                }
+//                if(comment.close == 1 && comment.follow == 0 && comment.request == 0){
+//
+//                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
+//                    js.put(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
+//
+//                }else if(comment.close == 1 && comment.follow == 0 && comment.request == 1){
+//
+//                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
+//                    js.put(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
+//
+//                }else if (comment.close == 1 && comment.follow == 1 && comment.request == 0){
+//
+//                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+//                    js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+//
+//                }else if (comment.close == 0 && comment.follow == 0 && comment.request == 1){
+//
+//                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+//                    js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+//
+//
+//                }else if (comment.close == 0 && comment.follow == 1 && comment.request == 0){
+//
+//                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+//                    js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+//
+//                }else{
+//                    bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+//                    js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+//
+//                }
 
                 val go = Intent(ctx, FollowActivity::class.java)
-
-                go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
-                go.putExtra("close",comment.close)
-                go.putExtras(bundle)
-                js.put("close",comment.close)
+//                if (comment.blockMe == "0")
+//                    go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
+//                else
+//                    go.putExtra(FollowActivity.TYPE, FollowActivity.BLOCKED_ME)
+//                go.putExtra("close",comment.close)
+//                go.putExtras(bundle)
+//                js.put("close",comment.close)
                 ctx.startActivity(go)
 
 
@@ -112,10 +114,15 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
                 val go = Intent(ctx, FollowActivity::class.java)
                 bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.SETTINGS)
 
+
                 go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
-                go.putExtra("close",comment.close)
+
+//                go.putExtra("close",comment.close)
+//                go.putExtra("blockMe",comment.blockMe)
+//                go.putExtra("blockIt",comment.blockIt)
+
                 go.putExtras(bundle)
-                js.put("close",comment.close)
+//                js.put("close",comment.close)
                 ctx.startActivity(go)
             }
         }

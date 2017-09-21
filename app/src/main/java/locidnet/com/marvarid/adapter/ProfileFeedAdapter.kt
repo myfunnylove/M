@@ -49,15 +49,16 @@ import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
 
-class FeedAdapter(context: Activity,
-                  feedsMap: PostList,
+class ProfileFeedAdapter(context: Activity,
+                         feedsMap: PostList,
 
-                  adapterClicker: AdapterClicker,
-                  musicPlayerListener: MusicPlayerListener,
-                  profilOrFeed:Boolean = false,
-                  followType:String = "",
-                  val postUser: PostUser? = null,
-                  closedProfil:Boolean = false
+                         adapterClicker: AdapterClicker,
+                         musicPlayerListener: MusicPlayerListener,
+                         var userInfo: UserInfo? = null,
+                         profilOrFeed:Boolean = false,
+                         followType:String = "",
+
+                         closedProfil:Boolean = false
                   ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var ctx                   = context
@@ -66,7 +67,7 @@ class FeedAdapter(context: Activity,
     var clicker               = adapterClicker
     val like                  = R.drawable.like_select
     val unLike                = R.drawable.like
-    var profile               = Base.get.prefs.getUser()
+    var myProfil              = Base.get.prefs.getUser()
     val model                 = Model()
     val pOrF                  = profilOrFeed
     var FOLLOW_TYPE           = followType
@@ -163,7 +164,6 @@ class FeedAdapter(context: Activity,
             log.wtf("post like:     ${post.like}")
             log.wtf("post likes:    ${post.likes}")
             log.wtf("post time:     ${post.time}")
-            log.wtf("post user:     ${post.user}")
             log.wtf("=============== end ; ")
 
 
@@ -203,8 +203,8 @@ class FeedAdapter(context: Activity,
                     val js = JSONObject()
                     js.put("post_id",post.id)
                     js.put("quote", JSONObject(Gson().toJson(quote)))
-                    js.put("user_id", profile.userId )
-                    js.put("session", profile.session)
+                    js.put("user_id", myProfil.userId )
+                    js.put("session", myProfil.session)
                     log.d ("changequote send data $js")
                     model.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
                             .enqueue(object : Callback<ResponseData>{
@@ -244,7 +244,7 @@ class FeedAdapter(context: Activity,
 
             var photo = ""
             try {
-                photo = if (post.user.photo.startsWith("http")) post.user.photo else Http.BASE_URL + post.user.photo
+                photo = if (userInfo!!.user.info.photoOrg.startsWith("http")) userInfo!!.user.info.photoOrg else Http.BASE_URL + userInfo!!.user.info.photoOrg
             } catch (e: Exception) {
                 photo = ""
             }
@@ -262,7 +262,7 @@ class FeedAdapter(context: Activity,
 
                 h.quote.tag = post.id
 
-                h.username.text = post.user.username
+                h.username.text = userInfo!!.user.info.username
                 //TODO
 
                 h.name.visibility = View.GONE
@@ -424,8 +424,8 @@ class FeedAdapter(context: Activity,
 
                     val reqObj = JSONObject()
 
-                    reqObj.put("user_id", profile.userId)
-                    reqObj.put("session", profile.session)
+                    reqObj.put("user_id", myProfil.userId)
+                    reqObj.put("session", myProfil.session)
                     reqObj.put("post_id", post.id)
 
                     log.d("request data $reqObj")
@@ -501,7 +501,7 @@ class FeedAdapter(context: Activity,
                 h.popup.setOnClickListener {
 
                     val popup = PopupMenu(ctx,h.popup)
-                   if (pOrF == true && profile.userId == postUser!!.userId){
+                   if (pOrF == true && myProfil.userId == userInfo!!.user.info.user_id){
                        popup.inflate(R.menu.menu_own_feed)
                    }else{
                        popup.inflate(R.menu.menu_feed)
@@ -513,8 +513,8 @@ class FeedAdapter(context: Activity,
 
                                 val reqObj = JSONObject()
 
-                                reqObj.put("user_id", profile.userId)
-                                reqObj.put("session", profile.session)
+                                reqObj.put("user_id", myProfil.userId)
+                                reqObj.put("session", myProfil.session)
                                 reqObj.put("post_id", post.id)
 
                                 log.d("request data for delete post $reqObj")
@@ -523,7 +523,8 @@ class FeedAdapter(context: Activity,
                                     override fun onResponse(p0: Call<ResponseData>?, p1: Response<ResponseData>?) {
                                         try{
 
-                                            feeds.postlarSoni = "${feeds.postlarSoni.toInt()-1}"
+
+                                            userInfo!!.user.count.postCount = "${userInfo!!.user.count.postCount.toInt()-1}"
                                             feeds.posts.removeAt(i)
                                             MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
                                             notifyItemRemoved(i)
@@ -601,9 +602,9 @@ class FeedAdapter(context: Activity,
                 h.progress.visibility = View.GONE
             }
 
-            if(postUser!!.photo.isNotEmpty()){
+            if(!userInfo!!.user.info.photoOrg.isNullOrEmpty()){
                 Picasso.with(ctx)
-                        .load(postUser!!.photo)
+                        .load(Http.BASE_URL+userInfo!!.user.info.photoOrg)
                         .error(VectorDrawableCompat.create(Base.get.resources, R.drawable.account_select,null))
 
                         .into(h.avatar)
@@ -624,13 +625,13 @@ class FeedAdapter(context: Activity,
 ////
 ////                    })
 
-            h.username.text  = postUser.username
+            h.username.text  = userInfo!!.user.info.username
             h.username.setStyle("#00000000", "#90CAF9", "#EA80FC", 3f, 35)
-            h.posts.text  =    feeds.postlarSoni
+            h.posts.text  =    userInfo!!.user.count.postCount
 //            h.firstName.text =
 
-            h.followers.text = feeds.followers
-            h.following.text = feeds.following
+            h.followers.text = userInfo!!.user.count.followersCount
+            h.following.text = userInfo!!.user.count.followingCount
 
             if(!closedProfile){
                 h.followersLay.setOnClickListener{
@@ -660,7 +661,7 @@ class FeedAdapter(context: Activity,
 
                     reqObj.put("user_id",user.userId)
                     reqObj.put("session",user.session)
-                    reqObj.put("user",   postUser.userId)
+                    reqObj.put("user",   userInfo!!.user.info.user_id)
 
                     log.d("request data $reqObj")
 
@@ -675,10 +676,10 @@ class FeedAdapter(context: Activity,
                                         log.d("follow on response $response")
                                         log.d("follow on response ${response.body()!!.res}")
                                         log.d("follow on response ${Http.getResponseData(response.body()!!.prms)}")
-                                        log.d("follow on response ${postUser}")
+                                        log.d("follow on response ${userInfo!!.user}")
 
                                         log.d("follow on response ${h.follow.tag}")
-                                        FFFFragment.OZGARGAN_USERNI_IDSI = postUser.userId.toInt()
+                                        FFFFragment.OZGARGAN_USERNI_IDSI = userInfo!!.user.info.user_id.toInt()
 
 
                                         if ((FOLLOW_TYPE == ProfileFragment.UN_FOLLOW || FOLLOW_TYPE == ProfileFragment.REQUEST) && response.body()!!.res == "0"){
@@ -692,11 +693,11 @@ class FeedAdapter(context: Activity,
                                             * */
 
                                             if(SearchFragment.choosedUserId.isNotEmpty()){
-                                                SearchFragment.choosedUserId = postUser.userId
+                                                SearchFragment.choosedUserId = userInfo!!.user.info.user_id
                                                 SearchFragment.chooseUserFstatus = ProfileFragment.FOLLOW
                                             }
 
-                                            if (h.follow.tag != ProfileFragment.REQUEST) feeds.followers = "${h.followers.text.toString().toInt() -  1}"
+                                            if (h.follow.tag != ProfileFragment.REQUEST) userInfo!!.user.count.followersCount = "${h.followers.text.toString().toInt() -  1}"
                                             FOLLOW_TYPE    = ProfileFragment.FOLLOW
                                             FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.FOLLOW
                                             ProfileFragment.FOLLOW_TYPE       = ProfileFragment.FOLLOW
@@ -716,7 +717,7 @@ class FeedAdapter(context: Activity,
                                                     FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.REQUEST
                                                     ProfileFragment.FOLLOW_TYPE       = ProfileFragment.REQUEST
                                                     if(SearchFragment.choosedUserId.isNotEmpty()){
-                                                        SearchFragment.choosedUserId = postUser.userId
+                                                        SearchFragment.choosedUserId = userInfo!!.user.info.user_id
                                                         SearchFragment.chooseUserFstatus = ProfileFragment.REQUEST
                                                     }
 
@@ -725,13 +726,13 @@ class FeedAdapter(context: Activity,
 
                                                     FOLLOW_TYPE  = ProfileFragment.UN_FOLLOW
 
-                                                    feeds.followers = "${h.followers.text.toString().toInt() +  1}"
+                                                    userInfo!!.user.count.followersCount = "${h.followers.text.toString().toInt() +  1}"
                                                     FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.UN_FOLLOW
                                                     ProfileFragment.FOLLOW_TYPE       = ProfileFragment.UN_FOLLOW
 
 
                                                     if(SearchFragment.choosedUserId.isNotEmpty()){
-                                                        SearchFragment.choosedUserId = postUser.userId
+                                                        SearchFragment.choosedUserId = userInfo!!.user.info.user_id
                                                         SearchFragment.chooseUserFstatus = ProfileFragment.UN_FOLLOW
                                                     }
                                                 }
@@ -845,13 +846,8 @@ class FeedAdapter(context: Activity,
     }
 
     fun updateProfilPhoto(path: String) {
-        postUser!!.photo = Http.BASE_URL + path
-        feeds.posts.forEach { post ->
+        userInfo!!.user.info.phone = Http.BASE_URL + path
 
-            post.user = postUser
-
-
-        }
         avatarUpdated = HIDE_PROGRESS
         notifyDataSetChanged()
 
@@ -870,7 +866,7 @@ class FeedAdapter(context: Activity,
     }
 
     fun updateFollowersCount() {
-        feeds.following = MyProfileFragment.FOLLOWING
+        userInfo!!.user.count.followingCount = MyProfileFragment.FOLLOWING
         notifyItemChanged(0)
     }
 

@@ -84,5 +84,5 @@
         android:layout_marginLeft="85dp"
         android:background="@drawable/res_circle_gray_when_select"
         android:visibility="gone"
-        app:srcCompat="@drawable/notif_close" />
+        app:srcCompat="@drawable/remove" />
 </RelativeLayout>

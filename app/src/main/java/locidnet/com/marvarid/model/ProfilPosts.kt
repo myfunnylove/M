@@ -6,10 +6,8 @@ import com.google.gson.annotations.SerializedName
  * Created by Michaelan on 6/27/2017.
  */
 
-data class PostList(@SerializedName("posts")     var posts:ArrayList<Posts>,
-                    @SerializedName("followers") var followers:String,
-                    @SerializedName("following") var following:String,
-                    @SerializedName("postlar")   var postlarSoni:String)
+data class PostList(@SerializedName("posts")     var posts:ArrayList<Posts>
+                    )
 
 data class Posts(      @SerializedName("id")     var id:String,
                        @SerializedName("quote")  var quote:Quote,

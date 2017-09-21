@@ -87,7 +87,10 @@
     <string name="quitTitle">Are you want to quit?</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
-    <string name="wait">Подождать</string>
+    <string name="wait">Wait</string>
     <string name="loadingYetTitle">Not yet uploaded</string>
+    <string name="blockUser">Блокировать</string>
+    <string name="unblock">Разблокировать</string>
+    <string name="profil_blocked_me_title">This account blocked you</string>
 
 </resources>

@@ -26,13 +26,16 @@ import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import kotlin.properties.Delegates
 
 /**
+ *
  * Created by Michaelan on 7/5/2017.
+ *
  */
 
 
@@ -177,52 +180,61 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
 
         bundle.putString("username",user.username)
         bundle.putString("photo",   user.photo150)
-        bundle.putString("userId",  user.userId)
+        bundle.putString("user_id",  user.userId)
+        bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.FOLLOW)
+//        bundle.putString("blockMe",user.blockMe)
+//        bundle.putString("blockIt",user.blockIt)
         js.put("username",user.username)
         js.put("photo",   user.photo150)
-        js.put("userId",  user.userId)
+        js.put("user_id",  user.userId)
         if (user.userId != this.user.userId){
 
 
 
-            log.d("user clicked $user")
-            if(user.close == 1 && user.follow == 0 && user.request == 0){
-
-                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
-                js.put(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
-
-            }else if(user.close == 1 && user.follow == 0 && user.request == 1){
-
-                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
-                js.put(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
-
-            }else if (user.close == 1 && user.follow == 1 && user.request == 0){
-
-                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-                js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-
-            }else if (user.close == 0 && user.follow == 0 && user.request == 1){
-
-                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-                js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-
-
-            }else if (user.close == 0 && user.follow == 1 && user.request == 0){
-
-                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-                js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-
-            }else{
-                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-                js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-            }
+//            log.d("user clicked $user")
+//            if(user.close == 1 && user.follow == 0 && user.request == 0){
+//
+//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
+//                js.put(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
+//
+//            }else if(user.close == 1 && user.follow == 0 && user.request == 1){
+//
+//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
+//                js.put(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
+//
+//            }else if (user.close == 1 && user.follow == 1 && user.request == 0){
+//
+//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+//                js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+//
+//            }else if (user.close == 0 && user.follow == 0 && user.request == 1){
+//
+//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+//                js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+//
+//
+//            }else if (user.close == 0 && user.follow == 1 && user.request == 0){
+//
+//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+//                js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+//
+//            }else{
+//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+//                js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+//            }
 
             val go = Intent(activity, FollowActivity::class.java)
 
-            go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
-            go.putExtra("close",user.close)
+//            if (user.blockMe == "0")
+                go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
+//            else
+//                go.putExtra(FollowActivity.TYPE, FollowActivity.BLOCKED_ME)
+
+//            go.putExtra("close",user.close)
+//            go.putExtra("blockMe",user.blockMe)
+//            go.putExtra("blockIt",user.blockIt)
             go.putExtras(bundle)
-            js.put("close",user.close)
+//            js.put("close",user.close)
             startActivityForResult(go,Const.TO_FAIL)
 
 
@@ -234,8 +246,10 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
 
             go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
             go.putExtra("close",user.close)
+
             go.putExtras(bundle)
             js.put("close",user.close)
+
             startActivityForResult(go,Const.TO_FAIL)
         }
 
