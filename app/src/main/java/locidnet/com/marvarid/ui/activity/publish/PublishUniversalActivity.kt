@@ -58,7 +58,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
     lateinit var errorConn: ErrorConnection
     var visibly       = false
     var TEXT_SIZE     = 16f
-    var TEXT_COLOR_ID = 2;
+    var TEXT_COLOR_ID = 0;
     var idImage:Int   = -1;
     var idMusic:Int   = -1;
     var user:User?    = null

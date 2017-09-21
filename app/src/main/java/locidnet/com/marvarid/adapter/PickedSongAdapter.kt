@@ -143,8 +143,16 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
                     h.errorImg.visibility = View.VISIBLE
                 }
 
-        }else{
+            h.remove.visibility = View.GONE
 
+        }else{
+            h.remove.visibility = View.VISIBLE
+            h.remove.setOnClickListener {
+                list.removeAt(p1)
+                PublishUniversalActivity.loadedAudioIds.removeAt(p1)
+                notifyItemRemoved(p1)
+                notifyDataSetChanged()
+            }
             h.pr!!.setProgress(100f)
 
         }
@@ -162,6 +170,7 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
         var songArtist by Delegates.notNull<TextView>()
         var container by Delegates.notNull<ViewGroup>()
         var progress by Delegates.notNull<ViewGroup>()
+        var remove by Delegates.notNull<AppCompatImageView>()
         var errorImg:AppCompatImageView by Delegates.notNull<AppCompatImageView>()
         var pr:ImageUploadMask? = null
         init {
@@ -172,6 +181,7 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
             container = itemView.findViewById(R.id.container) as ViewGroup
             progress = itemView.findViewById(R.id.progress) as ViewGroup
             errorImg = itemView.findViewById(R.id.errorImg) as AppCompatImageView
+            remove = itemView.findViewById(R.id.remove) as AppCompatImageView
 
             pr = ImageUploadMask.Builder(Base.get)
                     .bind(progress)

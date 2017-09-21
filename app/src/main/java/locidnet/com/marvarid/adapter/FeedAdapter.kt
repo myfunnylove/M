@@ -69,7 +69,7 @@ class FeedAdapter(context: Activity,
     var profile               = Base.get.prefs.getUser()
     val model                 = Model()
     val pOrF                  = profilOrFeed
-    val FOLLOW_TYPE           = followType
+    var FOLLOW_TYPE           = followType
     var user                  = Base.get.prefs.getUser()
     var lastAnimationPosition = -1
     var itemsCount            = 0
@@ -676,8 +676,12 @@ class FeedAdapter(context: Activity,
                                         log.d("follow on response ${response.body()!!.res}")
                                         log.d("follow on response ${Http.getResponseData(response.body()!!.prms)}")
                                         log.d("follow on response ${postUser}")
+
+                                        log.d("follow on response ${h.follow.tag}")
                                         FFFFragment.OZGARGAN_USERNI_IDSI = postUser.userId.toInt()
-                                        if ((h.follow.tag == ProfileFragment.UN_FOLLOW || h.follow.tag == ProfileFragment.REQUEST) && response.body()!!.res == "0"){
+
+
+                                        if ((FOLLOW_TYPE == ProfileFragment.UN_FOLLOW || FOLLOW_TYPE == ProfileFragment.REQUEST) && response.body()!!.res == "0"){
 
                                             /*
                                             *
@@ -692,14 +696,15 @@ class FeedAdapter(context: Activity,
                                                 SearchFragment.chooseUserFstatus = ProfileFragment.FOLLOW
                                             }
 
-                                            if (h.follow.tag != ProfileFragment.REQUEST) h.followers.text = "${h.followers.text.toString().toInt() -  1}"
-                                            h.follow.text    = ProfileFragment.FOLLOW
+                                            if (h.follow.tag != ProfileFragment.REQUEST) feeds.followers = "${h.followers.text.toString().toInt() -  1}"
+                                            FOLLOW_TYPE    = ProfileFragment.FOLLOW
                                             FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.FOLLOW
                                             ProfileFragment.FOLLOW_TYPE       = ProfileFragment.FOLLOW
 
 
                                             MainActivity.MY_POSTS_STATUS = MainActivity.FIRST_TIME
-                                        }else if (h.follow.tag == ProfileFragment.FOLLOW && response.body()!!.res == "0"){
+                                            notifyItemChanged(0)
+                                        }else if (FOLLOW_TYPE == ProfileFragment.FOLLOW && response.body()!!.res == "0"){
 
                                             try{
 
@@ -707,8 +712,7 @@ class FeedAdapter(context: Activity,
                                                 if (req.optString("request") == "1"){
 
 
-                                                    h.follow.tag = ProfileFragment.REQUEST
-                                                    h.follow.text = ProfileFragment.REQUEST
+                                                    FOLLOW_TYPE= ProfileFragment.REQUEST
                                                     FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.REQUEST
                                                     ProfileFragment.FOLLOW_TYPE       = ProfileFragment.REQUEST
                                                     if(SearchFragment.choosedUserId.isNotEmpty()){
@@ -719,9 +723,9 @@ class FeedAdapter(context: Activity,
 
                                                 }else if (req.optString("request") == "0"){
 
-                                                    h.follow.tag  = ProfileFragment.UN_FOLLOW
-                                                    h.follow.text = ProfileFragment.UN_FOLLOW
-                                                    h.followers.text = "${h.followers.text.toString().toInt() +  1}"
+                                                    FOLLOW_TYPE  = ProfileFragment.UN_FOLLOW
+
+                                                    feeds.followers = "${h.followers.text.toString().toInt() +  1}"
                                                     FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.UN_FOLLOW
                                                     ProfileFragment.FOLLOW_TYPE       = ProfileFragment.UN_FOLLOW
 
@@ -732,6 +736,7 @@ class FeedAdapter(context: Activity,
                                                     }
                                                 }
                                                 MainActivity.MY_POSTS_STATUS = MainActivity.FIRST_TIME
+                                                notifyItemChanged(0)
 
                                             }catch (e : Exception){
 

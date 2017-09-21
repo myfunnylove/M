@@ -141,9 +141,16 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
             }else{
                 h.errorImg.visibility = View.VISIBLE
             }
+            h.remove.visibility = View.GONE
 
         }else{
-
+            h.remove.visibility = View.VISIBLE
+            h.remove.setOnClickListener {
+                list.removeAt(p1)
+                PublishUniversalActivity.loadedImagesIds.removeAt(p1)
+                notifyItemRemoved(p1)
+                notifyDataSetChanged()
+            }
             h.pr!!.setProgress(100f)
 
         }
@@ -157,11 +164,13 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
         var image:AppCompatImageView by Delegates.notNull<AppCompatImageView>()
         var container:ViewGroup by Delegates.notNull<ViewGroup>()
         var errorImg:AppCompatImageView by Delegates.notNull<AppCompatImageView>()
+        var remove by Delegates.notNull<AppCompatImageView>()
 
         var pr:ImageUploadMask? = null
         init {
             image = itemView.findViewById(R.id.image) as AppCompatImageView
             errorImg = itemView.findViewById(R.id.errorImg) as AppCompatImageView
+            remove = itemView.findViewById(R.id.remove) as AppCompatImageView
             container = itemView.findViewById(R.id.container) as ViewGroup
             pr = ImageUploadMask.Builder(Base.get)
                     .bind(image)
