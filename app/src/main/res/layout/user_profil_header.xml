@@ -79,6 +79,13 @@
 
             </RelativeLayout>
 
+            <locidnet.com.marvarid.resources.customviews.SGTextView
+                android:id="@+id/username"
+                style="@style/NormalText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="22sp" />
             <TextView
                 android:id="@+id/firstName"
                 style="@style/HeaderText"
@@ -88,13 +95,6 @@
                 android:padding="4dp"
                 android:visibility="gone" />
 
-            <locidnet.com.marvarid.resources.customviews.SGTextView
-                android:id="@+id/username"
-                style="@style/NormalText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="22sp" />
 
             <Button
                 android:id="@+id/follow"
@@ -103,7 +103,6 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/button_bg"
-                android:text="@string/settings"
                 android:textColor="@color/white"
                 android:theme="@style/ButtonUnpressed" />
 

@@ -126,16 +126,6 @@ class MyFeedAdapter(context: Activity,
 
     }
 
-    override fun getItemViewType(position: Int): Int {
-
-        if (pOrF){
-            if (position == 0) return HEADER else return BODY
-        }else{
-            return BODY
-        }
-
-    }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, i: Int) {
 
         val type = getItemViewType(i)
@@ -257,7 +247,14 @@ class MyFeedAdapter(context: Activity,
                 h.username.text = post.user.username
                 //TODO
 
-                h.name.visibility = View.GONE
+//                if (!post.user..isNullOrEmpty()){
+//                    h.name.visibility = View.VISIBLE
+//                    h.name.text = userInfo!!.user.info.name
+//
+//                }else{
+//                    h.name.visibility = View.GONE
+//
+//                }
                 val prettyTime = PrettyTime()
                 val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 val date2 = formatter.parse(post.time) as Date

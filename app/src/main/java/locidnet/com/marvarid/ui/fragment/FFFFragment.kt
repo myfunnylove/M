@@ -177,11 +177,11 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
         val user = adapter!!.users.get(position)
         val bundle = Bundle()
         val js = JSONObject()
-
+        log.d("fffFragment $user")
         bundle.putString("username",user.username)
         bundle.putString("photo",   user.photo150)
         bundle.putString("user_id",  user.userId)
-        bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.FOLLOW)
+
 //        bundle.putString("blockMe",user.blockMe)
 //        bundle.putString("blockIt",user.blockIt)
         js.put("username",user.username)
@@ -192,36 +192,36 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
 
 
 //            log.d("user clicked $user")
-//            if(user.close == 1 && user.follow == 0 && user.request == 0){
-//
-//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
-//                js.put(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
-//
-//            }else if(user.close == 1 && user.follow == 0 && user.request == 1){
-//
-//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
-//                js.put(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
-//
-//            }else if (user.close == 1 && user.follow == 1 && user.request == 0){
-//
-//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-//                js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-//
-//            }else if (user.close == 0 && user.follow == 0 && user.request == 1){
-//
-//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-//                js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-//
-//
-//            }else if (user.close == 0 && user.follow == 1 && user.request == 0){
-//
-//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-//                js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
-//
-//            }else{
-//                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-//                js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
-//            }
+            if(user.close == 1 && user.follow == 0 && user.request == 0){
+
+                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
+                js.put(ProfileFragment.F_TYPE,ProfileFragment.CLOSE)
+
+            }else if(user.close == 1 && user.follow == 0 && user.request == 1){
+
+                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
+                js.put(ProfileFragment.F_TYPE,ProfileFragment.REQUEST)
+
+            }else if (user.close == 1 && user.follow == 1 && user.request == 0){
+
+                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+                js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+
+            }else if (user.close == 0 && user.follow == 0 && user.request == 1){
+
+                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+                js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+
+
+            }else if (user.close == 0 && user.follow == 1 && user.request == 0){
+
+                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+                js.put(ProfileFragment.F_TYPE,ProfileFragment.UN_FOLLOW)
+
+            }else{
+                bundle.putString(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+                js.put(ProfileFragment.F_TYPE,ProfileFragment.FOLLOW)
+            }
 
             val go = Intent(activity, FollowActivity::class.java)
 

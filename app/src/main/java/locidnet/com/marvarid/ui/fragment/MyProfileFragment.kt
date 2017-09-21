@@ -249,7 +249,10 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","",PostUser("","","")))
 
         val postList = PostList(emptyPost)
-        postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,true)
+
+        val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
+
+        postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,isClose)
         postView.visibility = View.VISIBLE
         postView.adapter = postAdapter
     }
@@ -289,9 +292,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 postView.smoothScrollBy(0,postView.getChildAt(0).height * postAdapter!!.feeds.posts.size)
 
             }
-            else if (postList.posts.size == 1 && (MainActivity.endFeed == 20 && MainActivity.startFeed == 0)) {
-                postAdapter!!.swapLast20Item(postList)
-            }
+
             else if ((MainActivity.end == 20 && MainActivity.start == 0) && postAdapter != null){
                 log.d("postni boshidan update qisin  F type -> $FOLLOW_TYPE")
                 if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()

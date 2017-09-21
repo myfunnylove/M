@@ -44,7 +44,7 @@
     <string name="changePassword">Change password</string>
     <string name="notifications">Notifications</string>
     <string name="search">Search</string>
-    <string name="feeds">Feed</string>
+    <string name="feeds">Feeds</string>
     <string name="closedAccaunt">Closed account</string>
     <string name="deleteAccount">Delete account</string>
     <string name="quit">Quit</string>
@@ -89,8 +89,8 @@
     <string name="yes">Yes</string>
     <string name="wait">Wait</string>
     <string name="loadingYetTitle">Not yet uploaded</string>
-    <string name="blockUser">Блокировать</string>
-    <string name="unblock">Разблокировать</string>
+    <string name="blockUser">Block</string>
+    <string name="unblock">UnBlock</string>
     <string name="profil_blocked_me_title">This account blocked you</string>
 
 </resources>

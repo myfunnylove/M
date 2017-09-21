@@ -15,6 +15,7 @@ import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
+import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
@@ -22,6 +23,7 @@ import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
 import kotlin.properties.Delegates
 
@@ -42,7 +44,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
     val model                         = Model()
     var manager:LinearLayoutManager?  = null
     var expanded                      = false
-    lateinit var userInfo:UserInfo
+    var userInfo:UserInfo?= null
 
     var scroll:EndlessRecyclerViewScrollListener? = null
     lateinit var emptyContainer: EmptyContainer
@@ -84,6 +86,14 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
     fun connectAudioPlayer(connAudioList: MusicPlayerListener){
         connectAudioList = connAudioList
     }
+
+    var signalListener: SignalListener? = null
+
+    fun signal(signal: SignalListener){
+        signalListener = signal
+
+    }
+
     override fun getFragmentView(): Int = R.layout.fragment_profil_page
 
     override fun init() {
@@ -116,8 +126,8 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 log.d("PROFIL POSTLARI OXIRIGA KELDI ${manager!!.findLastVisibleItemPosition()}")
                 if (postAdapter != null && postAdapter!!.feeds.posts.size >= 20){
-                    MainActivity.start = (postAdapter!!.feeds.posts.size - 1)
-                    MainActivity.end   = 20
+                    FollowActivity.start = (postAdapter!!.feeds.posts.size - 1)
+                    FollowActivity.end   = 20
                     connectActivity!!.goNext(Const.REFRESH_PROFILE_FEED,"")
                 }
 
@@ -172,8 +182,8 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         swipeRefreshLayout.setOnRefreshListener(object :SwipeRefreshLayout.OnRefreshListener{
             override fun onRefresh() {
                 if (postAdapter != null){
-                    MainActivity.start = 0
-                    MainActivity.end   = 20
+                    FollowActivity.start = 0
+                    FollowActivity.end   = 20
                     connectActivity!!.goNext(Const.REFRESH_PROFILE_FEED,"")
                 }else{
                     swipeRefreshLayout.isRefreshing = false
@@ -250,10 +260,13 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
 
         val emptyPost = ArrayList<Posts>()
-        emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","",PostUser("","","")))
+        emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","", PostUser("","","")))
+
 
         val postList = PostList(emptyPost)
-        postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,true)
+        val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
+
+        postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,isClose)
         postView.visibility = View.VISIBLE
         postView.adapter = postAdapter
     }
@@ -284,19 +297,9 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE)
                 postView.adapter = postAdapter
-            }else if (postList.posts.size == 1 && (MainActivity.endFeed == 1 && MainActivity.startFeed == 0)){
-                log.d("post qoshildi postni birinchi elementi update qilinadi")
-                MainActivity.start = postAdapter!!.feeds.posts.size
-
-                MainActivity.end = 20
-                postAdapter!!.swapFirstItem(postList)
-                postView.smoothScrollBy(0,postView.getChildAt(0).height * postAdapter!!.feeds.posts.size)
-
             }
-            else if (postList.posts.size == 1 && (MainActivity.endFeed == 20 && MainActivity.startFeed == 0)) {
-                postAdapter!!.swapLast20Item(postList)
-            }
-            else if ((MainActivity.end == 20 && MainActivity.start == 0) && postAdapter != null){
+
+            else if ((FollowActivity.end == 20 && FollowActivity.start == 0) && postAdapter != null){
                 log.d("postni boshidan update qisin  F type -> $FOLLOW_TYPE")
                 if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
 
@@ -305,13 +308,15 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE)
                 postView.adapter = postAdapter
-            }else if((MainActivity.end == 20 && MainActivity.start != 0) && postAdapter != null){
+            }else if((FollowActivity.end == 20 && FollowActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 postAdapter!!.swapLast20Item(postList)
 
             }
 
 
+        swipeRefreshLayout.isRefreshing = false
+            swipeRefreshLayout.isEnabled = true
 
 
         }catch (e:Exception){
@@ -364,4 +369,9 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         }
     }
 
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (signalListener != null) signalListener!!.turnOn()
+
+    }
 }

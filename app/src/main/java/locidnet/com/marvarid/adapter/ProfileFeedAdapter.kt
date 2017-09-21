@@ -249,7 +249,7 @@ class ProfileFeedAdapter(context: Activity,
                 photo = ""
             }
 
-            if(photo.isNotEmpty()){
+            if(!photo.isNullOrEmpty()){
                 Picasso.with(ctx)
                         .load(photo)
                         .error(VectorDrawableCompat.create(Base.get.resources, R.drawable.account_select,null))
@@ -264,8 +264,14 @@ class ProfileFeedAdapter(context: Activity,
 
                 h.username.text = userInfo!!.user.info.username
                 //TODO
+                if (!userInfo!!.user.info.name.isNullOrEmpty()){
+                    h.name.visibility = View.VISIBLE
+                    h.name.text = userInfo!!.user.info.name
 
-                h.name.visibility = View.GONE
+                }else{
+                    h.name.visibility = View.GONE
+
+                }
                 val prettyTime = PrettyTime()
                 val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 val date2 = formatter.parse(post.time) as Date
@@ -628,7 +634,12 @@ class ProfileFeedAdapter(context: Activity,
             h.username.text  = userInfo!!.user.info.username
             h.username.setStyle("#00000000", "#90CAF9", "#EA80FC", 3f, 35)
             h.posts.text  =    userInfo!!.user.count.postCount
-//            h.firstName.text =
+
+            if (!userInfo!!.user.info.name.isNullOrEmpty()){
+                h.firstName.visibility = View.VISIBLE
+                h.firstName.text = userInfo!!.user.info.name
+
+            }
 
             h.followers.text = userInfo!!.user.count.followersCount
             h.following.text = userInfo!!.user.count.followingCount
@@ -779,6 +790,7 @@ class ProfileFeedAdapter(context: Activity,
         notifyDataSetChanged()
     }
     fun swapLast20Item(postList: PostList){
+        log.d("in profilefeed $postList")
         disableAnimation = false
 
         val lastItemPostition = (feeds.posts.size + 1)

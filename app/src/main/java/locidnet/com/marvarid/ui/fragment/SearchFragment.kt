@@ -22,6 +22,7 @@ import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.GoNext
+import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
@@ -82,6 +83,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
         connectActivity = connActivity
 
     }
+
 
 
     override fun getFragmentView(): Int {
@@ -399,5 +401,9 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 //
 //        }
         return type
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 }

@@ -16,6 +16,7 @@ import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
+import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.di.DaggerMVPComponent
 import locidnet.com.marvarid.di.modules.ErrorConnModule
 import locidnet.com.marvarid.di.modules.MVPModule
@@ -33,9 +34,11 @@ import locidnet.com.marvarid.ui.fragment.*
 import org.json.JSONObject
 import javax.inject.Inject
 
-class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlayerControl, MusicPlayerListener {
-
-
+class FollowActivity : BaseActivity(),
+        GoNext,Viewer ,
+        MusicController.MediaPlayerControl,
+        MusicPlayerListener,
+        SignalListener{
 
     companion object {
         val LIST_T     = 1
@@ -46,14 +49,14 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
         val TYPE      = "type"
 
         var start     = 0
-        var end       = 40
+        var end       = 20
 
         var SHOW_POST = ""
     }
 
     var manager:FragmentManager?        = null
     var transaction:FragmentTransaction?= null
-    lateinit var menu:Menu
+    var menu:Menu? = null
     @Inject
     lateinit var presenter:Presenter
 
@@ -65,9 +68,10 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
     var followersFragment:FFFFragment?  = null
     var blocMeFragment:BlockMeFragment? = null
     var userID                          = ""
-    lateinit var jsUserData:JSONObject
+   // var jsUserData:JSONObject? = null
     private var controller: MusicController? = null
-
+    var userInfo:UserInfo? = null
+    var bundle:Bundle? = null
     override fun getLayout(): Int = R.layout.activity_follow
 
     override fun initView() {
@@ -124,13 +128,19 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
 
-        menuInflater.inflate(R.menu.menu_block_user,menu)
+        if(intent.extras.getString("user_id") != user.userId)
+        {
+            menuInflater.inflate(R.menu.menu_block_user,menu)
+            this.menu = menu
+            return true
 
-        this.menu = menu!!
+        }else{
+            return false
+        }
 
 
 
-        return true
+
 
     }
 
@@ -168,6 +178,7 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
                 profilFragment!!.connectAudioPlayer(this)
 
                 profilFragment!!.connect(this)
+                profilFragment!!.signal(this)
             }
             userID = intent.extras.getString("user_id")
 
@@ -266,7 +277,7 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
                         reqObj.put("user_id", user.userId)
                         reqObj.put("session", user.session)
                         reqObj.put("user",    userID)
-                        reqObj.put("start",   data)
+                        reqObj.put("start",   "0")
                         reqObj.put("end",     end)
 
                         presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
@@ -310,15 +321,7 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
 
              }
 
-            Const.PROFIL_PAGE_OTHER ->{
-                jsUserData = JSONObject(data)
-                log.d("json kirishdan oldin")
-                log.json(jsUserData.toString())
-                val bundle = Functions.jsonToBundle(jsUserData)
-                intent.putExtras(bundle)
 
-                showFragment(PROFIL_T)
-            }
         }
     }
 
@@ -337,7 +340,7 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
 
     override fun onSuccess(from: String, result: String) {
 
-        log.d("Profil postlani olib kelindi profil statusi $SHOW_POST")
+        log.d("Profil postlani olib kelindi $result")
 
         when(from){
             Http.CMDS.MY_POSTS -> {
@@ -387,55 +390,29 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
 
             Http.CMDS.USER_INFO -> {
 
-                val userinfo:UserInfo = Gson().fromJson(result, UserInfo::class.java)
+                userInfo = Gson().fromJson(result, UserInfo::class.java)
 
-                val otherUser = userinfo.user
-                val bundle = Bundle()
+                val otherUser = userInfo!!.user
+                bundle = Bundle()
 
-                bundle.putString("username", otherUser.info.username)
-                bundle.putString("photo",    otherUser.info.photoOrg)
-                bundle.putString("user_id",  otherUser.info.user_id)
+                bundle!!.putString("username", otherUser.info.username)
+                bundle!!.putString("photo",    otherUser.info.photoOrg)
+                bundle!!.putString("user_id",  otherUser.info.user_id)
 
 
-                if(otherUser.block_it == "0")
-                    this.menu.findItem(R.id.blockUser).title = Functions.getString(R.string.blockUser)
-                else
-                    this.menu.findItem(R.id.blockUser).title = Functions.getString(R.string.unblock)
+               if(menu != null){
+                   if(otherUser.block_it == "0")
+                       this.menu!!.findItem(R.id.blockUser).title = Functions.getString(R.string.blockUser)
+                   else
+                       this.menu!!.findItem(R.id.blockUser).title = Functions.getString(R.string.unblock)
+               }
 
                 log.d("result of userinfo $otherUser")
-                val fType = Functions.selectFollowType(userinfo)
+                val fType = Functions.selectFollowType(userInfo!!)
                 if (fType != "-1") {
                     showFragment(PROFIL_T)
 
-                    Handler().postDelayed({
-                        bundle.putString(ProfileFragment.F_TYPE,fType)
-                        intent.putExtras(bundle)
-                        profilFragment!!.initHeader(userinfo,fType)
-                        if(fType != ProfileFragment.CLOSE && fType != ProfileFragment.REQUEST){
 
-                            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                                override fun connected() {
-                                    log.d("connected")
-                                    val reqObj = JSONObject()
-                                    reqObj.put("user_id",user.userId)
-                                    reqObj.put("session",user.session)
-                                    reqObj.put("user",   otherUser.info.user_id)
-                                    reqObj.put("start",  start)
-                                    reqObj.put("end",    end)
-
-
-                                    presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
-                                }
-
-                                override fun disconnected() {
-                                    log.d("disconnected")
-
-
-                                }
-
-                            })
-                        }
-                    },1500)
 
                 }else{
                     intent.putExtras(bundle)
@@ -448,7 +425,7 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
             Http.CMDS.BLOCK_USER -> {
                try{
                    val blockRes = JSONObject(result)
-                   val item = menu.findItem(R.id.blockUser)
+                   val item = menu!!.findItem(R.id.blockUser)
 
                    if(blockRes.opt("result") == "block"){
                        item.title = Functions.getString(R.string.unblock)
@@ -789,4 +766,40 @@ class FollowActivity : BaseActivity(), GoNext,Viewer , MusicController.MediaPlay
         FeedFragment.playedSongPosition = -1
         super.onDestroy()
     }
+
+
+    override fun turnOn() {
+        val otherUser = userInfo!!.user
+
+        val fType = Functions.selectFollowType(userInfo!!)
+        bundle!!.putString(ProfileFragment.F_TYPE,fType)
+        intent.putExtras(bundle)
+        profilFragment!!.initHeader(userInfo!!,fType)
+        if(fType != ProfileFragment.CLOSE && fType != ProfileFragment.REQUEST){
+
+            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                override fun connected() {
+                    log.d("connected")
+                    val reqObj = JSONObject()
+                    reqObj.put("user_id",user.userId)
+                    reqObj.put("session",user.session)
+                    reqObj.put("user",   otherUser.info.user_id)
+                    reqObj.put("start",  start)
+                    reqObj.put("end",    end)
+
+
+                    presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
+                }
+
+                override fun disconnected() {
+                    log.d("disconnected")
+
+
+                }
+
+            })
+        }
+    }
+
+
 }
