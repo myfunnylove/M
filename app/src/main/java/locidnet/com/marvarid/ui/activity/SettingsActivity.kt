@@ -21,6 +21,7 @@ import locidnet.com.marvarid.di.DaggerMVPComponent
 import locidnet.com.marvarid.di.modules.ErrorConnModule
 import locidnet.com.marvarid.di.modules.MVPModule
 import locidnet.com.marvarid.di.modules.PresenterModule
+import locidnet.com.marvarid.model.DialogFragmentModel
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
@@ -246,7 +247,12 @@ class SettingsActivity : BaseActivity() ,Viewer {
 
         /*QUIT*/
         quitLay.setOnClickListener {
-                val dialog = YesNoFragment.instance()
+                val dialog = YesNoFragment.instance(
+                                                    DialogFragmentModel(
+                                                            Functions.getString(R.string.quit),
+                                                            Functions.getString(R.string.no),
+                                                            Functions.getString(R.string.yes)
+                                                            ))
                         dialog.setDialogClickListener(object : YesNoFragment.DialogClickListener{
                             override fun click(whichButton: Int) {
 

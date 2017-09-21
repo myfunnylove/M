@@ -87,4 +87,6 @@
     <string name="quitTitle">Вы хотите выйти?</string>
     <string name="no">Нет</string>
     <string name="yes">Да</string>
+    <string name="wait">Подождать</string>
+    <string name="loadingYetTitle">Еще не загружена</string>
 </resources>

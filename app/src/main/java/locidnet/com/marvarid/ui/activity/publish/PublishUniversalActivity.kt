@@ -37,6 +37,7 @@ import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
+import locidnet.com.marvarid.ui.fragment.YesNoFragment
 import me.iwf.photopicker.PhotoPicker
 import org.json.JSONObject
 import java.io.File
@@ -56,6 +57,9 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
 
     @Inject
     lateinit var errorConn: ErrorConnection
+
+    lateinit var quitDialog:YesNoFragment
+
     var visibly       = false
     var TEXT_SIZE     = 16f
     var TEXT_COLOR_ID = 0;
@@ -154,6 +158,22 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
                 .build()
                 .inject(this)
 
+        quitDialog = YesNoFragment.instance(
+                DialogFragmentModel(Functions.getString(R.string.quitTitle),
+                        Functions.getString(R.string.quit),
+                        Functions.getString(R.string.wait))
+        )
+
+        quitDialog.setDialogClickListener(object : YesNoFragment.DialogClickListener{
+            override fun click(whichButton: Int) {
+
+                if (whichButton == YesNoFragment.NO)
+                    quitDialog.dismiss()
+                else
+                    finish()
+            }
+
+        })
 
         initQuoteSettings()
 
@@ -431,14 +451,36 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
 
 
     override fun onBackPressed() {
-        imageAdapter == null
-        songAdapter == null
-        loading = false
-        commentText.hideKeyboard()
-        Functions.hideSoftKeyboard(this)
-        super.onBackPressed()
+        val logicImage = if (imageAdapter == null) true else if (imageAdapter!!.list.size == loadedImagesIds.size) true else false
+        val logicAudio = if (songAdapter == null)  true else if (songAdapter!!.list.size == loadedAudioIds.size)   true else false
+
+        if(!loading && logicImage && logicAudio){
+
+            quitDialog.show(supportFragmentManager,YesNoFragment.TAG)
+
+        }else{
+
+            clearCache()
+            super.onBackPressed()
+
+        }
+
+
+    }
+
+    override fun onDestroy() {
+        clearCache()
+        super.onDestroy()
     }
 
 
-
+    fun clearCache(){
+        imageAdapter    = null
+        songAdapter     = null
+        loadedImagesIds = ArrayList()
+        loadedAudioIds  = ArrayList()
+        loading         = false
+        commentText.hideKeyboard()
+        Functions.hideSoftKeyboard(this)
+    }
 }

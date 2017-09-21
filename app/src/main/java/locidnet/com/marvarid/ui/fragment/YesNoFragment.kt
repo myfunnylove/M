@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
+import android.widget.TextView
 import locidnet.com.marvarid.R
+import locidnet.com.marvarid.model.DialogFragmentModel
 
 /**
  * Created by macbookpro on 06.09.17.
@@ -18,14 +20,21 @@ import locidnet.com.marvarid.R
 class YesNoFragment : DialogFragment() {
 
     var listener:DialogClickListener? = null
+
     companion object {
         var mInstance:YesNoFragment? = null
         val NO = 1
         val YES = 2
         val TAG = "yesnofragment"
-        fun instance() : YesNoFragment{
+        fun instance(dialogFragmentModel: DialogFragmentModel) : YesNoFragment{
 
             if (mInstance == null) mInstance = YesNoFragment()
+
+            val bundle = Bundle()
+            bundle.putString("title",dialogFragmentModel.title)
+            bundle.putString("no",dialogFragmentModel.no)
+            bundle.putString("yes",dialogFragmentModel.yes)
+            mInstance!!.arguments = bundle
 
             return mInstance!!
         }
@@ -41,11 +50,23 @@ class YesNoFragment : DialogFragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_dialog,container,false)
 
-        view.findViewById(R.id.no).setOnClickListener {
+        val titleView = view.findViewById(R.id.title) as TextView
+        val no = view.findViewById(R.id.no) as TextView
+        val yes = view.findViewById(R.id.yes) as TextView
+
+        try{
+            titleView.text = arguments.getString("title")
+            no.text = arguments.getString("no")
+            yes.text = arguments.getString("yes")
+
+        }catch (e:Exception){
+
+        }
+        no.findViewById(R.id.no).setOnClickListener {
             listener!!.click(NO)
         }
 
-        view.findViewById(R.id.yes).setOnClickListener {
+        yes.findViewById(R.id.yes).setOnClickListener {
             listener!!.click(YES)
         }
 
