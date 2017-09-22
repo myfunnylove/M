@@ -136,11 +136,7 @@ class ProfileFeedAdapter(context: Activity,
 
     override fun getItemViewType(position: Int): Int {
 
-        if (pOrF){
             if (position == 0) return HEADER else return BODY
-        }else{
-            return BODY
-        }
 
     }
 
@@ -264,14 +260,14 @@ class ProfileFeedAdapter(context: Activity,
 
                 h.username.text = userInfo!!.user.info.username
                 //TODO
-                if (!userInfo!!.user.info.name.isNullOrEmpty()){
-                    h.name.visibility = View.VISIBLE
-                    h.name.text = userInfo!!.user.info.name
-
-                }else{
+//                if (!userInfo!!.user.info.name.isNullOrEmpty()){
+//                    h.name.visibility = View.VISIBLE
+//                    h.name.text = userInfo!!.user.info.name
+//
+//                }else{
                     h.name.visibility = View.GONE
 
-                }
+//                }
                 val prettyTime = PrettyTime()
                 val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 val date2 = formatter.parse(post.time) as Date
@@ -662,7 +658,7 @@ class ProfileFeedAdapter(context: Activity,
 
             h.follow.setOnClickListener {
 
-
+                MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
                 if(h.follow.tag != ProfileFragment.SETTINGS){
                     log.d("follow button type ${h.follow.tag}")
 
@@ -714,7 +710,6 @@ class ProfileFeedAdapter(context: Activity,
                                             ProfileFragment.FOLLOW_TYPE       = ProfileFragment.FOLLOW
 
 
-                                            MainActivity.MY_POSTS_STATUS = MainActivity.FIRST_TIME
                                             notifyItemChanged(0)
                                         }else if (FOLLOW_TYPE == ProfileFragment.FOLLOW && response.body()!!.res == "0"){
 
@@ -747,7 +742,6 @@ class ProfileFeedAdapter(context: Activity,
                                                         SearchFragment.chooseUserFstatus = ProfileFragment.UN_FOLLOW
                                                     }
                                                 }
-                                                MainActivity.MY_POSTS_STATUS = MainActivity.FIRST_TIME
                                                 notifyItemChanged(0)
 
                                             }catch (e : Exception){

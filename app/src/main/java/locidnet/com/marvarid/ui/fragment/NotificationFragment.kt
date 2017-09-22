@@ -42,10 +42,10 @@ class NotificationFragment(): BaseFragment(), Viewer{
     }
     var connectActivity:GoNext?     = null
 
-    lateinit var emptyContainer:EmptyContainer
-    lateinit var list:RecyclerView
+    var emptyContainer:EmptyContainer? = null
+    var list:RecyclerView? = null
 
-    lateinit var adapter:PushAdapter
+    var adapter:PushAdapter? = null
 
     var progressLay            by Delegates.notNull<ViewGroup>()
     var swipeRefreshLayout     by Delegates.notNull<SwipeRefreshLayout>()
@@ -64,54 +64,54 @@ class NotificationFragment(): BaseFragment(), Viewer{
 
         swipeRefreshLayout    = rootView.findViewById(R.id.swipeRefreshLayout)    as SwipeRefreshLayout
         list  = rootView.findViewById(R.id.list)           as RecyclerView
-        manager = LinearLayoutManager(activity)
-        list.layoutManager = manager
-        list.setHasFixedSize(true)
-
-        scroll = object : EndlessRecyclerViewScrollListener(manager) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-
-            }
-
-            override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
-            }
-
-        }
-        list.addOnScrollListener(scroll)
-        swipeRefreshLayout.isEnabled  = false
-        swipeRefreshLayout.setOnRefreshListener {
-
-        }
-
-        emptyContainer = EmptyContainer.Builder()
-                .setIcon(R.drawable.notification_light)
-                .setText(R.string.error_empty_universal)
-                .initLayoutForFragment(rootView)
-
-                .build()
-
-        emptyContainer.hide()
-
-
-        //TODO TEST NOTIFICATIOn
-
-        val pushes = ArrayList<Push>()
-        user = Prefs.Builder().getUser()
-        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
-        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
-        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName,"", Action(user.profilPhoto,"21")))
-        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
-        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
-        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
-        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
-        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
-        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
-        pushes.add(Push(Const.Push.OTHER,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.follow),"21")))
-        pushes.add(Push(Const.Push.COMMENT,user.profilPhoto,user.userName,"", Action(user.profilPhoto,"21")))
-
-        adapter = PushAdapter(activity,pushes)
-        hideProgress()
-        list.adapter = adapter
+//        manager = LinearLayoutManager(activity)
+//        list.layoutManager = manager
+//        list.setHasFixedSize(true)
+//
+//        scroll = object : EndlessRecyclerViewScrollListener(manager) {
+//            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+//
+//            }
+//
+//            override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
+//            }
+//
+//        }
+//        list.addOnScrollListener(scroll)
+//        swipeRefreshLayout.isEnabled  = false
+//        swipeRefreshLayout.setOnRefreshListener {
+//
+//        }
+//
+//        emptyContainer = EmptyContainer.Builder()
+//                .setIcon(R.drawable.notification_light)
+//                .setText(R.string.error_empty_universal)
+//                .initLayoutForFragment(rootView)
+//
+//                .build()
+//
+//        emptyContainer.hide()
+//
+//
+//        //TODO TEST NOTIFICATIOn
+//
+//        val pushes = ArrayList<Push>()
+//        user = Prefs.Builder().getUser()
+//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
+//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
+//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName,"", Action(user.profilPhoto,"21")))
+//        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
+//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
+//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
+//        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
+//        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
+//        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
+//        pushes.add(Push(Const.Push.OTHER,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.follow),"21")))
+//        pushes.add(Push(Const.Push.COMMENT,user.profilPhoto,user.userName,"", Action(user.profilPhoto,"21")))
+//
+//        adapter = PushAdapter(activity,pushes)
+//        hideProgress()
+//        list.adapter = adapter
     }
 
 

@@ -68,7 +68,7 @@ class FollowAdapter(context:Context,
         h!!.itemView.runEnterAnimation(p1)
         log.d("$user")
         h.login.text = user.username
-        h.login.typeface = Typeface.createFromAsset(Base.get.context.assets,"font/Quicksand-Regular.otf")
+        h.login.typeface = Typeface.createFromAsset(Base.get.context.assets,"font/regular.ttf")
         h.name.visibility = View.GONE
 
         var photo = ""
@@ -142,6 +142,7 @@ class FollowAdapter(context:Context,
 
        }
         h.follow.setOnClickListener {
+            MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
 
             val reqObj = JSONObject()
 
@@ -169,7 +170,6 @@ class FollowAdapter(context:Context,
                                     users.get(p1).request = 0
                                     users.get(p1).follow  = 0
                                     swapItems(users,p1)
-                                    MainActivity.MY_POSTS_STATUS = MainActivity.FIRST_TIME
                                     if (FFFFragment.followersCount != -1) FFFFragment.followersCount--
                                 }else if (h.follow.tag == ProfileFragment.FOLLOW && response.body()!!.res == "0"){
 
@@ -189,7 +189,6 @@ class FollowAdapter(context:Context,
                                             if (FFFFragment.followersCount != -1) FFFFragment.followersCount++
 
                                         }
-                                        MainActivity.MY_POSTS_STATUS = MainActivity.FIRST_TIME
 
                                     }catch (e : Exception){
 

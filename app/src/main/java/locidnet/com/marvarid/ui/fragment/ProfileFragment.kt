@@ -22,6 +22,7 @@ import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
@@ -99,7 +100,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
     override fun init() {
         Const.TAG = "ProfileFragment"
         MainActivity.musicSubject.subscribe(this)
-        FOLLOW_TYPE = arguments.getString(F_TYPE)
+//        FOLLOW_TYPE = arguments.getString(F_TYPE)
 
 
         log.d("init profil fragment")
@@ -181,7 +182,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
         swipeRefreshLayout.setOnRefreshListener(object :SwipeRefreshLayout.OnRefreshListener{
             override fun onRefresh() {
-                if (postAdapter != null){
+                if (postAdapter != null ){
                     FollowActivity.start = 0
                     FollowActivity.end   = 20
                     connectActivity!!.goNext(Const.REFRESH_PROFILE_FEED,"")
@@ -239,12 +240,14 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
 
     fun initHeader(userInfo:UserInfo,fType:String){
+        log.d("ProfileFragment => initheader")
+
         this.userInfo = userInfo
         FOLLOWERS  = userInfo.user.count.followersCount
         FOLLOWING  = userInfo.user.count.followersCount
         POST_COUNT = userInfo.user.count.postCount
 
-
+        FOLLOW_TYPE = fType
         progressLay.visibility = View.GONE
         emptyContainer.hide()
         postView.visibility       = View.VISIBLE
@@ -266,9 +269,12 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         val postList = PostList(emptyPost)
         val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
 
-        postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,isClose)
+        postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE,isClose)
         postView.visibility = View.VISIBLE
         postView.adapter = postAdapter
+        swipeRefreshLayout.isEnabled = false
+        swipeRefreshLayout.isRefreshing = false
+
     }
 
     fun initBody(postList: PostList){
@@ -291,22 +297,23 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
             var photo ="http"
 
             if (postAdapter == null){
+
                 log.d("birinchi marta postla yuklandi size: ${postList.posts.size}")
                 if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
-                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE)
+                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true, FOLLOW_TYPE)
                 postView.adapter = postAdapter
+
             }
 
             else if ((FollowActivity.end == 20 && FollowActivity.start == 0) && postAdapter != null){
-                log.d("postni boshidan update qisin  F type -> $FOLLOW_TYPE")
                 if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
 
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
 
-                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE)
+                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true, FOLLOW_TYPE)
                 postView.adapter = postAdapter
             }else if((FollowActivity.end == 20 && FollowActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
@@ -315,7 +322,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
             }
 
 
-        swipeRefreshLayout.isRefreshing = false
+            swipeRefreshLayout.isRefreshing = false
             swipeRefreshLayout.isEnabled = true
 
 

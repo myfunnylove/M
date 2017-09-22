@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:orientation="vertical"
-        android:layout_margin="16dp"
         >
 
 
@@ -21,7 +20,7 @@
             android:id="@+id/search"
             style="@style/NormalText"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="50dp"
             android:background="@color/white"
             android:maxLength="20"
             android:maxLines="1"
@@ -32,6 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/searchLay"
+        android:layout_marginTop="8dp"
         />
 
     <include layout="@layout/res_empty_container"/>

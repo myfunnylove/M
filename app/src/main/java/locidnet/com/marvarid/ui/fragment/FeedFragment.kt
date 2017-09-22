@@ -178,7 +178,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
         progressLay.visibility = View.GONE
     }
     override fun click(position: Int) {
-        val user = feedAdapter!!.feeds.posts.get(0).user
+        val user = feedAdapter!!.feeds.posts.get(position).user
 
         if (user.userId != this.user.userId){
 

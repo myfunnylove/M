@@ -126,13 +126,13 @@
 
         <item name="android:textSize">@dimen/headerTextSize</item>
         <item name="android:textColor">@color/headerTextColor</item>
-        <item name="fontPath">font/Quicksand-Bold.otf</item>
+        <item name="fontPath">font/bold.ttf</item>
     </style>
     <style name="NormalText">
 
         <item name="android:textSize">@dimen/normalTextSize</item>
         <item name="android:textColor">@color/normalTextColor</item>
-        <item name="fontPath">font/Quicksand-Regular.otf</item>
+        <item name="fontPath">font/regular.ttf</item>
 
     </style>
     <style name="ErrorText">

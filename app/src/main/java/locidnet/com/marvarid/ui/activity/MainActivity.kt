@@ -100,6 +100,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         val FIRST_TIME   = "0"
         val NEED_UPDATE  = "1"
         val AFTER_UPDATE = "2"
+        val ONLY_USER_INFO = "3"
 
         var FEED_STATUS = NEED_UPDATE
 
@@ -615,15 +616,27 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                 log.d("lastfragment -> ${lastFragment}")
                 log.d("profil followers count -> ${FFFFragment.followersCount}")
+                log.d("my post status $MY_POSTS_STATUS")
+
                 if (requestCode == Const.CHANGE_AVATAR){
                     try{
                         profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.CANCEL_PROGRESS);
                     }catch (e:Exception){}
                 }
 
-                if  (lastFragment == 4 && FFFFragment.followersCount != -1 && profilFragment != null ){
-                    MyProfileFragment.FOLLOWING = FFFFragment.followersCount.toString()
-                    profilFragment!!.postAdapter!!.updateFollowersCount()
+                if  (lastFragment == 4 && profilFragment != null && MY_POSTS_STATUS == NEED_UPDATE){
+
+                    MY_POSTS_STATUS = ONLY_USER_INFO
+
+                        val reqObj = JSONObject()
+                        reqObj.put("user_id", user.userId)
+                        reqObj.put("user", user.userId)
+                        reqObj.put("session", user.session)
+
+                        log.d("send data for user info data: ${reqObj}")
+                        presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
+
+
                 }
                 val tab = tablayout.getTabAt(lastFragment)
                 tab!!.setIcon(Const.selectedTabs.get(lastFragment)!!)
@@ -682,9 +695,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             Http.CMDS.USER_INFO -> {
                 val userInfo = Gson().fromJson(result,UserInfo::class.java)
                 val fType = Functions.selectFollowType(userInfo)
-                profilFragment!!.initHeader(userInfo,fType)
                 log.i("profil page select $MY_POSTS_STATUS")
-                if (MY_POSTS_STATUS != AFTER_UPDATE) {
+                if (MY_POSTS_STATUS != ONLY_USER_INFO) {
+                    profilFragment!!.initHeader(userInfo,fType)
 
 
                     errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
@@ -708,6 +721,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                         }
 
                     })
+
+                }else{
+                    profilFragment!!.updateUserInfo(userInfo,fType)
 
                 }
             }

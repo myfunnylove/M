@@ -24,7 +24,7 @@
     <string name="request">Запрошено</string>
     <string name="settings">Настройки</string>
     <string name="error_empty_search_result">Нет резултатов</string>
-    <string name="load_more_text">LOAD MORE</string>
+    <string name="load_more_text">Загрузить еще</string>
     <string name="headerComment">Комментарии</string>
     <string name="following">Подписки</string>
     <string name="followers">Подписчики</string>
@@ -92,4 +92,5 @@
     <string name="blockUser">Блокировать</string>
     <string name="unblock">Разблокировать</string>
     <string name="profil_blocked_me_title">Этот аккаунт заблокировал вас</string>
+    <string name="refresh">Обновить</string>
 </resources>

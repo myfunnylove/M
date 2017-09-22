@@ -92,5 +92,6 @@
     <string name="blockUser">Block</string>
     <string name="unblock">UnBlock</string>
     <string name="profil_blocked_me_title">This account blocked you</string>
+    <string name="refresh">Обновить</string>
 
 </resources>

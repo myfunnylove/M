@@ -85,41 +85,45 @@
             android:id="@+id/commentBoxLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="bottom"
-            android:weightSum="1"
             android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
             android:background="@drawable/border_top"
+            android:orientation="vertical"
             android:paddingTop="1dp"
+            android:weightSum="1"
+
             >
+
             <LinearLayout
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="1"
-                >
+                android:weightSum="1">
+
                 <EditText
                     android:id="@+id/commentText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
-                    android:textColorHint="@color/silver"
                     android:background="@color/white"
-                    android:textColor="@color/normalTextColor"
-                    android:padding="6dp"
                     android:focusableInTouchMode="true"
                     android:inputType="textMultiLine"
+                    android:maxHeight="100dp"
+                    android:padding="6dp"
+                    android:textColor="@color/normalTextColor"
+                    android:textColorHint="@color/silver"
 
                     />
+
                 <android.support.v7.widget.AppCompatImageButton
                     android:id="@+id/sendComment"
                     android:layout_width="60dp"
                     android:layout_height="50dp"
+                    android:layout_gravity="bottom"
                     android:layout_weight="5"
-                    android:background="@color/colorAccent"
-                    app:srcCompat="@drawable/comment_white"
-                    />
+                    android:background="@color/white"
+                    app:srcCompat="@drawable/send_icon" />
             </LinearLayout>
         </LinearLayout>
 

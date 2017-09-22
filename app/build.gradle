@@ -7,17 +7,17 @@ android {
 
     signingConfigs {
         config {
-<<<<<<< HEAD
+
             keyAlias 'mbank'
             keyPassword 'So1551567'
             storeFile file('D:/Muhammadjon/1.Rabota_MBank/Mbank_Old/mbank_key')
             storePassword 'so1551567'
-=======
-            keyAlias 'microlab'
-            keyPassword 'microlab'
-            storeFile file('/Users/macbookpro/AndroidStudioProjects/Marvarid/key/marvarid.jks')
-            storePassword 'microlab'
->>>>>>> c8dd0c705304df80ae53fe32fa44a6549d0b2cd0
+//
+//            keyAlias 'microlab'
+//            keyPassword 'microlab'
+//            storeFile file('/Users/macbookpro/AndroidStudioProjects/Marvarid/key/marvarid.jks')
+//            storePassword 'microlab'
+
         }
     }
 

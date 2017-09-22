@@ -68,6 +68,7 @@ class FollowActivity : BaseActivity(),
     var followersFragment:FFFFragment?  = null
     var blocMeFragment:BlockMeFragment? = null
     var userID                          = ""
+    var afterrefresh                    = false
    // var jsUserData:JSONObject? = null
     private var controller: MusicController? = null
     var userInfo:UserInfo? = null
@@ -189,6 +190,7 @@ class FollowActivity : BaseActivity(),
                     transaction!!.show(profilFragment)
             } else
                 transaction!!.add(R.id.container, profilFragment, ProfileFragment.TAG)
+
             log.d("json chiqdi")
             log.d(intent.extras.toString())
 
@@ -268,28 +270,51 @@ class FollowActivity : BaseActivity(),
     override fun goNext(to: Int, data: String) {
         when(to){
             Const.REFRESH_PROFILE_FEED ->{
+                val fType = Functions.selectFollowType(userInfo!!)
+
+                if (fType == ProfileFragment.FOLLOW || fType == ProfileFragment.UN_FOLLOW){
+                    errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                        override fun connected() {
+                            log.d("connected")
+                            val reqObj = JSONObject()
+                            reqObj.put("user_id", user.userId)
+                            reqObj.put("session", user.session)
+                            reqObj.put("user",    userID)
+                            reqObj.put("start",   "0")
+                            reqObj.put("end",     end)
+                            afterrefresh = true;
+
+                            presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
+                        }
+
+                        override fun disconnected() {
+                            log.d("disconnected")
 
 
-                errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                    override fun connected() {
-                        log.d("connected")
-                        val reqObj = JSONObject()
-                        reqObj.put("user_id", user.userId)
-                        reqObj.put("session", user.session)
-                        reqObj.put("user",    userID)
-                        reqObj.put("start",   "0")
-                        reqObj.put("end",     end)
+                        }
 
-                        presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
-                    }
-
-                    override fun disconnected() {
-                        log.d("disconnected")
+                    })
+                }else{
+                    errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                        override fun connected() {
+                            val reqObj = JSONObject()
+                            reqObj.put("user_id",user.userId)
+                            reqObj.put("user",   intent.extras.getString("user_id"))
+                            reqObj.put("session",user.session)
 
 
-                    }
+                            log.d("send data for user info data: ${reqObj}")
+                            presenter.requestAndResponse(reqObj,Http.CMDS.USER_INFO)
+                        }
 
-                })
+                        override fun disconnected() {
+                            log.d("disconnected")
+
+
+                        }
+
+                    })
+                }
             }
 
             Const.TO_FOLLOWERS -> showFragment(FOLLOWERS)
@@ -351,6 +376,8 @@ class FollowActivity : BaseActivity(),
 
                     if (postList.posts.size > 0){
                         profilFragment!!.initBody(postList)
+                    }else {
+                        profilFragment!!.swipeRefreshLayout.isRefreshing = false
                     }
 
                 }catch (e:Exception){
@@ -406,18 +433,27 @@ class FollowActivity : BaseActivity(),
                    else
                        this.menu!!.findItem(R.id.blockUser).title = Functions.getString(R.string.unblock)
                }
+                val fType = if (intent.extras.getString(ProfileFragment.F_TYPE) != null && intent.extras.getString(ProfileFragment.F_TYPE) == ProfileFragment.SETTINGS)
+                                 ProfileFragment.SETTINGS
+                            else Functions.selectFollowType(userInfo!!)
 
-                log.d("result of userinfo $otherUser")
-                val fType = Functions.selectFollowType(userInfo!!)
-                if (fType != "-1") {
-                    showFragment(PROFIL_T)
+                    log.d("fType $fType result of userinfo $otherUser ")
 
+                    if (fType != "-1") {
+                        if (profilFragment != null && profilFragment!!.isVisible){
+                            afterrefresh = false
 
+                            profilFragment!!.initHeader(userInfo!!,fType)
+                        }else{
+                            showFragment(PROFIL_T)
 
-                }else{
-                    intent.putExtras(bundle)
-                    showFragment(BLOCKED_ME)
-                }
+                        }
+                    }else{
+                        afterrefresh = false
+                        intent.putExtras(bundle)
+                        showFragment(BLOCKED_ME)
+                    }
+
 
 
             }
@@ -455,17 +491,22 @@ class FollowActivity : BaseActivity(),
     }
 
     override fun onBackPressed() {
-        if (manager!!.backStackEntryCount == 1){
+       if (manager != null){
+
+           if (manager!!.backStackEntryCount == 1){
 
 
-            this.finish()
-        }else if(Prefs.Builder().getUser().session != ""){
+               this.finish()
+           }else if(Prefs.Builder().getUser().session != ""){
 
-            super.onBackPressed()
-        }else{
-            setResult(Const.SESSION_OUT)
-            this.finish()
-        }
+               super.onBackPressed()
+           }else{
+               setResult(Const.SESSION_OUT)
+               this.finish()
+           }
+       }else{
+           super.onBackPressed()
+       }
     }
 
     override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -771,10 +812,13 @@ class FollowActivity : BaseActivity(),
     override fun turnOn() {
         val otherUser = userInfo!!.user
 
-        val fType = Functions.selectFollowType(userInfo!!)
+        val fType = if (intent.extras.getString(ProfileFragment.F_TYPE) != null && intent.extras.getString(ProfileFragment.F_TYPE) == ProfileFragment.SETTINGS)
+            ProfileFragment.SETTINGS
+        else Functions.selectFollowType(userInfo!!)
         bundle!!.putString(ProfileFragment.F_TYPE,fType)
         intent.putExtras(bundle)
         profilFragment!!.initHeader(userInfo!!,fType)
+
         if(fType != ProfileFragment.CLOSE && fType != ProfileFragment.REQUEST){
 
             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{

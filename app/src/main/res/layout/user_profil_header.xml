@@ -15,7 +15,7 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="270dp"
             android:scaleType="centerCrop"
             android:src="@drawable/profilbg" />
 
@@ -85,7 +85,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="22sp" />
+                android:textSize="22sp"
+                />
             <TextView
                 android:id="@+id/firstName"
                 style="@style/HeaderText"
@@ -93,7 +94,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="4dp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                 />
 
 
             <Button

@@ -10,9 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
-import android.view.View
-import android.view.ViewTreeObserver
+import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import com.google.gson.Gson
@@ -29,10 +27,12 @@ import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.resources.utils.log
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.AbsListView
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import locidnet.com.marvarid.base.Base
+import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.di.DaggerMVPComponent
 import locidnet.com.marvarid.di.modules.ErrorConnModule
 import locidnet.com.marvarid.di.modules.MVPModule
@@ -43,6 +43,7 @@ import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessR
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.Toaster
+import java.util.*
 import javax.inject.Inject
 
 
@@ -61,7 +62,7 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
     val user      = Base.get.prefs.getUser()
     var scroll: EndlessRecyclerViewScrollListener? = null
-
+    var manager:LinearLayoutManager? = null
  //   var commentList:   ArrayList<Comment>? = null
     var commentAdapter:CommentAdapter?     = null
     var drawingStartLocation               = 0
@@ -73,10 +74,7 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
         val LOCATION = "location"
     }
 
-    override fun getLayout(): Int {
-
-        return R.layout.activity_comment
-    }
+    override fun getLayout(): Int = R.layout.activity_comment
 
     override fun initView() {
         DaggerMVPComponent
@@ -123,7 +121,7 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
                     obj.put("post_id",   postId)
                     obj.put("start",   0)
                     obj.put("end",    end)
-                    obj.put("order",  "ASC")
+                    obj.put("order",  "DESC")
 
                     obj.put("user_id",user.userId)
                     obj.put("session",user.session)
@@ -199,80 +197,44 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
             }
 
         })
-        val manager = LinearLayoutManager(this)
-        scroll = object : EndlessRecyclerViewScrollListener(manager) {
-            override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
-                var lastVisibleItemPosition = 0
-                val totalItemCount = mLayoutManager.itemCount
+        manager = LinearLayoutManager(this)
 
-                lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-
-
-                // If the total item count is zero and the previous isn't, assume the
-                // list is invalidated and should be reset back to initial state
-                if (totalItemCount < previousTotalItemCount) {
-                    this.currentPage = this.startingPageIndex
-                    this.previousTotalItemCount = totalItemCount
-                    if (totalItemCount == 0) {
-                        this.loading = true
-                    }
-                }
-                // If it’s still loading, we check to see if the dataset count has
-                // changed, if so we conclude it has finished loading and update the current page
-                // number and total item count.
-                if (loading && totalItemCount > previousTotalItemCount) {
-                    loading = false
-                    previousTotalItemCount = totalItemCount
-                }
-
-                // If it isn’t currently loading, we check to see if we have breached
-                // the visibleThreshold and need to reload more data.
-                // If we do need to reload some more data, we execute onLoadMore to fetch the data.
-                // threshold should reflect how many total columns there are too
-                if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount) {
-                    currentPage++
-                    Log.d("APPLICATION_DEMO", "currentPage" + currentPage)
-                    onLoadMore(currentPage, totalItemCount, view)
-                    loading = true
-                }
-
-            }
-
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                if (commentAdapter != null && commentAdapter!!.comments.size >= 10){
-
-
-                    errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                        override fun connected() {
-                            log.d("on more $page $totalItemsCount ")
-                            val obj = JSONObject()
-                            obj.put("post_id",postId)
-                            start = commentAdapter!!.comments.size
-                            obj.put("start",  start)
-                            obj.put("end",    end)
-                            obj.put("order",  "ASC")
-                            obj.put("user_id",user.userId)
-                            obj.put("session",user.session)
-                            presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
-                        }
-
-                        override fun disconnected() {
-                        }
-
-                    })
-                }
-            }
-
-
-
-        }
         list.layoutManager = manager
         list.setHasFixedSize(true)
 
-        list.addOnScrollListener(scroll)
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+
+        menuInflater.inflate(R.menu.menu_refresh,menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+            override fun connected() {
+                /*send data for get comment list*/
+                start = 0
+                val obj = JSONObject()
+                obj.put("post_id",   postId)
+                obj.put("start",   start)
+                obj.put("end",    end)
+                obj.put("order",  "DESC")
+
+                obj.put("user_id",user.userId)
+                obj.put("session",user.session)
+                presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
+            }
+
+            override fun disconnected() {
+            }
+
+        })
+
+        return true
+    }
     override fun initProgress() {
         emptyContainer.visibility = View.GONE
     }
@@ -301,15 +263,27 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
                 override fun connected() {
                     commentText.setText("")
 
-                    val obj = JSONObject()
-                    obj.put("post_id",postId)
-                    start = commentAdapter!!.comments.size
-                    obj.put("start",  start)
-                    obj.put("end",    end)
-                    obj.put("order",  "ASC")
-                    obj.put("user_id",user.userId)
-                    obj.put("session",user.session)
-                    presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
+
+                    if (commentAdapter != null && commentAdapter!!.comments.size > 0){
+                        val obj = JSONObject()
+                        obj.put("post_id",postId)
+                        start = commentAdapter!!.comments.size
+                        obj.put("comm",    commentAdapter!!.comments.get(commentAdapter!!.comments.size - 1).commentId)
+                        obj.put("order",  "ASC")
+                        obj.put("user_id",user.userId)
+                        obj.put("session",user.session)
+                        presenter.requestAndResponse(obj, Http.CMDS.GET_LAST_COMMENTS)
+                    }else{
+                        val obj = JSONObject()
+                        obj.put("post_id",postId)
+
+                        obj.put("start",  0)
+                        obj.put("end",    end)
+                        obj.put("order",  "DESC")
+                        obj.put("user_id",user.userId)
+                        obj.put("session",user.session)
+                        presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
+                    }
                 }
 
                 override fun disconnected() {
@@ -320,38 +294,120 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
             val comment = Gson().fromJson<Comments>(result,Comments::class.java)
             list.visibility           = View.VISIBLE
             emptyContainer.visibility = View.GONE
-//            commentList = comment.comments
-//            if (commentList!!.size > 0 && commentAdapter == null){
-//
-//                commentAdapter = CommentAdapter(this,commentList!!,this)
-//
-//                list.adapter = commentAdapter
-//
-//            }else if(commentList!!.size > 0 && commentAdapter != null){
-//                commentAdapter!!.swapList(commentList!!)
-//                commentAdapter!!.animationsLocked = false
-//                commentAdapter!!.delayEnterAnimation = false
-//                list.smoothScrollBy(0,list.getChildAt(0).height * commentAdapter!!.comments.size)
-//            }else{
-//            }
+
+
+            Collections.reverse(comment.comments)
 
             if (commentAdapter == null){
                 log.d("COMMENT ADAPTER NULLGA TENG")
+
+
                 commentAdapter = CommentAdapter(this,comment.comments,this)
+                commentAdapter!!.setAdapterClicker(object : SignalListener{
+                    override fun turnOn() {
+                        if (commentAdapter != null && commentAdapter!!.comments.size >= 10){
+
+
+                            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                                override fun connected() {
+                                    val obj = JSONObject()
+                                    obj.put("post_id",postId)
+                                    start = commentAdapter!!.comments.size
+                                    obj.put("start",  start)
+                                    obj.put("end",    end)
+                                    obj.put("order",  "DESC")
+                                    obj.put("user_id",user.userId)
+                                    obj.put("session",user.session)
+                                    presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
+                                }
+
+                                override fun disconnected() {
+                                }
+
+                            })
+                        }
+                    }
+
+                })
                 list.adapter = commentAdapter
 
+                try{
+//                    list.smoothScrollBy(0,list.getChildAt(0).height * commentAdapter!!.comments.size)
+                    manager!!.scrollToPosition(commentAdapter!!.comments.size - 1)
+                }catch (e:Exception){}
 
-            }else if(end == 10){
+
+            }else if(start == 0 && end == 10){
+
+
+
+                commentAdapter = CommentAdapter(this,comment.comments,this)
+                commentAdapter!!.setAdapterClicker(object : SignalListener{
+                    override fun turnOn() {
+                        if (commentAdapter != null && commentAdapter!!.comments.size >= 10){
+
+
+                            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                                override fun connected() {
+                                    val obj = JSONObject()
+                                    obj.put("post_id",postId)
+                                    start = commentAdapter!!.comments.size
+                                    obj.put("start",  start)
+                                    obj.put("end",    end)
+                                    obj.put("order",  "DESC")
+                                    obj.put("user_id",user.userId)
+                                    obj.put("session",user.session)
+                                    presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
+                                }
+
+                                override fun disconnected() {
+                                }
+
+                            })
+                        }
+                    }
+
+                })
+                list.adapter = commentAdapter
+
+                try{
+//                    list.smoothScrollBy(0,list.getChildAt(0).height * commentAdapter!!.comments.size)
+                    manager!!.scrollToPosition(commentAdapter!!.comments.size - 1)
+                }catch (e:Exception){}
+            }else{
                 log.d("COMMENT ADAPTER NULL EMAS")
 
                 commentAdapter!!.animationsLocked = false
                 commentAdapter!!.delayEnterAnimation = false
-                commentAdapter!!.swapLast(comment.comments)
-               try{
-                   list.smoothScrollBy(0,list.getChildAt(0).height * commentAdapter!!.comments.size)
-               }catch (e:Exception){}
+//                Collections.reverse(comment.comments)
+
+
+                commentAdapter!!.swapToTop(comment.comments)
 
             }
+        }else if(from == Http.CMDS.GET_LAST_COMMENTS){
+
+            val comment = Gson().fromJson<Comments>(result,Comments::class.java)
+            list.visibility           = View.VISIBLE
+            emptyContainer.visibility = View.GONE
+            emptyContainer.visibility = View.GONE
+
+
+            Collections.reverse(comment.comments)
+
+            log.d("COMMENT ADAPTER NULL EMAS")
+
+            commentAdapter!!.animationsLocked = false
+            commentAdapter!!.delayEnterAnimation = false
+            Collections.reverse(comment.comments)
+
+            commentAdapter!!.swapLast(comment.comments)
+
+            try{
+                list.smoothScrollBy(0,list.getChildAt(0).height * commentAdapter!!.comments.size)
+                manager!!.scrollToPosition(commentAdapter!!.comments.size - 1)
+
+            }catch (e:Exception){}
         }
 
     }

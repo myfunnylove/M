@@ -98,7 +98,7 @@ class Base : Application (){
 
         CalligraphyConfig.initDefault(
                 CalligraphyConfig.Builder()
-                        .setDefaultFontPath("font/Quicksand-Regular.otf")
+                        .setDefaultFontPath("font/regular.ttf")
                         .setFontAttrId(R.attr.fontPath)
                         .build())
 
