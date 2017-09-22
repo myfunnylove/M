@@ -234,12 +234,12 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
         log.d("FeedFragment => method swapPosts => startfrom: ${MainActivity.start}")
 
         try {
+
             scroll!!.resetState()
             emptyContainer.hide()
 
             progressLay.visibility = View.GONE
             swipeRefreshLayout.isRefreshing = false
-
             listFeed.visibility = View.VISIBLE
 
             if (feedAdapter == null){

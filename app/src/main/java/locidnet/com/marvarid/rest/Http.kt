@@ -61,6 +61,7 @@ object Http {
         val ADD_SONG_TO_PLAYLIST       = "32"
         val GET_PLAYLIST               = "33"
         val SET_TOKEN_DATA             = "36"
+        val GET_NOTIF_LIST             = "37"
         val GET_LAST_COMMENTS          = "38"
 
     }

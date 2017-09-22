@@ -87,6 +87,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         var end            = 20
         var startFeed      = 0
         var endFeed        = 20
+        var startNotif     = 0
+        var endNotif       = 20
         var getFirst       = 1
         var startFollowers = 0
         var endFollowers   = 20
@@ -230,6 +232,36 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
 
                     }
+
+                    Const.NOTIF_FR -> {
+                        errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                            override fun connected() {
+                                val reqObj = JSONObject()
+                                reqObj.put("user_id", user.userId)
+                                reqObj.put("session", user.session)
+                                reqObj.put("start",   startNotif)
+                                reqObj.put("end",     endNotif)
+
+                                log.d("feed page select $reqObj")
+                                presenter!!.requestAndResponse(reqObj, Http.CMDS.GET_NOTIF_LIST)
+
+
+
+                            }
+
+                            override fun disconnected() {
+
+                            }
+
+                        })
+
+
+                    lastFragment = p0.position
+
+                            p0.setIcon(Const.selectedTabs.get(p0.position)!!)
+                            setFragment(p0.position)
+                    }
+
                     Const.FEED_FR -> {
                         log.i("feed page select")
 
@@ -406,6 +438,32 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                 })
             }
+
+            Const.REFRESH_NOTIFICATION -> {
+
+                errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                    override fun connected() {
+
+
+                        val reqObj = JSONObject()
+                        reqObj.put("user_id", user.userId)
+                        reqObj.put("session", user.session)
+                        reqObj.put("start",   startNotif)
+                        reqObj.put("end",     endNotif)
+
+
+                        presenter.requestAndResponse(reqObj, Http.CMDS.GET_NOTIF_LIST)
+
+
+                    }
+
+                    override fun disconnected() {
+
+                    }
+
+                })
+            }
+
 
             Const.REFRESH_PROFILE_FEED ->{
 
@@ -694,7 +752,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
             Http.CMDS.USER_INFO -> {
                 val userInfo = Gson().fromJson(result,UserInfo::class.java)
-                val fType = Functions.selectFollowType(userInfo)
+                val fType = ProfileFragment.SETTINGS
                 log.i("profil page select $MY_POSTS_STATUS")
                 if (MY_POSTS_STATUS != ONLY_USER_INFO) {
                     profilFragment!!.initHeader(userInfo,fType)
@@ -733,10 +791,15 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                 try{
                     val postList: PostList = Gson().fromJson(result, PostList::class.java)
 
-
                     if (postList.posts.size > 0){
                         MY_POSTS_STATUS = AFTER_UPDATE
                         profilFragment!!.initBody(postList)
+                    }else {
+                        profilFragment!!.swipeRefreshLayout.isRefreshing = false
+                    }
+
+                    if (postList.posts.size > 0){
+
                     }
 
                 }catch (e:Exception){
@@ -787,6 +850,15 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
             Http.CMDS.GET_FOLLOWERS -> {
 
+            }
+
+            Http.CMDS.GET_NOTIF_LIST ->{
+
+                val pushList:PushList = Gson().fromJson(result,PushList::class.java)
+
+                if(pushList.pushes.size > 0){
+                    notificationFragment!!.swapPushes(pushList)
+                }
             }
         }
     }

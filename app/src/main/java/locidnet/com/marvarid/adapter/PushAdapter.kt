@@ -13,8 +13,11 @@ import android.widget.Toast
 import com.squareup.picasso.Picasso
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.model.Push
+import locidnet.com.marvarid.model.PushList
 import locidnet.com.marvarid.resources.customviews.CircleImageView
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.rest.Http
 
 /**
  * Created by myfunnylove on 17.09.17.
@@ -25,7 +28,7 @@ class PushAdapter(private val ctx:Context,private val list:ArrayList<Push> ) : R
 
     override fun getItemCount(): Int = list.size
 
-    override fun getItemViewType(position: Int): Int = list.get(position).title
+    override fun getItemViewType(position: Int): Int = list.get(position).type
 
 
 
@@ -36,6 +39,7 @@ class PushAdapter(private val ctx:Context,private val list:ArrayList<Push> ) : R
 
             Const.Push.COMMENT -> return Comment(inflater.inflate(R.layout.res_item_push_like,parent,false))
 
+            Const.Push.FOLLOW -> return Requested(inflater.inflate(R.layout.res_item_push_requested,parent,false))
             Const.Push.REQUESTED -> return Requested(inflater.inflate(R.layout.res_item_push_requested,parent,false))
 
             else -> return Other(inflater.inflate(R.layout.res_item_push_requested,parent,false))
@@ -52,16 +56,20 @@ class PushAdapter(private val ctx:Context,private val list:ArrayList<Push> ) : R
 
                 val like = holder as Like
 
-                    Picasso.with(ctx)
-                            .load(push.photo)
-                            .error(VectorDrawableCompat.create(ctx.resources,R.drawable.account,ctx.theme))
-                            .into(like.avatar)
+                    try{
+                        Picasso.with(ctx)
+                                .load(push.user.userPhoto)
+                                .error(VectorDrawableCompat.create(ctx.resources,R.drawable.account,ctx.theme))
+                                .into(like.avatar)
+                    }catch (e:Exception){
 
-                like.username.text = ctx.resources.getString(R.string.user,push.username)
+                    }
+
+                like.username.text = push.user.userName
                 like.body.text = ctx.resources.getString(R.string.pushLikeBody)
 
                 Picasso.with(ctx)
-                        .load(push.action.actionName)
+                        .load(push.action.actionPhoto)
                         .error(VectorDrawableCompat.create(ctx.resources,R.drawable.image_broken_variant_white,ctx.theme))
                         .into(like.mypost)
 
@@ -74,14 +82,14 @@ class PushAdapter(private val ctx:Context,private val list:ArrayList<Push> ) : R
 
                 val comment = holder as Comment
                 Picasso.with(ctx)
-                        .load(push.photo)
+                        .load(push.user.userPhoto)
                         .error(VectorDrawableCompat.create(ctx.resources,R.drawable.account,ctx.theme))
                         .into(comment.avatar)
-                comment.username.text = ctx.resources.getString(R.string.user,push.username)
+                comment.username.text = push.user.userName
                 comment.body.text = ctx.resources.getString(R.string.pushCommentBody)
 
                 Picasso.with(ctx)
-                        .load(push.action.actionName)
+                        .load(Http.BASE_URL +push.action.actionPhoto)
                         .error(VectorDrawableCompat.create(ctx.resources,R.drawable.image_broken_variant_white,ctx.theme))
                         .into(comment.mypost)
 
@@ -94,37 +102,38 @@ class PushAdapter(private val ctx:Context,private val list:ArrayList<Push> ) : R
 
                 val requested = holder as Requested
                 Picasso.with(ctx)
-                        .load(push.photo)
+                        .load(Http.BASE_URL + push.action.actionPhoto)
                         .error(VectorDrawableCompat.create(ctx.resources,R.drawable.account,ctx.theme))
                         .into(requested.avatar)
 
-                requested.username.text = ctx.resources.getString(R.string.user,push.username)
+                requested.username.text = push.user.userName
 
                 requested.body.text = ctx.resources.getString(R.string.pushRequestBody)
 
 
-                requested.action.setText(push.action.actionName)
+                requested.action.setText(Functions.getString(R.string.allow))
 
                 requested.action.setOnClickListener{
                     Toast.makeText(ctx,"requested pressed ",Toast.LENGTH_SHORT).show()
                 }
             }
 
-            else -> {
+            Const.Push.FOLLOW -> {
 
-                val other = holder as Other
+                val follow = holder as Requested
                 Picasso.with(ctx)
-                        .load(push.photo)
+                        .load(Http.BASE_URL + push.action.actionPhoto)
                         .error(VectorDrawableCompat.create(ctx.resources,R.drawable.account,ctx.theme))
-                        .into(other.avatar)
+                        .into(follow.avatar)
 
-                other.username.text = ctx.resources.getString(R.string.user,push.username)
+                follow.username.text = push.user.userName
 
-                other.body.text = ctx.resources.getString(R.string.pushFollowBody)
+                follow.body.text = ctx.resources.getString(R.string.pushFollowBody)
 
-                other.action.setText(push.action.actionName)
+                follow.action.setText(Functions.getString(R.string.allow))
 
-                other.action.setOnClickListener{
+
+                follow.action.setOnClickListener{
                     Toast.makeText(ctx,"other pressed ",Toast.LENGTH_SHORT).show()
                 }
             }
@@ -165,5 +174,12 @@ class PushAdapter(private val ctx:Context,private val list:ArrayList<Push> ) : R
         val username = view.findViewById(R.id.username) as TextView
         val body = view.findViewById(R.id.body) as TextView
         val action = view.findViewById(R.id.action) as Button
+    }
+
+    fun swapItems(pushList: PushList) {
+
+        list.addAll(pushList.pushes)
+        notifyItemRangeInserted(list.size + 1,pushList.pushes.size)
+
     }
 }

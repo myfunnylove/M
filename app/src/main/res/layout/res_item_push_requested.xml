@@ -34,25 +34,24 @@
             android:layout_height="wrap_content"
             android:text="@string/user"
             style="@style/HeaderText"
+            android:textSize="13sp"
             />
         <TextView
             android:id="@+id/body"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="like your post"
-            style="@style/NormalText"
+            style="@style/HeaderText"
+            android:textSize="13sp"
             />
+
     </LinearLayout>
     <Button
         android:id="@+id/action"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginLeft="8dp"
-        android:theme="@style/ButtonUnpressed"
-        android:background="@drawable/button_bg"
         android:textColor="@color/white"
         android:layout_gravity="center"
-        android:text="ALLOW"
+        android:textSize="13sp"
         />
 </LinearLayout>

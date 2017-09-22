@@ -252,6 +252,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 //            val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
                 postAdapter!!.userInfo = userInfo
               postAdapter!!.notifyItemChanged(0)
+
+
         }else{
             initHeader(userInfo,fType)
         }
@@ -288,6 +290,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,isClose)
         postView.visibility = View.VISIBLE
         postView.adapter = postAdapter
+        swipeRefreshLayout.isEnabled = false
+        swipeRefreshLayout.isRefreshing = false
     }
 
     fun initBody(postList: PostList){

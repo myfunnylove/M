@@ -14,18 +14,21 @@ import locidnet.com.marvarid.base.BaseFragment
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.model.Action
 import locidnet.com.marvarid.model.Push
+import locidnet.com.marvarid.model.PushList
 import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Prefs
+import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.ui.activity.MainActivity
 import kotlin.properties.Delegates
 
 /**
  * Created by Michaelan on 5/19/2017.
  */
-class NotificationFragment(): BaseFragment(), Viewer{
+class NotificationFragment(): BaseFragment(){
 
     companion object {
         var TAG:String  = "NotificationFragment"
@@ -64,74 +67,92 @@ class NotificationFragment(): BaseFragment(), Viewer{
 
         swipeRefreshLayout    = rootView.findViewById(R.id.swipeRefreshLayout)    as SwipeRefreshLayout
         list  = rootView.findViewById(R.id.list)           as RecyclerView
-//        manager = LinearLayoutManager(activity)
-//        list.layoutManager = manager
-//        list.setHasFixedSize(true)
-//
-//        scroll = object : EndlessRecyclerViewScrollListener(manager) {
-//            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-//
-//            }
-//
-//            override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
-//            }
-//
-//        }
-//        list.addOnScrollListener(scroll)
-//        swipeRefreshLayout.isEnabled  = false
-//        swipeRefreshLayout.setOnRefreshListener {
-//
-//        }
-//
-//        emptyContainer = EmptyContainer.Builder()
-//                .setIcon(R.drawable.notification_light)
-//                .setText(R.string.error_empty_universal)
-//                .initLayoutForFragment(rootView)
-//
-//                .build()
-//
-//        emptyContainer.hide()
-//
-//
-//        //TODO TEST NOTIFICATIOn
-//
-//        val pushes = ArrayList<Push>()
-//        user = Prefs.Builder().getUser()
-//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
-//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
-//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName,"", Action(user.profilPhoto,"21")))
-//        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
-//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
-//        pushes.add(Push(Const.Push.LIKE,user.profilPhoto,user.userName, "",Action(user.profilPhoto,"21")))
-//        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
-//        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
-//        pushes.add(Push(Const.Push.REQUESTED,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.allow),"21")))
-//        pushes.add(Push(Const.Push.OTHER,user.profilPhoto,user.userName, "",Action(activity.resources.getString(R.string.follow),"21")))
-//        pushes.add(Push(Const.Push.COMMENT,user.profilPhoto,user.userName,"", Action(user.profilPhoto,"21")))
-//
-//        adapter = PushAdapter(activity,pushes)
-//        hideProgress()
-//        list.adapter = adapter
+        manager = LinearLayoutManager(activity)
+        list!!.layoutManager = manager
+        list!!.setHasFixedSize(true)
+
+        scroll = object : EndlessRecyclerViewScrollListener(manager) {
+            override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
+                var lastVisibleItemPosition = 0
+                val totalItemCount = mLayoutManager.itemCount
+
+                lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                swipeRefreshLayout.setEnabled(mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+
+
+                // If the total item count is zero and the previous isn't, assume the
+                // list is invalidated and should be reset back to initial state
+                if (totalItemCount < previousTotalItemCount) {
+                    this.currentPage = this.startingPageIndex
+                    this.previousTotalItemCount = totalItemCount
+                    if (totalItemCount == 0) {
+                        this.loading = true
+                    }
+                }
+                // If it’s still loading, we check to see if the dataset count has
+                // changed, if so we conclude it has finished loading and update the current page
+                // number and total item count.
+                if (loading && totalItemCount > previousTotalItemCount) {
+                    loading = false
+                    previousTotalItemCount = totalItemCount
+                }
+
+                // If it isn’t currently loading, we check to see if we have breached
+                // the visibleThreshold and need to reload more data.
+                // If we do need to reload some more data, we execute onLoadMore to fetch the data.
+                // threshold should reflect how many total columns there are too
+                if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount) {
+                    currentPage++
+                    onLoadMore(currentPage, totalItemCount, view)
+                    loading = true
+                }
+            }
+
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                if (adapter != null && adapter!!.itemCount >= 20){
+                    log.d("on more $page $totalItemsCount ")
+                    MainActivity.startNotif = adapter!!.itemCount
+                    MainActivity.endNotif = 20
+
+                    log.d("FeedFragment => method onload more => startfrom: ${MainActivity.startNotif}")
+
+                    connectActivity!!.goNext(Const.REFRESH_NOTIFICATION,"")
+                }
+            }
+
+
+        }
+        list!!.addOnScrollListener(scroll)
+        swipeRefreshLayout.isEnabled  = false
+        swipeRefreshLayout.setOnRefreshListener {
+
+        }
+
+        emptyContainer = EmptyContainer.Builder()
+                .setIcon(R.drawable.notification_light)
+                .setText(R.string.error_empty_universal)
+                .initLayoutForFragment(rootView)
+
+                .build()
+
+        emptyContainer!!.hide()
+
     }
 
+    fun swapPushes(pushList: PushList) {
+        scroll!!.resetState()
+        emptyContainer!!.hide()
 
-
-    override fun initProgress() {
-    }
-
-    override fun showProgress() {
-        progressLay.visibility = View.VISIBLE
-
-    }
-
-    override fun hideProgress() {
         progressLay.visibility = View.GONE
+        swipeRefreshLayout.isRefreshing = false
+        list!!.visibility = View.VISIBLE
+        if (adapter == null){
+            adapter = PushAdapter(activity,pushList.pushes)
+            list!!.adapter = adapter
+        }else {
+            adapter!!.swapItems(pushList);
+        }
     }
 
-    override fun onSuccess(from: String, result: String) {
-    }
-
-    override fun onFailure(from: String, message: String, erroCode: String) {
-    }
 
 }

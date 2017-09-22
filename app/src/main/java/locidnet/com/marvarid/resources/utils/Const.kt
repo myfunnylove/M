@@ -57,6 +57,7 @@ object Const {
     val PROFIL_PAGE_OTHER            = 17
     val GO_PLAY_LIST                 = 18
     val FROM_SEARCH_TO_PROFIL        = 19
+    val REFRESH_NOTIFICATION         = 20
     val TO_FAIL                      = -1;
 
 
@@ -358,8 +359,9 @@ object Const {
     object Push{
         val LIKE = 1
         val COMMENT = 2
-        val REQUESTED = 3
-        val OTHER = 4
+        val FOLLOW = 3
+        val REQUESTED = 4
+        val OTHER = 5
     }
 
 
