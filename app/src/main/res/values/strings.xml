@@ -89,4 +89,7 @@
     <string name="yes">Да</string>
     <string name="wait">Подождать</string>
     <string name="loadingYetTitle">Еще не загружена</string>
+    <string name="blockUser">Блокировать</string>
+    <string name="unblock">Разблокировать</string>
+    <string name="profil_blocked_me_title">Этот аккаунт заблокировал вас</string>
 </resources>

@@ -11,7 +11,5 @@ data class Comment(@SerializedName("username")   var username:String,
                    @SerializedName("user_id")    var userId:String,
                    @SerializedName("photo_150")  var avatar:String,
                    @SerializedName("comment_id") var commentId:String,
-                   @SerializedName("comment")    var comment:String,
-                   @SerializedName("request") var request:Int,
-                   @SerializedName("follow") var follow:Int,
-                   @SerializedName("close") var close:Int)
+                   @SerializedName("comment")    var comment:String
+                   )

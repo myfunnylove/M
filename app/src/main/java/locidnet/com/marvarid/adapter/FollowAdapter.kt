@@ -89,48 +89,48 @@ class FollowAdapter(context:Context,
                log.d("${user.userId} -> ${user.username}ga zapros tashalgan")
                h.follow.tag  = ProfileFragment.FOLLOW
                h.follow.text = ProfileFragment.FOLLOW
-               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
+               h.follow.setTextColor(ctx.resources.getColor(R.color.white))
 
-               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
 
            }else if(user.close == 1 && user.follow == 0 && user.request == 1){
 
                h.follow.tag  = ProfileFragment.REQUEST
                h.follow.text = ProfileFragment.REQUEST
-               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
+               h.follow.setTextColor(ctx.resources.getColor(R.color.white))
 
-               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
 
            }else if (user.close == 1 && user.follow == 1 && user.request == 0){
 
                h.follow.tag  = ProfileFragment.UN_FOLLOW
                h.follow.text = ProfileFragment.UN_FOLLOW
-               h.follow.setTextColor(ctx.resources.getColor(R.color.white))
+               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
 
-               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
            }else if (user.close == 0 && user.follow == 0 && user.request == 1){
 
                h.follow.tag  = ProfileFragment.FOLLOW
                h.follow.text = ProfileFragment.FOLLOW
-               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
+               h.follow.setTextColor(ctx.resources.getColor(R.color.white))
 
-               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
 
 
            }else if (user.close == 0 && user.follow == 1 && user.request == 0){
 
                h.follow.tag  = ProfileFragment.UN_FOLLOW
                h.follow.text = ProfileFragment.UN_FOLLOW
-               h.follow.setTextColor(ctx.resources.getColor(R.color.white))
+               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
 
-               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
 
            }else{
                h.follow.tag  = ProfileFragment.FOLLOW
                h.follow.text = ProfileFragment.FOLLOW
-               h.follow.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
+               h.follow.setTextColor(ctx.resources.getColor(R.color.white))
 
-               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
+               h.follow.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
 
            }
 

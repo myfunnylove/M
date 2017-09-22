@@ -21,7 +21,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import locidnet.com.marvarid.BuildConfig
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.adapter.FeedAdapter
+import locidnet.com.marvarid.adapter.ProfileFeedAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
 import locidnet.com.marvarid.connectors.GoNext
@@ -209,28 +209,16 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                 when (p0!!.position) {
 
                     Const.PROFIL_FR -> {
-                        log.i("profil page select $MY_POSTS_STATUS")
                         if (MY_POSTS_STATUS != AFTER_UPDATE) {
 
-
-                            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                                override fun connected() {
-                                    val reqObj = JSONObject()
-                                    reqObj.put("user_id", user.userId)
-                                    reqObj.put("session", user.session)
-                                    reqObj.put("user",    user.userId)
-                                    reqObj.put("start",   start)
-                                    reqObj.put("end",     end)
-                                    presenter!!.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
+                            val reqObj = JSONObject()
+                            reqObj.put("user_id", user.userId)
+                            reqObj.put("user", user.userId)
+                            reqObj.put("session", user.session)
 
 
-                                }
-
-                                override fun disconnected() {
-
-                                }
-
-                            })
+                            log.d("send data for user info data: ${reqObj}")
+                            presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
 
                         }
                         lastFragment = p0.position
@@ -304,14 +292,14 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                 intent = Intent(this, FollowActivity().javaClass)
                 intent.putExtra(FollowActivity.TYPE, FollowActivity.FOLLOWERS)
-                intent.putExtra("userId",user.userId)
+                intent.putExtra("user_id",user.userId)
 
             }
             Const.TO_FOLLOWING -> {
 
                 intent = Intent(this, FollowActivity().javaClass)
                 intent.putExtra(FollowActivity.TYPE, FollowActivity.FOLLOWING)
-                intent.putExtra("userId",user.userId)
+                intent.putExtra("user_id",user.userId)
             }
 
 
@@ -464,7 +452,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         bundle.putString("photo",     user.profilPhoto)
         bundle.putString("username",  user.userName)
         bundle.putString("firstName", user.first_name)
-        bundle.putString("userId",    user.userId)
+        bundle.putString("user_id",    user.userId)
         bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.SETTINGS)
         profilFragment = MyProfileFragment.newInstance(bundle)
         profilFragment!!.connectAudioPlayer(this)
@@ -629,7 +617,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                 log.d("profil followers count -> ${FFFFragment.followersCount}")
                 if (requestCode == Const.CHANGE_AVATAR){
                     try{
-                        profilFragment!!.createProgressForAvatar(FeedAdapter.CANCEL_PROGRESS);
+                        profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.CANCEL_PROGRESS);
                     }catch (e:Exception){}
                 }
 
@@ -691,35 +679,64 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         log.d("success from: $from result: $result")
         when (from) {
 
+            Http.CMDS.USER_INFO -> {
+                val userInfo = Gson().fromJson(result,UserInfo::class.java)
+                val fType = Functions.selectFollowType(userInfo)
+                profilFragment!!.initHeader(userInfo,fType)
+                log.i("profil page select $MY_POSTS_STATUS")
+                if (MY_POSTS_STATUS != AFTER_UPDATE) {
+
+
+                    errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                        override fun connected() {
+
+
+
+                            val reqObj = JSONObject()
+                            reqObj.put("user_id", user.userId)
+                            reqObj.put("session", user.session)
+                            reqObj.put("user",    user.userId)
+                            reqObj.put("start",   start)
+                            reqObj.put("end",     end)
+                            presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
+
+
+                        }
+
+                        override fun disconnected() {
+
+                        }
+
+                    })
+
+                }
+            }
+
             Http.CMDS.MY_POSTS -> {
                 log.d("my post status $MY_POSTS_STATUS")
                 try{
                     val postList: PostList = Gson().fromJson(result, PostList::class.java)
 
-                    profilFragment!!.initFF(postList)
+
                     if (postList.posts.size > 0){
                         MY_POSTS_STATUS = AFTER_UPDATE
-                        profilFragment!!.swapPosts(postList)
-                    }else{
-                        val emptyPost = ArrayList<Posts>()
-                        emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","", PostUser("","","http")))
-                        val emptyPosts: PostList = PostList(emptyPost,postList.followers,postList.following,postList.postlarSoni)
-                        profilFragment!!.swapPosts(emptyPosts)
-
+                        profilFragment!!.initBody(postList)
                     }
 
                 }catch (e:Exception){
 
-                    profilFragment!!.failedGetList()
+
 
                 }
             }
+
+
 
             Http.CMDS.CHANGE_AVATAR -> {
 
                 user = Base.get.prefs.getUser()
                 try{
-                profilFragment!!.createProgressForAvatar(FeedAdapter.HIDE_PROGRESS);
+                profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.HIDE_PROGRESS);
                 }catch (e:Exception){}
                 profilFragment!!.setAvatar(user.profilPhoto)
             }
@@ -761,21 +778,21 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     override fun onFailure(from: String, message: String, erroCode: String) {
 
         log.d("error from: $from message: $message")
-       Toaster.errror(message)
+       if (from != Http.CMDS.SEARCH_USER) Toaster.errror(message)
 
 
 
         when(from){
             Http.CMDS.FEED        -> Handler().postDelayed({feedFragment!!.failedGetList(message)},1500)
 
-            Http.CMDS.MY_POSTS    -> Handler().postDelayed({profilFragment!!.failedGetList(message)},1500)
+//            Http.CMDS.MY_POSTS    -> Handler().postDelayed({profilFragment!!.failedGetList(message)},1500)
             Http.CMDS.SEARCH_USER -> Handler().postDelayed({searchFragment!!.failedGetList(message)},1500)
         }
     }
 
     private fun String.uploadAvatar() {
         try{
-            profilFragment!!.createProgressForAvatar(FeedAdapter.SHOW_PROGRESS);
+            profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.SHOW_PROGRESS);
         }catch (e:Exception){}
         val reqFile = ProgressRequestBody(File(this), object : ProgressRequestBody.UploadCallbacks {
 

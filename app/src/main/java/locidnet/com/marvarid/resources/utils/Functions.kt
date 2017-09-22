@@ -23,6 +23,9 @@ import android.widget.EditText
 import android.widget.Toast
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.model.Song
+import locidnet.com.marvarid.model.UserInfo
+import locidnet.com.marvarid.ui.activity.FollowActivity
+import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -300,4 +303,52 @@ object Functions {
     }
 
     fun getString(str:Int):String = Base.get.resources.getString(str)
+
+
+    fun selectFollowType(userInfo:UserInfo) :String{
+        var result = ""
+        if(userInfo.user.block_me == "0"){
+
+            if(     userInfo.user.info.close == 1 &&
+                    userInfo.user.follow == 0 &&
+                    userInfo.user.request == 0){
+
+                result = ProfileFragment.CLOSE
+
+            }else if(userInfo.user.info.close == 1 &&
+                     userInfo.user.follow == 0 &&
+                     userInfo.user.request == 1){
+
+                result = ProfileFragment.REQUEST
+
+            }else if (userInfo.user.info.close == 1 &&
+                      userInfo.user.follow == 1 &&
+                      userInfo.user.request == 0){
+
+                result = ProfileFragment.UN_FOLLOW
+
+            }else if (userInfo.user.info.close == 0 &&
+                      userInfo.user.follow == 0 &&
+                      userInfo.user.request == 1){
+
+                result = ProfileFragment.FOLLOW
+
+
+            }else if (userInfo.user.info.close == 0 &&
+                      userInfo.user.follow == 1 &&
+                      userInfo.user.request == 0){
+
+                result = ProfileFragment.UN_FOLLOW
+
+            }else{
+                result = ProfileFragment.FOLLOW
+
+            }
+
+        }else{
+            result = "-1"
+        }
+
+        return result
+    }
 }

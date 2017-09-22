@@ -25,7 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:background="@drawable/gray_when_select"
             style="@style/HeaderText"
             android:text="@string/no"
@@ -35,6 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:background="@drawable/gray_when_select"
             style="@style/HeaderText"
             android:text="@string/yes"

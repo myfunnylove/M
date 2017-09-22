@@ -18,6 +18,7 @@ data class Users(@SerializedName("user_id")   var userId:String,
                  @SerializedName("close")     var close:Int)
 
 
+
 data class Followers (
         @SerializedName("followers") var users:ArrayList<Users>
 )

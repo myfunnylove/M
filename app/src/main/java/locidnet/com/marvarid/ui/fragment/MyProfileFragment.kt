@@ -1,24 +1,17 @@
 package locidnet.com.marvarid.ui.fragment
 
-import android.content.*
 import android.os.Bundle
-import android.os.IBinder
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.adapter.FeedAdapter
-import locidnet.com.marvarid.adapter.PostAudioGridAdapter
+import locidnet.com.marvarid.adapter.ProfileFeedAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
 import locidnet.com.marvarid.rest.Http
-import locidnet.com.marvarid.musicplayer.MusicController
-import locidnet.com.marvarid.musicplayer.MusicService
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
@@ -30,7 +23,6 @@ import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessR
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.MainActivity
-import locidnet.com.marvarid.ui.activity.PlaylistActivity
 import kotlin.properties.Delegates
 
 class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker, MusicPlayerListener,MusicControlObserver {
@@ -45,16 +37,16 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
     var user                          = Base.get.prefs.getUser()
     var oldpostList: PostList?         = null
-    var postAdapter: FeedAdapter?      = null
+    var postAdapter: ProfileFeedAdapter?      = null
 
     var connectActivity: GoNext?       = null
-    var postUser: PostUser?            = null
     val model                         = Model()
     var manager: LinearLayoutManager?  = null
     var expanded                      = false
 
     lateinit var emptyContainer:EmptyContainer
     var scroll: EndlessRecyclerViewScrollListener? = null
+    lateinit var userInfo:UserInfo
     companion object {
         var TAG:String   = "ProfileFragment"
         val FOLLOW       = Base.get.resources.getString(R.string.follow)
@@ -75,6 +67,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         }
         var FOLLOWERS                     = "0"
         var FOLLOWING                     = "0"
+        var POST_COUNT                    = "0"
 
 
     }
@@ -231,53 +224,40 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
 
 
-    fun failedGetList(error:String = ""){
+    fun initHeader(userInfo:UserInfo,fType:String){
+        this.userInfo = userInfo
+        FOLLOWERS  = userInfo.user.count.followersCount
+        FOLLOWING  = userInfo.user.count.followersCount
+        POST_COUNT = userInfo.user.count.postCount
+
+
         progressLay.visibility = View.GONE
-
-        swipeRefreshLayout.isRefreshing = false
-
-        log.e("ProfileFragment => method => failedGetList errorCode => $error")
-                if (postAdapter != null && postAdapter!!.feeds.posts.size != 0){
-                    log.e("list bor lekin xatolik shundo ozini qoldiramiz")
-                    emptyContainer.hide()
-                    postView.visibility       = View.VISIBLE
+        emptyContainer.hide()
+        postView.visibility       = View.VISIBLE
 
 
-                }else{
-                    log.e("list null yoki list bom bosh")
-                    val emptyPost = ArrayList<Posts>()
-                    emptyPost.add(Posts("-1", Quote("", "", ""), ArrayList<Audio>(), ArrayList<Image>(), "0", "0", "", "", PostUser("", "", "http")))
-                    val postList: PostList = PostList(emptyPost, "0", "0", "0")
-                    postAdapter = FeedAdapter(activity, postList, this, this, true, FOLLOW_TYPE, PostUser("", "", "http"))
-                    postView.adapter = postAdapter
-                    emptyContainer.hide()
 
-//                    val connectErrorIcon = VectorDrawableCompat.create(Base.get.resources, R.drawable.network_error, errorImg.context.theme)
-//                    val defaultErrorIcon = VectorDrawableCompat.create(Base.get.resources, R.drawable.account_light,          errorImg.context.theme)
-//                    if (error == ""){
-//                        errorImg.setImageDrawable(defaultErrorIcon)
-//                    }else{
-//                        errorImg.setImageDrawable(connectErrorIcon)
-//
-//                    }
-//                    errorText.text = error
-//                    emptyContainer.visibility = View.VISIBLE
-//                    postView.visibility = View.GONE
-                }
+        var photo ="http"
+        try{
+            photo = if (arguments!!.getString("photo").startsWith("http")) arguments.getString("photo") else Http.BASE_URL+arguments.getString("photo")
+        }catch (e:Exception){
+
+        }
 
 
+        val emptyPost = ArrayList<Posts>()
+        emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","",PostUser("","","")))
+
+        val postList = PostList(emptyPost)
+
+        val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
+
+        postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,isClose)
+        postView.visibility = View.VISIBLE
+        postView.adapter = postAdapter
     }
 
-    fun initFF(postList: PostList){
-        FOLLOWERS = postList.followers
-        FOLLOWING = postList.following
-
-//        followers.text = if(FOLLOWERS == "") "0" else FOLLOWERS
-//        following.text = if(FOLLOWING == "") "0" else FOLLOWING
-    }
-
-    fun swapPosts(postList: PostList){
-
+    fun initBody(postList: PostList){
 
         log.d("ProfileFragment => method swapPosts => onSuccess")
         log.d("ProfileFragment => method swapPosts => postSize: ${postList.posts.size} posts: ${postList.posts}")
@@ -292,37 +272,16 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
             progressLay.visibility    = View.GONE
 
             postView.visibility = View.VISIBLE
-            FOLLOWERS = postList.followers
-            FOLLOWING = postList.following
+
 
             var photo ="http"
-            if((MainActivity.end == 20 && MainActivity.start == 0) && postAdapter != null){
-
-               photo = postAdapter!!.feeds.posts.get(0).user.photo
-
-            }else{
-                try{
-                    photo = if (arguments!!.getString("photo").startsWith("http")) arguments.getString("photo") else Http.BASE_URL +arguments.getString("photo")
-                }catch (e:Exception){
-
-                }
-            }
-            var postUser: PostUser = PostUser(arguments.getString("userId"), arguments.getString("username"), photo)
-
-            postList.posts.forEach { post ->
-
-
-                post.user = postUser
-
-            }
 
             if (postAdapter == null){
                 log.d("birinchi marta postla yuklandi size: ${postList.posts.size}")
                 if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
-                postAdapter = FeedAdapter(activity, postList, this, this, true, FOLLOW_TYPE, postUser)
-
+                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE)
                 postView.adapter = postAdapter
             }else if (postList.posts.size == 1 && (MainActivity.endFeed == 1 && MainActivity.startFeed == 0)){
                 log.d("post qoshildi postni birinchi elementi update qilinadi")
@@ -332,14 +291,16 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 postAdapter!!.swapFirstItem(postList)
                 postView.smoothScrollBy(0,postView.getChildAt(0).height * postAdapter!!.feeds.posts.size)
 
-            }else if ((MainActivity.end == 20 && MainActivity.start == 0) && postAdapter != null){
+            }
+
+            else if ((MainActivity.end == 20 && MainActivity.start == 0) && postAdapter != null){
                 log.d("postni boshidan update qisin  F type -> $FOLLOW_TYPE")
                 if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
 
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
 
-                postAdapter = FeedAdapter(activity, postList, this, this, true, FOLLOW_TYPE, postUser)
+                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE)
                 postView.adapter = postAdapter
             }else if((MainActivity.end == 20 && MainActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
@@ -352,10 +313,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
         }catch (e:Exception){
             log.e("ProfileFragment => swapPosts => $e")
-            failedGetList()
 
         }
-
     }
 
     override fun click(position: Int) {

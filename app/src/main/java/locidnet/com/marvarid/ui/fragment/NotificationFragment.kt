@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import butterknife.bindView
 import kotlinx.android.synthetic.main.activity_settings.*
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.PushAdapter

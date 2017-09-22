@@ -19,7 +19,7 @@
         <!--<item name="android:popupMenuStyle">@style/PopupMenu</item>-->
         <item name="actionMenuTextColor">@color/sky</item>
     </style>
-    <style name="PopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
+    <style name="PopupMenu" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:popupBackground">@android:color/white</item>
        <item name="android:textColorPrimary">@color/normalTextColor</item>
         <item name="android:textColorHighlight">@color/normalTextColor</item>

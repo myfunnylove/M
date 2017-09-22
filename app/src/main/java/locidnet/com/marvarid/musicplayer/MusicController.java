@@ -160,7 +160,6 @@ public class MusicController extends FrameLayout implements MusicControlObserver
         WindowManager.LayoutParams p = mDecorLayoutParams;
         p.width = mAnchor.getWidth();
         p.x = anchorPos[0] + (mAnchor.getWidth() - p.width) / 2;
-        log.INSTANCE.d("height: "+mAnchor.getHeight());
         p.y = anchorPos[1] + mAnchor.getHeight() - (MainActivity.MyPostOffset.getTablayoutHeight() + 32);
     }
 
