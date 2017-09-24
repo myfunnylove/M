@@ -110,6 +110,13 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
 
             />
+
+        <activity
+            android:name=".ui.activity.UserPostActivity"
+            android:theme="@style/CommentActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+
+            />
         <activity
             android:name=".ui.activity.publish.PublishSongActivity"
             android:windowSoftInputMode="adjustResize|stateHidden"

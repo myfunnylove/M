@@ -247,7 +247,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         FOLLOWING  = userInfo.user.count.followersCount
         POST_COUNT = userInfo.user.count.postCount
 
-        FOLLOW_TYPE = fType
+        FOLLOW_TYPE = if (fType == ProfileFragment.CLOSE ) ProfileFragment.FOLLOW else fType
         progressLay.visibility = View.GONE
         emptyContainer.hide()
         postView.visibility       = View.VISIBLE

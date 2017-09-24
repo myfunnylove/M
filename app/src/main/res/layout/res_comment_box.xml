@@ -18,7 +18,6 @@
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/image_bg_corner"
         app:srcCompat="@drawable/account"
          />
 

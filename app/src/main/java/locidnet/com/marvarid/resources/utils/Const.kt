@@ -61,6 +61,7 @@ object Const {
     val GO_PLAY_LIST                 = 18
     val FROM_SEARCH_TO_PROFIL        = 19
     val REFRESH_NOTIFICATION         = 20
+    val PUSH_LIST                    = 21
     val TO_FAIL                      = -1;
 
 

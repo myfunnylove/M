@@ -249,7 +249,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
         quitLay.setOnClickListener {
                 val dialog = YesNoFragment.instance(
                                                     DialogFragmentModel(
-                                                            Functions.getString(R.string.quit),
+                                                            Functions.getString(R.string.quitTitle),
                                                             Functions.getString(R.string.no),
                                                             Functions.getString(R.string.yes)
                                                             ))

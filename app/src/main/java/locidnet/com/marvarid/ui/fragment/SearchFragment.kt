@@ -212,6 +212,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
         if (user.userId != this.user.userId){
            val type = user.setStatusUserFactory()
 
+            log.d("user type $type")
 
            choosedUserId = user.userId
            chooseUserFstatus = type
@@ -219,7 +220,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
            val go = Intent(activity,FollowActivity::class.java)
            val bundle = Bundle()
            bundle.putString("username",user.username)
-           bundle.putString("photo",   if (user.photo150.isNullOrEmpty()) "http" else user.photo150)
+           bundle.putString("photo",   if (user.photo150.isNullOrEmpty()) "" else user.photo150)
            bundle.putString("user_id",  user.userId)
 //            bundle.putString("blockMe",user.blockMe)
 //            bundle.putString("blockIt",user.blockIt)

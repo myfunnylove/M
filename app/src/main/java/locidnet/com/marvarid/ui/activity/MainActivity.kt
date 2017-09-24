@@ -867,6 +867,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                 if(pushList.pushes.size > 0){
                     notificationFragment!!.swapPushes(pushList)
+                }else{
+                    notificationFragment!!.onFail("")
+
                 }
             }
         }

@@ -171,7 +171,7 @@ class MyFeedAdapter(context: Activity,
 
 //            h.commentCount.text = post.comments
 
-
+        h.popup.visibility = View.GONE
 
             if(pOrF == true && changeId == i){
 

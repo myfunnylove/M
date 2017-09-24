@@ -63,6 +63,8 @@ object Http {
         val SET_TOKEN_DATA             = "36"
         val GET_NOTIF_LIST             = "37"
         val GET_LAST_COMMENTS          = "38"
+        val GET_FULL_POST              = "39"
+        val ALLOW_DISMISS              = "19"
 
     }
 

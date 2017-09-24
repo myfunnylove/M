@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MARVARID</string>
+    <string name="app_name">Marvarid</string>
     <integer name="com_vk_sdk_AppId">6070474</integer>
     <string name="facebook_app_id">1922124241359724</string>
 
@@ -68,10 +68,10 @@
     <string name="user">ползователь $1%s</string>
     <string name="allow">Разрешить</string>
 
-    <string name="pushLikeBody">liked your post</string>
-    <string name="pushFollowBody">followed you</string>
-    <string name="pushRequestBody">requested you</string>
-    <string name="pushCommentBody">commented your post</string>
+    <string name="pushLikeBody">лайкнул ваш пост</string>
+    <string name="pushFollowBody">подписался на вас</string>
+    <string name="pushRequestBody">хочет подписываться вас</string>
+    <string name="pushCommentBody">прокомментировал ваш пост</string>
     <string name="error_symbol">SYMBOL ERROR</string>
     <string name="play">Играть</string>
     <string name="error_empty_playlist">Пустой плейлист</string>
@@ -94,4 +94,5 @@
     <string name="profil_blocked_me_title">Этот аккаунт заблокировал вас</string>
     <string name="refresh">Обновить</string>
     <string name="ignore">Игнорировать</string>
+    <string name="error_empty_post">Пост не найден</string>
 </resources>

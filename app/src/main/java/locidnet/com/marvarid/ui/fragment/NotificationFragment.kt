@@ -125,7 +125,12 @@ class NotificationFragment(): BaseFragment(){
         list!!.addOnScrollListener(scroll)
         swipeRefreshLayout.isEnabled  = false
         swipeRefreshLayout.setOnRefreshListener {
+            MainActivity.startNotif = 0
+            MainActivity.endNotif = 20
 
+            log.d("FeedFragment => method onload more => startfrom: ${MainActivity.startNotif}")
+
+            connectActivity!!.goNext(Const.REFRESH_NOTIFICATION,"")
         }
 
         emptyContainer = EmptyContainer.Builder()
@@ -146,7 +151,7 @@ class NotificationFragment(): BaseFragment(){
         progressLay.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = false
         list!!.visibility = View.VISIBLE
-        if (adapter == null){
+        if (adapter == null || (MainActivity.startNotif == 0 && MainActivity.endNotif == 20)){
             adapter = PushAdapter(activity,pushList.pushes)
             list!!.adapter = adapter
         }else {
@@ -154,5 +159,9 @@ class NotificationFragment(): BaseFragment(){
         }
     }
 
+    fun onFail(error:String){
+        progressLay.visibility = View.GONE
+        emptyContainer!!.show()
+    }
 
 }

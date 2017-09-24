@@ -46,8 +46,6 @@
                     android:layout_width="110dp"
                     android:layout_height="110dp"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/image_bg_corner"
-                    app:srcCompat="@drawable/account"
                     android:elevation="3dp"
                     tools:targetApi="lollipop"
                     android:scaleType="centerCrop"

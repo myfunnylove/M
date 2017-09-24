@@ -5,7 +5,8 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/border_bottom"
+    android:background="@color/white"
+    android:layout_marginTop="1dp"
     android:orientation="horizontal"
     android:paddingBottom="8dp"
     android:paddingLeft="8dp"
@@ -17,7 +18,6 @@
         android:id="@+id/avatar"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/image_bg_corner"
         app:srcCompat="@drawable/account"
         />
     <RelativeLayout
@@ -49,27 +49,27 @@
             android:maxLines="1"
 
             />
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/NormalText"
-            android:textSize="13sp"
-            android:textColor="@color/material_grey_400"
-            android:text="1 minut ago"
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/actionPhoto"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="2dp"
+            app:srcCompat="@drawable/image"
             android:layout_below="@+id/username"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="2dp"
-            android:ellipsize="end"
-            android:maxLines="1"
             />
     </RelativeLayout>
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/actionPhoto"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/image_bg_corner"
-        app:srcCompat="@drawable/image"
 
-        />
+
+       <TextView
+           android:id="@+id/time"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           style="@style/NormalText"
+           android:textSize="13sp"
+           android:textColor="@color/material_grey_400"
+           android:text="1 minut ago"
+           android:ellipsize="end"
+           android:maxLines="1"
+           />
 </LinearLayout>
