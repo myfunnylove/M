@@ -207,6 +207,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
 //                        controller!!.show()
                     }
                 }else{
+                    if(controller == null) setController()
                     controller!!.setLoading(false);
 
                     if(MusicService.PLAY_STATUS == MusicService.PAUSED && MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){

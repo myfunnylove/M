@@ -461,7 +461,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
     }
 
     override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-        try{
+//        try{
 
             if (musicSrv != null){
                 log.d("PLAYIN SONG ${musicSrv!!.isPng}")
@@ -485,6 +485,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
 //                        controller!!.show()
                     }
                 }else{
+                    if(controller == null) setController()
                     controller!!.setLoading(false);
 
                     if(MusicService.PLAY_STATUS == MusicService.PAUSED && MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){
@@ -518,10 +519,11 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
 
 
             FeedFragment.playedSongPosition = position
-        }catch (e :Exception){
-            Toast.makeText(Base.get,Base.get.resources.getString(R.string.error_something), Toast.LENGTH_SHORT).show()
-
-        }
+//        }catch (e :Exception){
+//            log.d("$e")
+//            Toast.makeText(Base.get,Base.get.resources.getString(R.string.error_something), Toast.LENGTH_SHORT).show()
+//
+//        }
     }
 
 
