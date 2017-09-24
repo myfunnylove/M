@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -53,13 +54,15 @@ public class PhotoPagerAdapter extends PagerAdapter {
 
     boolean canLoadImage = AndroidLifecycleUtils.canLoadImage(context);
     if (canLoadImage) {
+      RequestOptions options = new RequestOptions();
+      options.dontAnimate();
+      options.override(800, 800);
+      options.placeholder(R.drawable.__picker_ic_photo_black_48dp);
+      options.error(R.drawable.__picker_ic_broken_image_black_48dp);
+        options.dontTransform();
       mGlide.load(uri)
               .thumbnail(0.1f)
-              .dontAnimate()
-              .dontTransform()
-              .override(800, 800)
-              .placeholder(R.drawable.__picker_ic_photo_black_48dp)
-              .error(R.drawable.__picker_ic_broken_image_black_48dp)
+             .apply(options)
               .into(imageView);
     }
 
@@ -108,7 +111,7 @@ public class PhotoPagerAdapter extends PagerAdapter {
   @Override
   public void destroyItem(ViewGroup container, int position, Object object) {
     container.removeView((View) object);
-    Glide.clear((View) object);
+//    Glide.with(context).clear((View) object);
   }
 
   @Override

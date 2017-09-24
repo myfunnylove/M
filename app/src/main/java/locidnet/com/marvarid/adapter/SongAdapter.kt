@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.model.Song
@@ -147,5 +148,15 @@ class SongAdapter(clicker:AdapterClicker, ctx:Context, list:ArrayList<Song>) : R
         songs = res
 
         this.notifyDataSetChanged()
+    }
+
+    override fun onViewRecycled(holder: Adapter?) {
+//        try{
+//            Glide.with(context).clear(holder!!.itemView)
+//
+//
+//        }catch (e:Exception){}
+
+        super.onViewRecycled(holder)
     }
 }

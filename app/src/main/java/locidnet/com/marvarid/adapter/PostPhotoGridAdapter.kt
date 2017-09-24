@@ -2,6 +2,8 @@ package locidnet.com.marvarid.adapter
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
@@ -12,13 +14,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
+
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.Image
+import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.resources.zoomimageview.ImageViewer
 
@@ -35,34 +39,14 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
     val isVertical = true
     var hierarchyBuilder:GenericDraweeHierarchyBuilder? =null
-    var cachedImages:ArrayList<Bitmap>? = null
+    //var cachedImages:ArrayList<Bitmap>? = null
     init {
         setHasStableIds(true)
         hierarchyBuilder = GenericDraweeHierarchyBuilder.newInstance(Base.get.resources)
                 .setFailureImage(VectorDrawableCompat.create(Base.get.resources, R.drawable.image_broken_variant_white, null))
                 .setProgressBarImage(VectorDrawableCompat.create(Base.get.resources, R.drawable.image, null))
                 .setPlaceholderImage(VectorDrawableCompat.create(Base.get.resources, R.drawable.image, null))
-        cachedImages = ArrayList()
-        images.forEach { img ->
-            Picasso.with(context)
-                    .load(Http.BASE_URL+img.image)
-                    .into(object : Target{
-                        override fun onPrepareLoad(p0: Drawable?) {
 
-                        }
-
-                        override fun onBitmapFailed(p0: Drawable?) {
-                        }
-
-                        override fun onBitmapLoaded(p0: Bitmap?, p1: Picasso.LoadedFrom?) {
-
-                             cachedImages!!.add(p0!!)
-
-                            log.d("IMAGES: ${cachedImages!!.get(0)}")
-                        }
-
-                    })
-        }
     }
     override fun getItemCount(): Int = images.size
     override fun getItemId(position: Int): Long = position.toLong()
@@ -118,23 +102,14 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
         itemView.layoutParams = params
 
-        if(h.photo.drawable == null){
-//            Glide.with(context)
-//                    .load(Http.BASE_URL+img.image640)
-//
-//                    .error(R.drawable.upload_error)
-//                    .into(h.photo)
 
-            Picasso.with(context)
-                    .load( Http.BASE_URL+images.get(i).image640)
-
-                    .fit()
-                    .centerCrop()
-                    .into(h.photo)
-
-            h.photo.tag = Http.BASE_URL+img.image640
-        }
-
+        Glide.with(context)
+                .load(Functions.checkImageUrl(img.image640))
+                .apply(RequestOptions().centerCrop()
+                                       .fallback(ColorDrawable(Color.GRAY))
+                                       .placeholder(ColorDrawable(Color.LTGRAY))
+                                       .error(ColorDrawable(Color.LTGRAY)))
+                .into(h.photo)
 
 
         h.photo.setOnClickListener {
@@ -167,5 +142,15 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
         var container:RelativeLayout = view.findViewById(R.id.container) as RelativeLayout
         var photo:AppCompatImageView = view.findViewById(R.id.photo) as AppCompatImageView
+    }
+
+
+    override fun onViewRecycled(holder: Holder?) {
+//      try{
+//          Glide.with(context).clear(holder!!.itemView)
+//
+//
+//      }catch (e:Exception){}
+        super.onViewRecycled(holder)
     }
 }

@@ -164,8 +164,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
         })
     }
 
-    override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    }
+
 
     val musicConnection = object : ServiceConnection {
 
@@ -413,5 +412,13 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
 
     override fun playPause(id: String) {
      adapter.notifyDataSetChanged()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
+            setResult(Const.SESSION_OUT)
+            finish()
+        }
     }
 }

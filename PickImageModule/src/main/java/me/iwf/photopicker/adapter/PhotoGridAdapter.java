@@ -10,6 +10,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,7 @@ public class PhotoGridAdapter extends SelectableAdapter<PhotoGridAdapter.PhotoVi
   public final static int ITEM_TYPE_CAMERA = 100;
   public final static int ITEM_TYPE_PHOTO  = 101;
   private final static int COL_NUMBER_DEFAULT = 3;
-
+    private Context context;
   private boolean hasCamera = true;
   private boolean previewEnable = true;
 
@@ -44,6 +46,7 @@ public class PhotoGridAdapter extends SelectableAdapter<PhotoGridAdapter.PhotoVi
 
 
   public PhotoGridAdapter(Context context, RequestManager requestManager, List<PhotoDirectory> photoDirectories) {
+    this.context =  context;
     this.photoDirectories = photoDirectories;
     this.glide = requestManager;
     setColumnNumber(context, columnNumber);
@@ -105,14 +108,18 @@ public class PhotoGridAdapter extends SelectableAdapter<PhotoGridAdapter.PhotoVi
       boolean canLoadImage = AndroidLifecycleUtils.canLoadImage(holder.ivPhoto.getContext());
 
       if (canLoadImage) {
+
+          RequestOptions options = new RequestOptions();
+          options.dontAnimate();
+          options.override(imageSize, imageSize);
+          options.placeholder(R.drawable.__picker_ic_photo_black_48dp);
+          options.error(R.drawable.__picker_ic_broken_image_black_48dp);
+
         glide
                 .load(new File(photo.getPath()))
-                .centerCrop()
-                .dontAnimate()
+                .apply(options)
+
                 .thumbnail(0.5f)
-                .override(imageSize, imageSize)
-                .placeholder(R.drawable.__picker_ic_photo_black_48dp)
-                .error(R.drawable.__picker_ic_broken_image_black_48dp)
                 .into(holder.ivPhoto);
       }
 
@@ -216,7 +223,7 @@ public class PhotoGridAdapter extends SelectableAdapter<PhotoGridAdapter.PhotoVi
   }
 
   @Override public void onViewRecycled(PhotoViewHolder holder) {
-    Glide.clear(holder.ivPhoto);
+    Glide.with(context).clear(holder.ivPhoto);
     super.onViewRecycled(holder);
   }
 }

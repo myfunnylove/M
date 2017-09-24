@@ -198,9 +198,7 @@ class SignActivity : BaseActivity() ,Viewer{
 
     }
 
-    override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-    }
 
     override fun getLayout(): Int = R.layout.activity_sign
 
@@ -237,5 +235,13 @@ class SignActivity : BaseActivity() ,Viewer{
         super.onBackPressed()
         startActivity(Intent(this,LoginActivity().javaClass))
         this.finish()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
+            setResult(Const.SESSION_OUT)
+            finish()
+        }
     }
 }

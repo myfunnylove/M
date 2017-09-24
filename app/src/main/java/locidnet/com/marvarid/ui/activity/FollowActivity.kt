@@ -509,13 +509,6 @@ class FollowActivity : BaseActivity(),
        }
     }
 
-    override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
-            setResult(Const.SESSION_OUT)
-            finish()
-        }
-
-    }
 
 
 
@@ -845,5 +838,11 @@ class FollowActivity : BaseActivity(),
         }
     }
 
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
+            setResult(Const.SESSION_OUT)
+            finish()
+        }
+    }
 }

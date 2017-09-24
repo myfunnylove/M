@@ -5,8 +5,11 @@ import locidnet.com.marvarid.model.Color
 import java.util.regex.Pattern
 
 /**
+ *
  * Created by Michaelan on 5/19/2017.
+ *
  */
+
 object Const {
 
 

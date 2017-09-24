@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
@@ -172,5 +173,15 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
 
     }
 
+
+    override fun onViewRecycled(holder: Holder?) {
+//        try{
+//            Glide.with(context).clear(holder!!.itemView)
+//
+//
+//        }catch (e:Exception){}
+
+        super.onViewRecycled(holder)
+    }
 
 }

@@ -1,6 +1,8 @@
 package locidnet.com.marvarid.ui.activity
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Handler
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatEditText
@@ -8,7 +10,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_login_and_password.*
@@ -25,6 +29,7 @@ import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import javax.inject.Inject
@@ -51,14 +56,14 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
 
         from = intent.getIntExtra("from",from)
 
-        if(Base.get.prefs.getUser().profilPhoto != ""){
-            log.d("photo: ${Base.get.prefs.getUser().profilPhoto }")
-            Picasso.with(this)
-                    .load(Base.get.prefs.getUser().profilPhoto)
-                    .error(android.R.drawable.stat_notify_error)
-                    .into(profilPhoto)
-        }
-
+        Glide.with(this)
+                .load(Base.get.prefs.getUser().profilPhoto)
+                .apply(RequestOptions()
+                        .circleCrop()
+                        .fallback(ColorDrawable(Color.BLACK))
+                        .error(VectorDrawableCompat.create(resources,R.drawable.account,theme))
+                        .placeholder(ColorDrawable(Color.GRAY)))
+                .into(profilPhoto)
         DaggerMVPComponent
                 .builder()
                 .mVPModule(MVPModule(this, Model(),this))
@@ -214,9 +219,13 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
         }
     }
 
-    override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
+            setResult(Const.SESSION_OUT)
+            finish()
+        }
     }
     fun AppCompatEditText.setLoginResult(drawable:Int = 0){
         if(drawable != 0){

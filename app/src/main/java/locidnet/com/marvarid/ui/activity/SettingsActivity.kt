@@ -295,11 +295,14 @@ class SettingsActivity : BaseActivity() ,Viewer {
         /*ALLOW NOTIFICATION*/
     }
 
-
-    override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode,resultCode,data)
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
+            setResult(Const.SESSION_OUT)
+            finish()
+        }
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         menuInflater.inflate(R.menu.menu_save,menu)

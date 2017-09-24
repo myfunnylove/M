@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -272,5 +273,13 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
 
 
 
+    }
+
+    override fun onViewRecycled(holder: Holder?) {
+//        try{
+//            Glide.with(context).clear(holder!!.itemView)
+//
+//        }catch (e:Exception){}
+        super.onViewRecycled(holder)
     }
 }

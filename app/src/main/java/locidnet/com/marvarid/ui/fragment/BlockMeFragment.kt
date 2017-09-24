@@ -1,16 +1,18 @@
 package locidnet.com.marvarid.ui.fragment
 
-import android.media.Image
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import kotlinx.android.synthetic.main.activity_login_and_password.*
 import locidnet.com.marvarid.R
+import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
-import locidnet.com.marvarid.resources.customviews.CircleImageView
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
@@ -55,17 +57,24 @@ class BlockMeFragment : BaseFragment() {
 
         text.text = Functions.getString(R.string.profil_blocked_me_title)
 
-        val avatar = rootView.findViewById(R.id.avatar) as CircleImageView
+        val avatar = rootView.findViewById(R.id.avatar) as AppCompatImageView
 
-        var photo = "http"
+        var photo = ""
 
         log.d("photo is ${arguments.getString("photo")}")
 
         if (!arguments.getString("photo").isNullOrEmpty())
             photo = arguments.getString("photo")
 
-        Picasso.with(activity).load(Http.BASE_URL + photo).error(R.drawable.account).into(avatar)
 
 
+        Glide.with(this)
+                .load(photo)
+                .apply(RequestOptions()
+                        .circleCrop()
+                        .fallback(ColorDrawable(Color.BLACK))
+                        .error(VectorDrawableCompat.create(resources,R.drawable.account,activity.theme))
+                        .placeholder(ColorDrawable(Color.GRAY)))
+                .into(avatar)
     }
 }

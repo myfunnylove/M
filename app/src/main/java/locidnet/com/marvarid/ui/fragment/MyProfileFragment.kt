@@ -309,7 +309,10 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
             progressLay.visibility    = View.GONE
 
             postView.visibility = View.VISIBLE
-
+            val postUser = PostUser(user.userId,user.userName,if (user.profilPhoto.isNullOrEmpty()) "" else user.profilPhoto)
+            postList.posts.forEach { item ->
+                item.user = postUser
+            }
 
             var photo ="http"
 

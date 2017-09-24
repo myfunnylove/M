@@ -607,9 +607,13 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
     }
 
-    override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         log.d("MainActivity -> OnactivityResult: req:${requestCode} res: ${resultCode} intent: ${if (data != null) true else false}")
-
+        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
+            setResult(Const.SESSION_OUT)
+            finish()
+        }
         when (resultCode) {
             Activity.RESULT_OK -> {
 
@@ -686,13 +690,13 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                     MY_POSTS_STATUS = ONLY_USER_INFO
 
-                        val reqObj = JSONObject()
-                        reqObj.put("user_id", user.userId)
-                        reqObj.put("user", user.userId)
-                        reqObj.put("session", user.session)
+                    val reqObj = JSONObject()
+                    reqObj.put("user_id", user.userId)
+                    reqObj.put("user", user.userId)
+                    reqObj.put("session", user.session)
 
-                        log.d("send data for user info data: ${reqObj}")
-                        presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
+                    log.d("send data for user info data: ${reqObj}")
+                    presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
 
 
                 }
@@ -712,7 +716,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
 
         if (doubleBackToExitPressedOnce) {
-
+            MyPostOffset.startNotif          = 0
+            MyPostOffset.endNotif            = 20
             MyPostOffset.start          = 0
             MyPostOffset.end            = 20
             MyPostOffset.startFeed      = 0
@@ -823,8 +828,12 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             Http.CMDS.SEARCH_USER -> {
 
                 val follow = Gson().fromJson<Follow>(result, Follow::class.java)
+                if(follow.users.size > 0){
+                    searchFragment!!.swapList(follow.users)
 
-                searchFragment!!.swapList(follow.users)
+                }else {
+                    searchFragment!!.failedGetList("empty")
+                }
             }
 
             Http.CMDS.FEED -> {

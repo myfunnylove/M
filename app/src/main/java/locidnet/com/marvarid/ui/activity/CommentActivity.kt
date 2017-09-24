@@ -479,8 +479,6 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
                 .start()
     }
 
-    override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    }
 
     fun View.showKeyboard() {
         this.requestFocus()
@@ -491,6 +489,14 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
     fun View.hideKeyboard() {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
+            setResult(Const.SESSION_OUT)
+            finish()
+        }
     }
 }
 

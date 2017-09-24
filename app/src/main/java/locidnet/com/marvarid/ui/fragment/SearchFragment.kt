@@ -126,7 +126,10 @@ class SearchFragment : BaseFragment(), AdapterClicker{
                         connectActivity!!.donGo(res)
                     }
                 }else{
-                // TODO CLEAR LIST
+                    if(adapter != null){
+                        adapter!!.users.clear()
+                        adapter!!.notifyDataSetChanged()
+                    }
                 }
             }
 
@@ -186,7 +189,8 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
 
             emptyContainer.hide()
-
+            adapter!!.users.clear()
+            adapter!!.notifyDataSetChanged()
             list.visibility = View.VISIBLE
 
 
@@ -245,16 +249,18 @@ class SearchFragment : BaseFragment(), AdapterClicker{
         if (requestCode == Const.FROM_SEARCH_TO_PROFIL){
 
 
-            adapter!!.users.forEach { user ->
+            try{
+                adapter!!.users.forEach { user ->
 
-                if (user.userId == choosedUserId) run {
+                    if (user.userId == choosedUserId) run {
 
                         user.setStatusFactory(chooseUserFstatus)
 
+                    }
+
+
                 }
-
-
-            }
+            }catch (e:Exception){}
 
             adapter!!.notifyDataSetChanged()
             chooseUserFstatus = ""
@@ -308,9 +314,6 @@ class SearchFragment : BaseFragment(), AdapterClicker{
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
     override fun onStart() {
         super.onStart()
         log.d("onresume")

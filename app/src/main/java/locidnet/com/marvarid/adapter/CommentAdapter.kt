@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -17,8 +18,7 @@ import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.Comment
-import locidnet.com.marvarid.resources.customviews.CircleImageView
-import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
@@ -71,10 +71,9 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
 
             val comment = comments.get(i)
 
-            val url = if (!comment.avatar.isNullOrEmpty() && comment.avatar.startsWith("http")) comment.avatar else  Http.BASE_URL+comment.avatar
             Glide.with(ctx)
-                    .load(url)
-                    .error(R.drawable.account)
+                    .load(Functions.checkImageUrl(comment.avatar))
+                    .apply(Functions.getGlideOpts())
                     .into(h.avatar)
 
             h.comment.text  = comment.comment.replace("\\n","\n")
@@ -135,7 +134,7 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
     }
 
     class Holder(view: View) :RecyclerView.ViewHolder(view){
-        val avatar    = view.findViewById(R.id.avatar)    as CircleImageView
+        val avatar    = view.findViewById(R.id.avatar)    as AppCompatImageView
         val username  = view.findViewById(R.id.username)  as TextView
         val container = view.findViewById(R.id.container) as ViewGroup
         val comment   = view.findViewById(R.id.comment)   as TextView
@@ -188,5 +187,11 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
 
     }
 
-
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
+//        try{
+//            Glide.with(ctx).clear(holder!!.itemView)
+//
+//        }catch (e:Exception){}
+        super.onViewRecycled(holder)
+    }
 }

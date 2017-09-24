@@ -3,6 +3,8 @@ package locidnet.com.marvarid.adapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.AppCompatImageButton
@@ -16,9 +18,11 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.nineoldandroids.animation.AnimatorSet
-import com.squareup.picasso.Picasso
+
 import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
@@ -27,16 +31,12 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
-import locidnet.com.marvarid.resources.customviews.CircleImageView
 import locidnet.com.marvarid.resources.customviews.CustomManager
-import locidnet.com.marvarid.resources.customviews.SGTextView
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
-import locidnet.com.marvarid.ui.activity.PlaylistActivity
-import locidnet.com.marvarid.ui.activity.SettingsActivity
 import locidnet.com.marvarid.ui.fragment.*
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
@@ -79,6 +79,8 @@ class MyFeedAdapter(context: Activity,
     var changeId              = -1
     val player                = musicPlayerListener
     var closedProfile         = closedProfil
+
+
     companion object {
 
         val ANIMATED_ITEM_COUNT        = 0
@@ -224,23 +226,14 @@ class MyFeedAdapter(context: Activity,
 
             }
 
-            var photo = ""
-            try {
-                photo = if (post.user.photo.startsWith("http")) post.user.photo else Http.BASE_URL + post.user.photo
-            } catch (e: Exception) {
-                photo = ""
-            }
 
-            if(photo.isNotEmpty()){
-                Picasso.with(ctx)
-                        .load(photo)
-                        .error(VectorDrawableCompat.create(Base.get.resources, R.drawable.account_select,null))
-                        .into(h.avatar)
-            }else{
-                h.avatar.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, R.drawable.account_select,null))
-            }
+        Glide.with(ctx)
+                .load(Functions.checkImageUrl(post.user.photo))
+                .apply(Functions.getGlideOpts())
+                .into(h.avatar)
 
-            if (h.quote.tag == null || h.quote.tag != post.id) {
+
+        if (h.quote.tag == null || h.quote.tag != post.id) {
 
                 h.quote.tag = post.id
 
@@ -527,7 +520,7 @@ class MyFeedAdapter(context: Activity,
 
         var images        by Delegates.notNull<RecyclerView>()
         var audios        by Delegates.notNull<RecyclerView>()
-        var avatar        by Delegates.notNull<CircleImageView>()
+        var avatar        by Delegates.notNull<AppCompatImageView>()
         var name          by Delegates.notNull<TextView>()
         var quote         by Delegates.notNull<TextView>()
         var quoteEdit     by Delegates.notNull<EditText>()
@@ -544,7 +537,7 @@ class MyFeedAdapter(context: Activity,
         init {
             images       = itemView.findViewById(R.id.images)       as RecyclerView
             audios       = itemView.findViewById(R.id.audios)       as RecyclerView
-            avatar       = itemView.findViewById(R.id.avatar)       as CircleImageView
+            avatar       = itemView.findViewById(R.id.avatar)       as AppCompatImageView
             name         = itemView.findViewById(R.id.name)         as TextView
             quote        = itemView.findViewById(R.id.commentText)  as TextView
             quoteEdit    = itemView.findViewById(R.id.commentEditText)  as EditText
@@ -589,6 +582,13 @@ class MyFeedAdapter(context: Activity,
 
     }
 
-
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
+//        try{
+//            Glide.with(ctx).clear(holder!!.itemView)
+//
+//
+//        }catch (e:Exception){}
+        super.onViewRecycled(holder)
+    }
 
 }

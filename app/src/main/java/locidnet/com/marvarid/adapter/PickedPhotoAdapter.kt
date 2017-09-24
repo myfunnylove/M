@@ -2,12 +2,14 @@ package locidnet.com.marvarid.adapter
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -23,6 +25,7 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.resources.customviews.imageuploadmask.ImageUploadMask
 import locidnet.com.marvarid.resources.customviews.imageuploadmask.ShapeMask
 import locidnet.com.marvarid.resources.utils.CustomAnim
+import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.publish.PublishUniversalActivity
 import retrofit2.Call
@@ -100,11 +103,11 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
 
 //        if(h.image.tag == null || h.image.tag == photo.uri){
 
+        Glide.with(context)
+                .load(photo.uri)
+                .apply(RequestOptions().fallback(ColorDrawable(Color.GRAY)))
+                .into(h.image)
 
-            Picasso.with(context)
-                    .load(photo.uri)
-                    .error(R.drawable.image)
-                    .into(h.image)
 //            h.image.tag = photo.uri
 //        }
 
@@ -274,5 +277,15 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
 
 
 
+    }
+
+    override fun onViewRecycled(holder: Holder?) {
+//        try{
+//            Glide.with(context).clear(holder!!.itemView)
+//
+//
+//        }catch (e:Exception){}
+
+        super.onViewRecycled(holder)
     }
 }

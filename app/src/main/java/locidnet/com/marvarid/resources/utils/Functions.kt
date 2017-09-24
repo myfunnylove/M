@@ -6,12 +6,16 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Point
+import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.AppCompatImageView
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -21,9 +25,16 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.Request
+import com.bumptech.glide.request.RequestOptions
+import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.model.Song
 import locidnet.com.marvarid.model.UserInfo
+import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import okhttp3.MediaType
@@ -351,4 +362,32 @@ object Functions {
 
         return result
     }
+
+    @JvmStatic
+    var avatar: Drawable? =null
+
+    @JvmStatic
+    var default: Drawable? =null
+
+    fun checkImageUrl(photo:String?):String? {
+
+        if (photo == null) return null
+
+        if (photo.isNullOrEmpty())  return null
+
+        if (photo.startsWith("http"))
+            return photo
+        else
+            return Http.BASE_URL+photo
+    }
+
+
+    fun getGlideOpts():RequestOptions{
+        return RequestOptions()
+                .circleCrop()
+                .fallback(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
+                .error(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
+                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
+    }
+
 }

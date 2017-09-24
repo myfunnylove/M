@@ -286,6 +286,16 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         try {
             swipeRefreshLayout.isRefreshing = false
 
+            log.d("in body user info $userInfo")
+            val postUser = PostUser(userInfo!!.user.info.user_id,
+
+                                    userInfo!!.user.info.username,
+                                    if (!userInfo!!.user.info.photoOrg.isNullOrEmpty()) userInfo!!.user.info.photoOrg else "")
+            postList.posts.forEach { item ->
+                item.user = postUser
+            }
+
+
             scroll!!.resetState()
             emptyContainer.hide()
 

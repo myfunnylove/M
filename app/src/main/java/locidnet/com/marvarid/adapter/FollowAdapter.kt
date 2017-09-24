@@ -4,8 +4,11 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +17,9 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+
 import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
@@ -23,7 +28,7 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.mvp.Model
-import locidnet.com.marvarid.resources.customviews.CircleImageView
+import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.MainActivity
 import locidnet.com.marvarid.ui.fragment.FFFFragment
@@ -71,16 +76,11 @@ class FollowAdapter(context:Context,
         h.login.typeface = Typeface.createFromAsset(Base.get.context.assets,"font/regular.ttf")
         h.name.visibility = View.GONE
 
-        var photo = ""
-        try{
-            photo = if (user.photo150.startsWith("http")) user.photo150 else Http.BASE_URL+user.photo150
-        }catch (e:Exception){
-            photo = "http"
-        }
 
-        Picasso.with(ctx)
-                .load(photo)
-                .error(VectorDrawableCompat.create(Base.get.resources, R.drawable.account_select,null))
+
+        Glide.with(ctx)
+                .load(Functions.checkImageUrl(user.photo150))
+                .apply(Functions.getGlideOpts())
                 .into(h.img)
 
        if (which == 0 && user.userId != Base.get.prefs.getUser().userId){
@@ -219,14 +219,14 @@ class FollowAdapter(context:Context,
 
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var img by Delegates.notNull<CircleImageView>()
+        var img by Delegates.notNull<AppCompatImageView>()
         var name by Delegates.notNull<TextView>()
         var login by Delegates.notNull<TextView>()
         var follow by Delegates.notNull<Button>()
         var container by Delegates.notNull<ViewGroup>()
 
         init {
-            img = itemView.findViewById(R.id.img) as CircleImageView
+            img = itemView.findViewById(R.id.img) as AppCompatImageView
             name = itemView.findViewById(R.id.name) as TextView
             login = itemView.findViewById(R.id.login) as TextView
             follow = itemView.findViewById(R.id.follow) as Button
@@ -259,5 +259,14 @@ class FollowAdapter(context:Context,
                     }).start()
         }
 
+    }
+
+    override fun onViewRecycled(holder: Holder?) {
+//        try{
+//            Glide.with(ctx).clear(holder!!.itemView)
+//
+//
+//        }catch (e:Exception){}
+        super.onViewRecycled(holder)
     }
 }

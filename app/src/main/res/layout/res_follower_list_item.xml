@@ -13,14 +13,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <locidnet.com.marvarid.resources.customviews.CircleImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/img"
             android:layout_width="46dp"
             android:layout_height="46dp"
             android:layout_gravity="center_horizontal"
-            app:civ_border_color="@color/silver"
-            app:civ_border_width="0.50dp"
-            app:civ_fill_color="@color/white" />
+            android:background="@drawable/image_bg_corner"
+            app:srcCompat="@drawable/account"
+             />
 
         <LinearLayout
             android:layout_width="wrap_content"

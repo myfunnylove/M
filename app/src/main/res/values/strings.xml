@@ -93,4 +93,5 @@
     <string name="unblock">Разблокировать</string>
     <string name="profil_blocked_me_title">Этот аккаунт заблокировал вас</string>
     <string name="refresh">Обновить</string>
+    <string name="ignore">Игнорировать</string>
 </resources>
