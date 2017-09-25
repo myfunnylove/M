@@ -2,8 +2,6 @@ package locidnet.com.marvarid.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
@@ -16,20 +14,16 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.gson.Gson
-
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.model.Push
 import locidnet.com.marvarid.model.PushList
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.mvp.Model
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.Prefs
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.activity.FollowActivity
+import locidnet.com.marvarid.ui.activity.MainActivity
 import locidnet.com.marvarid.ui.activity.UserPostActivity
 import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import org.json.JSONObject
@@ -56,7 +50,8 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
     val model = Model()
     val user = Prefs.Builder().getUser()
-
+    val prettyTime = PrettyTime()
+    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     override fun getItemCount(): Int = list.size
 
     override fun getItemViewType(position: Int): Int = list.get(position).type
@@ -79,8 +74,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
 
         val push = list.get(position)
-        val prettyTime = PrettyTime()
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
         val date2 = formatter.parse(push.time) as Date
 
         when (getItemViewType(position)) {
@@ -200,7 +194,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 val requested = holder as Requested
 
                 Glide.with(ctx)
-                        .load(Functions.checkImageUrl(push.action.actionPhoto))
+                        .load(Functions.checkImageUrl(push.user.userPhoto))
                         .apply(Functions.getGlideOpts())
                         .into(requested.avatar)
 
@@ -234,13 +228,11 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
                 requested.body.text = ctx.resources.getString(R.string.pushRequestBody)
 
-//                requested.time.text = prettyTime.format(date2)
+                requested.time.text = prettyTime.format(date2)
 
                 requested.accept.setText(Functions.getString(R.string.allow))
                 requested.dismiss.setText(Functions.getString(R.string.ignore))
-                val js = JSONObject()
-                js.put("user_id", user.userId )
-                js.put("session", user.session)
+                val js =  JS.get()
                 js.put("user", push.user.userId)
                 requested.accept.setOnClickListener {
                     js.put("type","1")
@@ -292,7 +284,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 val follow = holder as Requested
 
                 Glide.with(ctx)
-                        .load(Functions.checkImageUrl(push.action.actionPhoto))
+                        .load(Functions.checkImageUrl(push.user.userPhoto))
                         .apply(Functions.getGlideOpts())
                         .into(follow.avatar)
 
@@ -324,28 +316,103 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 follow.username.text = push.user.userName
 
                 follow.body.text = ctx.resources.getString(R.string.pushFollowBody)
-//                follow.time.text = prettyTime.format(date2)
+                follow.time.text = prettyTime.format(date2)
 
                 follow.dismiss.visibility = View.GONE
 
                 log.d("push:  ${push}")
                 try{
-                    if (push.actions.requestIt == "1")
+                    if (push.user.actions.requestIt == "1") {
+                        follow.accept.tag = ProfileFragment.REQUEST
                         follow.accept.setText(Functions.getString(R.string.request))
-                    else if(push.actions.followIt == "1")
-                        follow.accept.setText(Functions.getString(R.string.unfollow))
-                    else
-                        follow.accept.setText(Functions.getString(R.string.follow))
+                    }else if(push.user.actions.followIt == "1") {
+                        follow.accept.tag = ProfileFragment.UN_FOLLOW
 
+                        follow.accept.setText(Functions.getString(R.string.unfollow))
+
+                    }else {
+                        follow.accept.tag = ProfileFragment.FOLLOW
+
+                        follow.accept.setText(Functions.getString(R.string.follow))
+                    }
                 }catch (e:Exception){
+                    follow.accept.tag = ProfileFragment.FOLLOW
+
                     follow.accept.setText(Functions.getString(R.string.follow))
                 }
 
 
 
                 follow.accept.setOnClickListener {
+                    val reqObj =  JS.get()
 
 
+                    reqObj.put("user",   push.user.userId)
+                    if (follow.accept.tag == ProfileFragment.FOLLOW){
+                        model.responseCall(Http.getRequestData(reqObj, Http.CMDS.FOLLOW))
+                                .enqueue(object : Callback<ResponseData>{
+                                    override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                        log.d("follow on fail $t")
+                                    }
+
+                                    override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+                                        if (response!!.isSuccessful){
+
+                                            try{
+
+                                                val req = JSONObject(Http.getResponseData(response.body()!!.prms))
+                                                if (req.optString("request") == "1"){
+
+                                                    list.get(position).user.actions.followIt  = "0"
+                                                    list.get(position).user.actions.requestIt = "1"
+                                                    notifyItemChanged(position)
+
+                                                }else if (req.optString("request") == "0"){
+                                                    list.get(position).user.actions.followIt  = "1"
+                                                    list.get(position).user.actions.requestIt = "0"
+                                                    notifyItemChanged(position)
+                                                    MainActivity.MY_POSTS_STATUS = MainActivity.ONLY_USER_INFO
+                                                }
+
+                                            }catch (e : Exception){
+
+                                            }
+
+
+
+                                        }else{
+                                            Toast.makeText(Base.get, Base.get.resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
+
+                                        }
+
+
+                                    }
+
+                                })
+                    }else if (follow.accept.tag == ProfileFragment.REQUEST || follow.accept.tag == ProfileFragment.UN_FOLLOW){
+                        model.responseCall(Http.getRequestData(reqObj, Http.CMDS.UN_FOLLOW))
+                                .enqueue(object : Callback<ResponseData>{
+                                    override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                        log.d("follow on fail $t")
+                                    }
+
+                                    override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+                                        if (response!!.isSuccessful){
+                                            list.get(position).user.actions.followIt  = "0"
+                                            list.get(position).user.actions.requestIt = "0"
+                                            notifyItemChanged(position)
+                                            MainActivity.MY_POSTS_STATUS = MainActivity.ONLY_USER_INFO
+
+                                        }else{
+                                            Toast.makeText(Base.get, Base.get.resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
+
+                                        }
+
+
+                                    }
+
+                                })
+                    }
 
                 }
             }
@@ -382,6 +449,8 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
         val body = view.findViewById(R.id.body) as TextView
         val accept = view.findViewById(R.id.accept) as Button
         val dismiss = view.findViewById(R.id.dismiss) as Button
+        val time = view.findViewById(R.id.time) as TextView
+
     }
 
     class Other(view: View) : RecyclerView.ViewHolder(view) {
@@ -391,6 +460,8 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
         val body = view.findViewById(R.id.body) as TextView
         val accept = view.findViewById(R.id.accept) as Button
         val dismiss = view.findViewById(R.id.dismiss) as Button
+        val time = view.findViewById(R.id.time) as TextView
+
     }
 
     fun swapItems(pushList: PushList) {

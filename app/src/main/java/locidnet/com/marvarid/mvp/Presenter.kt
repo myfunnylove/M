@@ -17,6 +17,8 @@ import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.UserInfo
 import locidnet.com.marvarid.pattern.builder.SessionOut
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.JS
+import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
@@ -30,6 +32,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
 
     val model:Model = modeler
     val context = context
+
     override fun requestAndResponse(data:JSONObject, cmd:String){
 
 
@@ -61,10 +64,8 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                                  user.session = response.optString("session")
                                     Base.get.prefs.setUser(user)
 
-                                 val reqObj = JSONObject()
-                                     reqObj.put("user_id",user.userId)
+                                 val reqObj = JS.get()
                                      reqObj.put("user",   user.userId)
-                                     reqObj.put("session",user.session)
 
 
                                      log.d("http zapros $cmd resultat: $res")
@@ -160,7 +161,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                 .filter { beforeText -> beforeText.text().toString().length >= 6 }
                 .map { filteredText ->
 
-                    val obj = JSONObject()
+                    val obj = JS.get()
                     obj.put("username",filteredText.text().toString())
 
 
@@ -203,7 +204,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
         val user = Base.get.prefs.getUser()
         log.d("upload file ketvotti: ${body.body()!!}")
         val name = RequestBody.create(MediaType.parse("text/plain"),"image/*")
-        Observable.just(model.uploadPhoto(body,name,user.userId,user.session))
+        Observable.just(model.uploadPhoto(body,name))
                 .subscribeOn(Schedulers.io())
                 .flatMap({res -> res})
                 .observeOn(AndroidSchedulers.mainThread())
@@ -221,7 +222,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
         val user = Base.get.prefs.getUser()
         log.d("upload file ketvotti: ${body.body()!!}")
         val name = RequestBody.create(MediaType.parse("text/plain"),"image/*")
-        Observable.just(model.uploadAvatar(body,name,user.userId,user.session,"avatar"))
+        Observable.just(model.uploadAvatar(body,name,"avatar"))
                 .subscribeOn(Schedulers.io())
                 .flatMap({res ->
                     log.d("$res")
@@ -229,10 +230,8 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                 .filter { filt -> filt.res == "0" }
                 .flatMap {
 
-                    val reqObj = JSONObject()
-                    reqObj.put("user_id",user.userId)
+                    val reqObj = JS.get()
                     reqObj.put("user",   user.userId)
-                    reqObj.put("session",user.session)
 
                     model.response(Http.getRequestData(reqObj, Http.CMDS.USER_INFO))
                  }

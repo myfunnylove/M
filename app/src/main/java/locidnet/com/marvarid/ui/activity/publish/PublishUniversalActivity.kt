@@ -100,7 +100,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
 
 
                                 val post = Post(user!!.userId,
-                                        user!!.session,
+
                                         loadedAudioIds,
                                         loadedImagesIds,
                                         quote)

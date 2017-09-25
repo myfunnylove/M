@@ -7,8 +7,7 @@ import com.google.gson.annotations.SerializedName
  */
 
 data class Post(@SerializedName("user_id") var userId:String,
-                @SerializedName("session") var session:String,
-                @SerializedName("audios") var audios:ArrayList<String>,
+                          @SerializedName("audios") var audios:ArrayList<String>,
                 @SerializedName("images") var images:ArrayList<String>,
                 @SerializedName("quote") var quote:Quote)
 

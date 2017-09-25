@@ -4,6 +4,7 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import locidnet.com.marvarid.model.ResponseData
+import locidnet.com.marvarid.resources.utils.Functions
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -11,47 +12,52 @@ interface API {
 
     @POST("index.php")
     @FormUrlEncoded
-    fun request(@Field("data") data:String ) : Observable<ResponseData>
+    fun request(@Header("User-Agent") userAgent: String?, @Header("Authorization") headerIdAndSess: String, @Field("data") data: String): Observable<ResponseData>
 
     @POST("index.php")
     @FormUrlEncoded
-    fun requestCall(@Field("data") data:String ) : Call<ResponseData>
+    fun requestCall(@Header("User-Agent") userAgent: String?, @Header("Authorization") headerIdAndSess: String, @Field("data") data: String): Call<ResponseData>
 
     @Multipart
     @POST("image.php")
-    fun uploadPhoto(@Part file:MultipartBody.Part,
-                    @Part("name") name:RequestBody,
-                    @Query("user") id:String,
-                    @Query("sess") session:String) :Observable<ResponseData>
+    fun uploadPhoto(@Header("User-Agent") userAgent: String?,
+                    @Header("Authorization") headerIdAndSess: String,
+                    @Part file: MultipartBody.Part,
+                    @Part("name") name: RequestBody
+    ): Observable<ResponseData>
 
     @Multipart
     @POST("audio.php")
-    fun uploadAudio(@Part file:MultipartBody.Part,
-                    @Part("name") name:RequestBody,
-                    @Query("user") id:String,
-                    @Query("sess") session:String) :Observable<ResponseData>
-
+    fun uploadAudio(@Header("User-Agent") userAgent: String?,
+                    @Header("Authorization") headerIdAndSess: String,
+                    @Part file: MultipartBody.Part,
+                    @Part("name") name: RequestBody
+    ): Observable<ResponseData>
 
 
     @Multipart
     @POST("image.php")
-    fun uploadPhotoDemo(@Part file:MultipartBody.Part,
-                        @Part("name") name:RequestBody,
-                        @Query("user") id:String,
-                        @Query("sess") session:String) : Call<ResponseData>
+    fun uploadPhotoDemo(
+            @Header("User-Agent") userAgent: String?,
+            @Header("Authorization") headerIdAndSess: String,
+            @Part file: MultipartBody.Part,
+            @Part("name") name: RequestBody): Call<ResponseData>
 
     @Multipart
     @POST("audio.php")
-    fun uploadAudioDemo(@Part file:MultipartBody.Part,
-                        @Part("name") name:RequestBody,
-                        @Query("user") id:String,
-                        @Query("sess") session:String) : Call<ResponseData>
+    fun uploadAudioDemo(
+            @Header("User-Agent") userAgent: String?,
+            @Header("Authorization") headerIdAndSess: String,
+            @Part file: MultipartBody.Part,
+            @Part("name") name: RequestBody
+    ): Call<ResponseData>
 
     @Multipart
     @POST("image.php")
-    fun uploadAvatar(@Part file:MultipartBody.Part,
-                     @Part("name") name:RequestBody,
-                     @Query("user") id:String,
-                     @Query("sess") session:String ,
-                     @Query("profile") profil:String) : Observable<ResponseData>
+    fun uploadAvatar(
+            @Header("User-Agent") userAgent: String?,
+            @Header("Authorization") headerIdAndSess: String,
+            @Part file: MultipartBody.Part,
+            @Part("name") name: RequestBody,
+            @Query("profile") profil: String): Observable<ResponseData>
 }

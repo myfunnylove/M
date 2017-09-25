@@ -104,9 +104,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
 
                             }else{
 
-                                val js = JSONObject()
-                                js.put("user_id",userData.userId)
-                                js.put("session",userData.session)
+                                val js = JS.get()
                                 val phoneStr = "998${Functions.clearEdit(changePhoneDialog!!.phone)}"
                                 js.put("phone",phoneStr)
                                 changePhoneDialog!!.setVisibility(true)
@@ -119,9 +117,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
                     }else{
                         if (changePhoneDialog!!.smsCode.text.toString().trim().length == 6){
 
-                            val js = JSONObject()
-                            js.put("user_id",userData.userId)
-                            js.put("session",userData.session)
+                            val js = JS.get()
                             val phoneStr = "998${Functions.clearEdit(changePhoneDialog!!.phone)}"
                             js.put("phone",phoneStr)
                             js.put("code",changePhoneDialog!!.smsCode.text.toString().trim())
@@ -153,9 +149,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
                         if (!Const.VALID_EMAIL_ADDRESS_REGEX.matcher(changeMailDialog!!.mail.text.toString()).find()){
                             changeMailDialog!!.mail.error = resources.getString(R.string.error_incorrect_mail)
                         }else{
-                            val js = JSONObject()
-                            js.put("user_id",userData.userId)
-                            js.put("session",userData.session)
+                            val js =JS.get()
                             val phoneStr = changeMailDialog!!.mail.text.toString()
                             js.put("mail",phoneStr)
                             changeMailDialog!!.setVisibility(true)
@@ -169,9 +163,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
 
                         if (changeMailDialog!!.smsCode.text.toString().trim().length == 6){
 
-                            val js = JSONObject()
-                            js.put("user_id",userData.userId)
-                            js.put("session",userData.session)
+                            val js = JS.get()
                             js.put("mail",changeMailDialog!!.mail.text.toString())
                             js.put("code",changeMailDialog!!.smsCode.text.toString().trim())
                             changeMailDialog!!.setVisibility(true)
@@ -204,9 +196,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
         /*GENDER*/
         switchCloseAccount.isChecked = if(Base.get.prefs.getUser().close == 1 ) true else false
         switchCloseAccount.setOnCheckedChangeListener{view, isChecked ->
-            val js = JSONObject()
-            js.put("session",Base.get.prefs.getUser().session)
-            js.put("user_id",Base.get.prefs.getUser().userId)
+            val js = JS.get()
             model.responseCall(Http.getRequestData(js, Http.CMDS.CLOSE_PROFIL))
                     .enqueue(object :Callback<ResponseData>{
                         override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
@@ -351,9 +341,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
 
 
     fun send(){
-        val jsObject = JSONObject()
-        jsObject.put("user_id",Base.get.prefs.getUser().userId)
-        jsObject.put("session",Base.get.prefs.getUser().session)
+        val jsObject = JS.get()
         jsObject.put("username",username.text.toString())
         jsObject.put("name",name.text.trim().toString())
         jsObject.put("gender", map.get(gender.selectedItemPosition))

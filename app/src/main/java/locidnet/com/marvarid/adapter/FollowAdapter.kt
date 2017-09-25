@@ -28,7 +28,10 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.pattern.cryptDecorator.AppCrypt
+import locidnet.com.marvarid.pattern.cryptDecorator.B64EncoderCryptDecorator
 import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.MainActivity
 import locidnet.com.marvarid.ui.fragment.FFFFragment
@@ -144,67 +147,86 @@ class FollowAdapter(context:Context,
         h.follow.setOnClickListener {
             MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
 
-            val reqObj = JSONObject()
+            val reqObj =  JS.get()
 
-            reqObj.put("user_id",profile.userId)
-            reqObj.put("session",profile.session)
+//            reqObj.put("user_id",profile.userId)
+//            reqObj.put("session",profile.session)
             reqObj.put("user",   users.get(p1).userId)
 
             log.d("request data $reqObj")
+            if (h.follow.tag == ProfileFragment.FOLLOW){
+                model.responseCall(Http.getRequestData(reqObj, Http.CMDS.FOLLOW))
+                        .enqueue(object : Callback<ResponseData>{
+                            override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                log.d("follow on fail $t")
+                            }
 
-            model.responseCall(Http.getRequestData(reqObj, Http.CMDS.FOLLOW))
-                    .enqueue(object : Callback<ResponseData>{
-                        override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
-                            log.d("follow on fail $t")
-                        }
+                            override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+                                if (response!!.isSuccessful){
 
-                        override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
-                            if (response!!.isSuccessful){
-                                log.d("follow on response $response")
-                                log.d("follow on response ${response.body()!!.res}")
-                                log.d("follow on response ${Http.getResponseData(response.body()!!.prms)}")
-                                log.d("follow on text     ${h.follow.text.toString()}")
+                                        try{
 
-                                if ((h.follow.tag == ProfileFragment.UN_FOLLOW || h.follow.tag == ProfileFragment.REQUEST) && response.body()!!.res == "0"){
+                                            val req = JSONObject(Http.getResponseData(response.body()!!.prms))
+                                            if (req.optString("request") == "1"){
 
-                                    users.get(p1).request = 0
-                                    users.get(p1).follow  = 0
-                                    swapItems(users,p1)
-                                    if (FFFFragment.followersCount != -1) FFFFragment.followersCount--
-                                }else if (h.follow.tag == ProfileFragment.FOLLOW && response.body()!!.res == "0"){
+                                                users.get(p1).follow  = 0
+                                                users.get(p1).request = 1
+                                                swapItems(users,p1)
 
-                                    try{
+                                            }else if (req.optString("request") == "0"){
+                                                users.get(p1).follow  = 1
+                                                users.get(p1).request = 0
+                                                swapItems(users,p1)
+                                                if (FFFFragment.followersCount != -1) FFFFragment.followersCount++
 
-                                        val req = JSONObject(Http.getResponseData(response.body()!!.prms))
-                                        if (req.optString("request") == "1"){
+                                            }
 
-                                            users.get(p1).follow  = 0
-                                            users.get(p1).request = 1
-                                            swapItems(users,p1)
-
-                                        }else if (req.optString("request") == "0"){
-                                            users.get(p1).follow  = 1
-                                            users.get(p1).request = 0
-                                            swapItems(users,p1)
-                                            if (FFFFragment.followersCount != -1) FFFFragment.followersCount++
+                                        }catch (e : Exception){
 
                                         }
 
-                                    }catch (e : Exception){
 
-                                    }
 
+                                }else{
+                                    Toast.makeText(Base.get, Base.get.resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
 
                                 }
-                            }else{
-                                Toast.makeText(Base.get, Base.get.resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
+
 
                             }
 
+                        })
+            }else if (h.follow.tag == ProfileFragment.REQUEST || h.follow.tag == ProfileFragment.UN_FOLLOW){
+                model.responseCall(Http.getRequestData(reqObj, Http.CMDS.UN_FOLLOW))
+                        .enqueue(object : Callback<ResponseData>{
+                            override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                log.d("follow on fail $t")
+                            }
 
-                        }
+                            override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+                                if (response!!.isSuccessful){
+                                    log.d("follow on response $response")
+                                    log.d("follow on response ${response.body()!!.res}")
+                                    log.d("follow on response ${Http.getResponseData(response.body()!!.prms)}")
+                                    log.d("follow on text     ${h.follow.text.toString()}")
 
-                    })
+
+                                        users.get(p1).request = 0
+                                        users.get(p1).follow  = 0
+                                        swapItems(users,p1)
+                                        if (FFFFragment.followersCount != -1) FFFFragment.followersCount--
+
+                                }else{
+                                    Toast.makeText(Base.get, Base.get.resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
+
+                                }
+
+
+                            }
+
+                        })
+            }
+
         }
         h.container.setOnClickListener {
                 clicker.click(p1)

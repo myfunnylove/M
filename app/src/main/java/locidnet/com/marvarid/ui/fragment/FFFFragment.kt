@@ -25,10 +25,7 @@ import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.Prefs
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import kotlin.properties.Delegates
 
@@ -176,7 +173,7 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
     override fun click(position: Int) {
         val user = adapter!!.users.get(position)
         val bundle = Bundle()
-        val js = JSONObject()
+        val js = JS.get()
         log.d("fffFragment $user")
         bundle.putString("username",user.username)
         bundle.putString("photo",   user.photo150)

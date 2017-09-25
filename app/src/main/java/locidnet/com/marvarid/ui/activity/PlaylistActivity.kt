@@ -29,6 +29,7 @@ import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
@@ -148,9 +149,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
             override fun connected() {
                 log.d("connected")
 
-                val js = JSONObject()
-                js.put("user_id", user.userId)
-                js.put("session", user.session)
+                val js =  JS.get()
                 presenter.requestAndResponse(js, Http.CMDS.GET_PLAYLIST)
 
             }

@@ -120,7 +120,7 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
 
                 if (!song.loaded ){
                     h.errorImg.visibility = View.GONE
-                    val call: Call<ResponseData> = Model().uploadAudioDemo(body,name,user.userId,user.session)
+                    val call: Call<ResponseData> = Model().uploadAudioDemo(body,name)
                     call.uploadAudioByUri(p1,song.songPath)
                 }
 
@@ -138,7 +138,7 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
         if (!song.loaded ){
 
                 if(song.onFail == 0){
-                    val call: Call<ResponseData> = Model().uploadAudioDemo(body,name,user.userId,user.session)
+                    val call: Call<ResponseData> = Model().uploadAudioDemo(body,name)
                     call.uploadAudioByUri(p1,song.songPath)
                 }else{
                     h.errorImg.visibility = View.VISIBLE

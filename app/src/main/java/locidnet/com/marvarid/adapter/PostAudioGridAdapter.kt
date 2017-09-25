@@ -17,6 +17,7 @@ import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.Audio
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.activity.MainActivity
@@ -116,10 +117,8 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
 
             }
 
-                val reqObj = JSONObject()
+                val reqObj =  JS.get()
 
-                reqObj.put("user_id",user.userId)
-                reqObj.put("session",user.session)
                 reqObj.put("audio",   audio.audioId)
 
                 model.responseCall(Http.getRequestData(reqObj, Http.CMDS.ADD_SONG_TO_PLAYLIST))

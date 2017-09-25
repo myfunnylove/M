@@ -110,10 +110,8 @@ class FollowActivity : BaseActivity(),
         }
 
         if (intent.getIntExtra(TYPE,-1) == PROFIL_T ){
-            val reqObj = JSONObject()
-            reqObj.put("user_id",user.userId)
+            val reqObj =  JS.get()
             reqObj.put("user",   intent.extras.getString("user_id"))
-            reqObj.put("session",user.session)
 
 
             log.d("send data for user info data: ${reqObj}")
@@ -148,9 +146,7 @@ class FollowActivity : BaseActivity(),
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
 
-        val blockJS = JSONObject()
-        blockJS.put("user_id",user.userId)
-        blockJS.put("session",user.session)
+        val blockJS =  JS.get()
         blockJS.put("user",intent.extras.getString("user_id"))
 
         presenter.requestAndResponse(blockJS,Http.CMDS.BLOCK_USER)
@@ -243,10 +239,8 @@ class FollowActivity : BaseActivity(),
             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                 override fun connected() {
                     log.d("connected")
-                    val obj = JSONObject()
-                    obj.put("user_id",user.userId)
+                    val obj = JS.get()
                     obj.put("user",   userID)
-                    obj.put("session",user.session)
                     obj.put("start",  MainActivity.startFollowing)
                     obj.put("end",    MainActivity.endFollowing)
 
@@ -276,9 +270,7 @@ class FollowActivity : BaseActivity(),
                     errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                         override fun connected() {
                             log.d("connected")
-                            val reqObj = JSONObject()
-                            reqObj.put("user_id", user.userId)
-                            reqObj.put("session", user.session)
+                            val reqObj =JS.get()
                             reqObj.put("user",    userID)
                             reqObj.put("start",   "0")
                             reqObj.put("end",     end)
@@ -297,10 +289,8 @@ class FollowActivity : BaseActivity(),
                 }else{
                     errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                         override fun connected() {
-                            val reqObj = JSONObject()
-                            reqObj.put("user_id",user.userId)
+                            val reqObj = JS.get()
                             reqObj.put("user",   intent.extras.getString("user_id"))
-                            reqObj.put("session",user.session)
 
 
                             log.d("send data for user info data: ${reqObj}")
@@ -325,9 +315,7 @@ class FollowActivity : BaseActivity(),
                 errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                     override fun connected() {
                         log.d("connected")
-                        val reqObj = JSONObject()
-                        reqObj.put("user_id", user.userId)
-                        reqObj.put("session", user.session)
+                        val reqObj =  JS.get()
                         reqObj.put("user",    userID)
                         reqObj.put("start",   data)
                         reqObj.put("end",     end)
@@ -817,9 +805,7 @@ class FollowActivity : BaseActivity(),
             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                 override fun connected() {
                     log.d("connected")
-                    val reqObj = JSONObject()
-                    reqObj.put("user_id",user.userId)
-                    reqObj.put("session",user.session)
+                    val reqObj =  JS.get()
                     reqObj.put("user",   otherUser.info.user_id)
                     reqObj.put("start",  start)
                     reqObj.put("end",    end)

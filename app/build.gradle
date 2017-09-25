@@ -15,7 +15,7 @@ android {
 //
             keyAlias 'microlab'
             keyPassword 'microlab'
-            storeFile file('/Users/macbookpro/AndroidStudioProjects/Marvarid/key/marvarid.jks')
+            storeFile file('marvarid.jks')
             storePassword 'microlab'
 
         }
@@ -98,9 +98,9 @@ dependencies {
     compile 'com.google.dagger:dagger-android:2.11'
     compile 'com.google.dagger:dagger-android-support:2.11'
     compile 'com.squareup.okhttp3:logging-interceptor:3.10.0-SNAPSHOT'
-    compile 'com.google.firebase:firebase-core:10.0.1'
-    compile 'com.google.firebase:firebase-messaging:10.0.1'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile 'com.google.firebase:firebase-core:11.2.0'
+    compile 'com.google.firebase:firebase-messaging:11.2.0'
+    compile 'com.google.firebase:firebase-crash:11.2.0'
     testCompile 'junit:junit:4.12'
     kapt 'com.google.dagger:dagger-compiler:2.11'
     kapt 'com.google.dagger:dagger-android-processor:2.11'
@@ -112,6 +112,7 @@ configurations.all {
         if (requested.group == 'com.android.support') {
             if (!requested.name.startsWith("multidex")) {
                 details.useVersion '25.3.1'
+
             }
         }
     }

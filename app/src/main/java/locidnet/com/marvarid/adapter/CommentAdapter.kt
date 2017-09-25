@@ -19,6 +19,7 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.Comment
 import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
@@ -82,14 +83,13 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
             h.container.setOnClickListener {
 
                 val bundle = Bundle()
-                val js = JSONObject()
+                val js = JS.get()
 
                 bundle.putString("username",comment.username)
                 bundle.putString("photo",   comment.avatar)
                 bundle.putString("user_id",  comment.userId)
                 js.put("username",comment.username)
                 js.put("photo",   comment.avatar)
-                js.put("user_id",  comment.userId)
 
                 log.d("user userid ${comment.userId} my userId ${Prefs.Builder().getUser().userId}")
 

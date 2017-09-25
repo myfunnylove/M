@@ -24,7 +24,6 @@ import locidnet.com.marvarid.adapter.CommentAdapter
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.Comments
 import locidnet.com.marvarid.mvp.Presenter
-import locidnet.com.marvarid.resources.utils.log
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.AbsListView
@@ -40,9 +39,7 @@ import locidnet.com.marvarid.di.modules.PresenterModule
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.Toaster
+import locidnet.com.marvarid.resources.utils.*
 import java.util.*
 import javax.inject.Inject
 
@@ -117,14 +114,12 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                 override fun connected() {
                     /*send data for get comment list*/
-                    val obj = JSONObject()
+                    val obj = JS.get()
                     obj.put("post_id",   postId)
                     obj.put("start",   0)
                     obj.put("end",    end)
                     obj.put("order",  "DESC")
 
-                    obj.put("user_id",user.userId)
-                    obj.put("session",user.session)
                     presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
                 }
 
@@ -217,14 +212,13 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
             override fun connected() {
                 /*send data for get comment list*/
                 start = 0
-                val obj = JSONObject()
+                val obj =  JS.get()
                 obj.put("post_id",   postId)
                 obj.put("start",   start)
                 obj.put("end",    end)
                 obj.put("order",  "DESC")
 
-                obj.put("user_id",user.userId)
-                obj.put("session",user.session)
+
                 presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
             }
 
@@ -265,23 +259,21 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
 
                     if (commentAdapter != null && commentAdapter!!.comments.size > 0){
-                        val obj = JSONObject()
+                        val obj =  JS.get()
                         obj.put("post_id",postId)
                         start = commentAdapter!!.comments.size
                         obj.put("comm",    commentAdapter!!.comments.get(commentAdapter!!.comments.size - 1).commentId)
                         obj.put("order",  "ASC")
-                        obj.put("user_id",user.userId)
-                        obj.put("session",user.session)
+
                         presenter.requestAndResponse(obj, Http.CMDS.GET_LAST_COMMENTS)
                     }else{
-                        val obj = JSONObject()
+                        val obj =  JS.get()
                         obj.put("post_id",postId)
 
                         obj.put("start",  0)
                         obj.put("end",    end)
                         obj.put("order",  "DESC")
-                        obj.put("user_id",user.userId)
-                        obj.put("session",user.session)
+
                         presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
                     }
                 }
@@ -310,14 +302,13 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
                             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                                 override fun connected() {
-                                    val obj = JSONObject()
+                                    val obj =  JS.get()
                                     obj.put("post_id",postId)
                                     start = commentAdapter!!.comments.size
                                     obj.put("start",  start)
                                     obj.put("end",    end)
                                     obj.put("order",  "DESC")
-                                    obj.put("user_id",user.userId)
-                                    obj.put("session",user.session)
+
                                     presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
                                 }
 
@@ -349,14 +340,13 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
                             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                                 override fun connected() {
-                                    val obj = JSONObject()
+                                    val obj =  JS.get()
                                     obj.put("post_id",postId)
                                     start = commentAdapter!!.comments.size
                                     obj.put("start",  start)
                                     obj.put("end",    end)
                                     obj.put("order",  "DESC")
-                                    obj.put("user_id",user.userId)
-                                    obj.put("session",user.session)
+
                                     presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
                                 }
 
@@ -423,12 +413,11 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
     }
 
     fun send(){
-        val obj = JSONObject()
+        val obj =  JS.get()
         obj.put("post_id",postId)
         obj.put("comm",commentText.text.toString())
 
-        obj.put("user_id",user.userId)
-        obj.put("session",user.session)
+
         commentText.text.clear()
         presenter.requestAndResponse(obj, Http.CMDS.WRITE_COMMENT)
     }

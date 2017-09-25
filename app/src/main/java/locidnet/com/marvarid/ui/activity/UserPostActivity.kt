@@ -37,10 +37,7 @@ import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.customviews.CustomManager
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.Prefs
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.fragment.FeedFragment
 import org.json.JSONObject
@@ -155,14 +152,12 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                 override fun connected() {
                     /*send data for get comment list*/
-                    val obj = JSONObject()
+                    val obj = JS.get()
                     obj.put("post_id",   postId)
 //                    obj.put("start",   0)
 //                    obj.put("end", CommentActivity.end)
 //                    obj.put("order",  "DESC")
 //
-                    obj.put("user_id",user.userId)
-                    obj.put("session",user.session)
                     presenter.requestAndResponse(obj, Http.CMDS.GET_FULL_POST)
                 }
 
@@ -363,10 +358,8 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
 
 
 
-               val reqObj = JSONObject()
+               val reqObj = JS.get()
 
-               reqObj.put("user_id", user.userId)
-               reqObj.put("session", user.session)
                reqObj.put("post_id", post.id)
 
                log.d("request data $reqObj")

@@ -27,7 +27,6 @@ class ApiModule {
                 .baseUrl(Http.BASE_URL)
 
                 .client(client)
-
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()

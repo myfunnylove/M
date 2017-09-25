@@ -165,9 +165,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
             override fun connected() {
                 log.d("connected")
-                val reqObj = JSONObject()
-                reqObj.put("user_id" , user.userId)
-                reqObj.put("session", user.session)
+                val reqObj = JS.get()
+
                 reqObj.put("start",   startFeed)
                 reqObj.put("end",     endFeed)
 
@@ -214,10 +213,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                     Const.PROFIL_FR -> {
                         if (MY_POSTS_STATUS != AFTER_UPDATE) {
 
-                            val reqObj = JSONObject()
-                            reqObj.put("user_id", user.userId)
+                            val reqObj = JS.get()
                             reqObj.put("user", user.userId)
-                            reqObj.put("session", user.session)
 
 
                             log.d("send data for user info data: ${reqObj}")
@@ -236,9 +233,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                     Const.NOTIF_FR -> {
                         errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                             override fun connected() {
-                                val reqObj = JSONObject()
-                                reqObj.put("user_id", user.userId)
-                                reqObj.put("session", user.session)
+                                val reqObj = JS.get()
                                 reqObj.put("start",   startNotif)
                                 reqObj.put("end",     endNotif)
 
@@ -272,8 +267,6 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                                 override fun connected() {
                                     val reqObj = JSONObject()
-                                    reqObj.put("user_id", user.userId)
-                                    reqObj.put("session", user.session)
                                     reqObj.put("start",   startFeed)
                                     reqObj.put("end",     endFeed)
 
@@ -371,9 +364,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                 errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                     override fun connected() {
-                        val reqObj = JSONObject()
-                        reqObj.put("user_id", user.userId)
-                        reqObj.put("session", user.session)
+                        val reqObj = JS.get()
                         reqObj.put("start",   startSearch)
                         reqObj.put("end",     endSearch)
                         reqObj.put("user",    data)
@@ -420,9 +411,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                     override fun connected() {
 
 
-                        val reqObj = JSONObject()
-                        reqObj.put("user_id", user.userId)
-                        reqObj.put("session", user.session)
+                        val reqObj = JS.get()
                         reqObj.put("start",   startFeed)
                         reqObj.put("end",     endFeed)
 
@@ -445,9 +434,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                     override fun connected() {
 
 
-                        val reqObj = JSONObject()
-                        reqObj.put("user_id", user.userId)
-                        reqObj.put("session", user.session)
+                        val reqObj =  JS.get()
                         reqObj.put("start",   startNotif)
                         reqObj.put("end",     endNotif)
 
@@ -470,15 +457,11 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                 errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                     override fun connected() {
-                        val reqObj = JSONObject()
-                        reqObj.put("user_id", user.userId)
-                        reqObj.put("session", user.session)
-                        reqObj.put("user",    user.userId)
-                        reqObj.put("start",   start)
-                        reqObj.put("end",     end)
+                        val reqObj = JS.get()
+                        reqObj.put("user", user.userId)
 
-                        MY_POSTS_STATUS = FIRST_TIME
-                        presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
+                        log.d("send data for user info data: ${reqObj}")
+                        presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
 
 
 
@@ -690,10 +673,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                     MY_POSTS_STATUS = ONLY_USER_INFO
 
-                    val reqObj = JSONObject()
-                    reqObj.put("user_id", user.userId)
+                    val reqObj = JS.get()
                     reqObj.put("user", user.userId)
-                    reqObj.put("session", user.session)
 
                     log.d("send data for user info data: ${reqObj}")
                     presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
@@ -768,9 +749,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
 
 
-                            val reqObj = JSONObject()
-                            reqObj.put("user_id", user.userId)
-                            reqObj.put("session", user.session)
+                            val reqObj = JS.get()
                             reqObj.put("user",    user.userId)
                             reqObj.put("start",   start)
                             reqObj.put("end",     end)
@@ -1239,9 +1218,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
             }
 
-            val tokenJs = JSONObject()
-            tokenJs.put("user_id",user.userId)
-            tokenJs.put("session",user.session)
+            val tokenJs = JS.get()
+
             tokenJs.put("token",Prefs.Builder().getTokenId())
             tokenJs.put("device","android")
             tokenJs.put("app","marvarid")

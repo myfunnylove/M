@@ -35,7 +35,6 @@
             android:layout_height="wrap_content"
             style="@style/HeaderText"
             android:textSize="13sp"
-            android:text="Microlab"
             />
         <TextView
             android:id="@+id/body"
@@ -45,7 +44,6 @@
             android:textSize="13sp"
             android:layout_toRightOf="@+id/username"
             android:layout_marginLeft="3dp"
-            android:text="liked your photo"
             android:ellipsize="end"
             android:maxLines="1"
 
@@ -74,7 +72,6 @@
                 android:padding="2dp"
 
                 android:textSize="13sp"
-                android:text="Allow"
                 />
 
             <Button
@@ -86,7 +83,6 @@
                 android:gravity="center"
                 android:textColor="@color/headerTextColor"
                 android:padding="2dp"
-                android:text="dismiss"
                 android:textSize="13sp"
                 android:layout_marginLeft="2dp"
                 />
@@ -100,7 +96,6 @@
         style="@style/NormalText"
         android:textSize="13sp"
         android:textColor="@color/material_grey_400"
-        android:text="1 minut ago"
         android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:maxLines="1"

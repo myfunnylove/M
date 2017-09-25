@@ -254,12 +254,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
 
 
-        var photo ="http"
-        try{
-            photo = if (arguments!!.getString("photo").startsWith("http")) arguments.getString("photo") else Http.BASE_URL+arguments.getString("photo")
-        }catch (e:Exception){
 
-        }
 
 
         val emptyPost = ArrayList<Posts>()

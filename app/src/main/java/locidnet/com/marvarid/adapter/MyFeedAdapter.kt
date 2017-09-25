@@ -31,9 +31,12 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.pattern.cryptDecorator.AppCrypt
+import locidnet.com.marvarid.pattern.cryptDecorator.B64EncoderCryptDecorator
 import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
@@ -184,12 +187,13 @@ class MyFeedAdapter(context: Activity,
                     val quote:Quote = post.quote
                     quote.text = h.quoteEdit.text.toString()
 
-                    val js = JSONObject()
+                    val js =  JS.get()
                     js.put("post_id",post.id)
                     js.put("quote", JSONObject(Gson().toJson(quote)))
-                    js.put("user_id", profile.userId )
-                    js.put("session", profile.session)
+//                    js.put("user_id", profile.userId )
+//                    js.put("session", profile.session)
                     log.d ("changequote send data $js")
+
                     model.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
                             .enqueue(object : Callback<ResponseData>{
                                 override fun onResponse(p0: Call<ResponseData>?, response: Response<ResponseData>?) {
@@ -404,10 +408,8 @@ class MyFeedAdapter(context: Activity,
 
 
 
-                    val reqObj = JSONObject()
+                    val reqObj = JS.get()
 
-                    reqObj.put("user_id", profile.userId)
-                    reqObj.put("session", profile.session)
                     reqObj.put("post_id", post.id)
 
                     log.d("request data $reqObj")

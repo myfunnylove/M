@@ -35,6 +35,7 @@ import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.customviews.SGTextView
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
@@ -205,11 +206,9 @@ class ProfileFeedAdapter(context: Activity,
                     val quote:Quote = post.quote
                     quote.text = h.quoteEdit.text.toString()
 
-                    val js = JSONObject()
+                    val js =  JS.get()
                     js.put("post_id",post.id)
                     js.put("quote", JSONObject(Gson().toJson(quote)))
-                    js.put("user_id", myProfil.userId )
-                    js.put("session", myProfil.session)
                     log.d ("changequote send data $js")
                     model.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
                             .enqueue(object : Callback<ResponseData>{
@@ -425,8 +424,6 @@ class ProfileFeedAdapter(context: Activity,
 
                     val reqObj = JSONObject()
 
-                    reqObj.put("user_id", myProfil.userId)
-                    reqObj.put("session", myProfil.session)
                     reqObj.put("post_id", post.id)
 
                     log.d("request data $reqObj")
@@ -514,8 +511,6 @@ class ProfileFeedAdapter(context: Activity,
 
                                 val reqObj = JSONObject()
 
-                                reqObj.put("user_id", myProfil.userId)
-                                reqObj.put("session", myProfil.session)
                                 reqObj.put("post_id", post.id)
 
                                 log.d("request data for delete post $reqObj")
@@ -643,19 +638,17 @@ class ProfileFeedAdapter(context: Activity,
 
             h.follow.setOnClickListener {
 
-                MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
-                if(h.follow.tag != ProfileFragment.SETTINGS){
-                    log.d("follow button type ${h.follow.tag}")
+                log.d("follow button type ${h.follow.tag}")
 
+                if (h.follow.tag == ProfileFragment.SETTINGS){
+                    val goSettingActivity = Intent(ctx, SettingsActivity::class.java)
 
+                    ctx.startActivityForResult(goSettingActivity,Const.FROM_MAIN_ACTIVITY)
+                }else if(h.follow.tag == ProfileFragment.FOLLOW){
 
-                    val reqObj = JSONObject()
+                    val reqObj =  JS.get()
 
-                    reqObj.put("user_id",user.userId)
-                    reqObj.put("session",user.session)
                     reqObj.put("user",   userInfo!!.user.info.user_id)
-
-                    log.d("request data $reqObj")
 
                     model.responseCall(Http.getRequestData(reqObj, Http.CMDS.FOLLOW))
                             .enqueue(object : retrofit2.Callback<ResponseData> {
@@ -665,76 +658,45 @@ class ProfileFeedAdapter(context: Activity,
 
                                 override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
                                     if (response!!.isSuccessful){
-                                        log.d("follow on response $response")
-                                        log.d("follow on response ${response.body()!!.res}")
-                                        log.d("follow on response ${Http.getResponseData(response.body()!!.prms)}")
-                                        log.d("follow on response ${userInfo!!.user}")
 
-                                        log.d("follow on response ${h.follow.tag}")
                                         FFFFragment.OZGARGAN_USERNI_IDSI = userInfo!!.user.info.user_id.toInt()
 
+                                        try{
 
-                                        if ((FOLLOW_TYPE == ProfileFragment.UN_FOLLOW || FOLLOW_TYPE == ProfileFragment.REQUEST) && response.body()!!.res == "0"){
-
-                                            /*
-                                            *
-                                            * 12.09.2017
-                                            * Searchdan user follow statusini o'zgartirish
-                                            *
-                                            *
-                                            * */
-
-                                            if(SearchFragment.choosedUserId.isNotEmpty()){
-                                                SearchFragment.choosedUserId = userInfo!!.user.info.user_id
-                                                SearchFragment.chooseUserFstatus = ProfileFragment.FOLLOW
-                                            }
-
-                                            if (h.follow.tag != ProfileFragment.REQUEST) userInfo!!.user.count.followersCount = "${h.followers.text.toString().toInt() -  1}"
-                                            FOLLOW_TYPE    = ProfileFragment.FOLLOW
-                                            FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.FOLLOW
-                                            ProfileFragment.FOLLOW_TYPE       = ProfileFragment.FOLLOW
+                                            val req = JSONObject(Http.getResponseData(response.body()!!.prms))
+                                            if (req.optString("request") == "1"){
 
 
-                                            notifyItemChanged(0)
-                                        }else if (FOLLOW_TYPE == ProfileFragment.FOLLOW && response.body()!!.res == "0"){
-
-                                            try{
-
-                                                val req = JSONObject(Http.getResponseData(response.body()!!.prms))
-                                                if (req.optString("request") == "1"){
-
-
-                                                    FOLLOW_TYPE= ProfileFragment.REQUEST
-                                                    FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.REQUEST
-                                                    ProfileFragment.FOLLOW_TYPE       = ProfileFragment.REQUEST
-                                                    if(SearchFragment.choosedUserId.isNotEmpty()){
-                                                        SearchFragment.choosedUserId = userInfo!!.user.info.user_id
-                                                        SearchFragment.chooseUserFstatus = ProfileFragment.REQUEST
-                                                    }
-
-
-                                                }else if (req.optString("request") == "0"){
-
-                                                    FOLLOW_TYPE  = ProfileFragment.UN_FOLLOW
-
-                                                    userInfo!!.user.count.followersCount = "${h.followers.text.toString().toInt() +  1}"
-                                                    FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.UN_FOLLOW
-                                                    ProfileFragment.FOLLOW_TYPE       = ProfileFragment.UN_FOLLOW
-
-
-                                                    if(SearchFragment.choosedUserId.isNotEmpty()){
-                                                        SearchFragment.choosedUserId = userInfo!!.user.info.user_id
-                                                        SearchFragment.chooseUserFstatus = ProfileFragment.UN_FOLLOW
-                                                    }
+                                                FOLLOW_TYPE= ProfileFragment.REQUEST
+                                                FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.REQUEST
+                                                ProfileFragment.FOLLOW_TYPE       = ProfileFragment.REQUEST
+                                                if(SearchFragment.choosedUserId.isNotEmpty()){
+                                                    SearchFragment.choosedUserId = userInfo!!.user.info.user_id
+                                                    SearchFragment.chooseUserFstatus = ProfileFragment.REQUEST
                                                 }
-                                                notifyItemChanged(0)
 
-                                            }catch (e : Exception){
 
+                                            }else if (req.optString("request") == "0"){
+
+                                                FOLLOW_TYPE  = ProfileFragment.UN_FOLLOW
+
+                                                userInfo!!.user.count.followersCount = "${h.followers.text.toString().toInt() +  1}"
+                                                FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.UN_FOLLOW
+                                                ProfileFragment.FOLLOW_TYPE       = ProfileFragment.UN_FOLLOW
+
+
+                                                if(SearchFragment.choosedUserId.isNotEmpty()){
+                                                    SearchFragment.choosedUserId = userInfo!!.user.info.user_id
+                                                    SearchFragment.chooseUserFstatus = ProfileFragment.UN_FOLLOW
+                                                }
                                             }
+                                            notifyItemChanged(0)
 
+                                        }catch (e : Exception){
 
                                         }
+
+
 
                                         MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
                                     }else{
@@ -747,12 +709,53 @@ class ProfileFeedAdapter(context: Activity,
                                 }
 
                             })
-                }else{
+                }else if (h.follow.tag == ProfileFragment.UN_FOLLOW || h.follow.tag == ProfileFragment.REQUEST){
 
-                    val goSettingActivity = Intent(ctx, SettingsActivity::class.java)
+                    val reqObj =  JS.get()
 
-                    ctx.startActivityForResult(goSettingActivity,Const.FROM_MAIN_ACTIVITY)
+                    reqObj.put("user",   userInfo!!.user.info.user_id)
+                    model.responseCall(Http.getRequestData(reqObj, Http.CMDS.UN_FOLLOW))
+                            .enqueue(object : retrofit2.Callback<ResponseData> {
+                                override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                    log.d("follow on fail $t")
+                                }
+
+                                override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+                                    if (response!!.isSuccessful) {
+
+                                        FFFFragment.OZGARGAN_USERNI_IDSI = userInfo!!.user.info.user_id.toInt()
+
+
+
+                                        if ((FOLLOW_TYPE == ProfileFragment.UN_FOLLOW || FOLLOW_TYPE == ProfileFragment.REQUEST) && response.body()!!.res == "0") {
+
+
+                                            if (SearchFragment.choosedUserId.isNotEmpty()) {
+                                                SearchFragment.choosedUserId = userInfo!!.user.info.user_id
+                                                SearchFragment.chooseUserFstatus = ProfileFragment.FOLLOW
+                                            }
+
+                                            if (h.follow.tag != ProfileFragment.REQUEST) userInfo!!.user.count.followersCount = "${h.followers.text.toString().toInt() - 1}"
+                                            FOLLOW_TYPE = ProfileFragment.FOLLOW
+                                            FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.FOLLOW
+                                            ProfileFragment.FOLLOW_TYPE = ProfileFragment.FOLLOW
+
+
+                                            notifyItemChanged(0)
+
+                                        }
+
+                                        MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
+                                    }
+
+
+                                }
+
+                            })
                 }
+
+
+
             }
         }
     }

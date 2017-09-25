@@ -40,6 +40,7 @@ object Http {
         val MY_POSTS                   = "10"
         val CHANGE_AVATAR              = "00"
         val FOLLOW                     = "13"
+        val UN_FOLLOW                  = "20"
         val USER_INFO                  = "15"
         val SEARCH_USER                = "17"
         val LIKE_BOSISH                = "11"

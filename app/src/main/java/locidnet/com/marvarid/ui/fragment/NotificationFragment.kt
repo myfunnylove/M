@@ -161,6 +161,9 @@ class NotificationFragment(): BaseFragment(){
 
     fun onFail(error:String){
         progressLay.visibility = View.GONE
+        list!!.adapter = null
+        list!!.visibility = View.GONE
+        swipeRefreshLayout!!.isRefreshing = false
         emptyContainer!!.show()
     }
 
