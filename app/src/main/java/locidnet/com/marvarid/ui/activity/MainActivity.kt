@@ -266,7 +266,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                                 override fun connected() {
-                                    val reqObj = JSONObject()
+                                    val reqObj = JS.get()
                                     reqObj.put("start",   startFeed)
                                     reqObj.put("end",     endFeed)
 
