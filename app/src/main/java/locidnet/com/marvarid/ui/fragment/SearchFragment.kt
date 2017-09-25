@@ -107,7 +107,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
         list.setHasFixedSize(true)
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-        val drawableCompat = VectorDrawableCompat.create(activity.resources,R.drawable.search,search.context.theme)
+        val drawableCompat = VectorDrawableCompat.create(activity.resources,R.drawable.search_select,search.context.theme)
         search.setCompoundDrawablesWithIntrinsicBounds(drawableCompat,null,null,null)
 //        }else{
 

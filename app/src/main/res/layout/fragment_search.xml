@@ -20,7 +20,7 @@
             android:id="@+id/search"
             style="@style/NormalText"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:background="@color/white"
             android:maxLength="20"
             android:maxLines="1"

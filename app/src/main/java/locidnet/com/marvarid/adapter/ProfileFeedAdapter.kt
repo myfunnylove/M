@@ -422,7 +422,7 @@ class ProfileFeedAdapter(context: Activity,
 
 
 
-                    val reqObj = JSONObject()
+                    val reqObj = JS.get()
 
                     reqObj.put("post_id", post.id)
 
@@ -509,7 +509,7 @@ class ProfileFeedAdapter(context: Activity,
                         when(item.itemId){
                             R.id.delete ->{
 
-                                val reqObj = JSONObject()
+                                val reqObj = JS.get()
 
                                 reqObj.put("post_id", post.id)
 
@@ -730,6 +730,7 @@ class ProfileFeedAdapter(context: Activity,
                                         if ((FOLLOW_TYPE == ProfileFragment.UN_FOLLOW || FOLLOW_TYPE == ProfileFragment.REQUEST) && response.body()!!.res == "0") {
 
 
+
                                             if (SearchFragment.choosedUserId.isNotEmpty()) {
                                                 SearchFragment.choosedUserId = userInfo!!.user.info.user_id
                                                 SearchFragment.chooseUserFstatus = ProfileFragment.FOLLOW
@@ -740,8 +741,14 @@ class ProfileFeedAdapter(context: Activity,
                                             FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.FOLLOW
                                             ProfileFragment.FOLLOW_TYPE = ProfileFragment.FOLLOW
 
+                                            if (userInfo!!.user.info.close == 1){
+                                                closedProfile = true
+                                                val post = feeds.posts.get(0)
+                                                feeds.posts.clear()
+                                                feeds.posts.add(post)
+                                                notifyDataSetChanged()
+                                            }
 
-                                            notifyItemChanged(0)
 
                                         }
 
