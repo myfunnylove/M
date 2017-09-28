@@ -43,7 +43,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     val model                         = Model()
     var manager: LinearLayoutManager?  = null
     var expanded                      = false
-
+    var initBody                      = false
     lateinit var emptyContainer:EmptyContainer
     var scroll: EndlessRecyclerViewScrollListener? = null
     lateinit var userInfo:UserInfo
@@ -287,10 +287,14 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
         val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
 
-        postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,isClose)
-        postView.visibility = View.VISIBLE
-        postView.adapter = postAdapter
-        swipeRefreshLayout.isEnabled = false
+       if (postAdapter == null){
+           postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,isClose)
+           postView.visibility = View.VISIBLE
+           postView.adapter = postAdapter
+       }else{
+           postAdapter!!.updateFirstItem(userInfo)
+       }
+//        swipeRefreshLayout.isEnabled = false
         swipeRefreshLayout.isRefreshing = false
     }
 
@@ -301,6 +305,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
 
         try {
+            initBody = true
+
             swipeRefreshLayout.isRefreshing = false
 
             scroll!!.resetState()

@@ -84,7 +84,7 @@
     <string name="allow_notification">Allow notification</string>
     <string name="forgot_passsword">Forgot password?</string>
     <string name="or">or</string>
-    <string name="quitTitle">Are you want to quit?</string>
+    <string name="quitTitle">Do you want to exit the application?</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="wait">Wait</string>
@@ -92,8 +92,15 @@
     <string name="blockUser">Block</string>
     <string name="unblock">UnBlock</string>
     <string name="profil_blocked_me_title">This account blocked you</string>
-    <string name="refresh">Обновить</string>
-    <string name="ignore">Игнорировать</string>
-    <string name="error_empty_post">Пост не найден</string>
+    <string name="refresh">Refresh</string>
+    <string name="ignore">Ignore</string>
+    <string name="error_empty_post">Post not found</string>
+    <string name="username_error">Invalid username</string>
+    <string name="oldPassword">Enter old password</string>
+    <string name="newPassword">Enter new password</string>
+    <string name="newPasswordAgain">Repeat new password</string>
+    <string name="password_doesnot_match">Passwords don\'t match</string>
+    <string name="changed">Changed</string>
+    <string name="quitPostPublish">Пост еще не загружено, хотите выйти?</string>
 
 </resources>

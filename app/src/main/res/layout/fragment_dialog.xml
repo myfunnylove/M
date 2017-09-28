@@ -1,47 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_style_bg"
-    android:padding="6dp"
-    >
+    android:orientation="vertical"
+    android:padding="6dp">
+
     <TextView
-        android:id="@+id/title"
+        style="@style/HeaderText"
+        android:textSize="14sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/NormalText"
 
         android:gravity="center_horizontal"
         android:padding="16dp"
-        android:text="@string/quitTitle"
-        />
+        android:text="@string/quit" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/NormalText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:text="@string/quitTitle" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/no"
+            style="@style/HeaderText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/gray_when_select"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:background="@drawable/gray_when_select"
-            style="@style/HeaderText"
-            android:text="@string/no"
-            />
+            android:text="@string/no" />
+
         <Button
             android:id="@+id/yes"
+            style="@style/HeaderText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/gray_when_select"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:background="@drawable/gray_when_select"
-            style="@style/HeaderText"
-            android:text="@string/yes"
-            />
+            android:text="@string/yes" />
 
     </LinearLayout>
 </LinearLayout>

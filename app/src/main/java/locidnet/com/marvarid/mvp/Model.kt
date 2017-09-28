@@ -27,9 +27,9 @@ class Model {
     fun uploadAudio(body:MultipartBody.Part,name:RequestBody) : Observable<ResponseData> = Base.get.APIClient.uploadAudio(Functions.getDeviceName()!!,idAndSess,body,name)
 
 
-    fun uploadPhotoDemo(body:MultipartBody.Part,name:RequestBody) : Call<ResponseData> = Base.get.APIClient.uploadPhotoDemo(Functions.getDeviceName()!!,idAndSess,body,name)
-    fun uploadAudioDemo(body:MultipartBody.Part,name:RequestBody) : Call<ResponseData> = Base.get.APIClient.uploadAudioDemo(Functions.getDeviceName()!!,idAndSess,body,name)
-    fun uploadAvatar(body:MultipartBody.Part,name:RequestBody,profile:String) : Observable<ResponseData> = Base.get.APIClient.uploadAvatar(Functions.getDeviceName()!!,idAndSess,body,name,profile)
+    fun uploadPhotoDemo(body:MultipartBody.Part,name:RequestBody,userId:String,session:String) : Call<ResponseData> = Base.get.APIClient.uploadPhotoDemo(Functions.getDeviceName()!!,idAndSess,body,name,userId,session)
+    fun uploadAudioDemo(body:MultipartBody.Part,name:RequestBody,userId:String,session:String) : Call<ResponseData> = Base.get.APIClient.uploadAudioDemo(Functions.getDeviceName()!!,idAndSess,body,name,userId,session)
+    fun uploadAvatar(body:MultipartBody.Part,name:RequestBody,profile:String,userId:String,session:String) : Observable<ResponseData> = Base.get.APIClient.uploadAvatar(Functions.getDeviceName()!!,idAndSess,body,name,profile,userId,session)
 
 
 

@@ -63,6 +63,7 @@ object Const {
     val REFRESH_NOTIFICATION         = 20
     val PUSH_LIST                    = 21
     val TO_FAIL                      = -1;
+    val QUIT: Int                    = 22
 
 
 

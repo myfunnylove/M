@@ -37,7 +37,7 @@ import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
-import locidnet.com.marvarid.ui.fragment.YesNoFragment
+import locidnet.com.marvarid.ui.activity.dialogs.YesNoFragment
 import me.iwf.photopicker.PhotoPicker
 import org.json.JSONObject
 import java.io.File
@@ -58,7 +58,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
     @Inject
     lateinit var errorConn: ErrorConnection
 
-    lateinit var quitDialog:YesNoFragment
+    lateinit var quitDialog: YesNoFragment
 
     var visibly       = false
     var TEXT_SIZE     = 16f
@@ -100,7 +100,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
 
 
                                 val post = Post(user!!.userId,
-
+                                        user!!.session,
                                         loadedAudioIds,
                                         loadedImagesIds,
                                         quote)
@@ -160,9 +160,9 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
                 .inject(this)
 
         quitDialog = YesNoFragment.instance(
-                DialogFragmentModel(Functions.getString(R.string.quitTitle),
-                        Functions.getString(R.string.quit),
-                        Functions.getString(R.string.wait))
+                DialogFragmentModel(Functions.getString(R.string.quitPostPublish),
+                        Functions.getString(R.string.yes),
+                        Functions.getString(R.string.no))
         )
 
         quitDialog.setDialogClickListener(object : YesNoFragment.DialogClickListener{
@@ -295,7 +295,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
         if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
             setResult(Const.SESSION_OUT)
             finish()
-        }
+        }else
         if (resultCode == Activity.RESULT_OK ){
             log.d("Rasm olishdan resultat keldi: ")
             var photos: List<String>? = null
@@ -465,7 +465,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
             super.onBackPressed()
 
         }else{
-            quitDialog.show(supportFragmentManager,YesNoFragment.TAG)
+            quitDialog.show(supportFragmentManager, YesNoFragment.TAG)
 
 
 

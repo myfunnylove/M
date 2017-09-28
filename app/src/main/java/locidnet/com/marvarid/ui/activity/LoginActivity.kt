@@ -126,8 +126,7 @@ class LoginActivity : BaseActivity(), Viewer {
         if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
             setResult(Const.SESSION_OUT)
             finish()
-        }
-        if (requestCode == VKONTAKTE) { /* INTEGRATE VIA VKONTAKTE */
+        }else if  (requestCode == VKONTAKTE) { /* INTEGRATE VIA VKONTAKTE */
 
             if (!signBridge.getResult(requestCode,resultCode,data)) {
                 super.onActivityResult(requestCode, resultCode, data)

@@ -778,6 +778,14 @@ class ProfileFeedAdapter(context: Activity,
         feeds.posts.add(0,postList.posts.get(0))
         notifyDataSetChanged()
     }
+
+    fun updateFirstItem(userInfo: UserInfo?){
+        fun swapFirstItem(userInfo: UserInfo?){
+            disableAnimation = false
+            this.userInfo = userInfo
+            notifyItemChanged(0)
+        }
+    }
     fun swapLast20Item(postList: PostList){
         log.d("in profilefeed $postList")
         disableAnimation = false

@@ -24,6 +24,17 @@ public class Toaster {
         toast.setGravity(Gravity.CENTER,0,0);
         toast.show();
     }
+
+    public static void errror(int errorText){
+        Toast toast = Toast.makeText(Base.Companion.getGet(),Base.Companion.getGet().getResources().getString(errorText),Toast.LENGTH_SHORT);
+        toast.setView(View.inflate(Base.Companion.getGet(),R.layout.res_custom_toast_error,null));
+
+        TextView textView = (TextView) toast.getView().findViewById(R.id.txtMessage);
+        textView.setText(errorText);
+        textView.setCompoundDrawablesWithIntrinsicBounds(Base.Companion.getGet().getResources().getDrawable(R.drawable.close_),null,null,null);
+        toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
+    }
     public static void info(String errorText){
         Toast toast = Toast.makeText(Base.Companion.getGet(),errorText,Toast.LENGTH_SHORT);
         toast.setView(View.inflate(Base.Companion.getGet(),R.layout.res_custom_toast_error,null));

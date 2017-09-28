@@ -1,4 +1,4 @@
-package locidnet.com.marvarid.ui.fragment
+package locidnet.com.marvarid.ui.activity.dialogs
 
 import android.app.Dialog
 import android.graphics.Color
@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
 import android.widget.TextView
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.model.DialogFragmentModel
@@ -19,14 +18,14 @@ import locidnet.com.marvarid.model.DialogFragmentModel
  */
 class YesNoFragment : DialogFragment() {
 
-    var listener:DialogClickListener? = null
+    var listener: DialogClickListener? = null
 
     companion object {
-        var mInstance:YesNoFragment? = null
+        var mInstance: YesNoFragment? = null
         val NO = 1
         val YES = 2
         val TAG = "yesnofragment"
-        fun instance(dialogFragmentModel: DialogFragmentModel) : YesNoFragment{
+        fun instance(dialogFragmentModel: DialogFragmentModel) : YesNoFragment {
 
             if (mInstance == null) mInstance = YesNoFragment()
 

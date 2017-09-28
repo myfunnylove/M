@@ -7,9 +7,6 @@ import locidnet.com.marvarid.resources.utils.Const;
 import locidnet.com.marvarid.resources.utils.Prefs;
 import locidnet.com.marvarid.ui.activity.LoginActivity;
 
-/**
- * Created by Sarvar on 28.08.2017.
- */
 
 public class SessionOut {
 

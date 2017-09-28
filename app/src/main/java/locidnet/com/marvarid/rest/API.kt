@@ -1,5 +1,6 @@
 package locidnet.com.marvarid.rest
 
+import com.google.gson.annotations.SerializedName
 import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -41,7 +42,9 @@ interface API {
             @Header("User-Agent") userAgent: String?,
             @Header("Authorization") headerIdAndSess: String,
             @Part file: MultipartBody.Part,
-            @Part("name") name: RequestBody): Call<ResponseData>
+            @Part("name") name: RequestBody,
+            @Query("user_id") userId :String,
+            @Query("session") session :String): Call<ResponseData>
 
     @Multipart
     @POST("audio.php")
@@ -49,8 +52,9 @@ interface API {
             @Header("User-Agent") userAgent: String?,
             @Header("Authorization") headerIdAndSess: String,
             @Part file: MultipartBody.Part,
-            @Part("name") name: RequestBody
-    ): Call<ResponseData>
+            @Part("name") name: RequestBody,
+            @Query("user_id") userId :String,
+            @Query("session") session :String): Call<ResponseData>
 
     @Multipart
     @POST("image.php")
@@ -59,5 +63,7 @@ interface API {
             @Header("Authorization") headerIdAndSess: String,
             @Part file: MultipartBody.Part,
             @Part("name") name: RequestBody,
-            @Query("profile") profil: String): Observable<ResponseData>
+            @Query("profile") profil: String,
+            @Query("user_id") userId :String,
+            @Query("session") session :String): Observable<ResponseData>
 }

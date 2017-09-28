@@ -121,7 +121,7 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
 
             if (!photo.loaded ){
                 h.errorImg.visibility = View.GONE
-                val call: Call<ResponseData> = Model().uploadPhotoDemo(body,name)
+                val call: Call<ResponseData> = Model().uploadPhotoDemo(body,name,user.userId,user.session)
                 call.uploadAudioByUri(p1,photo.uri.path)
             }
 
@@ -139,7 +139,7 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
         if (!photo.loaded ){
 
             if(photo.onFail == 0){
-                val call: Call<ResponseData> = Model().uploadPhotoDemo(body,name)
+                val call: Call<ResponseData> = Model().uploadPhotoDemo(body,name,user.userId,user.session)
                 call.uploadAudioByUri(p1,photo.uri.path)
             }else{
                 h.errorImg.visibility = View.VISIBLE

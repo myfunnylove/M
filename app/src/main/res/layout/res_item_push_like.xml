@@ -1,72 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
     android:layout_marginTop="1dp"
+    android:background="@color/white"
     android:orientation="horizontal"
     android:paddingBottom="8dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
     android:paddingTop="8dp"
 
     >
+
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/avatar"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:srcCompat="@drawable/account"
-        />
+        app:srcCompat="@drawable/account" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        >
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/time"
+            style="@style/NormalText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/material_grey_400"
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/username"
+            style="@style/HeaderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/HeaderText"
             android:textSize="13sp"
+            android:layout_below="@+id/time"
             />
+
         <TextView
             android:id="@+id/body"
+            style="@style/NormalText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/NormalText"
-            android:textSize="13sp"
-            android:layout_toRightOf="@+id/username"
             android:layout_marginLeft="3dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:textSize="13sp"
+            android:layout_toRightOf="@+id/username"
+            android:layout_below="@+id/time"
 
             />
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/actionPhoto"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="2dp"
-            app:srcCompat="@drawable/image"
-            android:layout_below="@+id/username"
-            android:layout_alignParentLeft="true"
-            />
+
+
     </RelativeLayout>
 
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/actionPhoto"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="2dp"
+        app:srcCompat="@drawable/image" />
 
-       <TextView
-           android:id="@+id/time"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           style="@style/NormalText"
-           android:textSize="13sp"
-           android:textColor="@color/material_grey_400"
-           android:ellipsize="end"
-           android:maxLines="1"
-           />
 </LinearLayout>

@@ -84,6 +84,7 @@
                     android:focusableInTouchMode="true"
                     android:maxLines="1"
                     android:inputType="text"
+                    android:maxLength="60"
                     android:textColor="@color/headerTextColor"
                     android:theme="@style/MyEditText"
                     android:textSize="14sp"
@@ -122,6 +123,7 @@
                     android:textColor="@color/headerTextColor"
                     android:theme="@style/MyEditText"
                     android:textSize="14sp"
+                    android:maxLength="20"
 
                     />
 

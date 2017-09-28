@@ -84,7 +84,7 @@
     <string name="allow_notification">Разрешить уведомление</string>
     <string name="forgot_passsword">Забыли пароль?</string>
     <string name="or">или</string>
-    <string name="quitTitle">Вы хотите выйти?</string>
+    <string name="quitTitle">Вы хотите выйти из приложении?</string>
     <string name="no">Нет</string>
     <string name="yes">Да</string>
     <string name="wait">Подождать</string>
@@ -95,4 +95,11 @@
     <string name="refresh">Обновить</string>
     <string name="ignore">Игнорировать</string>
     <string name="error_empty_post">Пост не найден</string>
+    <string name="username_error">Неправильный логин</string>
+    <string name="oldPassword">Введите старый пароль</string>
+    <string name="newPassword">Введите новый пароль</string>
+    <string name="newPasswordAgain">Повторите новый пароль</string>
+    <string name="password_doesnot_match">Пароли не совпадают</string>
+    <string name="changed">Изменено</string>
+    <string name="quitPostPublish">Пост еще не загружено, хотите выйти?</string>
 </resources>

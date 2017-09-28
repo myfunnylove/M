@@ -2,7 +2,8 @@ package locidnet.com.marvarid.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
+import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v7.widget.AppCompatEditText
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -30,9 +31,10 @@ import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.pattern.builder.SessionOut
 import locidnet.com.marvarid.pattern.signInUpBridge.SimpleoAuth
 import locidnet.com.marvarid.resources.utils.*
-import locidnet.com.marvarid.ui.fragment.MailFormFragment
-import locidnet.com.marvarid.ui.fragment.PhoneFormFragment
-import locidnet.com.marvarid.ui.fragment.YesNoFragment
+import locidnet.com.marvarid.ui.activity.dialogs.ChangePassFragment
+import locidnet.com.marvarid.ui.activity.dialogs.MailFormFragment
+import locidnet.com.marvarid.ui.activity.dialogs.PhoneFormFragment
+import locidnet.com.marvarid.ui.activity.dialogs.YesNoFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,18 +44,21 @@ import javax.inject.Inject
 /**
  * Created by Sarvar on 10.08.2017.
  */
-class SettingsActivity : BaseActivity() ,Viewer {
+class SettingsActivity : BaseActivity(), Viewer {
 
 
     val userData = Base.get.prefs.getUser()
-    val sex = listOf(Base.get.resources.getString(R.string.unknown),Base.get.resources.getString(R.string.male),Base.get.resources.getString(R.string.female))
+    val sex = listOf(Base.get.resources.getString(R.string.unknown), Base.get.resources.getString(R.string.male), Base.get.resources.getString(R.string.female))
     var changed = false
     val map = hashMapOf(0 to "N", 1 to "F", 2 to "M")
-    val model                 = Model()
+    val model = Model()
     var changePhoneDialog: PhoneFormFragment? = null
     var changeMailDialog: MailFormFragment? = null
+    var changePassDialog: ChangePassFragment? = null
+    var isLoginFree = false
+
     @Inject
-    lateinit var presenter:Presenter
+    lateinit var presenter: Presenter
 
     @Inject
     lateinit var errorConn: ErrorConnection
@@ -64,9 +69,9 @@ class SettingsActivity : BaseActivity() ,Viewer {
         log.d("userdata: ${userData}")
         DaggerMVPComponent
                 .builder()
-                .mVPModule(MVPModule(this, Model(),this))
+                .mVPModule(MVPModule(this, Model(), this))
                 .presenterModule(PresenterModule())
-                .errorConnModule(ErrorConnModule(this,false))
+                .errorConnModule(ErrorConnModule(this, false))
                 .build()
                 .inject(this)
 
@@ -89,43 +94,42 @@ class SettingsActivity : BaseActivity() ,Viewer {
 
         /*PHONE AND MAIL*/
         phone.text = if (!userData.userPhone.isNullOrEmpty()) userData.userPhone else resources.getString(R.string.addPhone)
-        mail.text  = if (!userData.userMail.isNullOrEmpty()) userData.userMail else resources.getString(R.string.addMail)
-        phone.setOnClickListener{
+        mail.text = if (!userData.userMail.isNullOrEmpty()) userData.userMail else resources.getString(R.string.addMail)
+        phone.setOnClickListener {
             changePhoneDialog = PhoneFormFragment.instance()
-            changePhoneDialog!!.setDialogClickListener(object : PhoneFormFragment.DialogClickListener{
+            changePhoneDialog!!.setDialogClickListener(object : PhoneFormFragment.DialogClickListener {
                 override fun click(whichButton: Int) {
                     log.d("$whichButton")
-                    if (whichButton == PhoneFormFragment.GET_SMS){
+                    if (whichButton == PhoneFormFragment.GET_SMS) {
 
-                            if (Functions.clearEdit(changePhoneDialog!!.phone).length != 9){
+                        if (Functions.clearEdit(changePhoneDialog!!.phone).length != 9) {
 
-                                changePhoneDialog!!.phone.error = resources.getString(R.string.error_incorrect_phone)
-
-
-                            }else{
-
-                                val js = JS.get()
-                                val phoneStr = "998${Functions.clearEdit(changePhoneDialog!!.phone)}"
-                                js.put("phone",phoneStr)
-                                changePhoneDialog!!.setVisibility(true)
-
-                                presenter.requestAndResponse(js, Http.CMDS.CHANGE_PHONE_NUMBER)
-                            }
+                            changePhoneDialog!!.phone.error = resources.getString(R.string.error_incorrect_phone)
 
 
-
-                    }else{
-                        if (changePhoneDialog!!.smsCode.text.toString().trim().length == 6){
+                        } else {
 
                             val js = JS.get()
                             val phoneStr = "998${Functions.clearEdit(changePhoneDialog!!.phone)}"
-                            js.put("phone",phoneStr)
-                            js.put("code",changePhoneDialog!!.smsCode.text.toString().trim())
+                            js.put("phone", phoneStr)
+                            changePhoneDialog!!.setVisibility(true)
+
+                            presenter.requestAndResponse(js, Http.CMDS.CHANGE_PHONE_NUMBER)
+                        }
+
+
+                    } else {
+                        if (changePhoneDialog!!.smsCode.text.toString().trim().length == 6) {
+
+                            val js = JS.get()
+                            val phoneStr = "998${Functions.clearEdit(changePhoneDialog!!.phone)}"
+                            js.put("phone", phoneStr)
+                            js.put("code", changePhoneDialog!!.smsCode.text.toString().trim())
                             changePhoneDialog!!.setVisibility(true)
                             presenter.requestAndResponse(js, Http.CMDS.ACCEPT_CHANGE_PHONE)
 
 
-                        }else{
+                        } else {
                             changePhoneDialog!!.smsCode.error = resources.getString(R.string.sms_code_error)
 
                         }
@@ -135,42 +139,41 @@ class SettingsActivity : BaseActivity() ,Viewer {
 
             })
 
-            changePhoneDialog!!.show(supportFragmentManager,YesNoFragment.TAG)
+            changePhoneDialog!!.show(supportFragmentManager, YesNoFragment.TAG)
         }
-        mail.setOnClickListener{
+        mail.setOnClickListener {
 
 
             changeMailDialog = MailFormFragment.instance()
-            changeMailDialog!!.setDialogClickListener(object : MailFormFragment.DialogClickListener{
+            changeMailDialog!!.setDialogClickListener(object : MailFormFragment.DialogClickListener {
                 override fun click(whichButton: Int) {
 
-                    if (whichButton == PhoneFormFragment.GET_SMS){
+                    if (whichButton == PhoneFormFragment.GET_SMS) {
 
-                        if (!Const.VALID_EMAIL_ADDRESS_REGEX.matcher(changeMailDialog!!.mail.text.toString()).find()){
+                        if (!Const.VALID_EMAIL_ADDRESS_REGEX.matcher(changeMailDialog!!.mail.text.toString()).find()) {
                             changeMailDialog!!.mail.error = resources.getString(R.string.error_incorrect_mail)
-                        }else{
-                            val js =JS.get()
+                        } else {
+                            val js = JS.get()
                             val phoneStr = changeMailDialog!!.mail.text.toString()
-                            js.put("mail",phoneStr)
+                            js.put("mail", phoneStr)
                             changeMailDialog!!.setVisibility(true)
 
                             presenter.requestAndResponse(js, Http.CMDS.CHANGE_MAIL)
                         }
 
 
+                    } else {
 
-                    }else{
-
-                        if (changeMailDialog!!.smsCode.text.toString().trim().length == 6){
+                        if (changeMailDialog!!.smsCode.text.toString().trim().length == 6) {
 
                             val js = JS.get()
-                            js.put("mail",changeMailDialog!!.mail.text.toString())
-                            js.put("code",changeMailDialog!!.smsCode.text.toString().trim())
+                            js.put("mail", changeMailDialog!!.mail.text.toString())
+                            js.put("code", changeMailDialog!!.smsCode.text.toString().trim())
                             changeMailDialog!!.setVisibility(true)
                             presenter.requestAndResponse(js, Http.CMDS.ACCEPT_MAIL)
 
 
-                        }else{
+                        } else {
                             changePhoneDialog!!.smsCode.error = resources.getString(R.string.sms_code_error)
 
                         }
@@ -181,113 +184,130 @@ class SettingsActivity : BaseActivity() ,Viewer {
 
             })
 
-            changeMailDialog!!.show(supportFragmentManager,YesNoFragment.TAG)
+            changeMailDialog!!.show(supportFragmentManager, YesNoFragment.TAG)
         }
         /*PHONE AND MAIL*/
 
 
         /*GENDER*/
-        val genderAdapter = ArrayAdapter<String>(this,R.layout.white_textview,sex)
+        val genderAdapter = ArrayAdapter<String>(this, R.layout.white_textview, sex)
         genderAdapter.setDropDownViewResource(R.layout.white_textview_adapter)
         gender.adapter = genderAdapter
         gender.setSelection(if (userData.gender == "N") 0
-                            else if(userData.gender == "F") 1
-                            else 2)
+        else if (userData.gender == "F") 1
+        else 2)
         /*GENDER*/
-        switchCloseAccount.isChecked = if(Base.get.prefs.getUser().close == 1 ) true else false
-        switchCloseAccount.setOnCheckedChangeListener{view, isChecked ->
+        switchCloseAccount.isChecked = if (Base.get.prefs.getUser().close == 1) true else false
+        switchCloseAccount.setOnCheckedChangeListener { view, isChecked ->
             val js = JS.get()
             model.responseCall(Http.getRequestData(js, Http.CMDS.CLOSE_PROFIL))
-                    .enqueue(object :Callback<ResponseData>{
+                    .enqueue(object : Callback<ResponseData> {
                         override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
                             log.d("close profil $response")
-                            try{
-                               if (response!!.body()!!.res == "0"){
-                                   val user = Base.get.prefs.getUser()
-                                   log.d("closed :${user.close}")
+                            try {
+                                if (response!!.body()!!.res == "0") {
+                                    val user = Base.get.prefs.getUser()
+                                    log.d("closed :${user.close}")
 
-                                   user.close = if(user.close == 1) 0 else 1
-                                   Base.get.prefs.setUser(user)
-                               }
-                           }catch (e:Exception){
-                                switchCloseAccount.isChecked = if(Base.get.prefs.getUser().close == 1 ) true else false
-                           }
+                                    user.close = if (user.close == 1) 0 else 1
+                                    Base.get.prefs.setUser(user)
+                                }
+                            } catch (e: Exception) {
+                                switchCloseAccount.isChecked = if (Base.get.prefs.getUser().close == 1) true else false
+                            }
 
                         }
 
                         override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                             log.d("close profil fail $t")
-                            switchCloseAccount.isChecked = if(Base.get.prefs.getUser().close == 1 ) true else false
+                            switchCloseAccount.isChecked = if (Base.get.prefs.getUser().close == 1) true else false
 
                         }
 
                     })
-         }
+        }
         /*GENDER*/
 
 
         /*PASSWORD*/
-        if (userData.password.isNullOrEmpty()){
-            password.text = resources.getString(R.string.addPassword)
-            password.tag = R.string.addPassword
-        }else{
+//        if (userData.password.isNullOrEmpty()) {
+//            password.text = resources.getString(R.string.addPassword)
+//            password.tag = R.string.addPassword
+//        } else {
             password.text = resources.getString(R.string.changePassword)
             password.tag = R.string.changePassword
+//        }
+
+        password.setOnClickListener {
+            changePassDialog = ChangePassFragment.instance()
+            changePassDialog!!.setDialogClickListener(object : ChangePassFragment.DialogClickListener{
+                override fun click(whichButton: Int) {
+                    changePassDialog!!.setVisibility(true)
+
+                    val js = JS.get()
+                    js.put("old_pass",changePassDialog!!.oldPass.text.toString())
+                    js.put("new_pass",changePassDialog!!.newPass.text.toString())
+                    presenter.requestAndResponse(js,Http.CMDS.CHANGE_PASSWORD)
+                }
+
+            })
+            changePassDialog!!.show(supportFragmentManager,ChangePassFragment.TAG)
         }
 
         /*QUIT*/
         quitLay.setOnClickListener {
-                val dialog = YesNoFragment.instance(
-                                                    DialogFragmentModel(
-                                                            Functions.getString(R.string.quitTitle),
-                                                            Functions.getString(R.string.no),
-                                                            Functions.getString(R.string.yes)
-                                                            ))
-                        dialog.setDialogClickListener(object : YesNoFragment.DialogClickListener{
-                            override fun click(whichButton: Int) {
+            val dialog = YesNoFragment.instance(
+                    DialogFragmentModel(
+                            Functions.getString(R.string.quitTitle),
+                            Functions.getString(R.string.no),
+                            Functions.getString(R.string.yes)
+                    ))
+            dialog.setDialogClickListener(object : YesNoFragment.DialogClickListener {
+                override fun click(whichButton: Int) {
 
-                                if (whichButton == YesNoFragment.NO){
-                                    dialog.dismiss()
-                                }else{
-                                    dialog.dismiss()
+                    if (whichButton == YesNoFragment.NO) {
+                        dialog.dismiss()
+                    } else {
+                        dialog.dismiss()
 
-                                    MainActivity.start           = 0
-                                    MainActivity.end             = 20
-                                    MainActivity.startFeed       = 0
-                                    MainActivity.endFeed         = 20
-                                    MainActivity.startFollowers  = 0
-                                    MainActivity.endFollowers    = 20
-                                    MainActivity.startFollowing  = 0
-                                    MainActivity.endFollowing    = 20
-                                    MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
-                                    MainActivity.FEED_STATUS     = MainActivity.NEED_UPDATE
-                                    MainActivity.COMMENT_POST_UPDATE = 0
-                                    MainActivity.COMMENT_COUNT = 0
-                                    val sesion = SessionOut.Builder(this@SettingsActivity)
-                                            .setErrorCode(96)
-                                            .build()
-                                    sesion.out()
-                                }
+                        MainActivity.start = 0
+                        MainActivity.end = 20
+                        MainActivity.startFeed = 0
+                        MainActivity.endFeed = 20
+                        MainActivity.startFollowers = 0
+                        MainActivity.endFollowers = 20
+                        MainActivity.startFollowing = 0
+                        MainActivity.endFollowing = 20
+                        MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
+                        MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
+                        MainActivity.COMMENT_POST_UPDATE = 0
+                        MainActivity.COMMENT_COUNT = 0
+                        setResult(Const.QUIT)
+                        finish()
+//                        val sesion = SessionOut.Builder(this@SettingsActivity)
+//                                .setErrorCode(96)
+//                                .build()
+//                        sesion.out()
+                    }
 
-                            }
+                }
 
-                        })
-                dialog.show(supportFragmentManager,YesNoFragment.TAG)
+            })
+            dialog.show(supportFragmentManager, YesNoFragment.TAG)
 
         }
         /*QUIT*/
 
 
-
         /*ALLOW NOTIFICATION*/
-        switchNotification.isChecked = if(Base.get.prefs.isALlowNotif()) true else false
-        switchNotification.setOnCheckedChangeListener { view, isChecked -> Base.get.prefs.allowNotif(isChecked)}
+        switchNotification.isChecked = if (Base.get.prefs.isALlowNotif()) true else false
+        switchNotification.setOnCheckedChangeListener { view, isChecked -> Base.get.prefs.allowNotif(isChecked) }
         /*ALLOW NOTIFICATION*/
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
+        if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT) {
             setResult(Const.SESSION_OUT)
             finish()
         }
@@ -295,55 +315,58 @@ class SettingsActivity : BaseActivity() ,Viewer {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
-        menuInflater.inflate(R.menu.menu_save,menu)
+        menuInflater.inflate(R.menu.menu_save, menu)
         return true;
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
 
-
-      if (changed || map.get(gender.selectedItemPosition) != Base.get.prefs.getUser().gender){
-
+        if (changed || map.get(gender.selectedItemPosition) != Base.get.prefs.getUser().gender) {
 
 
-          errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-              override fun connected() {
-                  log.d("connected")
+            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener {
+                override fun connected() {
+                    log.d("connected")
 
-                  val pattern  = Pattern.compile(SimpleoAuth.REGEXP.loginAndPasswordRegExp)
+                    val pattern = Pattern.compile(SimpleoAuth.REGEXP.loginAndPasswordRegExp)
 
-                      if (username.text.toString().isEmpty() || !pattern.matcher(username.text.toString()).matches()){
-                          onFailure("1",resources.getString(R.string.error_symbol))
-                      }else{
-                          send();
+                    if (username.text.toString().isEmpty()  || username.text.toString().length < 6) {
+                        onFailure("1", resources.getString(R.string.username_field_less_5))
+                    } else if(!isLoginFree){
+                        onFailure("1", resources.getString(R.string.username_not_free_error))
+
+                    }
+                    else if (!pattern.matcher(username.text.toString()).matches()){
+                        onFailure("1", resources.getString(R.string.username_error))
+
+                    }
+                    else {
+                        send();
 
 
-
-                      }
-
+                    }
 
 
+                }
 
-              }
+                override fun disconnected() {
+                    log.d("disconnected")
 
-              override fun disconnected() {
-                  log.d("disconnected")
+                    Toast.makeText(this@SettingsActivity, resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
+                }
 
-                    Toast.makeText(this@SettingsActivity,resources.getString(R.string.internet_conn_error),Toast.LENGTH_SHORT).show()
-              }
+            })
 
-          })
-
-      }
+        }
         return true
     }
 
 
-    fun send(){
+    fun send() {
         val jsObject = JS.get()
-        jsObject.put("username",username.text.toString())
-        jsObject.put("name",name.text.trim().toString())
+        jsObject.put("username", username.text.toString())
+        jsObject.put("name", name.text.trim().toString())
         jsObject.put("gender", map.get(gender.selectedItemPosition))
 
 
@@ -363,7 +386,7 @@ class SettingsActivity : BaseActivity() ,Viewer {
     override fun onSuccess(from: String, result: String) {
 
 
-        when(from){
+        when (from) {
             Http.CMDS.CHANGE_PHONE_NUMBER -> {
                 val response = JSONObject(result)
                 log.d("from change phone number -> $response")
@@ -394,6 +417,14 @@ class SettingsActivity : BaseActivity() ,Viewer {
 
             }
 
+            Http.CMDS.CHANGE_PASSWORD ->{
+                changePassDialog!!.setVisibility(false)
+
+                changePassDialog!!.reset()
+                changePassDialog!!.dismiss()
+                Toast.makeText(Base.get.context, Base.get.context.resources.getString(R.string.changed), Toast.LENGTH_SHORT).show()
+
+            }
 
             Http.CMDS.CHANGE_USER_SETTINGS -> {
                 val user = Base.get.prefs.getUser()
@@ -402,10 +433,14 @@ class SettingsActivity : BaseActivity() ,Viewer {
                 user.userName = username.text.toString()
 
                 Base.get.prefs.setUser(user)
-
-                Toast.makeText(Base.get.context,Base.get.context.resources.getString(R.string.saved),Toast.LENGTH_SHORT).show()
+                MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
+                MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
+                Toast.makeText(Base.get.context, Base.get.context.resources.getString(R.string.saved), Toast.LENGTH_SHORT).show()
             }
-
+            Http.CMDS.LOGIN_YOQLIGINI_TEKSHIRISH -> {
+                isLoginFree = true
+                username.setLoginResult(R.drawable.check_circle_outline)
+            }
 
         }
 
@@ -413,40 +448,64 @@ class SettingsActivity : BaseActivity() ,Viewer {
     }
 
     override fun onFailure(from: String, message: String, erroCode: String) {
-       if(from == Http.CMDS.CHANGE_PHONE_NUMBER){
-           changePhoneDialog!!.dismiss()
-       }
+        if (from == Http.CMDS.CHANGE_PHONE_NUMBER) {
+            changePhoneDialog!!.dismiss()
+        }
 
-        when(from){
-            Http.CMDS.CHANGE_PHONE_NUMBER ->{
+        when (from) {
+
+            Http.CMDS.CHANGE_PASSWORD -> {
+
+                changePassDialog!!.setVisibility(false)
+                Toaster.errror(message)
+
+            }
+
+            Http.CMDS.CHANGE_PHONE_NUMBER -> {
                 changePhoneDialog!!.setVisibility(false)
+                Toaster.errror(message)
+
             }
             Http.CMDS.ACCEPT_CHANGE_PHONE -> {
                 changePhoneDialog!!.setVisibility(false)
 
+                Toaster.errror(message)
+
             }
             Http.CMDS.CHANGE_MAIL -> {
                 changeMailDialog!!.setVisibility(false)
+                Toaster.errror(message)
 
             }
             Http.CMDS.ACCEPT_MAIL -> {
                 changeMailDialog!!.setVisibility(false)
+                Toaster.errror(message)
 
             }
             Http.CMDS.CHANGE_USER_SETTINGS -> {
                 changePhoneDialog!!.setVisibility(false)
+                Toaster.errror(message)
 
             }
 
+            Http.CMDS.LOGIN_YOQLIGINI_TEKSHIRISH -> {
+                isLoginFree = false
+                username.setLoginResult(R.drawable.close_circle_outline)
+            }
+            else -> {
+                Toaster.errror(message)
+
+            }
         }
-        Toaster.errror(message)
 
     }
 
 
-    val textwatcher = object : TextWatcher{
+    val textwatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             changed = true
+            if(s!!.toString().length >= 6) presenter.filterLogin(username)
+            else username.setLoginResult()
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -482,6 +541,15 @@ class SettingsActivity : BaseActivity() ,Viewer {
     fun View.hideKeyboard() {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+    fun AppCompatEditText.setLoginResult(drawable:Int = 0){
+        if(drawable != 0){
+            val drawableCompat = VectorDrawableCompat.create(resources,drawable,this.context.theme)
+            this.setCompoundDrawablesWithIntrinsicBounds(null,null,drawableCompat,null)
+        }else{
+            this.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null)
+
+        }
     }
 
 

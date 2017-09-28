@@ -145,7 +145,6 @@ class FollowAdapter(context:Context,
 
        }
         h.follow.setOnClickListener {
-            MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
 
             val reqObj =  JS.get()
 
@@ -215,6 +214,7 @@ class FollowAdapter(context:Context,
                                         users.get(p1).follow  = 0
                                         swapItems(users,p1)
                                         if (FFFFragment.followersCount != -1) FFFFragment.followersCount--
+                                        MainActivity.MY_POSTS_STATUS = MainActivity.ONLY_USER_INFO
 
                                 }else{
                                     Toast.makeText(Base.get, Base.get.resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()

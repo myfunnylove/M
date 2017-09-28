@@ -121,7 +121,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
 
 
-                like.time.text = prettyTime.format(date2)
+                like.time.text = "${prettyTime.format(date2)} - "
 
 
 
@@ -174,7 +174,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 }
                 comment.username.text = push.user.userName
                 comment.body.text = ctx.resources.getString(R.string.pushCommentBody)
-                comment.time.text = prettyTime.format(date2)
+                comment.time.text = "${prettyTime.format(date2)} - "
 
                 Glide.with(ctx)
                         .load(Functions.checkImageUrl(push.action.actionPhoto))
@@ -228,7 +228,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
                 requested.body.text = ctx.resources.getString(R.string.pushRequestBody)
 
-                requested.time.text = prettyTime.format(date2)
+                requested.time.text ="${prettyTime.format(date2)} - "
 
                 requested.accept.setText(Functions.getString(R.string.allow))
                 requested.dismiss.setText(Functions.getString(R.string.ignore))
@@ -245,6 +245,8 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                                     if (res.body()!!.res == "0") {
                                         list.removeAt(position)
                                         notifyItemRemoved(position)
+                                        MainActivity.MY_POSTS_STATUS = MainActivity.ONLY_USER_INFO
+
                                     }
 
                                 }
@@ -266,6 +268,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                                     if (res.body()!!.res == "0") {
                                         list.removeAt(position)
                                         notifyItemRemoved(position)
+
                                     }
                                 }
 
@@ -316,7 +319,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 follow.username.text = push.user.userName
 
                 follow.body.text = ctx.resources.getString(R.string.pushFollowBody)
-                follow.time.text = prettyTime.format(date2)
+                follow.time.text = "${prettyTime.format(date2)} - "
 
                 follow.dismiss.visibility = View.GONE
 
@@ -407,7 +410,6 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                                             Toast.makeText(Base.get, Base.get.resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
 
                                         }
-
 
                                     }
 

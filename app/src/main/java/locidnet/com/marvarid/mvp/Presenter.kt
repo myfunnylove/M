@@ -222,7 +222,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
         val user = Base.get.prefs.getUser()
         log.d("upload file ketvotti: ${body.body()!!}")
         val name = RequestBody.create(MediaType.parse("text/plain"),"image/*")
-        Observable.just(model.uploadAvatar(body,name,"avatar"))
+        Observable.just(model.uploadAvatar(body,name,"avatar",user.userId,user.session))
                 .subscribeOn(Schedulers.io())
                 .flatMap({res ->
                     log.d("$res")

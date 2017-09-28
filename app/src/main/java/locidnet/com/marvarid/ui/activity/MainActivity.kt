@@ -38,6 +38,7 @@ import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.MControlObserver.MusicSubject
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
+import locidnet.com.marvarid.pattern.builder.SessionOut
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.activity.publish.PublishSongActivity
@@ -596,13 +597,13 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
             setResult(Const.SESSION_OUT)
             finish()
-        }
-        when (resultCode) {
-            Activity.RESULT_OK -> {
+        }else {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
 
-                var photos: List<String>? = null
+                    var photos: List<String>? = null
 
-                when (requestCode) {
+                    when (requestCode) {
 //                    Const.PICK_IMAGE -> {
 //                        if (data != null) {
 //                            photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS)
@@ -616,77 +617,90 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 //                            startActivityForResult(intent, Const.FROM_MAIN_ACTIVITY)
 //                        }
 //                    }
-                    Const.CHANGE_AVATAR -> {
-                        if (data != null) {
-                            photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS)
+                        Const.CHANGE_AVATAR -> {
+                            if (data != null) {
+                                photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS)
 
+                            }
+                            if (photos != null) {
+                                log.d("picked photo ${photos.get(0)}")
+
+                                photos.get(0).uploadAvatar()
+                            }
                         }
-                        if (photos != null) {
-                            log.d("picked photo ${photos.get(0)}")
+                        Const.GO_COMMENT_ACTIVITY -> {
+                            if (feedFragment != null && !feedFragment!!.isHidden) {
+                                try {
 
-                            photos.get(0).uploadAvatar()
-                        }
-                    }
-                    Const.GO_COMMENT_ACTIVITY ->{
-                        if (feedFragment != null && !feedFragment!!.isHidden){
-                            try {
-
-                                //TODO COMMENTLANI SONINI OLIB KELISH
+                                    //TODO COMMENTLANI SONINI OLIB KELISH
 //                               feedFragment!!.feedAdapter!!.feeds.posts.get(COMMENT_POST_UPDATE).comments = COMMENT_COUNT.toString()
 //                               feedFragment!!.feedAdapter!!.notifyItemChanged(COMMENT_POST_UPDATE)
-                            }catch (e :Exception){}
+                                } catch (e: Exception) {
+                                }
 
+                            }
                         }
                     }
                 }
-            }
 
-            Const.PICK_UNIVERSAL -> {
-                log.d("after posting go feed $MY_POSTS_STATUS")
-                FEED_STATUS  = NEED_UPDATE
-                if (feedFragment!!.feedAdapter != null){
-                    MyPostOffset.startFeed = 0
-                    MyPostOffset.endFeed   = 1
-                }
+                Const.PICK_UNIVERSAL -> {
+                    log.d("after posting go feed $MY_POSTS_STATUS")
+                    FEED_STATUS = NEED_UPDATE
+                    if (feedFragment!!.feedAdapter != null) {
+                        MyPostOffset.startFeed = 0
+                        MyPostOffset.endFeed = 1
+                    }
 
-                MY_POSTS_STATUS = NEED_UPDATE
+                    MY_POSTS_STATUS = NEED_UPDATE
 
-                val tab = tablayout.getTabAt(0)
-                tab!!.setIcon(Const.selectedTabs.get(0)!!)
-                tab.select()
-
-            }
-
-            else -> {
-
-                log.d("lastfragment -> ${lastFragment}")
-                log.d("profil followers count -> ${FFFFragment.followersCount}")
-                log.d("my post status $MY_POSTS_STATUS")
-
-                if (requestCode == Const.CHANGE_AVATAR){
-                    try{
-                        profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.CANCEL_PROGRESS);
-                    }catch (e:Exception){}
-                }
-
-                if  (lastFragment == 4 && profilFragment != null && MY_POSTS_STATUS == NEED_UPDATE){
-
-                    MY_POSTS_STATUS = ONLY_USER_INFO
-
-                    val reqObj = JS.get()
-                    reqObj.put("user", user.userId)
-
-                    log.d("send data for user info data: ${reqObj}")
-                    presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
-
+                    val tab = tablayout.getTabAt(0)
+                    tab!!.setIcon(Const.selectedTabs.get(0)!!)
+                    tab.select()
 
                 }
-                val tab = tablayout.getTabAt(lastFragment)
-                tab!!.setIcon(Const.selectedTabs.get(lastFragment)!!)
-                tab.select()
 
-                setFragment(lastFragment)
+                Const.QUIT -> {
+                    val sesion = SessionOut.Builder(this@MainActivity)
+                            .setErrorCode(96)
+                            .build()
+                    sesion.out()
+                }
 
+                else -> {
+
+                    log.d("lastfragment -> ${lastFragment}")
+                    log.d("profil followers count -> ${FFFFragment.followersCount}")
+                    log.d("my post status $MY_POSTS_STATUS")
+
+                    if (requestCode == Const.CHANGE_AVATAR) {
+
+                        try {
+                            profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.CANCEL_PROGRESS)
+
+                        } catch (e: Exception) {
+                        }
+
+                    }
+
+                    if (lastFragment == 4 && profilFragment != null && MY_POSTS_STATUS != AFTER_UPDATE) {
+
+//                    MY_POSTS_STATUS = ONLY_USER_INFO
+
+                        val reqObj = JS.get()
+                        reqObj.put("user", user.userId)
+
+                        log.d("send data for user info data: ${reqObj}")
+                        presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
+
+
+                    }
+                    val tab = tablayout.getTabAt(lastFragment)
+                    tab!!.setIcon(Const.selectedTabs.get(lastFragment)!!)
+                    tab.select()
+
+                    setFragment(lastFragment)
+
+                }
             }
         }
     }
@@ -697,8 +711,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
 
         if (doubleBackToExitPressedOnce) {
-            MyPostOffset.startNotif          = 0
-            MyPostOffset.endNotif            = 20
+            MyPostOffset.startNotif     = 0
+            MyPostOffset.endNotif       = 20
             MyPostOffset.start          = 0
             MyPostOffset.end            = 20
             MyPostOffset.startFeed      = 0
@@ -740,8 +754,10 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                 val userInfo = Gson().fromJson(result,UserInfo::class.java)
                 val fType = ProfileFragment.SETTINGS
                 log.i("profil page select $MY_POSTS_STATUS")
-                if (MY_POSTS_STATUS != ONLY_USER_INFO) {
-                    profilFragment!!.initHeader(userInfo,fType)
+                profilFragment!!.initHeader(userInfo,fType)
+
+
+                if (MY_POSTS_STATUS != ONLY_USER_INFO || !profilFragment!!.initBody) {
 
 
                     errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
