@@ -20,6 +20,7 @@ import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.ui.activity.MainActivity
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -248,6 +249,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                         user.userName    = userInfo.user.info.username
                         user.profilPhoto = userInfo.user.info.photoOrg
                         Base.get.prefs.setUser(user)
+                        MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
                         view.onSuccess(Http.CMDS.CHANGE_AVATAR, Http.getResponseData(result.prms))
                     }
                 },{

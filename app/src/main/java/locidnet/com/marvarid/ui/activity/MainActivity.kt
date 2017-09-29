@@ -815,6 +815,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                 user = Base.get.prefs.getUser()
                 try{
+                    log.d("from change avatar get user photo ${user.profilPhoto}")
                 profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.HIDE_PROGRESS);
                 }catch (e:Exception){}
                 profilFragment!!.setAvatar(user.profilPhoto)

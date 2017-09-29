@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
@@ -41,6 +42,7 @@ import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
 import locidnet.com.marvarid.ui.activity.PlaylistActivity
 import locidnet.com.marvarid.ui.activity.SettingsActivity
+import locidnet.com.marvarid.ui.activity.dialogs.ComplaintsFragment
 import locidnet.com.marvarid.ui.fragment.*
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
@@ -53,7 +55,7 @@ import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
 
-class ProfileFeedAdapter(context: Activity,
+class ProfileFeedAdapter(context: FragmentActivity,
                          feedsMap: PostList,
 
                          adapterClicker: AdapterClicker,
@@ -78,7 +80,7 @@ class ProfileFeedAdapter(context: Activity,
     var user                  = Base.get.prefs.getUser()
     var lastAnimationPosition = -1
     var itemsCount            = 0
-    var activity:Activity?    = null
+    var activity:FragmentActivity?    = null
     var disableAnimation      = false
     var cachedLists           = HashMap<String,String>()
     var changeId              = -1
@@ -547,6 +549,36 @@ class ProfileFeedAdapter(context: Activity,
                                     notifyItemChanged(i)
                                 }
                             }
+
+                            R.id.report -> {
+
+                                    val dialog =  ComplaintsFragment.instance()
+
+                                    dialog.setDialogClickListener(object : ComplaintsFragment.DialogClickListener{
+                                        override fun click(whichButton: Int) {
+                                            val js = JS.get()
+                                            js.put("type",whichButton)
+                                            js.put("post_id",post.id)
+                                            model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
+                                                    .enqueue(object : retrofit2.Callback<ResponseData>{
+                                                        override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                                            log.e("complaint fail $t")
+
+                                                        }
+
+                                                        override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+
+                                                            log.d("complaint fail ${response!!.body()}")
+                                                            Toast.makeText(ctx,ctx.resources.getString(R.string.thank_data_sent),Toast.LENGTH_SHORT).show()
+                                                        }
+
+                                                    })
+                                            dialog.dismiss()
+                                        }
+                                    })
+                                    dialog.show(activity!!.supportFragmentManager,"TAG")
+                                   
+                            }
                         }
                         false
                     }
@@ -855,7 +887,10 @@ class ProfileFeedAdapter(context: Activity,
     }
 
     fun updateProfilPhoto(path: String) {
-        userInfo!!.user.info.phone = Http.BASE_URL + path
+        userInfo!!.user.info.photoOrg = Http.BASE_URL + path
+        feeds.posts.forEach {
+            post -> post.user.photo = userInfo!!.user.info.photoOrg
+        }
 
         avatarUpdated = HIDE_PROGRESS
         notifyDataSetChanged()

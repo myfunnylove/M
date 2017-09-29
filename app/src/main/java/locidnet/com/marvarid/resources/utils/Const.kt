@@ -1,7 +1,9 @@
 package locidnet.com.marvarid.resources.utils
 
 import locidnet.com.marvarid.R
+import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.model.Color
+import locidnet.com.marvarid.model.Complaints
 import java.util.regex.Pattern
 
 /**
@@ -372,4 +374,14 @@ object Const {
 
     val VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE)
     val ONLY_DIGITS = Pattern.compile("[0-9]{9}")
+
+    val complaints:ArrayList<Complaints> = arrayListOf(
+            Complaints(Base.get.resources.getString(R.string.complaintSpam),1),
+            Complaints(Base.get.resources.getString(R.string.complaintAbuse),2),
+            Complaints(Base.get.resources.getString(R.string.compaintAdult),3),
+            Complaints(Base.get.resources.getString(R.string.complaintDrug),4),
+            Complaints(Base.get.resources.getString(R.string.complaintChild),5),
+            Complaints(Base.get.resources.getString(R.string.complaintViolence),6),
+            Complaints(Base.get.resources.getString(R.string.complaintSuicide),7)
+    )
 }
