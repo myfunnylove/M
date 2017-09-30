@@ -3,6 +3,7 @@ package locidnet.com.marvarid.ui.activity
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -18,6 +19,7 @@ import android.widget.Toast
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
+import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 import locidnet.com.marvarid.BuildConfig
 import locidnet.com.marvarid.R
@@ -594,14 +596,25 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         log.d("MainActivity -> OnactivityResult: req:${requestCode} res: ${resultCode} intent: ${if (data != null) true else false}")
+        var photos: List<String>? = null
+
+
         if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
             setResult(Const.SESSION_OUT)
             finish()
         }else {
             when (resultCode) {
+                Const.PICK_CROP_IMAGE ->{
+                    if (data != null) {
+                            log.d("data null emas")
+                        val resultUri: Uri = UCrop.getOutput(data)!!
+                        resultUri.path.uploadAvatar()
+                        }
+
+                }
+
                 Activity.RESULT_OK -> {
 
-                    var photos: List<String>? = null
 
                     when (requestCode) {
 //                    Const.PICK_IMAGE -> {
