@@ -241,7 +241,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
 
     fun initHeader(userInfo:UserInfo,fType:String){
-        log.d("ProfileFragment => initheader")
+        log.d("ProfileFragment => initheader $fType")
 
         this.userInfo = userInfo
         FOLLOWERS  = userInfo.user.count.followersCount
@@ -265,7 +265,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         val postList = PostList(emptyPost)
         val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
         if (postAdapter == null){
-            postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,isClose)
+            postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE,isClose)
             postView.visibility = View.VISIBLE
             postView.adapter = postAdapter
         }else{

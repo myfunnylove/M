@@ -112,12 +112,6 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
 
         h.container.setOnClickListener {
 
-
-
-
-
-
-
                 if (!song.loaded ){
                     h.errorImg.visibility = View.GONE
                     val call: Call<ResponseData> = Model().uploadAudioDemo(body,name,user.userId,user.session)

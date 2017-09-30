@@ -557,7 +557,7 @@ class ProfileFeedAdapter(context: Activity,
             }
 
         }else if (type == HEADER){
-            log.d("HEADER")
+            log.d("HEADER $FOLLOW_TYPE")
             val h = holder as ProfileHeaderHolder
 
             h.follow.tag  = FOLLOW_TYPE
