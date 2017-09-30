@@ -25,5 +25,7 @@ interface MVPComponent {
     fun inject(loginAndPassActivity: LoginAndPassActivity)
     fun inject(playlistActivity: PlaylistActivity)
     fun inject(userPostActivity: UserPostActivity)
+    fun inject(forgotPasswordActivity: ForgotPasswordActivity)
+    fun inject(newPasswordActivity: NewPasswordActivity)
 
 }

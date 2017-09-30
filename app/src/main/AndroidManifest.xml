@@ -88,7 +88,18 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
 
             />
+        <activity
+            android:name=".ui.activity.ForgotPasswordActivity"
+            android:theme="@style/AppTheme.LOGIN"
+            android:windowSoftInputMode="adjustResize|stateHidden"
 
+            />
+        <activity
+            android:name=".ui.activity.NewPasswordActivity"
+            android:theme="@style/AppTheme.LOGIN"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+
+            />
         <activity
             android:name=".ui.activity.LoginAndPassActivity"
             android:theme="@style/AppTheme.LOGIN"

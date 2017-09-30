@@ -477,43 +477,92 @@ class MyFeedAdapter(context: FragmentActivity,
                 }
 
 
-                if(user.userId != post.user.userId){
                     h.popup.setOnClickListener {
+                        val popup = PopupMenu(ctx, h.popup)
+                        if (user.userId != post.user.userId) {
 
-                        val popup = PopupMenu(ctx,h.popup)
-                        popup.inflate(R.menu.menu_feed)
+                            popup.inflate(R.menu.menu_feed)
+                        } else {
+                            popup.inflate(R.menu.menu_own_feed)
 
+                        }
                         popup.show()
-                        popup.setOnMenuItemClickListener {
-                            val dialog =  ComplaintsFragment.instance()
+                        popup.setOnMenuItemClickListener { item ->
+                            when (item.itemId) {
+                                R.id.delete -> {
 
-                            dialog.setDialogClickListener(object : ComplaintsFragment.DialogClickListener{
-                                override fun click(whichButton: Int) {
-                                    val js = JS.get()
-                                    js.put("type",whichButton)
-                                    js.put("post",post.id)
-                                    model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
-                                            .enqueue(object : retrofit2.Callback<ResponseData>{
-                                                override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
-                                                    log.e("complaint fail $t")
+                                    val reqObj = JS.get()
 
-                                                }
+                                    reqObj.put("post_id", post.id)
 
-                                                override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+                                    log.d("request data for delete post $reqObj")
 
-                                                    log.d("complaint onresponse ${response!!.body()}")
-                                                    Toast.makeText(ctx,ctx.resources.getString(R.string.thank_data_sent),Toast.LENGTH_SHORT).show()
-                                                }
+                                    model.responseCall(Http.getRequestData(reqObj, Http.CMDS.DELETE_POST)).enqueue(object : Callback<ResponseData> {
+                                        override fun onResponse(p0: Call<ResponseData>?, p1: Response<ResponseData>?) {
+                                            try {
 
-                                            })
-                                    dialog.dismiss()
+
+                                                feeds.posts.removeAt(i)
+                                                MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
+                                                notifyItemRemoved(i)
+                                                notifyItemRangeChanged(i, feeds.posts.size)
+                                                notifyItemChanged(0)
+
+                                                log.d("onresponse from delete post $p1")
+                                            } catch (e: Exception) {
+
+                                            }
+                                        }
+
+                                        override fun onFailure(p0: Call<ResponseData>?, p1: Throwable?) {
+                                            log.d("onfail from delete post $p1")
+                                        }
+
+                                    })
                                 }
-                            })
-                            dialog.show(activity!!.supportFragmentManager,"TAG")
-                            true
+
+                                R.id.change -> {
+
+                                    if (changeId == -1) {
+                                        changeId = i
+                                        notifyItemChanged(i)
+                                    }
+                                }
+
+                                R.id.report -> {
+
+                                    val dialog = ComplaintsFragment.instance()
+
+                                    dialog.setDialogClickListener(object : ComplaintsFragment.DialogClickListener {
+                                        override fun click(whichButton: Int) {
+                                            val js = JS.get()
+                                            js.put("type", whichButton)
+                                            js.put("post", post.id)
+
+                                            model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
+                                                    .enqueue(object : retrofit2.Callback<ResponseData> {
+                                                        override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                                            log.e("complaint fail $t")
+
+                                                        }
+
+                                                        override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+
+                                                            log.d("complaint fail ${response!!.body()}")
+                                                            Toast.makeText(ctx, ctx.resources.getString(R.string.thank_data_sent), Toast.LENGTH_SHORT).show()
+                                                        }
+
+                                                    })
+                                            dialog.dismiss()
+                                        }
+                                    })
+                                    dialog.show(activity!!.supportFragmentManager, "TAG")
+
+                                }
+                            }
+                            false
                         }
                     }
-                }
 
             }
 

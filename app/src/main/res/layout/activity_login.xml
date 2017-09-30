@@ -20,8 +20,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/progressLay"
+        android:layout_toEndOf="@+id/progressLay">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -88,6 +89,7 @@
                     />
 
             <TextView
+                android:id="@+id/forgot"
                 style="@style/NormalText"
                 android:textSize="14sp"
                 android:textColor="@color/white"

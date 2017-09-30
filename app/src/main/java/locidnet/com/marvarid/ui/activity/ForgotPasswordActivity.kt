@@ -1,18 +1,14 @@
 package locidnet.com.marvarid.ui.activity
 
 import android.content.Intent
-import android.graphics.Color
-import android.os.Handler
-import android.support.graphics.drawable.VectorDrawableCompat
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.base.BaseActivity
-import locidnet.com.marvarid.mvp.Viewer
 import kotlinx.android.synthetic.main.activity_sign.*
-import org.json.JSONObject
-import locidnet.com.marvarid.base.Base
-import locidnet.com.marvarid.rest.Http
+
+import locidnet.com.marvarid.base.BaseActivity
 import locidnet.com.marvarid.di.DaggerMVPComponent
 import locidnet.com.marvarid.di.modules.ErrorConnModule
 import locidnet.com.marvarid.di.modules.MVPModule
@@ -20,13 +16,14 @@ import locidnet.com.marvarid.di.modules.PresenterModule
 import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
+import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
+import locidnet.com.marvarid.rest.Http
+import org.json.JSONObject
 import javax.inject.Inject
 
-class SignActivity : BaseActivity() ,Viewer{
+class ForgotPasswordActivity : BaseActivity() , Viewer {
 
 
     var signMode   = -1
@@ -35,7 +32,7 @@ class SignActivity : BaseActivity() ,Viewer{
     val SMS_MODE   = 3
 
     @Inject
-    lateinit var presenter:Presenter
+    lateinit var presenter: Presenter
     @Inject
     lateinit var errorConn: ErrorConnection
 
@@ -61,17 +58,17 @@ class SignActivity : BaseActivity() ,Viewer{
     }
 
     override fun onSuccess(from:String,result: String) {
-
-        if(from == Http.CMDS.TELEFONNI_JONATISH){
+        log.d("from $from result $result")
+        if(from == Http.CMDS.FORGOT_PHONE){
 
 
             selectMail.isEnabled  = false
             selectPhone.isEnabled = false
             smsCode.visibility = View.VISIBLE
             signMode = SMS_MODE
-            signUp.setText(resources.getString(R.string.Sign_up))
+            signUp.setText(resources.getString(R.string.send))
 
-        }else if(from == Http.CMDS.SMSNI_JONATISH){
+        }else if(from == Http.CMDS.FORGOT_SMS){
 
             phone.isEnabled    = false
             mail.isEnabled     = false
@@ -80,12 +77,14 @@ class SignActivity : BaseActivity() ,Viewer{
             val phone = if(Const.ONLY_DIGITS.matcher(phoneStr).find()) phoneStr else ""
             val mail  = if(Const.VALID_EMAIL_ADDRESS_REGEX.matcher(phoneStr).find()) phoneStr else ""
 
-            val user = User("","","","","","N",phoneStr,smsStr,"","","",signMode,
-                    phone,mail)
+            val user = User("", "", "", "", "", "N", phoneStr, smsStr, "", "", "", signMode,
+                    phone, mail)
 
-            Base.get.prefs.setUser(user)
-            startActivity(Intent(this,LoginAndPassActivity().javaClass))
-            this.finish()
+            Prefs.setUser(user)
+            val intent = Intent(this, NewPasswordActivity().javaClass)
+            val js= JSONObject(result)
+            intent.putExtra("userId",js.optString("user"))
+            startActivityForResult(intent,Const.FORGOT_PASS)
         }
 
     }
@@ -101,16 +100,16 @@ class SignActivity : BaseActivity() ,Viewer{
 
 
     override fun initView() {
-        Const.TAG = "SignActivity"
+        Const.TAG = "ForgotPasswordActivity"
 
-        DaggerMVPComponent
-                .builder()
-                .mVPModule(MVPModule(this, Model(),this))
+        DaggerMVPComponent.builder()
+                .mVPModule(MVPModule(this, Model(), this))
                 .presenterModule(PresenterModule())
-                .errorConnModule(ErrorConnModule(this,false))
+                .errorConnModule(ErrorConnModule(this, false))
                 .build()
                 .inject(this)
         signMode = PHONE_MODE
+
         signUp.setText(resources.getString(R.string.get_sms))
 
         phone.setDefaultCountry("uz")
@@ -133,25 +132,49 @@ class SignActivity : BaseActivity() ,Viewer{
             mail.visibility = View.VISIBLE
         }
 
+        smsCode.addTextChangedListener(object :TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (smsCode.text.toString().length == 6){
+                    val sendObject = JS.get()
+
+                    smsStr = smsCode.text.toString()
+
+                    sendObject.put("type",if(signMode == PHONE_MODE) "1" else "2")
+                    sendObject.put("input",phoneStr)
+                    sendObject.put("code",smsStr)
+
+
+                    presenter.requestAndResponse(sendObject, Http.CMDS.FORGOT_SMS)
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+        })
         signUp.setOnClickListener{
 
 
 
 
-            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener {
                 override fun connected() {
 
                     if(signMode == PHONE_MODE){
 
 
                         if (phone.isValid){
-                            val sendObject = JSONObject()
+                            val sendObject = JS.get()
                             phoneStr = phone.phoneNumber!!
-                            sendObject.put("phone",phoneStr)
+                            sendObject.put("type","1")
+                            sendObject.put("input",phoneStr)
 
-                            presenter.requestAndResponse(sendObject, Http.CMDS.TELEFONNI_JONATISH)
+                            presenter.requestAndResponse(sendObject, Http.CMDS.FORGOT_PHONE)
                         }else
-                           Toaster.errror(R.string.error_incorrect_phone)
+                            Toaster.errror(R.string.error_incorrect_phone)
 
 
                     }else if(signMode == SMS_MODE){
@@ -159,26 +182,30 @@ class SignActivity : BaseActivity() ,Viewer{
                         if (smsCode.text.toString().length != 6){
                             smsCode.error = resources.getString(R.string.sms_code_error)
                         }else{
-                            val sendObject = JSONObject()
+                            val sendObject = JS.get()
+
 
                             smsStr = smsCode.text.toString()
+                            sendObject.put("type",if(signMode == PHONE_MODE) "1" else "2")
+                            sendObject.put("input",phoneStr)
+                            sendObject.put("code",smsStr)
 
-                            sendObject.put("phone",phoneStr)
-                            sendObject.put("sms",smsStr)
 
 
-                            presenter.requestAndResponse(sendObject, Http.CMDS.SMSNI_JONATISH)
+                            presenter.requestAndResponse(sendObject, Http.CMDS.FORGOT_SMS)
                         }
                     }else{
                         if (!Const.VALID_EMAIL_ADDRESS_REGEX.matcher(mail.text.toString()).find()){
 
                             mail.error = resources.getString(R.string.error_incorrect_mail)
                         }else{
-                            val sendObject = JSONObject()
-                            phoneStr = mail.text.toString()
-                            sendObject.put("phone",phoneStr)
+                            val sendObject = JS.get()
 
-                            presenter.requestAndResponse(sendObject, Http.CMDS.TELEFONNI_JONATISH)
+                            phoneStr = mail.text.toString()
+                            sendObject.put("type","2")
+                            sendObject.put("input",phoneStr)
+
+                            presenter.requestAndResponse(sendObject, Http.CMDS.FORGOT_PHONE)
                         }
                     }
 
@@ -186,7 +213,7 @@ class SignActivity : BaseActivity() ,Viewer{
                 }
 
                 override fun disconnected() {
-                    Toast.makeText(this@SignActivity,resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ForgotPasswordActivity, resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
 
                 }
 
@@ -232,7 +259,7 @@ class SignActivity : BaseActivity() ,Viewer{
     }
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivity(Intent(this,LoginActivity().javaClass))
+        startActivity(Intent(this, LoginActivity().javaClass))
         this.finish()
     }
 
@@ -241,6 +268,9 @@ class SignActivity : BaseActivity() ,Viewer{
         if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
             setResult(Const.SESSION_OUT)
             finish()
+        }else if(requestCode == Const.FORGOT_PASS){
+            finish()
+
         }
     }
 }

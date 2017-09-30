@@ -109,10 +109,11 @@
     <string name="com_lamudi_phonefield_til_phone">til_phone</string>
     <string name="complaintSpam">Спам</string>
     <string name="complaintAbuse">Оскорбление</string>
-    <string name="compaintAdult">материал для взрослых</string>
+    <string name="compaintAdult">Материал для взрослых</string>
     <string name="complaintDrug">Пропаганда наркотиков</string>
     <string name="complaintChild">Детская порногафия</string>
     <string name="complaintViolence">Экстремизм/Насилие</string>
     <string name="complaintSuicide">Призыв к суициду</string>
     <string name="thank_data_sent">Спасибо, данные отправлено</string>
+    <string name="send">Отправить</string>
 </resources>

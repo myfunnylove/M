@@ -66,6 +66,7 @@ object Const {
     val PUSH_LIST                    = 21
     val TO_FAIL                      = -1;
     val QUIT: Int                    = 22
+    val FORGOT_PASS                  = 23
 
 
 

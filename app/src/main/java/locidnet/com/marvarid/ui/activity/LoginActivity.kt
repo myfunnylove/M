@@ -114,6 +114,10 @@ class LoginActivity : BaseActivity(), Viewer {
                 startActivity(Intent(this, SignActivity().javaClass))
                 this.finish()
             }
+
+            forgot.setOnClickListener {
+                startActivity(Intent(this, ForgotPasswordActivity().javaClass))
+            }
         } else {
             startActivity(Intent(this, MainActivity().javaClass))
             this.finish()

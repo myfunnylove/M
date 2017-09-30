@@ -409,43 +409,43 @@
             </LinearLayout>
 
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.50dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/silver"
+            <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0.50dp"-->
+                <!--android:layout_marginLeft="16dp"-->
+                <!--android:layout_marginRight="16dp"-->
+                <!--android:layout_marginTop="16dp"-->
+                <!--android:background="@color/silver"-->
 
-                />
+                <!--/>-->
 
 
-            <LinearLayout
-                android:id="@+id/deleteAccountlay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
+            <!--<LinearLayout-->
+                <!--android:id="@+id/deleteAccountlay"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:padding="16dp">-->
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    app:srcCompat="@drawable/account_remove_icon"
+                <!--<android.support.v7.widget.AppCompatImageView-->
+                    <!--android:layout_width="24dp"-->
+                    <!--android:layout_height="24dp"-->
+                    <!--app:srcCompat="@drawable/account_remove_icon"-->
 
-                    />
+                    <!--/>-->
 
-                <TextView
-                    android:id="@+id/deleteAccount"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="16dp"
-                    android:text="@string/deleteAccount"
-                    android:textColor="@color/headerTextColor"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:gravity="center_vertical"
-                    />
-            </LinearLayout>
+                <!--<TextView-->
+                    <!--android:id="@+id/deleteAccount"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_marginLeft="16dp"-->
+                    <!--android:text="@string/deleteAccount"-->
+                    <!--android:textColor="@color/headerTextColor"-->
+                    <!--android:textSize="14sp"-->
+                    <!--android:textStyle="bold"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--/>-->
+            <!--</LinearLayout>-->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.50dp"

@@ -96,7 +96,7 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
 
 
                     username = login.text.toString()
-                    password =                                                                                                                                                                                                                                                                                    pass.text.toString()
+                    password = pass.text.toString()
 
                     if (!isLoginFree){
 
@@ -107,7 +107,7 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
 
                         login.setLoginResult(R.drawable.close_circle_outline)
 
-                    }else if(password.length < 5){
+                    }else if(password.length < 6){
 
                         Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.password_field_less_5),Toast.LENGTH_SHORT).show();
 
