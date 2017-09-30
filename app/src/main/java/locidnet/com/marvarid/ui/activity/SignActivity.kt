@@ -1,6 +1,7 @@
 package locidnet.com.marvarid.ui.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Handler
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.view.View
@@ -109,9 +110,7 @@ class SignActivity : BaseActivity() ,Viewer{
                 .inject(this)
         signMode = PHONE_MODE
 
-        phone.addTextChangedListener(JavaCodes.EditTelephoneCodeWatcher)
-        phone.setKeyListener(Functions.EditCardKey)
-
+        phone.setDefaultCountry("uz")
         selectPhone.setOnClickListener {
             signMode = PHONE_MODE
 
@@ -140,19 +139,16 @@ class SignActivity : BaseActivity() ,Viewer{
                 override fun connected() {
 
                     if(signMode == PHONE_MODE){
-                        if (Functions.clearEdit(phone).length != 9){
-
-                            phone.error = resources.getString(R.string.error_incorrect_phone)
 
 
-                        }else{
-
+                        if (phone.isValid){
                             val sendObject = JSONObject()
-                            phoneStr = "998${Functions.clearEdit(phone)}"
+                            phoneStr = phone.phoneNumber!!
                             sendObject.put("phone",phoneStr)
 
                             presenter.requestAndResponse(sendObject, Http.CMDS.TELEFONNI_JONATISH)
-                        }
+                        }else
+                           Toaster.errror(R.string.error_incorrect_phone)
 
 
                     }else if(signMode == SMS_MODE){

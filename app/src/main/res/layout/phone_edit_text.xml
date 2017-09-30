@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    >
+
+    <Spinner
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:dropDownWidth="@dimen/spinner_height"
+        android:popupBackground="@color/pf_white"
+        android:tag="@string/com_lamudi_phonefield_flag_spinner"
+        android:layout_marginLeft="6dp"
+        />
+
+    <EditText
+        style="@style/NormalText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:hint="@string/phone"
+        android:maxLines="1"
+        android:inputType="phone"
+        android:tag="@string/com_lamudi_phonefield_edittext"
+        android:textColor="@color/white"
+         />
+
+</LinearLayout>

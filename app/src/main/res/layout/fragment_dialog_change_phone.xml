@@ -25,7 +25,7 @@
         android:padding="8dp"
         >
 
-        <android.support.design.widget.TextInputEditText
+        <locidnet.com.marvarid.resources.phonefield.PhoneEditText
             android:id="@+id/phone"
             style="@style/NormalText"
             android:layout_width="match_parent"

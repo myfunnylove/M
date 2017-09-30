@@ -102,4 +102,17 @@
     <string name="password_doesnot_match">Пароли не совпадают</string>
     <string name="changed">Изменено</string>
     <string name="quitPostPublish">Пост еще не загружено, хотите выйти?</string>
+    <string name="report">Пожаловатся</string>
+
+    <string name="com_lamudi_phonefield_edittext">phone_edit_text</string>
+    <string name="com_lamudi_phonefield_flag_spinner">flag_spinner</string>
+    <string name="com_lamudi_phonefield_til_phone">til_phone</string>
+    <string name="complaintSpam">Спам</string>
+    <string name="complaintAbuse">Оскорбление</string>
+    <string name="compaintAdult">материал для взрослых</string>
+    <string name="complaintDrug">Пропаганда наркотиков</string>
+    <string name="complaintChild">Детская порногафия</string>
+    <string name="complaintViolence">Экстремизм/Насилие</string>
+    <string name="complaintSuicide">Призыв к суициду</string>
+    <string name="thank_data_sent">Спасибо, данные отправлено</string>
 </resources>

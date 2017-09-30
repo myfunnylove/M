@@ -6,7 +6,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
@@ -40,6 +42,8 @@ import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
+import locidnet.com.marvarid.ui.activity.dialogs.ChangePassFragment
+import locidnet.com.marvarid.ui.activity.dialogs.ComplaintsFragment
 import locidnet.com.marvarid.ui.fragment.*
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
@@ -52,7 +56,7 @@ import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
 
-class MyFeedAdapter(context: Activity,
+class MyFeedAdapter(context: FragmentActivity,
                     feedsMap: PostList,
 
                     adapterClicker: AdapterClicker,
@@ -76,7 +80,7 @@ class MyFeedAdapter(context: Activity,
     var user                  = Base.get.prefs.getUser()
     var lastAnimationPosition = -1
     var itemsCount            = 0
-    var activity:Activity?    = null
+    var activity:FragmentActivity?    = null
     var disableAnimation      = false
     var cachedLists           = HashMap<String,String>()
     var changeId              = -1
@@ -174,7 +178,6 @@ class MyFeedAdapter(context: Activity,
 
 //            h.commentCount.text = post.comments
 
-        h.popup.visibility = View.GONE
 
             if(pOrF == true && changeId == i){
 
@@ -482,16 +485,42 @@ class MyFeedAdapter(context: Activity,
                 }
 
 
-                h.popup.setOnClickListener {
+                if(user.userId != post.user.userId){
+                    h.popup.setOnClickListener {
 
-                    val popup = PopupMenu(ctx,h.popup)
-                    if (pOrF == true && profile.userId == postUser!!.userId){
-                        popup.inflate(R.menu.menu_own_feed)
-                    }else{
+                        val popup = PopupMenu(ctx,h.popup)
                         popup.inflate(R.menu.menu_feed)
-                    }
 
-                    popup.show()
+                        popup.show()
+                        popup.setOnMenuItemClickListener {
+                            val dialog =  ComplaintsFragment.instance()
+
+                            dialog.setDialogClickListener(object : ComplaintsFragment.DialogClickListener{
+                                override fun click(whichButton: Int) {
+                                    val js = JS.get()
+                                    js.put("type",whichButton)
+                                    js.put("post_id",post.id)
+                                    model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
+                                            .enqueue(object : retrofit2.Callback<ResponseData>{
+                                                override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                                    log.e("complaint fail $t")
+
+                                                }
+
+                                                override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+
+                                                    log.d("complaint fail ${response!!.body()}")
+                                                    Toast.makeText(ctx,ctx.resources.getString(R.string.thank_data_sent),Toast.LENGTH_SHORT).show()
+                                                }
+
+                                            })
+                                    dialog.dismiss()
+                                }
+                            })
+                            dialog.show(activity!!.supportFragmentManager,"TAG")
+                            true
+                        }
+                    }
                 }
 
             }

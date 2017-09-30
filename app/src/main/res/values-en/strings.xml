@@ -59,7 +59,7 @@
     <string name="unknown">Unknown</string>
     <string name="sms_code">Code</string>
     <string name="added_to_favorite">Added to favorite list</string>
-    <string name="my_playlist">My playlit</string>
+    <string name="my_playlist">My playlist</string>
     <string name="post">Create post</string>
     <string name="try_again">Try again</string>
     <string name="Sign_up">Sign up</string>
@@ -101,6 +101,17 @@
     <string name="newPasswordAgain">Repeat new password</string>
     <string name="password_doesnot_match">Passwords don\'t match</string>
     <string name="changed">Changed</string>
-    <string name="quitPostPublish">Пост еще не загружено, хотите выйти?</string>
-
+    <string name="quitPostPublish">The post has not been uploaded yet, do you want to quit?</string>
+    <string name="report">Complaint</string>
+    <string name="com_lamudi_phonefield_edittext">phone_edit_text</string>
+    <string name="com_lamudi_phonefield_flag_spinner">flag_spinner</string>
+    <string name="com_lamudi_phonefield_til_phone">til_phone</string>
+    <string name="complaintSpam">Spamming</string>
+    <string name="complaintAbuse">Complaint</string>
+    <string name="compaintAdult">Adult material</string>
+    <string name="complaintDrug">Propaganda of drugs</string>
+    <string name="complaintChild">Child porn</string>
+    <string name="complaintViolence">Extremism/Violence</string>
+    <string name="complaintSuicide">Appeal for suicide</string>
+    <string name="thank_data_sent">Спасибо, данные отправлено</string>
 </resources>
