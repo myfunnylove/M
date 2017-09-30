@@ -113,6 +113,6 @@
     <string name="complaintChild">Child porn</string>
     <string name="complaintViolence">Extremism/Violence</string>
     <string name="complaintSuicide">Appeal for suicide</string>
-    <string name="thank_data_sent">Спасибо, данные отправлено</string>
-    <string name="send">Отправить</string>
+    <string name="thank_data_sent">Thanks,data sent</string>
+    <string name="send">Send</string>
 </resources>
