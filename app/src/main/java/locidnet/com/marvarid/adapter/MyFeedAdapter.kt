@@ -171,7 +171,7 @@ class MyFeedAdapter(context: FragmentActivity,
 //            h.commentCount.text = post.comments
 
 
-            if(pOrF == true && changeId == i){
+            if(changeId == i){
 
                 h.quote.visibility      = View.GONE
                 h.quoteEdit.visibility  = View.VISIBLE
@@ -201,6 +201,8 @@ class MyFeedAdapter(context: FragmentActivity,
                                             val newChange = changeId
                                             changeId = -1
                                             notifyItemChanged(newChange)
+                                            MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
+
                                         }
                                     }catch (e :Exception){
 
@@ -490,7 +492,6 @@ class MyFeedAdapter(context: FragmentActivity,
                         popup.setOnMenuItemClickListener { item ->
                             when (item.itemId) {
                                 R.id.delete -> {
-
                                     val reqObj = JS.get()
 
                                     reqObj.put("post_id", post.id)
@@ -504,6 +505,7 @@ class MyFeedAdapter(context: FragmentActivity,
 
                                                 feeds.posts.removeAt(i)
                                                 MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
+                                                MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
                                                 notifyItemRemoved(i)
                                                 notifyItemRangeChanged(i, feeds.posts.size)
                                                 notifyItemChanged(0)
