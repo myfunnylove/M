@@ -37,7 +37,7 @@ import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
-import locidnet.com.marvarid.ui.activity.dialogs.YesNoFragment
+import locidnet.com.marvarid.ui.dialogs.YesNoFragment
 import me.iwf.photopicker.PhotoPicker
 import org.json.JSONObject
 import java.io.File

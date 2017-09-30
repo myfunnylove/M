@@ -1,4 +1,4 @@
-package locidnet.com.marvarid.ui.activity.dialogs
+package locidnet.com.marvarid.ui.dialogs
 
 import android.app.Dialog
 import android.content.DialogInterface
@@ -15,41 +15,38 @@ import android.widget.Button
 import android.widget.ProgressBar
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.JavaCodes
-import locidnet.com.marvarid.resources.utils.log
 
 /**
  * Created by macbookpro on 06.09.17.
  */
-class PhoneFormFragment : DialogFragment() {
+class MailFormFragment : DialogFragment() {
 
     var listener: DialogClickListener? = null
     companion object {
-        var mInstance: PhoneFormFragment? = null
+        var mInstance: MailFormFragment? = null
 
         val GET_SMS = 1
         val CHANGE = 2
         val TAG = "yesnofragment"
-        fun instance() : PhoneFormFragment {
+        fun instance() : MailFormFragment {
 
-            if (mInstance == null) mInstance = PhoneFormFragment()
+            if (mInstance == null) mInstance = MailFormFragment()
 
             return mInstance!!
         }
 
-        fun instance(bundle:Bundle) : PhoneFormFragment {
+        fun instance(bundle: Bundle) : MailFormFragment {
 
-            if (mInstance == null) mInstance = PhoneFormFragment()
+            if (mInstance == null) mInstance = MailFormFragment()
             mInstance!!.arguments = bundle
             return mInstance!!
         }
     }
 
-    lateinit var phone: TextInputEditText
-    lateinit var smsCode:TextInputEditText
-    lateinit var send:Button
-    lateinit var progress:ProgressBar
+    lateinit var mail: TextInputEditText
+    lateinit var smsCode: TextInputEditText
+    lateinit var send: Button
+    lateinit var progress: ProgressBar
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.window.requestFeature(Window.FEATURE_NO_TITLE)
@@ -58,14 +55,10 @@ class PhoneFormFragment : DialogFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val view = inflater!!.inflate(R.layout.fragment_dialog_change_phone,container,false)
+        val view = inflater!!.inflate(R.layout.fragment_dialog_change_mail,container,false)
 
         send = view.findViewById(R.id.yes) as Button
-        send.text = Base.get.resources.getString(R.string.get_sms)
-        phone = view.findViewById(R.id.phone) as TextInputEditText
-
-           phone.addTextChangedListener(JavaCodes.EditTelephoneCodeWatcher)
-           phone.setKeyListener(Functions.EditCardKey)
+        mail = view.findViewById(R.id.phone) as TextInputEditText
 
 
 
@@ -73,7 +66,6 @@ class PhoneFormFragment : DialogFragment() {
         progress = view.findViewById(R.id.progress) as ProgressBar
 
         send.findViewById(R.id.yes).setOnClickListener {
-            log.d("${send.tag}")
             if (send.tag == CHANGE) {
                 listener!!.click(CHANGE)
 
@@ -96,24 +88,24 @@ class PhoneFormFragment : DialogFragment() {
 
     fun setSms(sms:String) {
         send.tag = CHANGE
-
         send.text = Base.get.resources.getString(R.string.confirm)
         smsCode.visibility =View.VISIBLE
-
         smsCode.setText(sms)
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
-        phone.setText("")
-        smsCode.visibility =View.GONE
-
         smsCode.setText("")
-        send.tag = GET_SMS
-        send.text = Base.get.resources.getString(R.string.get_sms)
+
+       if (send.tag != CHANGE){
+           mail.setText("")
+
+           smsCode.visibility =View.GONE
+
+           send.tag = GET_SMS
+           send.text = Base.get.resources.getString(R.string.get_sms)
+       }
         super.onDismiss(dialog)
     }
-
-
     fun setVisibility(setVisible:Boolean) = if(setVisible) progress.visibility = View.VISIBLE
                                            else progress.visibility = View.GONE
 }

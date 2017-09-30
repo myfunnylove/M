@@ -66,6 +66,9 @@ object Http {
         val GET_LAST_COMMENTS          = "38"
         val GET_FULL_POST              = "39"
         val ALLOW_DISMISS              = "19"
+        val FORGOT_PHONE               = "42"
+        val FORGOT_SMS                 = "43"
+        val FORGOT_PASS                = "44"
         val COMPLAINTS                 = "46"
 
     }

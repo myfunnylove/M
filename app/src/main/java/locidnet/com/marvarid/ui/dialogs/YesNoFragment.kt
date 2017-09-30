@@ -1,4 +1,4 @@
-package locidnet.com.marvarid.ui.activity.dialogs
+package locidnet.com.marvarid.ui.dialogs
 
 import android.app.Dialog
 import android.graphics.Color

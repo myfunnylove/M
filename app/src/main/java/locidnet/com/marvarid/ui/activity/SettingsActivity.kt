@@ -28,22 +28,19 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
-import locidnet.com.marvarid.pattern.builder.SessionOut
 import locidnet.com.marvarid.pattern.signInUpBridge.SimpleoAuth
 import locidnet.com.marvarid.resources.utils.*
-import locidnet.com.marvarid.ui.activity.dialogs.ChangePassFragment
-import locidnet.com.marvarid.ui.activity.dialogs.MailFormFragment
-import locidnet.com.marvarid.ui.activity.dialogs.PhoneFormFragment
-import locidnet.com.marvarid.ui.activity.dialogs.YesNoFragment
+import locidnet.com.marvarid.ui.dialogs.ChangePassFragment
+import locidnet.com.marvarid.ui.dialogs.MailFormFragment
+import locidnet.com.marvarid.ui.dialogs.PhoneFormFragment
+import locidnet.com.marvarid.ui.dialogs.YesNoFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.regex.Pattern
 import javax.inject.Inject
 
-/**
- * Created by Sarvar on 10.08.2017.
- */
+
 class SettingsActivity : BaseActivity(), Viewer {
 
 
@@ -102,15 +99,15 @@ class SettingsActivity : BaseActivity(), Viewer {
                     log.d("$whichButton")
                     if (whichButton == PhoneFormFragment.GET_SMS) {
 
-                        if (Functions.clearEdit(changePhoneDialog!!.phone).length != 9) {
+                        if (!changePhoneDialog!!.phone.isValid) {
 
-                            changePhoneDialog!!.phone.error = resources.getString(R.string.error_incorrect_phone)
+                            Toaster.errror(resources.getString(R.string.error_incorrect_phone))
 
 
                         } else {
 
                             val js = JS.get()
-                            val phoneStr = "998${Functions.clearEdit(changePhoneDialog!!.phone)}"
+                            val phoneStr = changePhoneDialog!!.phone.phoneNumber
                             js.put("phone", phoneStr)
                             changePhoneDialog!!.setVisibility(true)
 
@@ -122,7 +119,7 @@ class SettingsActivity : BaseActivity(), Viewer {
                         if (changePhoneDialog!!.smsCode.text.toString().trim().length == 6) {
 
                             val js = JS.get()
-                            val phoneStr = "998${Functions.clearEdit(changePhoneDialog!!.phone)}"
+                            val phoneStr = changePhoneDialog!!.phone.phoneNumber
                             js.put("phone", phoneStr)
                             js.put("code", changePhoneDialog!!.smsCode.text.toString().trim())
                             changePhoneDialog!!.setVisibility(true)
@@ -395,7 +392,7 @@ class SettingsActivity : BaseActivity(), Viewer {
             }
             Http.CMDS.ACCEPT_CHANGE_PHONE -> {
                 changePhoneDialog!!.setVisibility(false)
-                userData.userPhone = Functions.clearEdit(changePhoneDialog!!.phone)
+                userData.userPhone = changePhoneDialog!!.phone.phoneNumber
                 Prefs.Builder().setUser(userData)
                 phone.text = Prefs.Builder().getUser().userPhone
                 changePhoneDialog!!.dismiss()

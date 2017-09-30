@@ -1,4 +1,4 @@
-package locidnet.com.marvarid.ui.activity.dialogs
+package locidnet.com.marvarid.ui.dialogs
 
 import android.app.Dialog
 import android.content.Context
@@ -15,7 +15,6 @@ import android.view.Window
 import android.widget.TextView
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
-import locidnet.com.marvarid.model.DialogFragmentModel
 import locidnet.com.marvarid.resources.utils.Const
 
 /**

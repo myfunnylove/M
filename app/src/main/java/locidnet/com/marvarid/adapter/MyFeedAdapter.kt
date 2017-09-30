@@ -1,14 +1,10 @@
 package locidnet.com.marvarid.adapter
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
@@ -21,7 +17,6 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.nineoldandroids.animation.AnimatorSet
 
@@ -33,8 +28,6 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
-import locidnet.com.marvarid.pattern.cryptDecorator.AppCrypt
-import locidnet.com.marvarid.pattern.cryptDecorator.B64EncoderCryptDecorator
 import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
@@ -42,8 +35,7 @@ import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
-import locidnet.com.marvarid.ui.activity.dialogs.ChangePassFragment
-import locidnet.com.marvarid.ui.activity.dialogs.ComplaintsFragment
+import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
 import locidnet.com.marvarid.ui.fragment.*
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
@@ -80,7 +72,7 @@ class MyFeedAdapter(context: FragmentActivity,
     var user                  = Base.get.prefs.getUser()
     var lastAnimationPosition = -1
     var itemsCount            = 0
-    var activity:FragmentActivity?    = null
+    var activity:FragmentActivity?    = context
     var disableAnimation      = false
     var cachedLists           = HashMap<String,String>()
     var changeId              = -1
@@ -499,7 +491,7 @@ class MyFeedAdapter(context: FragmentActivity,
                                 override fun click(whichButton: Int) {
                                     val js = JS.get()
                                     js.put("type",whichButton)
-                                    js.put("post_id",post.id)
+                                    js.put("post",post.id)
                                     model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
                                             .enqueue(object : retrofit2.Callback<ResponseData>{
                                                 override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
@@ -509,7 +501,7 @@ class MyFeedAdapter(context: FragmentActivity,
 
                                                 override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
 
-                                                    log.d("complaint fail ${response!!.body()}")
+                                                    log.d("complaint onresponse ${response!!.body()}")
                                                     Toast.makeText(ctx,ctx.resources.getString(R.string.thank_data_sent),Toast.LENGTH_SHORT).show()
                                                 }
 

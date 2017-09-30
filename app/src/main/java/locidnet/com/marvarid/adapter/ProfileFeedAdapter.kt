@@ -1,6 +1,5 @@
 package locidnet.com.marvarid.adapter
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -42,7 +41,7 @@ import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
 import locidnet.com.marvarid.ui.activity.PlaylistActivity
 import locidnet.com.marvarid.ui.activity.SettingsActivity
-import locidnet.com.marvarid.ui.activity.dialogs.ComplaintsFragment
+import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
 import locidnet.com.marvarid.ui.fragment.*
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
@@ -558,7 +557,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                         override fun click(whichButton: Int) {
                                             val js = JS.get()
                                             js.put("type",whichButton)
-                                            js.put("post_id",post.id)
+                                            js.put("post",post.id)
+
                                             model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
                                                     .enqueue(object : retrofit2.Callback<ResponseData>{
                                                         override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {

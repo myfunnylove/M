@@ -1,4 +1,4 @@
-package locidnet.com.marvarid.ui.activity.dialogs
+package locidnet.com.marvarid.ui.dialogs
 
 import android.app.Dialog
 import android.content.DialogInterface
@@ -14,11 +14,7 @@ import android.view.Window
 import android.widget.Button
 import android.widget.ProgressBar
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.base.Base
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.JavaCodes
 import locidnet.com.marvarid.resources.utils.Toaster
-import locidnet.com.marvarid.resources.utils.log
 
 /**
  * Created by macbookpro on 06.09.17.

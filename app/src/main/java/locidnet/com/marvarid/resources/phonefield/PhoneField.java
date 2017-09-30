@@ -288,5 +288,5 @@ public abstract class PhoneField extends LinearLayout {
   }
 
 
-
+  public void setText(String text) {mEditText.setText(text);}
 }
