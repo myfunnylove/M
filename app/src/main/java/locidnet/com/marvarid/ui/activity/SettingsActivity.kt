@@ -74,7 +74,7 @@ class SettingsActivity : BaseActivity(), Viewer {
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
-        supportActionBar!!.setTitle(resources.getString(R.string.settings))
+        supportActionBar!!.title = resources.getString(R.string.settings)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
 
@@ -85,7 +85,6 @@ class SettingsActivity : BaseActivity(), Viewer {
         /*FIRST LAST NAME AND USERNAME*/
         name.setText("${userData.first_name} ${userData.last_name}")
         username.setText(userData.userName)
-        name.addTextChangedListener(textwatcher)
         username.addTextChangedListener(textwatcher)
         /*FIRST LAST NAME AND USERNAME*/
 
@@ -194,7 +193,7 @@ class SettingsActivity : BaseActivity(), Viewer {
         else if (userData.gender == "F") 1
         else 2)
         /*GENDER*/
-        switchCloseAccount.isChecked = if (Base.get.prefs.getUser().close == 1) true else false
+        switchCloseAccount.isChecked = Base.get.prefs.getUser().close == 1
         switchCloseAccount.setOnCheckedChangeListener { view, isChecked ->
             val js = JS.get()
             model.responseCall(Http.getRequestData(js, Http.CMDS.CLOSE_PROFIL))
@@ -210,14 +209,14 @@ class SettingsActivity : BaseActivity(), Viewer {
                                     Base.get.prefs.setUser(user)
                                 }
                             } catch (e: Exception) {
-                                switchCloseAccount.isChecked = if (Base.get.prefs.getUser().close == 1) true else false
+                                switchCloseAccount.isChecked = Base.get.prefs.getUser().close == 1
                             }
 
                         }
 
                         override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                             log.d("close profil fail $t")
-                            switchCloseAccount.isChecked = if (Base.get.prefs.getUser().close == 1) true else false
+                            switchCloseAccount.isChecked = Base.get.prefs.getUser().close == 1
 
                         }
 
@@ -297,7 +296,7 @@ class SettingsActivity : BaseActivity(), Viewer {
 
 
         /*ALLOW NOTIFICATION*/
-        switchNotification.isChecked = if (Base.get.prefs.isALlowNotif()) true else false
+        switchNotification.isChecked = Base.get.prefs.isALlowNotif()
         switchNotification.setOnCheckedChangeListener { view, isChecked -> Base.get.prefs.allowNotif(isChecked) }
         /*ALLOW NOTIFICATION*/
     }
@@ -313,7 +312,7 @@ class SettingsActivity : BaseActivity(), Viewer {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         menuInflater.inflate(R.menu.menu_save, menu)
-        return true;
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -339,7 +338,7 @@ class SettingsActivity : BaseActivity(), Viewer {
 
                     }
                     else {
-                        send();
+                        send()
 
 
                     }
@@ -501,8 +500,15 @@ class SettingsActivity : BaseActivity(), Viewer {
     val textwatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             changed = true
-            if(s!!.toString().length >= 6) presenter.filterLogin(username)
-            else username.setLoginResult()
+            if(s!!.toString().length >= 6){
+                if(s.toString() != userData.userName)
+                presenter.filterLogin(username)
+                else
+                    isLoginFree = true
+            }
+            else{
+                username.setLoginResult()
+            }
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

@@ -279,13 +279,4 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
 
     }
 
-    override fun onViewRecycled(holder: Holder?) {
-//        try{
-//            Glide.with(context).clear(holder!!.itemView)
-//
-//
-//        }catch (e:Exception){}
-
-        super.onViewRecycled(holder)
-    }
 }

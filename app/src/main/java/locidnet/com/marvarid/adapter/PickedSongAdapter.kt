@@ -105,8 +105,8 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
 
         h.errorImg.visibility = View.GONE
 
-        h.songArtist.setText(song.songArtist)
-        h.songName.setText(song.songTitle)
+        h.songArtist.text = song.songArtist
+        h.songName.text = song.songTitle
 
 
 
@@ -269,11 +269,4 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
 
     }
 
-    override fun onViewRecycled(holder: Holder?) {
-//        try{
-//            Glide.with(context).clear(holder!!.itemView)
-//
-//        }catch (e:Exception){}
-        super.onViewRecycled(holder)
-    }
 }

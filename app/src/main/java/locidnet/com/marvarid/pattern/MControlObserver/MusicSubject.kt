@@ -1,6 +1,6 @@
 package locidnet.com.marvarid.pattern.MControlObserver
 
-class MusicSubject() : Subject {
+class MusicSubject : Subject {
 
     var list:ArrayList<MusicControlObserver> = ArrayList()
 

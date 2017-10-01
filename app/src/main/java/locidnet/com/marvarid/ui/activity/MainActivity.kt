@@ -113,7 +113,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         var COMMENT_COUNT       = 0
 
         var tablayoutHeight = 0
-        lateinit var musicSubject:MusicSubject
+        public var musicSubject:MusicSubject? = null
 
     }
 
@@ -139,12 +139,12 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         setPager()
-        tablayout.getViewTreeObserver().addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+        tablayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
             override fun onGlobalLayout() {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    tablayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    tablayout.viewTreeObserver.removeGlobalOnLayoutListener(this)
                 } else {
-                    tablayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    tablayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
                 tablayoutHeight = tablayout.measuredHeight
 
@@ -241,7 +241,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                                 reqObj.put("end",     endNotif)
 
                                 log.d("feed page select $reqObj")
-                                presenter!!.requestAndResponse(reqObj, Http.CMDS.GET_NOTIF_LIST)
+                                presenter.requestAndResponse(reqObj, Http.CMDS.GET_NOTIF_LIST)
 
 
 
@@ -274,7 +274,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                                     reqObj.put("end",     endFeed)
 
                                     log.d("feed page select $reqObj")
-                                    presenter!!.requestAndResponse(reqObj, Http.CMDS.FEED)
+                                    presenter.requestAndResponse(reqObj, Http.CMDS.FEED)
 
 
 
@@ -371,7 +371,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                         reqObj.put("start",   startSearch)
                         reqObj.put("end",     endSearch)
                         reqObj.put("user",    data)
-                        presenter!!.requestAndResponse(reqObj, Http.CMDS.SEARCH_USER)
+                        presenter.requestAndResponse(reqObj, Http.CMDS.SEARCH_USER)
 
 
 
@@ -595,7 +595,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        log.d("MainActivity -> OnactivityResult: req:${requestCode} res: ${resultCode} intent: ${if (data != null) true else false}")
+        log.d("MainActivity -> OnactivityResult: req:${requestCode} res: ${resultCode} intent: ${data != null}")
         var photos: List<String>? = null
 
 
@@ -738,12 +738,12 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             FEED_STATUS                 = NEED_UPDATE
             COMMENT_POST_UPDATE         = 0
             COMMENT_COUNT               = 0
-            super.onBackPressed();
-            return;
+            super.onBackPressed()
+            return
         }
 
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, resources.getString(R.string.exit_to_press_again), Toast.LENGTH_SHORT).show();
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, resources.getString(R.string.exit_to_press_again), Toast.LENGTH_SHORT).show()
 
         Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
     }
@@ -829,21 +829,12 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                 user = Base.get.prefs.getUser()
                 try{
                     log.d("from change avatar get user photo ${user.profilPhoto}")
-                profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.HIDE_PROGRESS);
+                profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.HIDE_PROGRESS)
                 }catch (e:Exception){}
                 profilFragment!!.setAvatar(user.profilPhoto)
             }
 
-            Http.CMDS.SEARCH_USER -> {
 
-                val follow = Gson().fromJson<Follow>(result, Follow::class.java)
-                if(follow.users.size > 0){
-                    searchFragment!!.swapList(follow.users)
-
-                }else {
-                    searchFragment!!.failedGetList("empty")
-                }
-            }
 
             Http.CMDS.FEED -> {
 
@@ -895,13 +886,13 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             Http.CMDS.FEED        -> Handler().postDelayed({feedFragment!!.failedGetList(message)},1500)
 
 //            Http.CMDS.MY_POSTS    -> Handler().postDelayed({profilFragment!!.failedGetList(message)},1500)
-            Http.CMDS.SEARCH_USER -> Handler().postDelayed({searchFragment!!.failedGetList(message)},1500)
+
         }
     }
 
     private fun String.uploadAvatar() {
         try{
-            profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.SHOW_PROGRESS);
+            profilFragment!!.createProgressForAvatar(ProfileFeedAdapter.SHOW_PROGRESS)
         }catch (e:Exception){}
         val reqFile = ProgressRequestBody(File(this), object : ProgressRequestBody.UploadCallbacks {
 
@@ -934,8 +925,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
         tablayout.animate()
                 .translationY(0f)
-                .setDuration(300)
-                .setStartDelay(300)
+                .setDuration(300).startDelay = 300
     }
     fun hideSoftKeyboard() {
         val inputMethodManager = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -962,7 +952,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             //set and show
             controller!!.setMediaPlayer(this)
             controller!!.setAnchorView(findViewById(R.id.pager))
-            controller!!.setEnabled(true)
+            controller!!.isEnabled = true
         }
     }
 
@@ -974,7 +964,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             setController()
             playbackPaused = false
         }
-        musicSubject.playMeause("")
+        musicSubject!!.playMeause("")
 
     }
 
@@ -984,7 +974,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             setController()
             playbackPaused = false
         }
-        musicSubject.playMeause("")
+        musicSubject!!.playMeause("")
 
     }
 
@@ -1003,7 +993,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                         setController()
                         controller!!.show()
                     }
-                    controller!!.setLoading(true);
+                    controller!!.setLoading(true)
 
                     musicSrv!!.setList(listSong)
                     musicSrv!!.setSong(position)
@@ -1027,7 +1017,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                         setController()
                         controller!!.show()
                     }
-                    controller!!.setLoading(true);
+                    controller!!.setLoading(true)
 
                     musicSrv!!.setList(listSong)
                     musicSrv!!.setSong(position)
@@ -1172,22 +1162,22 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     }
 
     override fun getCurrentPosition(): Int {
-        if (musicSrv != null && musicBound && musicSrv!!.isPng())
-            return musicSrv!!.getPosn()
+        if (musicSrv != null && musicBound && musicSrv!!.isPng)
+            return musicSrv!!.posn
         else
             return 0
     }
 
     override fun getDuration(): Int {
-        if (musicSrv != null && musicBound && musicSrv!!.isPng())
-            return musicSrv!!.getDur()
+        if (musicSrv != null && musicBound && musicSrv!!.isPng)
+            return musicSrv!!.dur
         else
             return 0
     }
 
     override fun isPlaying(): Boolean {
         if (musicSrv != null && musicBound)
-            return musicSrv!!.isPng()
+            return musicSrv!!.isPng
         return false
     }
 
@@ -1196,7 +1186,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         musicSrv!!.pausePlayer()
 
 
-        musicSubject.playMeause("")
+        musicSubject!!.playMeause("")
 
 
     }
@@ -1207,7 +1197,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
     override fun start() {
         musicSrv!!.go()
-        musicSubject.playMeause("")
+        musicSubject!!.playMeause("")
     }
 
     override fun goPlayList() {
@@ -1233,10 +1223,10 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         try {
 
             var token = Prefs.Builder().getTokenId()
-            log.d("Firebase da token bormi -> " + if (token!!.isEmpty()) "yo'q" else "bor -> $token ")
+            log.d("Firebase da token bormi -> " + if (token.isEmpty()) "yo'q" else "bor -> $token ")
 
 
-            if (token!!.isEmpty()) {
+            if (token.isEmpty()) {
                 log.d("Firebase da token yo'q -> ")
 
                 token = FirebaseInstanceId.getInstance().token!!

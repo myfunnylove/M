@@ -51,7 +51,7 @@ public class PhotoPagerActivity extends AppCompatActivity {
     }
     pagerFragment.setPhotos(paths, currentItem);
 
-    Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar mToolbar = findViewById(R.id.toolbar);
     setSupportActionBar(mToolbar);
 
     actionBar = getSupportActionBar();

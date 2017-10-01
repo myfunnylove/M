@@ -207,7 +207,7 @@ class FollowAdapter(context:Context,
                                     log.d("follow on response $response")
                                     log.d("follow on response ${response.body()!!.res}")
                                     log.d("follow on response ${Http.getResponseData(response.body()!!.prms)}")
-                                    log.d("follow on text     ${h.follow.text.toString()}")
+                                    log.d("follow on text     ${h.follow.text}")
 
 
                                         users.get(p1).request = 0
@@ -276,19 +276,11 @@ class FollowAdapter(context:Context,
                     .setListener(object : AnimatorListenerAdapter(){
                         override fun onAnimationEnd(animation: Animator?) {
                             if (translationY == 100f) translationY = 0f
-                            animationsLocked = true;
+                            animationsLocked = true
                         }
                     }).start()
         }
 
     }
 
-    override fun onViewRecycled(holder: Holder?) {
-//        try{
-//            Glide.with(ctx).clear(holder!!.itemView)
-//
-//
-//        }catch (e:Exception){}
-        super.onViewRecycled(holder)
-    }
 }

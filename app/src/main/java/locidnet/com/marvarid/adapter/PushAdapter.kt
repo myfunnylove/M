@@ -230,8 +230,8 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
                 requested.time.text ="${prettyTime.format(date2)} - "
 
-                requested.accept.setText(Functions.getString(R.string.allow))
-                requested.dismiss.setText(Functions.getString(R.string.ignore))
+                requested.accept.text = Functions.getString(R.string.allow)
+                requested.dismiss.text = Functions.getString(R.string.ignore)
                 val js =  JS.get()
                 js.put("user", push.user.userId)
                 requested.accept.setOnClickListener {
@@ -327,21 +327,21 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 try{
                     if (push.user.actions.requestIt == "1") {
                         follow.accept.tag = ProfileFragment.REQUEST
-                        follow.accept.setText(Functions.getString(R.string.request))
+                        follow.accept.text = Functions.getString(R.string.request)
                     }else if(push.user.actions.followIt == "1") {
                         follow.accept.tag = ProfileFragment.UN_FOLLOW
 
-                        follow.accept.setText(Functions.getString(R.string.unfollow))
+                        follow.accept.text = Functions.getString(R.string.unfollow)
 
                     }else {
                         follow.accept.tag = ProfileFragment.FOLLOW
 
-                        follow.accept.setText(Functions.getString(R.string.follow))
+                        follow.accept.text = Functions.getString(R.string.follow)
                     }
                 }catch (e:Exception){
                     follow.accept.tag = ProfileFragment.FOLLOW
 
-                    follow.accept.setText(Functions.getString(R.string.follow))
+                    follow.accept.text = Functions.getString(R.string.follow)
                 }
 
 
@@ -472,13 +472,4 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
     }
 
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
-
-//        try{
-//            Glide.with(ctx).clear(holder!!.itemView)
-//
-//
-//        }catch (e:Exception){}
-        super.onViewRecycled(holder)
-    }
 }

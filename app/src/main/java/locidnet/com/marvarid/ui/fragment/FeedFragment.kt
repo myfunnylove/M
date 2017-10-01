@@ -81,7 +81,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
     override fun init() {
         Const.TAG = "FeedFragment"
 
-        MainActivity.musicSubject.subscribe(this)
+        MainActivity.musicSubject!!.subscribe(this)
 
         progressLay    = rootView.findViewById<ViewGroup>(R.id.progressLay)
 
@@ -103,7 +103,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 val totalItemCount = mLayoutManager.itemCount
 
                 lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-                swipeRefreshLayout.setEnabled(mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+                swipeRefreshLayout.isEnabled = mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
 
 
                 // If the total item count is zero and the previous isn't, assume the
@@ -328,7 +328,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
     }
 
     override fun onDestroy() {
-        MainActivity.musicSubject.unsubscribe(this)
+        MainActivity.musicSubject!!.unsubscribe(this)
 
         super.onDestroy()
     }

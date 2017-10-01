@@ -27,5 +27,6 @@ interface MVPComponent {
     fun inject(userPostActivity: UserPostActivity)
     fun inject(forgotPasswordActivity: ForgotPasswordActivity)
     fun inject(newPasswordActivity: NewPasswordActivity)
+    fun inject(searchActivity: SearchActivity)
 
 }

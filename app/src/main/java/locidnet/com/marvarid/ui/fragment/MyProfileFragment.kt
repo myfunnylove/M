@@ -91,7 +91,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
         log.d("init profil fragment")
 
-        MainActivity.musicSubject.subscribe(this)
+        MainActivity.musicSubject!!.subscribe(this)
 
         progressLay    = rootView.findViewById<ViewGroup>(R.id.progressLay)
         swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
@@ -126,9 +126,9 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 var lastVisibleItemPosition = 0
 
                 val totalItemCount = mLayoutManager.itemCount
-                swipeRefreshLayout.setEnabled(mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+                swipeRefreshLayout.isEnabled = mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
 
-                    lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
 
 
                 // If the total item count is zero and the previous isn't, assume the
@@ -424,7 +424,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     }
 
     override fun onDestroy() {
-        MainActivity.musicSubject.unsubscribe(this)
+        MainActivity.musicSubject!!.unsubscribe(this)
         super.onDestroy()
     }
 

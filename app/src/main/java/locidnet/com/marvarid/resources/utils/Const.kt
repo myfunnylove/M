@@ -36,15 +36,15 @@ object Const {
     val FEED_FAILED  = -1
 
 
-    val TO_VALUE = "VALUE_IS?";
-    val SONG_PICKED = "PICKED_SONG";
+    val TO_VALUE = "VALUE_IS?"
+    val SONG_PICKED = "PICKED_SONG"
     val PUBLISH_IMAGE = "publish_image"
 
 
 
-    val TO_POSTS = -1;
-    val TO_FOLLOWERS = -2;
-    val TO_FOLLOWING = -3;
+    val TO_POSTS = -1
+    val TO_FOLLOWERS = -2
+    val TO_FOLLOWING = -3
 
     val PICK_IMAGE                   = 4
     val PICK_AUDIO                   = 5
@@ -64,14 +64,14 @@ object Const {
     val FROM_SEARCH_TO_PROFIL        = 19
     val REFRESH_NOTIFICATION         = 20
     val PUSH_LIST                    = 21
-    val TO_FAIL                      = -1;
+    val TO_FAIL                      = -1
     val QUIT: Int                    = 22
     val FORGOT_PASS                  = 23
 
 
 
 
-    val FROM_MAIN_ACTIVITY = 100;
+    val FROM_MAIN_ACTIVITY = 100
 
 
     val colorPalette = hashMapOf(

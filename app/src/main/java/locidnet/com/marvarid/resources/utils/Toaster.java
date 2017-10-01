@@ -18,7 +18,7 @@ public class Toaster {
         Toast toast = Toast.makeText(Base.Companion.getGet(),errorText,Toast.LENGTH_SHORT);
         toast.setView(View.inflate(Base.Companion.getGet(),R.layout.res_custom_toast_error,null));
 
-        TextView textView = (TextView) toast.getView().findViewById(R.id.txtMessage);
+        TextView textView = toast.getView().findViewById(R.id.txtMessage);
         textView.setText(errorText);
         textView.setCompoundDrawablesWithIntrinsicBounds(Base.Companion.getGet().getResources().getDrawable(R.drawable.close_),null,null,null);
         toast.setGravity(Gravity.CENTER,0,0);
@@ -29,7 +29,7 @@ public class Toaster {
         Toast toast = Toast.makeText(Base.Companion.getGet(),Base.Companion.getGet().getResources().getString(errorText),Toast.LENGTH_SHORT);
         toast.setView(View.inflate(Base.Companion.getGet(),R.layout.res_custom_toast_error,null));
 
-        TextView textView = (TextView) toast.getView().findViewById(R.id.txtMessage);
+        TextView textView = toast.getView().findViewById(R.id.txtMessage);
         textView.setText(errorText);
         textView.setCompoundDrawablesWithIntrinsicBounds(Base.Companion.getGet().getResources().getDrawable(R.drawable.close_),null,null,null);
         toast.setGravity(Gravity.CENTER,0,0);
@@ -39,7 +39,7 @@ public class Toaster {
         Toast toast = Toast.makeText(Base.Companion.getGet(),errorText,Toast.LENGTH_SHORT);
         toast.setView(View.inflate(Base.Companion.getGet(),R.layout.res_custom_toast_error,null));
 
-        TextView textView = (TextView) toast.getView().findViewById(R.id.txtMessage);
+        TextView textView = toast.getView().findViewById(R.id.txtMessage);
         textView.setCompoundDrawablesWithIntrinsicBounds(Base.Companion.getGet().getResources().getDrawable(R.drawable.info_),null,null,null);
 
         textView.setBackgroundDrawable(Base.Companion.getGet().getResources().getDrawable(R.drawable.button_bg_info));

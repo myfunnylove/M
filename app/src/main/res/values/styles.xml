@@ -44,8 +44,25 @@
         <item name="android:actionMenuTextColor">@color/asbestos</item>
         <item name="colorControlHighlight">@color/asbestos</item>
         <item name="actionMenuTextColor">@color/asbestos</item>
-    </style>
 
+
+    </style>
+    <style name="AppTheme.SEARCH" parent="Theme.AppCompat">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/asbestos</item>
+        <item name="colorPrimaryDark">@color/headerTextColor</item>
+        <item name="colorAccent">@color/asbestos</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:typeface">serif</item>
+
+        <item name="android:actionMenuTextColor">@color/headerTextColor</item>
+        <item name="colorControlHighlight">@color/headerTextColor</item>
+        <item name="actionMenuTextColor">@color/headerTextColor</item>
+        <item name="colorControlNormal">@color/headerTextColor</item>
+        <item name="actionBarTheme">@style/DrawerArrowStyle</item>
+    </style>
     <style name="AppTheme.SETTINGS" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -183,7 +200,12 @@
         <item name="android:elevation" tools:targetApi="lollipop">4dp</item>
         <item name="navigationIcon">@drawable/arrow_left</item>
     </style>
-
+    <style name="SearchToolbar" >
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="android:background">?colorPrimary</item>
+        <item name="android:elevation" tools:targetApi="lollipop">4dp</item>
+        <item name="navigationIcon">@drawable/search_select</item>
+    </style>
 
     <style name="MyEditText" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/material_grey_300</item>

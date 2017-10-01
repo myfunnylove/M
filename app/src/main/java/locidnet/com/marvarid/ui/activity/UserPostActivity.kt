@@ -127,7 +127,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
-        supportActionBar!!.setTitle(resources.getString(R.string.notifications))
+        supportActionBar!!.title = resources.getString(R.string.notifications)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
 
@@ -204,7 +204,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
            likeIcon.setImageDrawable(icon)
 
            likeCount.setCurrentText(post.likes)
-            supportActionBar!!.setTitle(post.user.username)
+           supportActionBar!!.title = post.user.username
 
            val currentLikesCount  = post.likes.toInt()
            if (true){
@@ -341,12 +341,12 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
 
                    post.like = "1"
                    post.likes = (post.likes.toInt() + 1).toString()
-                   likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, likeIcon.context.theme));
+                   likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, likeIcon.context.theme))
                } else {
                    post.likes = (post.likes.toInt() - 1).toString()
 
                    post.like = "0"
-                   likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, likeIcon.context.theme));
+                   likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, likeIcon.context.theme))
 
                }
 
@@ -464,7 +464,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
                         pause()
                     }else{
                         if(controller == null) setController()
-                        controller!!.setLoading(true);
+                        controller!!.setLoading(true)
 
                         musicSrv!!.setList(listSong)
                         musicSrv!!.setSong(position)
@@ -479,14 +479,14 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
                     }
                 }else{
                     if(controller == null) setController()
-                    controller!!.setLoading(false);
+                    controller!!.setLoading(false)
 
                     if(MusicService.PLAY_STATUS == MusicService.PAUSED && MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){
                         start()
                     }else{
 
                         if(controller == null) setController()
-                        controller!!.setLoading(true);
+                        controller!!.setLoading(true)
 
                         musicSrv!!.setList(listSong)
                         musicSrv!!.setSong(position)
@@ -552,32 +552,32 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
     }
 
     override fun getCurrentPosition(): Int {
-        if (musicSrv != null && musicBound && musicSrv!!.isPng())
-            return musicSrv!!.getPosn()
+        if (musicSrv != null && musicBound && musicSrv!!.isPng)
+            return musicSrv!!.posn
         else
             return 0
     }
 
     override fun getDuration(): Int {
-        if (musicSrv != null && musicBound && musicSrv!!.isPng())
-            return musicSrv!!.getDur()
+        if (musicSrv != null && musicBound && musicSrv!!.isPng)
+            return musicSrv!!.dur
         else
             return 0
     }
 
     override fun isPlaying(): Boolean {
         if (musicSrv != null && musicBound)
-            return musicSrv!!.isPng()
+            return musicSrv!!.isPng
         return false
     }
 
     override fun pause() {
         playbackPaused = true
         musicSrv!!.pausePlayer()
-        if(controller != null) controller!!.setLoading(false);
+        if(controller != null) controller!!.setLoading(false)
 
 
-        MainActivity.musicSubject.playMeause("")
+        MainActivity.musicSubject!!.playMeause("")
     }
 
     override fun seekTo(pos: Int) {
@@ -589,12 +589,12 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
         if(musicSrv != null && musicSrv!!.songs != null) {
             if (musicSrv!!.songs.size > 0) {
                 musicSrv!!.go()
-                MainActivity.musicSubject.playMeause("")
+                MainActivity.musicSubject!!.playMeause("")
             }
         }else{
             if (adapter != null && adapter!!.audios != null && adapter!!.audios.size > 0){
                 playClick(adapter!!.audios,0)
-                MainActivity.musicSubject.playMeause("")
+                MainActivity.musicSubject!!.playMeause("")
 
             }
         }
@@ -611,7 +611,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
             //set and show
             controller!!.setMediaPlayer(this)
             controller!!.setAnchorView(findViewById(R.id.playlistRoot))
-            controller!!.setEnabled(true)
+            controller!!.isEnabled = true
         }
     }
 
@@ -622,7 +622,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
             setController()
             playbackPaused = false
         }
-        MainActivity.musicSubject.playMeause("")
+        MainActivity.musicSubject!!.playMeause("")
 
     }
 
@@ -633,7 +633,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
             setController()
             playbackPaused = false
         }
-        MainActivity.musicSubject.playMeause("")
+        MainActivity.musicSubject!!.playMeause("")
 
     }
 
@@ -680,7 +680,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
     override fun onDestroy() {
         stopService(playIntent)
         musicSrv = null
-        MainActivity.musicSubject.unsubscribe(this)
+        MainActivity.musicSubject!!.unsubscribe(this)
         super.onDestroy()
     }
 

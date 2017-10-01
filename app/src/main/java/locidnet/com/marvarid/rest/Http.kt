@@ -14,7 +14,7 @@ object Http {
 
     val PRMS             = "prms"
     val CMD              = "cmd"
-    public val BASE_URL  = "http://api.maydon.net/new/"
+    val BASE_URL  = "http://api.maydon.net/new/"
     /*
     *
     *

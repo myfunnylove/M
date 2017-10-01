@@ -16,7 +16,7 @@ import kotlin.properties.Delegates
 /**
  * Created by Michaelan on 5/19/2017.
  */
-class UploadFragment()  : BaseFragment(){
+class UploadFragment : BaseFragment(){
 
 
 

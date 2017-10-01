@@ -166,7 +166,7 @@ class MyFeedAdapter(context: FragmentActivity,
                 likeAnimations.get(h)!!.cancel()
             }
 
-            likeAnimations.remove(h);
+            likeAnimations.remove(h)
 
 //            h.commentCount.text = post.comments
 
@@ -385,12 +385,12 @@ class MyFeedAdapter(context: FragmentActivity,
 
                         feeds.posts.get(i).like = "1"
                         feeds.posts.get(i).likes = (feeds.posts.get(i).likes.toInt() + 1).toString()
-                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme));
+                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme))
                     } else {
                         feeds.posts.get(i).likes = (feeds.posts.get(i).likes.toInt() - 1).toString()
 
                         feeds.posts.get(i).like = "0"
-                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme));
+                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme))
 
                     }
 
@@ -654,15 +654,6 @@ class MyFeedAdapter(context: FragmentActivity,
         }
 
 
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
-//        try{
-//            Glide.with(ctx).clear(holder!!.itemView)
-//
-//
-//        }catch (e:Exception){}
-        super.onViewRecycled(holder)
     }
 
 }

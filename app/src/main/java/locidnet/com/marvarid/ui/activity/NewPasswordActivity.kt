@@ -76,12 +76,12 @@ class NewPasswordActivity : BaseActivity(), Viewer {
                     passAgain =    newsPassAgain.text.toString()
 
                     if (!pass.equals(passAgain)){
-                        Toast.makeText(this@NewPasswordActivity, resources.getString(R.string.password_doesnot_match), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this@NewPasswordActivity, resources.getString(R.string.password_doesnot_match), Toast.LENGTH_SHORT).show()
 
                     }
                   else if(pass.length < 6 || passAgain.length < 6){
 
-                        Toast.makeText(this@NewPasswordActivity, resources.getString(R.string.password_field_less_5), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this@NewPasswordActivity, resources.getString(R.string.password_field_less_5), Toast.LENGTH_SHORT).show()
 
                     }else{
 

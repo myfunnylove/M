@@ -42,7 +42,7 @@ public class PhotoPagerAdapter extends PagerAdapter {
     View itemView = LayoutInflater.from(context)
         .inflate(R.layout.__picker_picker_item_pager, container, false);
 
-    final ImageView imageView = (ImageView) itemView.findViewById(R.id.iv_pager);
+    final ImageView imageView = itemView.findViewById(R.id.iv_pager);
 
     final String path = paths.get(position);
     final Uri uri;

@@ -38,10 +38,10 @@ object CustomAnim {
                 rl_footer.clearAnimation()
 
                 val lp = RelativeLayout.LayoutParams(
-                        rl_footer.getWidth(), rl_footer.getHeight())
+                        rl_footer.width, rl_footer.height)
                 // lp.setMargins(0, 0, 0, 0);
                 lp.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-                rl_footer.setLayoutParams(lp)
+                rl_footer.layoutParams = lp
 
             }
 
@@ -57,7 +57,7 @@ object CustomAnim {
     }
 
     fun translateBottomToTop(view: View, time: Int) {
-        val anim = TranslateAnimation(0f, 0f, view.getHeight().toFloat(), 0f)
+        val anim = TranslateAnimation(0f, 0f, view.height.toFloat(), 0f)
         anim.duration = time.toLong()
         view.startAnimation(anim)
     }

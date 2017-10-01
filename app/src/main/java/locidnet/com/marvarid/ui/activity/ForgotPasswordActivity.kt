@@ -66,7 +66,7 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
             selectPhone.isEnabled = false
             smsCode.visibility = View.VISIBLE
             signMode = SMS_MODE
-            signUp.setText(resources.getString(R.string.send))
+            signUp.text = resources.getString(R.string.send)
 
         }else if(from == Http.CMDS.FORGOT_SMS){
 
@@ -110,7 +110,7 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
                 .inject(this)
         signMode = PHONE_MODE
 
-        signUp.setText(resources.getString(R.string.get_sms))
+        signUp.text = resources.getString(R.string.get_sms)
 
         phone.setDefaultCountry("uz")
         selectPhone.setOnClickListener {

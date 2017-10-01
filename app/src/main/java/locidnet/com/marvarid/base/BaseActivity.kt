@@ -1,5 +1,6 @@
 package locidnet.com.marvarid.base
 
+import android.arch.lifecycle.LifecycleObserver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +11,7 @@ import locidnet.com.marvarid.R
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.viewmodel.PublishViewmodel
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import kotlin.properties.Delegates
 
@@ -19,11 +21,9 @@ import kotlin.properties.Delegates
  */
 abstract class BaseActivity : AppCompatActivity (){
 
-    var progress:ProgressBar by Delegates.notNull<ProgressBar>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(getLayout())
+            setContentView(getLayout())
         initView()
     }
 

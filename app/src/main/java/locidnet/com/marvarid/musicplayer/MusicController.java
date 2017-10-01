@@ -91,7 +91,7 @@ public class MusicController extends FrameLayout implements MusicControlObserver
     public MusicController(Context context, boolean isPlaylistActivity) {
         super(context);
         mContext = context;
-        MainActivity.musicSubject.subscribe(this);
+        MainActivity.MyPostOffset.getMusicSubject().subscribe(this);
         this.isPlaylistActivity = isPlaylistActivity;
 
         initFloatingWindowLayout();
@@ -241,7 +241,7 @@ public class MusicController extends FrameLayout implements MusicControlObserver
 //                .getText(R.string.lockscreen_transport_play_description);
 //        mPauseDescription = res
 //                .getText(R.string.lockscreen_transport_pause_description);
-        mPauseButton = (ImageButton) v.findViewById(R.id.pause);
+        mPauseButton = v.findViewById(R.id.pause);
         if (mPauseButton != null) {
             mPauseButton.requestFocus();
             mPauseButton.setOnClickListener(mPauseListener);
@@ -254,9 +254,9 @@ public class MusicController extends FrameLayout implements MusicControlObserver
 //                mFfwdButton.setVisibility(mUseFastForward ? View.VISIBLE : View.GONE);
 //            }
 //        }
-        loading = (ProgressBar) v.findViewById(R.id.loading) ;
-        playlistButton = (AppCompatImageButton) v.findViewById(R.id.playlist);
-        emptyIcon = (AppCompatImageButton) v.findViewById(R.id.emptyIcon);
+        loading = v.findViewById(R.id.loading);
+        playlistButton = v.findViewById(R.id.playlist);
+        emptyIcon = v.findViewById(R.id.emptyIcon);
         if (playlistButton != null) {
             playlistButton.requestFocus();
 
@@ -266,16 +266,16 @@ public class MusicController extends FrameLayout implements MusicControlObserver
         }
 
         // By default these are hidden. They will be enabled when setPrevNextListeners() is called
-        mNextButton = (AppCompatImageButton) v.findViewById(R.id.next);
+        mNextButton = v.findViewById(R.id.next);
         if (mNextButton != null && !mFromXml && !mListenersSet) {
             mNextButton.setVisibility(View.GONE);
         }
-        mPrevButton = (AppCompatImageButton) v.findViewById(R.id.prev);
+        mPrevButton = v.findViewById(R.id.prev);
         if (mPrevButton != null && !mFromXml && !mListenersSet) {
             mPrevButton.setVisibility(View.GONE);
         }
 
-        mProgress = (ProgressBar) v.findViewById(R.id.mediacontroller_progress);
+        mProgress = v.findViewById(R.id.mediacontroller_progress);
         if (mProgress != null) {
             if (mProgress instanceof SeekBar) {
                 SeekBar seeker = (SeekBar) mProgress;
@@ -284,8 +284,8 @@ public class MusicController extends FrameLayout implements MusicControlObserver
             mProgress.setMax(1000);
         }
 
-        mEndTime = (TextView) v.findViewById(R.id.time);
-        mCurrentTime = (TextView) v.findViewById(R.id.time_current);
+        mEndTime = v.findViewById(R.id.time);
+        mCurrentTime = v.findViewById(R.id.time_current);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 

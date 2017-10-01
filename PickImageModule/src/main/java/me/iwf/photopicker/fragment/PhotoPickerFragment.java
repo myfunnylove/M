@@ -136,14 +136,14 @@ public class PhotoPickerFragment extends Fragment {
 
     final View rootView = inflater.inflate(R.layout.__picker_fragment_photo_picker, container, false);
 
-    RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_photos);
+    RecyclerView recyclerView = rootView.findViewById(R.id.rv_photos);
     StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(column, OrientationHelper.VERTICAL);
     layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.setAdapter(photoGridAdapter);
     recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-    final Button btSwitchDirectory = (Button) rootView.findViewById(R.id.button);
+    final Button btSwitchDirectory = rootView.findViewById(R.id.button);
 
     listPopupWindow = new ListPopupWindow(getActivity());
     listPopupWindow.setWidth(ListPopupWindow.MATCH_PARENT);

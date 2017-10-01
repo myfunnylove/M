@@ -2,9 +2,11 @@ package locidnet.com.marvarid.ui.activity.publish
 
 
 import android.app.Activity
+import android.arch.lifecycle.*
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -38,22 +40,25 @@ import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.dialogs.YesNoFragment
+import locidnet.com.marvarid.viewmodel.PublishViewmodel
 import me.iwf.photopicker.PhotoPicker
 import org.json.JSONObject
 import java.io.File
 import javax.inject.Inject
 
 
-class PublishUniversalActivity :BaseActivity(),Viewer {
-
+class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
 
 
     var listMusic:ArrayList<Song>        = ArrayList()
     var listImage:ArrayList<PhotoUpload> = ArrayList()
     var imageAdapter:PickedPhotoAdapter? = null
     var songAdapter:PickedSongAdapter?   = null
+
+
     @Inject
     lateinit var presenter:Presenter
+
 
     @Inject
     lateinit var errorConn: ErrorConnection
@@ -62,10 +67,12 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
 
     var visibly       = false
     var TEXT_SIZE     = 16f
-    var TEXT_COLOR_ID = 0;
-    var idImage:Int   = -1;
-    var idMusic:Int   = -1;
+    var TEXT_COLOR_ID = 0
+    var idImage:Int   = -1
+    var idMusic:Int   = -1
     var user:User?    = null
+    var publishViewModel:PublishViewmodel? = null
+
     companion  object IDS{
         var loadedImagesIds:ArrayList<String>  = ArrayList()
         var loadedAudioIds :ArrayList<String>  = ArrayList()
@@ -75,9 +82,13 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
     override fun getLayout(): Int = R.layout.activity_publish_universal
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
         menuInflater.inflate(R.menu.menu_publish,menu)
         return true
     }
+
+
+
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
@@ -88,8 +99,8 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
                 if (!commentText.text.isEmpty()){
                     errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
                         override fun connected() {
-                            val logicImage = if (imageAdapter == null) true else if (imageAdapter!!.list.size == loadedImagesIds.size) true else false
-                            val logicAudio = if (songAdapter == null)  true else if (songAdapter!!.list.size == loadedAudioIds.size)   true else false
+                            val logicImage = if (imageAdapter == null) true else imageAdapter!!.list.size == loadedImagesIds.size
+                            val logicAudio = if (songAdapter == null)  true else songAdapter!!.list.size == loadedAudioIds.size
 
                             log.d("notloaded $loading $logicImage $logicAudio")
                             if (loading == false && logicImage && logicAudio){
@@ -136,9 +147,10 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
     }
     override fun initView() {
         Const.TAG = "PublishUniversalActivity"
+
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
-        supportActionBar!!.setTitle(resources.getString(R.string.post))
+        supportActionBar!!.title = resources.getString(R.string.post)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
 
@@ -269,7 +281,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
 
         },this,Const.colorPalette)
 
-        commentText.setTextSize(Const.TEXT_SIZE_DEFAULT)
+        commentText.textSize = Const.TEXT_SIZE_DEFAULT
 
 
         textSize1.setOnClickListener {
@@ -288,10 +300,34 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        log.d("save ${commentText.text.toString()} $TEXT_SIZE $TEXT_COLOR_ID")
+        outState!!.putString("quoteText",commentText.text.toString())
+        outState.putFloat("quoteSize",TEXT_SIZE)
+        outState.putInt("quoteColor",TEXT_COLOR_ID)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        try{
+
+            TEXT_SIZE =  savedInstanceState!!.getFloat("quoteSize",TEXT_SIZE)
+            TEXT_COLOR_ID = savedInstanceState.getInt("quoteColor",TEXT_COLOR_ID)
+            commentText.setText(savedInstanceState.getString("quoteText"))
+            commentText.textSize = TEXT_SIZE
+            commentText.setTextColor(ContextCompat.getColor(applicationContext,
+                    Const.colorPalette.get(TEXT_COLOR_ID)!!.drawable))
+
+        }catch (e:Exception){
+
+        }
+    }
     var photo:File? = null
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        log.d("MainActivity -> OnactivityResult: req:${requestCode} res: ${resultCode} intent: ${if (data != null) true else false }" )
+        log.d("MainActivity -> OnactivityResult: req:${requestCode} res: ${resultCode} intent: ${data != null}" )
         if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
             setResult(Const.SESSION_OUT)
             finish()
@@ -457,8 +493,8 @@ class PublishUniversalActivity :BaseActivity(),Viewer {
 
 
     override fun onBackPressed() {
-        val logicImage = if (imageAdapter == null) true else if (imageAdapter!!.list.size == loadedImagesIds.size) true else false
-        val logicAudio = if (songAdapter == null)  true else if (songAdapter!!.list.size == loadedAudioIds.size)   true else false
+        val logicImage = if (imageAdapter == null) true else imageAdapter!!.list.size == loadedImagesIds.size
+        val logicAudio = if (songAdapter == null)  true else songAdapter!!.list.size == loadedAudioIds.size
 
         if(!loading && logicImage && logicAudio){
             clearCache()

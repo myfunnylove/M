@@ -89,16 +89,16 @@ class FollowActivity : BaseActivity(),
         supportActionBar!!.setDisplayShowTitleEnabled(true)
 
         if (intent.getIntExtra(TYPE,-1) == PROFIL_T || intent.getIntExtra(TYPE,-1) == BLOCKED_ME){
-            supportActionBar!!.setTitle(intent.extras.getString("username"))
+            supportActionBar!!.title = intent.extras.getString("username")
             setController()
 
         }
         else if (intent.getIntExtra(TYPE,-1) == FOLLOWING){
 
-            supportActionBar!!.setTitle(resources.getString(R.string.following))
+            supportActionBar!!.title = resources.getString(R.string.following)
 
         }else if (intent.getIntExtra(TYPE,-1) == FOLLOWERS){
-            supportActionBar!!.setTitle(resources.getString(R.string.followers))
+            supportActionBar!!.title = resources.getString(R.string.followers)
 
         }
 
@@ -274,7 +274,7 @@ class FollowActivity : BaseActivity(),
                             reqObj.put("user",    userID)
                             reqObj.put("start",   "0")
                             reqObj.put("end",     end)
-                            afterrefresh = true;
+                            afterrefresh = true
 
                             presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
                         }
@@ -514,7 +514,7 @@ class FollowActivity : BaseActivity(),
             //set and show
             controller!!.setMediaPlayer(this)
             controller!!.setAnchorView(findViewById(R.id.container))
-            controller!!.setEnabled(true)
+            controller!!.isEnabled = true
         }
     }
 
@@ -527,7 +527,7 @@ class FollowActivity : BaseActivity(),
             playbackPaused = false
         }
         controller!!.show()
-        controller!!.setLoading(true);
+        controller!!.setLoading(true)
 
         try {
             if (FeedFragment.cachedSongAdapters != null) {
@@ -545,7 +545,7 @@ class FollowActivity : BaseActivity(),
             playbackPaused = false
         }
         controller!!.show()
-        controller!!.setLoading(true);
+        controller!!.setLoading(true)
 
         try {
 
@@ -572,7 +572,7 @@ class FollowActivity : BaseActivity(),
                         setController()
                         controller!!.show()
                     }
-                    controller!!.setLoading(true);
+                    controller!!.setLoading(true)
 
                     musicSrv!!.setList(listSong)
                     musicSrv!!.setSong(position)
@@ -595,7 +595,7 @@ class FollowActivity : BaseActivity(),
                         setController()
                         controller!!.show()
                     }
-                    controller!!.setLoading(true);
+                    controller!!.setLoading(true)
 
                     musicSrv!!.setList(listSong)
                     musicSrv!!.setSong(position)
@@ -734,22 +734,22 @@ class FollowActivity : BaseActivity(),
     override fun getBufferPercentage(): Int = 0
 
     override fun getCurrentPosition(): Int {
-        if (musicSrv != null && musicBound && musicSrv!!.isPng())
-            return musicSrv!!.getPosn()
+        if (musicSrv != null && musicBound && musicSrv!!.isPng)
+            return musicSrv!!.posn
         else
             return 0
     }
 
     override fun getDuration(): Int {
-        if (musicSrv != null && musicBound && musicSrv!!.isPng())
-            return musicSrv!!.getDur()
+        if (musicSrv != null && musicBound && musicSrv!!.isPng)
+            return musicSrv!!.dur
         else
             return 0
     }
 
     override fun isPlaying(): Boolean {
         if (musicSrv != null && musicBound)
-            return musicSrv!!.isPng()
+            return musicSrv!!.isPng
         return false
     }
 

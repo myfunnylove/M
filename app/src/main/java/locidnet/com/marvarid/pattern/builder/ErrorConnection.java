@@ -65,8 +65,8 @@ public class ErrorConnection {
         }
 
         public Builder init(){
-            tryAgain = (Button) activity.findViewById(R.id.errorButton);
-            container = (ViewGroup) activity.findViewById(R.id.connectAgain);
+            tryAgain = activity.findViewById(R.id.errorButton);
+            container = activity.findViewById(R.id.connectAgain);
 
             return this;
         }

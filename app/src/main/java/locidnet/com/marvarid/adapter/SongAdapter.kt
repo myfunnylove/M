@@ -30,13 +30,13 @@ class SongAdapter(clicker:AdapterClicker, ctx:Context, list:ArrayList<Song>) : R
         log.d("${song.songId} ${song.songTitle} ${song.songArtist} ${song.songDuration} ${song.songSize}")
 
 
-        h!!.songArtist.setText(song.songArtist)
-        h  .songName.setText(song.songTitle)
+        h!!.songArtist.text = song.songArtist
+        h  .songName.text = song.songTitle
 
 
-        if (song.selected) h.songCheck.isChecked = true else h.songCheck.isChecked = false
-        h.songDuration.setText("${song.songDuration.formateMilliSeccond()} | ")
-        h.songSize.setText(song.songSize.getSize())
+        h.songCheck.isChecked = song.selected
+        h.songDuration.text = "${song.songDuration.formateMilliSeccond()} | "
+        h.songSize.text = song.songSize.getSize()
         h.container.setOnClickListener {
                     selecterSong(p1,!h.songCheck.isChecked)
                     adapterClicker.click(p1)
@@ -150,13 +150,4 @@ class SongAdapter(clicker:AdapterClicker, ctx:Context, list:ArrayList<Song>) : R
         this.notifyDataSetChanged()
     }
 
-    override fun onViewRecycled(holder: Adapter?) {
-//        try{
-//            Glide.with(context).clear(holder!!.itemView)
-//
-//
-//        }catch (e:Exception){}
-
-        super.onViewRecycled(holder)
-    }
 }

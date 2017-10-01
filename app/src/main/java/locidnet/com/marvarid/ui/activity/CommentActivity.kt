@@ -84,7 +84,7 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
                 .inject(this)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
-        supportActionBar!!.setTitle(resources.getString(R.string.headerComment))
+        supportActionBar!!.title = resources.getString(R.string.headerComment)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
 
@@ -462,7 +462,7 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
                             commentBoxLay.animate().translationY(0f)
                                     .setInterpolator(DecelerateInterpolator())
                                     .setDuration(200)
-                                    .start();
+                                    .start()
                     }
                 })
                 .start()

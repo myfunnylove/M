@@ -116,7 +116,7 @@ class VKoAuth private constructor(builder: Builder) :SocialNetwork{
             log.d("Vkontakte error ${error!!.errorMessage}")
             log.d("Vkontakte error ${error.errorCode}")
             log.d("Vkontakte error ${error.errorReason}")
-            log.d("Vkontakte error ${error.httpError.toString()}")
+            log.d("Vkontakte error ${error.httpError}")
 
         }
     }

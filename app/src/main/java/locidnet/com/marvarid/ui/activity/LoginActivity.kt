@@ -62,7 +62,7 @@ class LoginActivity : BaseActivity(), Viewer {
 
     override fun initView() {
         Const.TAG = "LoginACtivity"
-        log.d("FINGERPRINT: ${VKUtil.getCertificateFingerprint(this, this.getPackageName()).get(0)}")
+        log.d("FINGERPRINT: ${VKUtil.getCertificateFingerprint(this, this.packageName).get(0)}")
         if (Base.get.prefs.getUser().session == "") {
 
             DaggerMVPComponent

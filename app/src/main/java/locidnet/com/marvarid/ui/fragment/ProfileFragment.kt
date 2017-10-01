@@ -100,7 +100,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
     override fun init() {
         Const.TAG = "ProfileFragment"
-        MainActivity.musicSubject.subscribe(this)
+        MainActivity.musicSubject!!.subscribe(this)
 //        FOLLOW_TYPE = arguments.getString(F_TYPE)
 
 
@@ -140,9 +140,9 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 var lastVisibleItemPosition = 0
 
                 val totalItemCount = mLayoutManager.itemCount
-                swipeRefreshLayout.setEnabled(mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+                swipeRefreshLayout.isEnabled = mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
 
-                    lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
 
 
                 // If the total item count is zero and the previous isn't, assume the
@@ -367,7 +367,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
 
     override fun onDestroy() {
-        MainActivity.musicSubject.unsubscribe(this)
+        MainActivity.musicSubject!!.unsubscribe(this)
 
         super.onDestroy()
 

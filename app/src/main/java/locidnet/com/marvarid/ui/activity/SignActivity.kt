@@ -69,7 +69,7 @@ class SignActivity : BaseActivity() ,Viewer{
             selectPhone.isEnabled = false
             smsCode.visibility = View.VISIBLE
             signMode = SMS_MODE
-            signUp.setText(resources.getString(R.string.Sign_up))
+            signUp.text = resources.getString(R.string.Sign_up)
 
         }else if(from == Http.CMDS.SMSNI_JONATISH){
 
@@ -111,7 +111,7 @@ class SignActivity : BaseActivity() ,Viewer{
                 .build()
                 .inject(this)
         signMode = PHONE_MODE
-        signUp.setText(resources.getString(R.string.get_sms))
+        signUp.text = resources.getString(R.string.get_sms)
 
         phone.setDefaultCountry("uz")
         selectPhone.setOnClickListener {

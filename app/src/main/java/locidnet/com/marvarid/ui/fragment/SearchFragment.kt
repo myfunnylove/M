@@ -7,6 +7,7 @@ import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -30,6 +31,7 @@ import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
+import locidnet.com.marvarid.ui.activity.SearchActivity
 import kotlin.properties.Delegates
 
 /**
@@ -37,13 +39,7 @@ import kotlin.properties.Delegates
  */
 class SearchFragment : BaseFragment(), AdapterClicker{
 
-
-    /*
-    *
-    * Properties
-    *
-    * */
-    var search:EditText       by Delegates.notNull<EditText>()
+    var search:Toolbar       by Delegates.notNull<Toolbar>()
 //    var searchResult:TextView by Delegates.notNull<TextView>()
     var list:RecyclerView     by Delegates.notNull<RecyclerView>()
 
@@ -54,7 +50,6 @@ class SearchFragment : BaseFragment(), AdapterClicker{
     var adapter:FollowAdapter?      = null
     val user:User                   = Base.get.prefs.getUser()
 
-    lateinit var emptyContainer: EmptyContainer
 
     var changePosition              = -1
 
@@ -74,8 +69,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
         }
 
-        var choosedUserId = ""
-        var chooseUserFstatus = ""
+
     }
 
     var connectActivity:GoNext?     = null
@@ -95,319 +89,32 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
 
         list           = rootView.findViewById<RecyclerView>(R.id.list)
-        search         = rootView.findViewById<EditText>(R.id.search)
+        search         = rootView.findViewById<Toolbar>(R.id.toolbar)
 
-        emptyContainer = EmptyContainer.Builder()
-                .setIcon(R.drawable.search_light)
-                .setText(R.string.error_empty_search_result)
-                .initLayoutForFragment(rootView)
-                .build()
+        search.setOnClickListener {
+            startActivity(Intent(activity,SearchActivity::class.java))
+            activity.overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
+        }
 
         list.layoutManager = LinearLayoutManager(activity)
         list.setHasFixedSize(true)
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-        val drawableCompat = VectorDrawableCompat.create(activity.resources,R.drawable.search_select,search.context.theme)
-        search.setCompoundDrawablesWithIntrinsicBounds(drawableCompat,null,null,null)
-//        }else{
 
-//        }
-
-        search.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if(s!!.toString().length >= 3){
-                    val res  =s.toString().isOkString()
-                    if (res == ""){
-                        val letter = s.toString().replace(pattern,"")
-                        try{
-                            connectActivity!!.goNext(Const.SEARCH_USER,letter)
-                        }catch (e:Throwable){}
-                    }else{
-                        connectActivity!!.donGo(res)
-                    }
-                }else{
-                    if(adapter != null){
-                        adapter!!.users.clear()
-                        adapter!!.notifyDataSetChanged()
-                    }
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-        })
-    }
-
-    fun String.isOkString():String{
-
-        var result = ""
-
-
-            for (i in 0..this.length - 1) {
-                if (Character.UnicodeBlock.of(this.get(i)) == Character.UnicodeBlock.CYRILLIC) {
-                    result = Base.get.resources.getString(R.string.error_cyrillic_letters)
-                }
-            }
-
-
-
-        return result
-    }
-
-
-    fun swapList(users:ArrayList<Users>){
-
-       if (users.size > 0){
-           emptyContainer.hide()
-
-           usersList                 = users
-           adapter                   = FollowAdapter(Base.get,users,this,1)
-           list.visibility           = View.VISIBLE
-           list.adapter              = adapter
-
-
-       }else{
-           emptyContainer.show()
-
-
-
-       }
 
     }
 
 
-    fun failedGetList(error:String = ""){
-
-//        progressLay.visibility = View.GONE
-        log.e("SearchFragment => method => failedGetList errorCode => $error")
-        if (adapter != null && adapter!!.users.size != 0){
-            log.e("list bor lekin xatolik shundo ozini qoldiramiz")
-
-
-            emptyContainer.hide()
-            adapter!!.users.clear()
-            adapter!!.notifyDataSetChanged()
-            list.visibility = View.VISIBLE
-
-
-        }else{
-            log.e("list null yoki list bom bosh")
-
-            emptyContainer.show()
-
-            list.visibility = View.GONE
-        }
-
-    }
 
     override fun click(position: Int) {
-
-       val user = adapter!!.users.get(position)
-        log.d("result from search user -> ${user}")
-
-        if (user.userId != this.user.userId){
-           val type = user.setStatusUserFactory()
-
-            log.d("user type $type")
-
-           choosedUserId = user.userId
-           chooseUserFstatus = type
-
-           val go = Intent(activity,FollowActivity::class.java)
-           val bundle = Bundle()
-           bundle.putString("username",user.username)
-           bundle.putString("photo",   if (user.photo150.isNullOrEmpty()) "" else user.photo150)
-           bundle.putString("user_id",  user.userId)
-//            bundle.putString("blockMe",user.blockMe)
-//            bundle.putString("blockIt",user.blockIt)
-            bundle.putString(ProfileFragment.F_TYPE,type)
-            log.d("result from search user -> ${bundle}")
-
-//           if (user.blockMe == "0")
-               go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
-//            else
-//               go.putExtra(FollowActivity.TYPE,FollowActivity.BLOCKED_ME)
-
-           go.putExtras(bundle)
-           startActivityForResult(go,Const.FROM_SEARCH_TO_PROFIL)
-       }else{
-           connectActivity!!.goNext(Const.PROFIL_PAGE,"")
-       }
 
     }
 
     override fun data(data: String) {
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        log.d("${requestCode} $resultCode")
-        if (requestCode == Const.FROM_SEARCH_TO_PROFIL){
-
-
-            try{
-                adapter!!.users.forEach { user ->
-
-                    if (user.userId == choosedUserId) run {
-
-                        user.setStatusFactory(chooseUserFstatus)
-
-                    }
-
-
-                }
-            }catch (e:Exception){}
-
-            adapter!!.notifyDataSetChanged()
-            chooseUserFstatus = ""
-            choosedUserId = ""
-        }
-        search.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if(s!!.toString().length >= 3){
-                    val res  =s.toString().isOkString()
-                    if (res == ""){
-                        val letter = s.toString().replace(pattern,"")
-                        try{
-                            connectActivity!!.goNext(Const.SEARCH_USER,letter)
-                        }catch (e:Exception){}
-                    }else{
-                        connectActivity!!.donGo(res)
-                    }
-                }else{
-                    adapter!!.users.clear()
-                    adapter!!.notifyDataSetChanged()
-                    list.adapter = adapter
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-        })
     }
 
 
-    override fun onResume() {
-        super.onResume()
-        log.d("onresume")
-        search.showKeyboard()
-
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        log.d("onHiddenChanged ")
-        if(hidden){
-            search.hideKeyboard()
-
-        }else{
-            search.showKeyboard()
-
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        log.d("onresume")
-
-    }
-    fun View.showKeyboard() {
-        this.requestFocus()
-        val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
-    }
-
-    fun View.hideKeyboard() {
-        val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
-    }
-
-
-    fun Users.setStatusFactory(type:String):Users{
-
-        when(type){
-            ProfileFragment.FOLLOW ->{
-                this.follow = 0
-                this.request = 0
-            }
-
-            ProfileFragment.REQUEST ->{
-                this.follow = 0
-                this.request = 1
-
-            }
-
-            ProfileFragment.UN_FOLLOW ->{
-                this.follow = 1
-                this.request = 0
-
-            }
-        }
-
-        return this
-    }
-
-
-    fun Users.setStatusUserFactory():String{
-         log.d("search select user $this")
-        val user = this
-        var type = ""
 
 
 
-        if(user.close == 1 && user.follow == 0 && user.request == 0){
-            type =  ProfileFragment.CLOSE
-        }else if(user.close == 1 && user.follow == 0 && user.request == 1){
-            type =  ProfileFragment.REQUEST
 
-        }else if (user.close == 1 && user.follow == 1 && user.request == 0){
-            type =  ProfileFragment.UN_FOLLOW
-
-        }else if (user.close == 0 && user.follow == 0 && user.request == 1){
-            type =  ProfileFragment.FOLLOW
-
-        }else if (user.close == 0 && user.follow == 1 && user.request == 0){
-            type =  ProfileFragment.UN_FOLLOW
-
-        }else{
-            type =  ProfileFragment.FOLLOW
-
-        }
-
-//        if (user.close == 1 && user.follow == 0 && user.request == 0) return ProfileFragment.CLOSE
-//
-//        if (user.follow == 0 && user.request == 0){
-//
-//            log.d("${user.user_id} -> ${user.username}ga follow qilinmagan")
-//
-//        }else if (user.follow == 1 && user.request == 0){
-//
-//            log.d("${user.user_id} -> ${user.username}ga follow qilingan")
-//            type =  ProfileFragment.UN_FOLLOW
-//        }else if (user.follow == 0 && user.request == 1){
-//
-//            log.d("${user.user_id} -> ${user.username}ga zapros tashalgan")
-//            type =  ProfileFragment.REQUEST
-//
-//        }else {
-//            log.d("${user.user_id} -> ${user.username}da xato holat ")
-//            type =  ProfileFragment.FOLLOW
-//
-//
-//        }
-        return type
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
 }

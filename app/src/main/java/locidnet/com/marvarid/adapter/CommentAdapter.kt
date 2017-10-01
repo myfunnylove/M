@@ -130,7 +130,7 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
     }
 
     override fun getItemCount(): Int {
-        return comments.size;
+        return comments.size
     }
 
     class Holder(view: View) :RecyclerView.ViewHolder(view){
@@ -180,18 +180,11 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
                     .setListener(object : AnimatorListenerAdapter(){
                         override fun onAnimationEnd(animation: Animator?) {
                            if (translationY == 100f) translationY = 0f
-                            animationsLocked = true;
+                            animationsLocked = true
                         }
                     }).start()
         }
 
     }
 
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
-//        try{
-//            Glide.with(ctx).clear(holder!!.itemView)
-//
-//        }catch (e:Exception){}
-        super.onViewRecycled(holder)
-    }
 }

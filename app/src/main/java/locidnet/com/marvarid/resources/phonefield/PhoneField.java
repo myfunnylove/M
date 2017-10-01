@@ -72,8 +72,8 @@ public abstract class PhoneField extends LinearLayout {
    * Prepare view.
    */
   protected void prepareView() {
-    mSpinner = (Spinner) findViewWithTag(getResources().getString(R.string.com_lamudi_phonefield_flag_spinner));
-    mEditText = (EditText) findViewWithTag(getResources().getString(R.string.com_lamudi_phonefield_edittext));
+    mSpinner = findViewWithTag(getResources().getString(R.string.com_lamudi_phonefield_flag_spinner));
+    mEditText = findViewWithTag(getResources().getString(R.string.com_lamudi_phonefield_edittext));
 
     if (mSpinner == null || mEditText == null) {
       throw new IllegalStateException("Please provide a valid xml layout");

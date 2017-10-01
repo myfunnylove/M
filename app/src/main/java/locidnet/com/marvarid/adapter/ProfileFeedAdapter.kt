@@ -37,10 +37,7 @@ import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
-import locidnet.com.marvarid.ui.activity.CommentActivity
-import locidnet.com.marvarid.ui.activity.MainActivity
-import locidnet.com.marvarid.ui.activity.PlaylistActivity
-import locidnet.com.marvarid.ui.activity.SettingsActivity
+import locidnet.com.marvarid.ui.activity.*
 import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
 import locidnet.com.marvarid.ui.fragment.*
 import org.ocpsoft.prettytime.PrettyTime
@@ -190,7 +187,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 likeAnimations.get(h)!!.cancel()
             }
 
-            likeAnimations.remove(h);
+            likeAnimations.remove(h)
 
 //            h.commentCount.text = post.comments
 
@@ -403,12 +400,12 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
                         feeds.posts.get(i).like = "1"
                         feeds.posts.get(i).likes = (feeds.posts.get(i).likes.toInt() + 1).toString()
-                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme));
+                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme))
                     } else {
                         feeds.posts.get(i).likes = (feeds.posts.get(i).likes.toInt() - 1).toString()
 
                         feeds.posts.get(i).like = "0"
-                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme));
+                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme))
 
                     }
 
@@ -702,9 +699,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                                 FOLLOW_TYPE= ProfileFragment.REQUEST
                                                 FFFFragment.QAYSI_HOLATGA_OZGARDI = ProfileFragment.REQUEST
                                                 ProfileFragment.FOLLOW_TYPE       = ProfileFragment.REQUEST
-                                                if(SearchFragment.choosedUserId.isNotEmpty()){
-                                                    SearchFragment.choosedUserId = userInfo!!.user.info.user_id
-                                                    SearchFragment.chooseUserFstatus = ProfileFragment.REQUEST
+                                                if(SearchActivity.choosedUserId.isNotEmpty()){
+                                                    SearchActivity.choosedUserId = userInfo!!.user.info.user_id
                                                 }
 
 
@@ -717,9 +713,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                                 ProfileFragment.FOLLOW_TYPE       = ProfileFragment.UN_FOLLOW
 
 
-                                                if(SearchFragment.choosedUserId.isNotEmpty()){
-                                                    SearchFragment.choosedUserId = userInfo!!.user.info.user_id
-                                                    SearchFragment.chooseUserFstatus = ProfileFragment.UN_FOLLOW
+                                                if(SearchActivity.choosedUserId.isNotEmpty()){
+                                                    SearchActivity.choosedUserId = userInfo!!.user.info.user_id
                                                 }
                                             }
                                             notifyItemChanged(0)
@@ -763,9 +758,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
 
 
-                                            if (SearchFragment.choosedUserId.isNotEmpty()) {
-                                                SearchFragment.choosedUserId = userInfo!!.user.info.user_id
-                                                SearchFragment.chooseUserFstatus = ProfileFragment.FOLLOW
+                                            if (SearchActivity.choosedUserId.isNotEmpty()) {
+                                                SearchActivity.choosedUserId = userInfo!!.user.info.user_id
                                             }
 
                                             if (h.follow.tag != ProfileFragment.REQUEST) userInfo!!.user.count.followersCount = "${h.followers.text.toString().toInt() - 1}"
@@ -983,13 +977,4 @@ class ProfileFeedAdapter(context: FragmentActivity,
 //        }
 //    }
 
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
-//        try{
-//            Glide.with(ctx).clear(holder!!.itemView)
-//
-//
-//        }catch (e:Exception){}
-
-        super.onViewRecycled(holder)
-    }
 }

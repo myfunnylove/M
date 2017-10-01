@@ -67,9 +67,9 @@ public class PopupDirectoryListAdapter extends BaseAdapter {
     public TextView tvCount;
 
     public ViewHolder(View rootView) {
-      ivCover = (ImageView) rootView.findViewById(R.id.iv_dir_cover);
-      tvName  = (TextView)  rootView.findViewById(R.id.tv_dir_name);
-      tvCount = (TextView)  rootView.findViewById(R.id.tv_dir_count);
+      ivCover = rootView.findViewById(R.id.iv_dir_cover);
+      tvName  = rootView.findViewById(R.id.tv_dir_name);
+      tvCount = rootView.findViewById(R.id.tv_dir_count);
     }
 
     public void bindData(PhotoDirectory directory) {

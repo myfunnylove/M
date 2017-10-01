@@ -28,7 +28,7 @@ import kotlin.properties.Delegates
 /**
  * Created by Michaelan on 5/19/2017.
  */
-class NotificationFragment(): BaseFragment(){
+class NotificationFragment : BaseFragment(){
 
     companion object {
         var TAG:String  = "NotificationFragment"
@@ -77,7 +77,7 @@ class NotificationFragment(): BaseFragment(){
                 val totalItemCount = mLayoutManager.itemCount
 
                 lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-                swipeRefreshLayout.setEnabled(mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+                swipeRefreshLayout.isEnabled = mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
 
 
                 // If the total item count is zero and the previous isn't, assume the
@@ -155,7 +155,7 @@ class NotificationFragment(): BaseFragment(){
             adapter = PushAdapter(activity,pushList.pushes)
             list!!.adapter = adapter
         }else {
-            adapter!!.swapItems(pushList);
+            adapter!!.swapItems(pushList)
         }
     }
 
@@ -163,7 +163,7 @@ class NotificationFragment(): BaseFragment(){
         progressLay.visibility = View.GONE
         list!!.adapter = null
         list!!.visibility = View.GONE
-        swipeRefreshLayout!!.isRefreshing = false
+        swipeRefreshLayout.isRefreshing = false
         emptyContainer!!.show()
     }
 

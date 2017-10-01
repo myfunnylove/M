@@ -145,12 +145,4 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
     }
 
 
-    override fun onViewRecycled(holder: Holder?) {
-//      try{
-//          Glide.with(context).clear(holder!!.itemView)
-//
-//
-//      }catch (e:Exception){}
-        super.onViewRecycled(holder)
-    }
 }

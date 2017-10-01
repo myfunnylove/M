@@ -100,16 +100,16 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
 
                     if (!isLoginFree){
 
-                        Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.username_not_free_error),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.username_not_free_error),Toast.LENGTH_SHORT).show()
                     }else if(username.length < 6){
 
-                        Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.username_field_less_5),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.username_field_less_5),Toast.LENGTH_SHORT).show()
 
                         login.setLoginResult(R.drawable.close_circle_outline)
 
                     }else if(password.length < 6){
 
-                        Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.password_field_less_5),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.password_field_less_5),Toast.LENGTH_SHORT).show()
 
                     }else{
                         val obj = JSONObject()

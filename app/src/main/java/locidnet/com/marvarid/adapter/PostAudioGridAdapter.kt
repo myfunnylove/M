@@ -38,7 +38,7 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
     var user                       = Base.get.prefs.getUser()
     val audios                     = list
     val notFeatured                = VectorDrawableCompat.create(Base.get.resources,R.drawable.plus,context.theme)
-    val featured                   = VectorDrawableCompat.create(Base.get.resources,R.drawable.playlist_remove,context.theme);
+    val featured                   = VectorDrawableCompat.create(Base.get.resources,R.drawable.playlist_remove,context.theme)
 
 
     val featureMap                 = mapOf<Int,VectorDrawableCompat>( 0 to notFeatured!!,1 to featured!! )
@@ -172,15 +172,5 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
 
     }
 
-
-    override fun onViewRecycled(holder: Holder?) {
-//        try{
-//            Glide.with(context).clear(holder!!.itemView)
-//
-//
-//        }catch (e:Exception){}
-
-        super.onViewRecycled(holder)
-    }
 
 }

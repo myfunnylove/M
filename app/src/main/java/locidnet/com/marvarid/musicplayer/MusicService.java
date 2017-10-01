@@ -78,7 +78,7 @@ public class MusicService extends Service implements
         player = new MediaPlayer();
         //initialize
         initMusicPlayer();
-        MainActivity.musicSubject.subscribe(this);
+        MainActivity.MyPostOffset.getMusicSubject().subscribe(this);
 
     }
 
@@ -317,7 +317,7 @@ public class MusicService extends Service implements
         player.pause();
         //player.release();
         PLAY_STATUS = PAUSED;
-        MainActivity.musicSubject.playMeause("");
+        MainActivity.MyPostOffset.getMusicSubject().playMeause("");
 //        Intent intent = new Intent(ACTION_PLAY_TOGGLE);
 //        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
     }
@@ -333,7 +333,7 @@ public class MusicService extends Service implements
 //        Intent intent = new Intent(ACTION_PLAY_TOGGLE);
 //        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
         PLAY_STATUS = PLAYING;
-        MainActivity.musicSubject.playMeause("");
+        MainActivity.MyPostOffset.getMusicSubject().playMeause("");
     }
 
     //skip to previous track
@@ -343,7 +343,7 @@ public class MusicService extends Service implements
         playSong();
 //        Intent intent = new Intent(ACTION_PLAY_LAST);
 //        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
-        MainActivity.musicSubject.playMeause("");
+        MainActivity.MyPostOffset.getMusicSubject().playMeause("");
 
     }
 
@@ -363,7 +363,7 @@ public class MusicService extends Service implements
         }
 
         playSong();
-        MainActivity.musicSubject.playMeause("");
+        MainActivity.MyPostOffset.getMusicSubject().playMeause("");
 
 //        Intent intent = new Intent(ACTION_PLAY_NEXT);
 //        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
@@ -377,8 +377,7 @@ public class MusicService extends Service implements
 
     //toggle shuffle
     public void setShuffle(){
-        if(shuffle) shuffle=false;
-        else shuffle=true;
+        shuffle = !shuffle;
     }
 
 

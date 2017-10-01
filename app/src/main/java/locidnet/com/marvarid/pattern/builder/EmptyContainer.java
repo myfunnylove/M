@@ -47,20 +47,20 @@ public class EmptyContainer {
 
         }
         public Builder initLayoutForActivity(AppCompatActivity activity){
-            textView = (TextView) activity.findViewById(R.id.emptyText);
+            textView = activity.findViewById(R.id.emptyText);
             textView.setText(activity.getResources().getString(text));
-            imageView = (AppCompatImageView) activity.findViewById(R.id.emptyIcon);
+            imageView = activity.findViewById(R.id.emptyIcon);
             imageView.setImageDrawable(VectorDrawableCompat.create(activity.getResources(),icon,activity.getTheme()));
-            container = (ViewGroup) activity.findViewById(R.id.emptyContainer);
+            container = activity.findViewById(R.id.emptyContainer);
             return this;
         }
 
         public Builder initLayoutForFragment(View view){
-            textView = (TextView) view.findViewById(R.id.emptyText);
+            textView = view.findViewById(R.id.emptyText);
             textView.setText(view.getResources().getString(text));
-            imageView = (AppCompatImageView) view.findViewById(R.id.emptyIcon);
+            imageView = view.findViewById(R.id.emptyIcon);
             imageView.setImageDrawable(VectorDrawableCompat.create(view.getResources(),icon,null));
-            container = (ViewGroup) view.findViewById(R.id.emptyContainer);
+            container = view.findViewById(R.id.emptyContainer);
             return this;
         }
 

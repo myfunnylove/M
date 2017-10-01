@@ -126,7 +126,7 @@ public class ImagePagerFragment extends Fragment {
 
     View rootView = inflater.inflate(R.layout.__picker_picker_fragment_image_pager, container, false);
 
-    mViewPager = (ViewPager) rootView.findViewById(R.id.vp_photos);
+    mViewPager = rootView.findViewById(R.id.vp_photos);
     mViewPager.setAdapter(mPagerAdapter);
     mViewPager.setCurrentItem(currentItem);
     mViewPager.setOffscreenPageLimit(5);

@@ -3,18 +3,13 @@ package locidnet.com.marvarid.ui.fragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.graphics.drawable.VectorDrawableCompat
-import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
 import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.FollowAdapter
@@ -40,11 +35,10 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
 
 
 
-    var search: EditText       by Delegates.notNull<EditText>()
 //  var searchResult: TextView by Delegates.notNull<TextView>()
     var list: RecyclerView     by Delegates.notNull<RecyclerView>()
 
-    var searchLay              by Delegates.notNull<LinearLayout>()
+    var searchLay              by Delegates.notNull<Toolbar>()
 
 
     var headerText = ""
@@ -92,8 +86,7 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
         QAYSI_HOLATGA_OZGARDI = ProfileFragment.FOLLOW
 
         list           = rootView.findViewById<RecyclerView>(R.id.list)
-        search         = rootView.findViewById<EditText>(R.id.search)
-        searchLay      = rootView.findViewById<LinearLayout>(R.id.searchLay)
+        searchLay      = rootView.findViewById<Toolbar>(R.id.toolbar)
 
         emptyContainer = EmptyContainer.Builder()
                 .setIcon(R.drawable.account_light)
@@ -105,27 +98,7 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
         list.layoutManager = LinearLayoutManager(activity)
         list.setHasFixedSize(true)
         headerText = arguments.getString("header","")
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-        val drawableCompat = VectorDrawableCompat.create(activity.resources,R.drawable.search,search.context.theme)
-        search.setCompoundDrawablesWithIntrinsicBounds(drawableCompat,null,null,null)
-//        }else{
 
-//        }
-
-        search.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if(s!!.toString().length >= 3){
-
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-        })
 
 
     }
@@ -304,17 +277,7 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
             }
         }
     }
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        log.d("onHiddenChanged ")
-        if(hidden){
-            search.hideKeyboard()
 
-        }else{
-            search.showKeyboard()
-
-        }
-    }
 
     fun View.showKeyboard() {
         this.requestFocus()
