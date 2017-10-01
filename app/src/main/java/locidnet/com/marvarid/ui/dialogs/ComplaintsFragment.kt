@@ -48,7 +48,7 @@ class ComplaintsFragment : DialogFragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_dialog_complain,container,false)
 
-        val list = view.findViewById(R.id.list) as RecyclerView
+        val list = view.findViewById<RecyclerView>(R.id.list)
         list.layoutManager = LinearLayoutManager(activity)
         list.setHasFixedSize(true)
         val adapter = ComplainsAdapter()
@@ -99,7 +99,7 @@ class ComplaintsFragment : DialogFragment() {
 
         class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-            val text = itemView.findViewById(R.id.text) as TextView;
+            val text = itemView.findViewById<TextView>(R.id.text)
         }
         fun setDialogClickListener(dialogClickListener: DialogClickListener){
             listener = dialogClickListener

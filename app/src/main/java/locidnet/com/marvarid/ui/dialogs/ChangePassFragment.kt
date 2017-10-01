@@ -56,15 +56,15 @@ class ChangePassFragment : DialogFragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_dialog_change_password,container,false)
 
-        oldPass = view.findViewById(R.id.oldPass) as TextInputEditText
-        newPass = view.findViewById(R.id.newPass) as TextInputEditText
-        newPassAgain = view.findViewById(R.id.newsPassAgain) as TextInputEditText
-        change = view.findViewById(R.id.change) as Button
+        oldPass = view.findViewById<TextInputEditText>(R.id.oldPass)
+        newPass = view.findViewById<TextInputEditText>(R.id.newPass)
+        newPassAgain = view.findViewById<TextInputEditText>(R.id.newsPassAgain)
+        change = view.findViewById<Button>(R.id.change)
 
 
 
 
-        progress = view.findViewById(R.id.progress) as ProgressBar
+        progress = view.findViewById<ProgressBar>(R.id.progress)
 
         change.setOnClickListener {
 

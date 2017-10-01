@@ -140,8 +140,8 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
     class Holder(view: View) : RecyclerView.ViewHolder(view) {
 
-        var container:RelativeLayout = view.findViewById(R.id.container) as RelativeLayout
-        var photo:AppCompatImageView = view.findViewById(R.id.photo) as AppCompatImageView
+        var container:RelativeLayout = view.findViewById<RelativeLayout>(R.id.container)
+        var photo:AppCompatImageView = view.findViewById<AppCompatImageView>(R.id.photo)
     }
 
 

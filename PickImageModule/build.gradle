@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta6'
 
     }
 
@@ -22,8 +22,8 @@ buildscript {
     }
 }
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
     resourcePrefix "__picker_"
 
     dexOptions {
@@ -31,7 +31,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 26
     }
     lintOptions {
         abortOnError false
@@ -40,7 +40,7 @@ android {
 
 }
 ext {
-    supportLibVersion = "25.3.1"
+    supportLibVersion = "26.1.0"
 }
 dependencies {
     compile "com.android.support:support-v4:$supportLibVersion"
@@ -58,14 +58,14 @@ dependencies {
 }
 
 
-//
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        def requested = details.requested
-        if (requested.group == 'com.android.support') {
-            if (!requested.name.startsWith("multidex")) {
-                details.useVersion '25.3.1'
-            }
-        }
-    }
-}
+////
+//configurations.all {
+//    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//        def requested = details.requested
+//        if (requested.group == 'com.android.support') {
+//            if (!requested.name.startsWith("multidex")) {
+//                details.useVersion '25.3.1'
+//            }
+//        }
+//    }
+//}

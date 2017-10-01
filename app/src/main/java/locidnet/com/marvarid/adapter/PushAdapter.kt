@@ -425,44 +425,43 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
     class Like(view: View) : RecyclerView.ViewHolder(view) {
 
-        val container = view.findViewById(R.id.container) as ViewGroup
-        val avatar = view.findViewById(R.id.avatar) as AppCompatImageView
-        val username = view.findViewById(R.id.username) as TextView
-        val body = view.findViewById(R.id.body) as TextView
-        val time = view.findViewById(R.id.time) as TextView
-        val mypost = view.findViewById(R.id.actionPhoto) as AppCompatImageView
+        val container = view.findViewById<ViewGroup>(R.id.container)
+        val username = view.findViewById<TextView>(R.id.username)
+        val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
+        val body = view.findViewById<TextView>(R.id.body)
+        val time = view.findViewById<TextView>(R.id.time)
+        val mypost = view.findViewById<AppCompatImageView>(R.id.actionPhoto)
 
     }
 
     class Comment(view: View) : RecyclerView.ViewHolder(view) {
-        val container = view.findViewById(R.id.container) as ViewGroup
-        val avatar = view.findViewById(R.id.avatar) as AppCompatImageView
-        val username = view.findViewById(R.id.username) as TextView
-        val body = view.findViewById(R.id.body) as TextView
-        val time = view.findViewById(R.id.time) as TextView
-
-        val mypost = view.findViewById(R.id.actionPhoto) as AppCompatImageView
+        val container = view.findViewById<ViewGroup>(R.id.container)
+        val username = view.findViewById<TextView>(R.id.username)
+        val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
+        val body = view.findViewById<TextView>(R.id.body)
+        val time = view.findViewById<TextView>(R.id.time)
+        val mypost = view.findViewById<AppCompatImageView>(R.id.actionPhoto)
     }
 
     class Requested(view: View) : RecyclerView.ViewHolder(view) {
-        val container = view.findViewById(R.id.container) as ViewGroup
-        val avatar = view.findViewById(R.id.avatar) as AppCompatImageView
-        val username = view.findViewById(R.id.username) as TextView
-        val body = view.findViewById(R.id.body) as TextView
-        val accept = view.findViewById(R.id.accept) as Button
-        val dismiss = view.findViewById(R.id.dismiss) as Button
-        val time = view.findViewById(R.id.time) as TextView
+        val container = view.findViewById<ViewGroup>(R.id.container)
+        val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
+        val username = view.findViewById<TextView>(R.id.username)
+        val body = view.findViewById<TextView>(R.id.body)
+        val accept = view.findViewById<Button>(R.id.accept)
+        val dismiss = view.findViewById<Button>(R.id.dismiss)
+        val time = view.findViewById<TextView>(R.id.time)
 
     }
 
     class Other(view: View) : RecyclerView.ViewHolder(view) {
-        val container = view.findViewById(R.id.container) as ViewGroup
-        val avatar = view.findViewById(R.id.avatar) as AppCompatImageView
-        val username = view.findViewById(R.id.username) as TextView
-        val body = view.findViewById(R.id.body) as TextView
-        val accept = view.findViewById(R.id.accept) as Button
-        val dismiss = view.findViewById(R.id.dismiss) as Button
-        val time = view.findViewById(R.id.time) as TextView
+        val container = view.findViewById<ViewGroup>(R.id.container)
+        val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
+        val username = view.findViewById<TextView>(R.id.username)
+        val body = view.findViewById<TextView>(R.id.body)
+        val accept = view.findViewById<Button>(R.id.accept)
+        val dismiss = view.findViewById<Button>(R.id.dismiss)
+        val time = view.findViewById<TextView>(R.id.time)
 
     }
 

@@ -59,17 +59,17 @@ class PhoneFormFragment : DialogFragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_dialog_change_phone,container,false)
 
-        send = view.findViewById(R.id.yes) as Button
+        send = view.findViewById<Button>(R.id.yes)
         send.text = Base.get.resources.getString(R.string.get_sms)
-        phone = view.findViewById(R.id.phone) as PhoneEditText
+        phone = view.findViewById<PhoneEditText>(R.id.phone)
         phone.setTextColor(Base.get.resources.getColor(R.color.normalTextColor))
         phone.setDefaultCountry("uz")
 
 
-        smsCode = view.findViewById(R.id.smsCode) as TextInputEditText
-        progress = view.findViewById(R.id.progress) as ProgressBar
+        smsCode = view.findViewById<TextInputEditText>(R.id.smsCode)
+        progress = view.findViewById<ProgressBar>(R.id.progress)
 
-        send.findViewById(R.id.yes).setOnClickListener {
+        send.findViewById<Button>(R.id.yes).setOnClickListener {
             log.d("${send.tag}")
             if (send.tag == CHANGE) {
                 listener!!.click(CHANGE)

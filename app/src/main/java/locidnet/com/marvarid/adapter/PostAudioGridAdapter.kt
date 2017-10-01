@@ -162,13 +162,13 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
     class Holder(view: View) : RecyclerView.ViewHolder(view) {
 
 
-        var container:ViewGroup = view.findViewById(R.id.container) as ViewGroup
-        var title:TextView = view.findViewById(R.id.title) as TextView
-        var duration:TextView = view.findViewById(R.id.duration) as TextView
-        var songName:TextView = view.findViewById(R.id.songName) as TextView
-        var play:AppCompatImageView = view.findViewById(R.id.play) as AppCompatImageView
+        var container:ViewGroup     = view.findViewById<ViewGroup>(R.id.container)
+        var title:TextView          = view.findViewById<TextView>(R.id.title)
+        var duration:TextView       = view.findViewById<TextView>(R.id.duration)
+        var songName:TextView       = view.findViewById<TextView>(R.id.songName)
+        var play:AppCompatImageView = view.findViewById<AppCompatImageView>(R.id.play)
 
-        var addFavorite:AppCompatImageView = view.findViewById(R.id.addFavorite) as AppCompatImageView
+        var addFavorite:AppCompatImageView = view.findViewById<AppCompatImageView>(R.id.addFavorite)
 
     }
 

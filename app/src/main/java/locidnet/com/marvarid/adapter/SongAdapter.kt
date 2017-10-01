@@ -69,13 +69,13 @@ class SongAdapter(clicker:AdapterClicker, ctx:Context, list:ArrayList<Song>) : R
         var container    by Delegates.notNull<ViewGroup>()
         var songCheck    by Delegates.notNull<AppCompatRadioButton>()
         init {
-            songName = itemView.findViewById(R.id.songName) as TextView
-            songArtist = itemView.findViewById(R.id.songArtist) as TextView
-            songSize = itemView.findViewById(R.id.songSize) as TextView
-            songDuration = itemView.findViewById(R.id.songDuration) as TextView
-            songArtist = itemView.findViewById(R.id.songArtist) as TextView
-            songCheck = itemView.findViewById(R.id.songCheck) as AppCompatRadioButton
-            container = itemView.findViewById(R.id.container) as ViewGroup
+            songName = itemView.findViewById<TextView>(R.id.songName)
+            songArtist = itemView.findViewById<TextView>(R.id.songArtist)
+            songSize = itemView.findViewById<TextView>(R.id.songSize)
+            songDuration = itemView.findViewById<TextView>(R.id.songDuration)
+            songArtist = itemView.findViewById<TextView>(R.id.songArtist)
+            songCheck = itemView.findViewById<AppCompatRadioButton>(R.id.songCheck)
+            container = itemView.findViewById<ViewGroup>(R.id.container)
 
         }
     }

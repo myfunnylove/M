@@ -142,7 +142,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
                 .initLayoutForActivity(this)
                 .build()
         emptyContainer.hide()
-        postContainer = findViewById(R.id.postContainer) as ViewGroup
+        postContainer = findViewById<ViewGroup>(R.id.postContainer)
         postContainer.visibility = View.GONE
 
         postId = intent.getIntExtra("postId",-1)
@@ -416,22 +416,22 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
 
 
     fun initViews(){
-        images       = findViewById(R.id.images)       as RecyclerView
-        audios       = findViewById(R.id.audios)       as RecyclerView
-        avatar       = findViewById(R.id.avatar)       as AppCompatImageView
-        name         = findViewById(R.id.name)         as TextView
-        quote        = findViewById(R.id.commentText)  as TextView
-        quoteEdit    = findViewById(R.id.commentEditText)  as EditText
-        likeCount    = findViewById(R.id.likeCount)    as TextSwitcher
-        commentCount = findViewById(R.id.commentCount) as TextView
-        time         = findViewById(R.id.time)         as TextView
-        username     = findViewById(R.id.username)     as TextView
-        likeIcon     = findViewById(R.id.likeIcon)     as AppCompatImageView
-        popup        = findViewById(R.id.popup)        as AppCompatImageView
-        likeLay      = findViewById(R.id.likeLay)      as LinearLayout
-        commentLay   = findViewById(R.id.commentLay)   as LinearLayout
-        topContainer = findViewById(R.id.topContainer) as ViewGroup
-        sendChange   = findViewById(R.id.sendChangedQuote) as AppCompatImageButton
+        images       = findViewById<RecyclerView>(R.id.images)
+        audios       = findViewById<RecyclerView>(R.id.audios)
+        avatar       = findViewById<AppCompatImageView>(R.id.avatar)
+        name         = findViewById<TextView>(R.id.name)
+        quote        = findViewById<TextView>(R.id.commentText)
+        quoteEdit    = findViewById<EditText>(R.id.commentEditText)
+        likeCount    = findViewById<TextSwitcher>(R.id.likeCount)
+        commentCount = findViewById<TextView>(R.id.commentCount)
+        time         = findViewById<TextView>(R.id.time)
+        username     = findViewById<TextView>(R.id.username)
+        likeIcon     = findViewById<AppCompatImageView>(R.id.likeIcon)
+        popup        = findViewById<AppCompatImageView>(R.id.popup)
+        likeLay      = findViewById<LinearLayout>(R.id.likeLay)
+        commentLay   = findViewById<LinearLayout>(R.id.commentLay)
+        topContainer = findViewById<ViewGroup>(R.id.topContainer)
+        sendChange   = findViewById<AppCompatImageButton>(R.id.sendChangedQuote)
 
         images
 

@@ -83,11 +83,11 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
         MainActivity.musicSubject.subscribe(this)
 
-        progressLay    = rootView.findViewById(R.id.progressLay)    as ViewGroup
+        progressLay    = rootView.findViewById<ViewGroup>(R.id.progressLay)
 
-        swipeRefreshLayout    = rootView.findViewById(R.id.swipeRefreshLayout)    as SwipeRefreshLayout
+        swipeRefreshLayout    = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
 
-        listFeed       = rootView.findViewById(R.id.listFeed)       as RecyclerView
+        listFeed       = rootView.findViewById<RecyclerView>(R.id.listFeed)
 
         emptyContainer = EmptyContainer.Builder()
                                        .setIcon(R.drawable.feed_light)

@@ -91,9 +91,9 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
         OZGARGAN_USERNI_IDSI = -1
         QAYSI_HOLATGA_OZGARDI = ProfileFragment.FOLLOW
 
-        list           = rootView.findViewById(R.id.list)           as RecyclerView
-        search         = rootView.findViewById(R.id.search)         as EditText
-        searchLay      = rootView.findViewById(R.id.searchLay)      as LinearLayout
+        list           = rootView.findViewById<RecyclerView>(R.id.list)
+        search         = rootView.findViewById<EditText>(R.id.search)
+        searchLay      = rootView.findViewById<LinearLayout>(R.id.searchLay)
 
         emptyContainer = EmptyContainer.Builder()
                 .setIcon(R.drawable.account_light)

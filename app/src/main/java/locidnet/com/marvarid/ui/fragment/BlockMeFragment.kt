@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -48,16 +49,16 @@ class BlockMeFragment : BaseFragment() {
 
 
     override fun init() {
-        rootView.findViewById(R.id.follow).visibility = View.GONE
-        rootView.findViewById(R.id.progressUpdateAvatar).visibility = View.GONE
-        rootView.findViewById(R.id.postsLay).visibility = View.GONE
-        rootView.findViewById(R.id.playlist).visibility = View.GONE
-        rootView.findViewById(R.id.closedProfilLay).visibility = View.VISIBLE
-        val text = rootView.findViewById(R.id.emptyText) as TextView
+        rootView.findViewById<View>(R.id.follow).visibility = View.GONE
+        rootView.findViewById<View>(R.id.progressUpdateAvatar).visibility = View.GONE
+        rootView.findViewById<ViewGroup>(R.id.postsLay).visibility = View.GONE
+        rootView.findViewById<View>(R.id.playlist).visibility = View.GONE
+        rootView.findViewById<ViewGroup>(R.id.closedProfilLay).visibility = View.VISIBLE
+        val text = rootView.findViewById<TextView>(R.id.emptyText)
 
         text.text = Functions.getString(R.string.profil_blocked_me_title)
 
-        val avatar = rootView.findViewById(R.id.avatar) as AppCompatImageView
+        val avatar = rootView.findViewById<AppCompatImageView>(R.id.avatar)
 
         var photo = ""
 

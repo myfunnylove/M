@@ -94,8 +94,8 @@ class SearchFragment : BaseFragment(), AdapterClicker{
         Const.TAG = "SearchFragment"
 
 
-        list           = rootView.findViewById(R.id.list)           as RecyclerView
-        search         = rootView.findViewById(R.id.search)         as EditText
+        list           = rootView.findViewById<RecyclerView>(R.id.list)
+        search         = rootView.findViewById<EditText>(R.id.search)
 
         emptyContainer = EmptyContainer.Builder()
                 .setIcon(R.drawable.search_light)

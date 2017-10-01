@@ -171,10 +171,10 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
 
         var pr:ImageUploadMask? = null
         init {
-            image = itemView.findViewById(R.id.image) as AppCompatImageView
-            errorImg = itemView.findViewById(R.id.errorImg) as AppCompatImageView
-            remove = itemView.findViewById(R.id.remove) as AppCompatImageView
-            container = itemView.findViewById(R.id.container) as ViewGroup
+            image = itemView.findViewById<AppCompatImageView>(R.id.image)
+            errorImg = itemView.findViewById<AppCompatImageView>(R.id.errorImg)
+            remove = itemView.findViewById<AppCompatImageView>(R.id.remove)
+            container = itemView.findViewById<ViewGroup>(R.id.container)
             pr = ImageUploadMask.Builder(Base.get)
                     .bind(image)
                     .textColorInt(Color.WHITE)

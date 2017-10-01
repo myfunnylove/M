@@ -134,15 +134,15 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
     }
 
     class Holder(view: View) :RecyclerView.ViewHolder(view){
-        val avatar    = view.findViewById(R.id.avatar)    as AppCompatImageView
-        val username  = view.findViewById(R.id.username)  as TextView
-        val container = view.findViewById(R.id.container) as ViewGroup
-        val comment   = view.findViewById(R.id.comment)   as TextView
+        val avatar    = view.findViewById<AppCompatImageView>(R.id.avatar)
+        val username  = view.findViewById<TextView>(R.id.username)
+        val container = view.findViewById<ViewGroup>(R.id.container)
+        val comment   = view.findViewById<TextView>(R.id.comment)
     }
 
 
     class LoadMoreHolder(view: View) :RecyclerView.ViewHolder(view){
-        val container = view.findViewById(R.id.container) as ViewGroup
+        val container = view.findViewById<ViewGroup>(R.id.container)
     }
 
     fun  swapList(list:ArrayList<Comment>){

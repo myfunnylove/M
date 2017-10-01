@@ -170,13 +170,13 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
         var pr:ImageUploadMask? = null
         init {
 
-            songName = itemView.findViewById(R.id.songName) as TextView
-            songArtist = itemView.findViewById(R.id.songArtist) as TextView
-            songArtist = itemView.findViewById(R.id.songArtist) as TextView
-            container = itemView.findViewById(R.id.container) as ViewGroup
-            progress = itemView.findViewById(R.id.progress) as ViewGroup
-            errorImg = itemView.findViewById(R.id.errorImg) as AppCompatImageView
-            remove = itemView.findViewById(R.id.remove) as AppCompatImageView
+            songName = itemView.findViewById<TextView>(R.id.songName)
+            songArtist = itemView.findViewById<TextView>(R.id.songArtist)
+            songArtist = itemView.findViewById<TextView>(R.id.songArtist)
+            container = itemView.findViewById<ViewGroup>(R.id.container)
+            progress = itemView.findViewById<ViewGroup>(R.id.progress)
+            errorImg = itemView.findViewById<AppCompatImageView>(R.id.errorImg)
+            remove = itemView.findViewById<AppCompatImageView>(R.id.remove)
 
             pr = ImageUploadMask.Builder(Base.get)
                     .bind(progress)

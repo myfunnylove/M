@@ -49,9 +49,9 @@ class YesNoFragment : DialogFragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_dialog,container,false)
 
-        val titleView = view.findViewById(R.id.title) as TextView
-        val no = view.findViewById(R.id.no) as TextView
-        val yes = view.findViewById(R.id.yes) as TextView
+        val titleView = view.findViewById<TextView>(R.id.title)
+        val no = view.findViewById<TextView>(R.id.no)
+        val yes = view.findViewById<TextView>(R.id.yes)
 
         try{
             titleView.text = arguments.getString("title")
@@ -61,11 +61,11 @@ class YesNoFragment : DialogFragment() {
         }catch (e:Exception){
 
         }
-        no.findViewById(R.id.no).setOnClickListener {
+        no.setOnClickListener {
             listener!!.click(NO)
         }
 
-        yes.findViewById(R.id.yes).setOnClickListener {
+        yes.setOnClickListener {
             listener!!.click(YES)
         }
 

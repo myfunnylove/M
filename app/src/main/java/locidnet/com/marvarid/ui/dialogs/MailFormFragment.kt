@@ -57,15 +57,15 @@ class MailFormFragment : DialogFragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_dialog_change_mail,container,false)
 
-        send = view.findViewById(R.id.yes) as Button
-        mail = view.findViewById(R.id.phone) as TextInputEditText
+        send = view.findViewById<Button>(R.id.yes)
+        mail = view.findViewById<TextInputEditText>(R.id.phone)
 
 
 
-        smsCode = view.findViewById(R.id.smsCode) as TextInputEditText
-        progress = view.findViewById(R.id.progress) as ProgressBar
+        smsCode = view.findViewById<TextInputEditText>(R.id.smsCode)
+        progress = view.findViewById<ProgressBar>(R.id.progress)
 
-        send.findViewById(R.id.yes).setOnClickListener {
+        send.findViewById<Button>(R.id.yes).setOnClickListener {
             if (send.tag == CHANGE) {
                 listener!!.click(CHANGE)
 

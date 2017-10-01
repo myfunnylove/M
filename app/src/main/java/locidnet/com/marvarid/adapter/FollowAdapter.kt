@@ -248,11 +248,11 @@ class FollowAdapter(context:Context,
         var container by Delegates.notNull<ViewGroup>()
 
         init {
-            img = itemView.findViewById(R.id.img) as AppCompatImageView
-            name = itemView.findViewById(R.id.name) as TextView
-            login = itemView.findViewById(R.id.login) as TextView
-            follow = itemView.findViewById(R.id.follow) as Button
-            container = itemView.findViewById(R.id.container) as ViewGroup
+            img = itemView.findViewById<AppCompatImageView>(R.id.img)
+            name = itemView.findViewById<TextView>(R.id.name)
+            login = itemView.findViewById<TextView>(R.id.login)
+            follow = itemView.findViewById<Button>(R.id.follow)
+            container = itemView.findViewById<ViewGroup>(R.id.container)
 
         }
     }

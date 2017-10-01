@@ -107,10 +107,10 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         log.d("init profil fragment")
 
 
-        progressLay    = rootView.findViewById(R.id.progressLay)    as ViewGroup
-        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout)    as SwipeRefreshLayout
+        progressLay    = rootView.findViewById<ViewGroup>(R.id.progressLay)
+        swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
 
-        postView     = rootView.findViewById(R.id.postList)         as RecyclerView
+        postView     = rootView.findViewById<RecyclerView>(R.id.postList)
 
 
 

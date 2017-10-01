@@ -63,10 +63,10 @@ class NotificationFragment(): BaseFragment(){
     override fun getFragmentView(): Int = R.layout.fragment_notification
 
     override fun init() {
-        progressLay           = rootView.findViewById(R.id.progressLay)    as ViewGroup
+        progressLay           = rootView.findViewById<ViewGroup>(R.id.progressLay)
 
-        swipeRefreshLayout    = rootView.findViewById(R.id.swipeRefreshLayout)    as SwipeRefreshLayout
-        list  = rootView.findViewById(R.id.list)           as RecyclerView
+        swipeRefreshLayout    = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        list  = rootView.findViewById<RecyclerView>(R.id.list)
         manager = LinearLayoutManager(activity)
         list!!.layoutManager = manager
         list!!.setHasFixedSize(true)

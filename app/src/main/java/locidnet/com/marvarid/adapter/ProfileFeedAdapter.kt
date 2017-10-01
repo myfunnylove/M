@@ -846,22 +846,22 @@ class ProfileFeedAdapter(context: FragmentActivity,
         var topContainer  by Delegates.notNull<ViewGroup>()
         var sendChange    by Delegates.notNull<AppCompatImageButton>()
         init {
-            images       = itemView.findViewById(R.id.images)       as RecyclerView
-            audios       = itemView.findViewById(R.id.audios)       as RecyclerView
-            avatar       = itemView.findViewById(R.id.avatar)       as AppCompatImageView
-            name         = itemView.findViewById(R.id.name)         as TextView
-            quote        = itemView.findViewById(R.id.commentText)  as TextView
-            quoteEdit    = itemView.findViewById(R.id.commentEditText)  as EditText
-            likeCount    = itemView.findViewById(R.id.likeCount)    as TextSwitcher
-            commentCount = itemView.findViewById(R.id.commentCount) as TextView
-            time         = itemView.findViewById(R.id.time)         as TextView
-            username     = itemView.findViewById(R.id.username)     as TextView
-            likeIcon     = itemView.findViewById(R.id.likeIcon)     as AppCompatImageView
-            popup        = itemView.findViewById(R.id.popup)        as AppCompatImageView
-            likeLay      = itemView.findViewById(R.id.likeLay)      as LinearLayout
-            commentLay   = itemView.findViewById(R.id.commentLay)   as LinearLayout
-            topContainer = itemView.findViewById(R.id.topContainer) as ViewGroup
-            sendChange   = itemView.findViewById(R.id.sendChangedQuote) as AppCompatImageButton
+            images       = itemView.findViewById<RecyclerView>(R.id.images)
+            audios       = itemView.findViewById<RecyclerView>(R.id.audios)
+            avatar       = itemView.findViewById<AppCompatImageView>(R.id.avatar)
+            name         = itemView.findViewById<TextView>(R.id.name)
+            quote        = itemView.findViewById<TextView>(R.id.commentText)
+            quoteEdit    = itemView.findViewById<EditText>(R.id.commentEditText)
+            likeCount    = itemView.findViewById<TextSwitcher>(R.id.likeCount)
+            commentCount = itemView.findViewById<TextView>(R.id.commentCount)
+            time         = itemView.findViewById<TextView>(R.id.time)
+            username     = itemView.findViewById<TextView>(R.id.username)
+            likeIcon     = itemView.findViewById<AppCompatImageView>(R.id.likeIcon)
+            popup        = itemView.findViewById<AppCompatImageView>(R.id.popup)
+            likeLay      = itemView.findViewById<LinearLayout>(R.id.likeLay)
+            commentLay   = itemView.findViewById<LinearLayout>(R.id.commentLay)
+            topContainer = itemView.findViewById<ViewGroup>(R.id.topContainer)
+            sendChange   = itemView.findViewById<AppCompatImageButton>(R.id.sendChangedQuote)
         }
     }
 
@@ -870,18 +870,18 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
 
 
-            val   closedProfilLay = rootView.findViewById(R.id.closedProfilLay) as LinearLayout
-            val   followersLay = rootView.findViewById(R.id.followersLay) as LinearLayout
-            val   followingLay = rootView.findViewById(R.id.followingLay) as LinearLayout
-            val   playlist     = rootView.findViewById(R.id.playlist)   as AppCompatImageView
-            val   avatar       = rootView.findViewById(R.id.avatar)       as AppCompatImageView
-            val   followers    = rootView.findViewById(R.id.followers)    as TextView
-            val   following    = rootView.findViewById(R.id.following)    as TextView
-            val   username     = rootView.findViewById(R.id.username)     as SGTextView
-            val   firstName    = rootView.findViewById(R.id.firstName)    as TextView
-            val   posts        = rootView.findViewById(R.id.posts)        as TextView
-            val   follow       = rootView.findViewById(R.id.follow)       as Button
-        val   progress     = rootView.findViewById(R.id.progressUpdateAvatar)       as ProgressBar
+            val   closedProfilLay = rootView.findViewById<LinearLayout>(R.id.closedProfilLay)
+            val   followersLay = rootView.findViewById<LinearLayout>(R.id.followersLay)
+            val   followingLay = rootView.findViewById<LinearLayout>(R.id.followingLay)
+            val   playlist     = rootView.findViewById<AppCompatImageView>(R.id.playlist)
+            val   avatar       = rootView.findViewById<AppCompatImageView>(R.id.avatar)
+            val   followers    = rootView.findViewById<TextView>(R.id.followers)
+            val   following    = rootView.findViewById<TextView>(R.id.following)
+            val   username     = rootView.findViewById<SGTextView>(R.id.username)
+            val   firstName    = rootView.findViewById<TextView>(R.id.firstName)
+            val   posts        = rootView.findViewById<TextView>(R.id.posts)
+            val   follow       = rootView.findViewById<Button>(R.id.follow)
+            val   progress     = rootView.findViewById<ProgressBar>(R.id.progressUpdateAvatar)
 
 
     }
