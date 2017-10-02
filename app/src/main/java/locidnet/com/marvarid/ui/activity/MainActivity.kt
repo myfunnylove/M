@@ -101,13 +101,13 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         var endSearch      = 20
 
         var MY_POSTS_STATUS = "-1"
+        var RECOMMEND_POST  = "-1"
+        var FEED_STATUS     = "1"
 
-        val FIRST_TIME   = "0"
-        val NEED_UPDATE  = "1"
-        val AFTER_UPDATE = "2"
+        val FIRST_TIME     = "0"
+        val NEED_UPDATE    = "1"
+        val AFTER_UPDATE   = "2"
         val ONLY_USER_INFO = "3"
-
-        var FEED_STATUS = NEED_UPDATE
 
         var COMMENT_POST_UPDATE = 0
         var COMMENT_COUNT       = 0
@@ -258,6 +258,32 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                             p0.setIcon(Const.selectedTabs.get(p0.position)!!)
                             setFragment(p0.position)
+                    }
+
+                    Const.SEARCH_FR -> {
+
+                        if(RECOMMEND_POST != AFTER_UPDATE){
+                            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                                override fun connected() {
+                                    val reqObj = JS.get()
+
+                                    log.d("feed page select $reqObj")
+                                    presenter.requestAndResponse(reqObj, Http.CMDS.GET_15_POSTS)
+
+
+
+                                }
+
+                                override fun disconnected() {
+
+                                }
+
+                            })
+                        }
+                        lastFragment = p0.position
+
+                        p0.setIcon(Const.selectedTabs.get(p0.position)!!)
+                        setFragment(p0.position)
                     }
 
                     Const.FEED_FR -> {
@@ -871,6 +897,26 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                     notificationFragment!!.onFail("")
 
                 }
+            }
+
+            Http.CMDS.GET_15_POSTS -> {
+                try{
+
+                    val postList: PostList = Gson().fromJson(result, PostList::class.java)
+                    searchFragment!!.hideProgress()
+                    if (postList.posts.size > 0){
+                        RECOMMEND_POST = AFTER_UPDATE
+                        searchFragment!!.swapPosts(postList)
+                    }else{
+                        searchFragment!!.failedGetList()
+
+                    }
+
+                }catch (e:Exception){
+                    searchFragment!!.failedGetList()
+
+                }
+
             }
         }
     }

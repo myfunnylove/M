@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import io.reactivex.Observable
 import locidnet.com.marvarid.R
@@ -24,6 +25,7 @@ import locidnet.com.marvarid.base.BaseFragment
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.SignalListener
+import locidnet.com.marvarid.model.PostList
 import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
@@ -43,7 +45,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 //    var searchResult:TextView by Delegates.notNull<TextView>()
     var list:RecyclerView     by Delegates.notNull<RecyclerView>()
 
-    var progressLay           by Delegates.notNull<ViewGroup>()
+    var progress           by Delegates.notNull<ProgressBar>()
     val pattern = "^[\\p{L}0-9]*$"
 
     var usersList:ArrayList<Users>? = null
@@ -80,9 +82,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
 
 
-    override fun getFragmentView(): Int {
-     return R.layout.fragment_search
-    }
+    override fun getFragmentView(): Int = R.layout.fragment_search
 
     override fun init() {
         Const.TAG = "SearchFragment"
@@ -90,7 +90,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
         list           = rootView.findViewById<RecyclerView>(R.id.list)
         search         = rootView.findViewById<Toolbar>(R.id.toolbar)
-
+        progress       = rootView.findViewById<ProgressBar>(R.id.progress)
         search.setOnClickListener {
             startActivity(Intent(activity,SearchActivity::class.java))
             activity.overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
@@ -112,9 +112,20 @@ class SearchFragment : BaseFragment(), AdapterClicker{
     override fun data(data: String) {
     }
 
+    fun hideProgress() {
+        progress.visibility = View.GONE
+
+    }
+
+    fun swapPosts(postList: PostList) {
+        progress.visibility = View.GONE
 
 
+    }
 
+    fun failedGetList() {
+        progress.visibility = View.GONE
+    }
 
 
 }

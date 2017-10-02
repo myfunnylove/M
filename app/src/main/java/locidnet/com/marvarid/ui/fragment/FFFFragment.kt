@@ -76,9 +76,7 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
         connectActivity = connActivity
 
     }
-    override fun getFragmentView(): Int {
-        return R.layout.fragment_search
-    }
+    override fun getFragmentView(): Int = R.layout.fragment_fff
 
     override fun init() {
         Const.TAG = "FFFFragment"

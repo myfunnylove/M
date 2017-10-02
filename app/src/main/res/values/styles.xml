@@ -136,7 +136,7 @@
     <style name="LogoText">
         <item name="android:textColor">@color/white</item>
         <item name="fontPath">font/KaushanScript-Regular.otf</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">28sp</item>
     </style>
 
     <style name="HeaderText">
@@ -214,5 +214,12 @@
 
     <style name="CircularProgress" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+
+    <style name="FullWidthEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:padding">20dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:textSize">17sp</item>
     </style>
 </resources>

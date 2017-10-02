@@ -3,16 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    >
     <include layout="@layout/res_error_connection_lay"
         android:id="@+id/include" />
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/bg"
-        android:scaleType="centerCrop"
-        android:foreground="#70000000"
-        />
+    <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:src="@drawable/bg"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:foreground="#70000000"-->
+        <!--/>-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="100dp"

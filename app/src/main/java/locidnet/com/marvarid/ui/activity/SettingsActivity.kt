@@ -299,6 +299,13 @@ class SettingsActivity : BaseActivity(), Viewer {
         switchNotification.isChecked = Base.get.prefs.isALlowNotif()
         switchNotification.setOnCheckedChangeListener { view, isChecked -> Base.get.prefs.allowNotif(isChecked) }
         /*ALLOW NOTIFICATION*/
+
+
+        reportBugLay.setOnClickListener {
+            startActivity(Intent(this,ReportBugActivity::class.java))
+            overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -115,4 +115,8 @@
     <string name="complaintSuicide">Appeal for suicide</string>
     <string name="thank_data_sent">Thanks,data sent</string>
     <string name="send">Send</string>
+    <string name="subject">Тема</string>
+    <string name="message">Сообщение</string>
+    <string name="feedBack">Обратная связь</string>
+    <string name="thank_for_report">Спасибо данные отправлены</string>
 </resources>

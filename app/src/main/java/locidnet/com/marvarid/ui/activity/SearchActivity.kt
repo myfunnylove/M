@@ -463,4 +463,9 @@ class SearchActivity :BaseActivity() ,Viewer, AdapterClicker{
 
         Handler().postDelayed({failedGetList(message)},1500)
     }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+    }
 }

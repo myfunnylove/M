@@ -14,18 +14,8 @@ object Http {
 
     val PRMS             = "prms"
     val CMD              = "cmd"
-    val BASE_URL  = "http://api.maydon.net/new/"
-    /*
-    *
-    *
-    *
-    *
-    * QUERY CMD'S
-    *
-    *
-    *
-    *
-    * */
+    val BASE_URL         = "http://api.maydon.net/new/"
+
     object CMDS{
 
         val TELEFONNI_JONATISH         = "1"
@@ -69,7 +59,9 @@ object Http {
         val FORGOT_PHONE               = "42"
         val FORGOT_SMS                 = "43"
         val FORGOT_PASS                = "44"
+        val GET_15_POSTS               = "45"
         val COMPLAINTS                 = "46"
+        val REPORT_BUG                 = "47"
 
     }
 

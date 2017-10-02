@@ -131,6 +131,7 @@ class FollowActivity : BaseActivity(),
         {
             menuInflater.inflate(R.menu.menu_block_user,menu)
             this.menu = menu
+
             return true
 
         }else{
