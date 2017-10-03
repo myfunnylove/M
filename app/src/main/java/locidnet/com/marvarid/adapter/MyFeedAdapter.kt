@@ -199,8 +199,8 @@ class MyFeedAdapter(context: FragmentActivity,
                     val js =  JS.get()
                     js.put("post_id",post.id)
                     js.put("quote", JSONObject(Gson().toJson(quote)))
-//                    js.put("user_id", profile.userId )
-//                    js.put("session", profile.session)
+//                  js.put("user_id", profile.userId )
+//                  js.put("session", profile.session)
                     log.d ("changequote send data $js")
 
                     model.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
@@ -517,11 +517,15 @@ class MyFeedAdapter(context: FragmentActivity,
                                         try {
 
 
-                                            feeds.posts.removeAt(i)
+                                            feeds.posts.removeAt(holder.adapterPosition)
                                             MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
                                             MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
-                                            notifyItemRemoved(i)
-                                            notifyItemRangeChanged(i, feeds.posts.size)
+                                            MainActivity.startFeed = 0
+                                            MainActivity.endFeed = 20
+                                            MainActivity.start = 0
+                                            MainActivity.end = 20
+                                            notifyItemRemoved(holder.adapterPosition)
+                                            notifyItemRangeChanged(holder.adapterPosition, feeds.posts.size)
                                             notifyItemChanged(0)
 
                                             log.d("onresponse from delete post $p1")

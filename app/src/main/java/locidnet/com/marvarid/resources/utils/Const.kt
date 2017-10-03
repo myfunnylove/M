@@ -67,8 +67,8 @@ object Const {
     val TO_FAIL                      = -1
     val QUIT: Int                    = 22
     val FORGOT_PASS                  = 23
-
-
+    val GET_15_POST                  = 24
+    val GO_SETTINGS                  = 25
 
 
     val FROM_MAIN_ACTIVITY = 100

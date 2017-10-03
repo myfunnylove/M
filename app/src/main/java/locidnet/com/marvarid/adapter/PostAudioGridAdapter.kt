@@ -149,9 +149,9 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
 
 
 
-        h.title.text    = if(audio.artist.isNotEmpty()) URLDecoder.decode(audio.artist,"UTF-8")
+        h.songName.text    = if(audio.artist.isNotEmpty()) URLDecoder.decode(audio.artist,"UTF-8")
                           else context.resources.getString(R.string.unknown)
-        h.songName.text = if(audio.title.isNotEmpty()) URLDecoder.decode(audio.title,"UTF-8")
+        h.title.text = if(audio.title.isNotEmpty()) URLDecoder.decode(audio.title,"UTF-8")
         else context.resources.getString(R.string.unknown)
         h.duration.text = "(${audio.duration})"
     }

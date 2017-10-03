@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.*
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -28,6 +30,7 @@ import locidnet.com.marvarid.model.RecPost
 import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
+import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
@@ -42,11 +45,13 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
     var search:Toolbar?    = null
     var list:RecyclerView? = null
+    var swipe:SwipeRefreshLayout? = null
 
     var recPosts:ArrayList<RecPost>? = null
     var adapter:FollowAdapter?       = null
     val user:User                    = Base.get.prefs.getUser()
-
+    var scroll:EndlessRecyclerViewScrollListener? = null
+    var manager:GridLayoutManager?   = null
 
 
 
@@ -83,15 +88,74 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
         list           = rootView.findViewById<RecyclerView>(R.id.list)
         search         = rootView.findViewById<Toolbar>(R.id.toolbar)
+        swipe          = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         search!!.setOnClickListener {
-            startActivity(Intent(activity,SearchActivity::class.java))
+            startActivity(Intent(activity!!,SearchActivity::class.java))
             activity.overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
         }
-
-        list!!.layoutManager = GridLayoutManager(activity,3)
+        manager = GridLayoutManager(activity,3)
+        list!!.layoutManager =  manager
         list!!.setHasFixedSize(true)
 
+        scroll = object : EndlessRecyclerViewScrollListener(manager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
 
+
+
+            }
+
+            override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
+                var lastVisibleItemPosition = 0
+
+                val totalItemCount = mLayoutManager.itemCount
+//                swipe!!.isEnabled = mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
+
+                lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+
+
+                // If the total item count is zero and the previous isn't, assume the
+                // list is invalidated and should be reset back to initial state
+                if (totalItemCount < previousTotalItemCount) {
+                    this.currentPage = this.startingPageIndex
+                    this.previousTotalItemCount = totalItemCount
+                    if (totalItemCount == 0) {
+                        this.loading = true
+                    }
+                }
+                // If it’s still loading, we check to see if the dataset count has
+                // changed, if so we conclude it has finished loading and update the current page
+                // number and total item count.
+                if (loading && totalItemCount > previousTotalItemCount) {
+                    loading = false
+                    previousTotalItemCount = totalItemCount
+                }
+
+                // If it isn’t currently loading, we check to see if we have breached
+                // the visibleThreshold and need to reload more data.
+                // If we do need to reload some more data, we execute onLoadMore to fetch the data.
+                // threshold should reflect how many total columns there are too
+
+                if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount) {
+                    currentPage++
+                    Log.d("APPLICATION_DEMO", "currentPage" + currentPage)
+                    onLoadMore(currentPage, totalItemCount, view)
+                    loading = true
+                }
+            }
+
+
+        }
+
+
+        list!!.addOnScrollListener(scroll)
+
+        swipe!!.setOnRefreshListener(object :SwipeRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+
+                    connectActivity!!.goNext(Const.GET_15_POST,"")
+            }
+
+        })
 
     }
 
@@ -114,6 +178,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
     }
 
     fun swapPosts(postList: ArrayList<RecPost>) {
+        swipe!!.isRefreshing  = false
         recPosts = postList
         val adapter = RecommendedAdapter(this,Base.get.applicationContext,recPosts!!)
 
@@ -122,6 +187,8 @@ class SearchFragment : BaseFragment(), AdapterClicker{
     }
 
     fun failedGetList() {
+        swipe!!.isRefreshing  = false
+
     }
 
 

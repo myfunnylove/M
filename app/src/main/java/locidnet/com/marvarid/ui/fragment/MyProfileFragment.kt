@@ -21,6 +21,7 @@ import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.MainActivity
 import kotlin.properties.Delegates
@@ -292,6 +293,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
            postView.visibility = View.VISIBLE
            postView.adapter = postAdapter
        }else{
+           log.d("update first item $userInfo")
            postAdapter!!.updateFirstItem(userInfo)
        }
 //        swipeRefreshLayout.isEnabled = false
@@ -315,6 +317,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
             progressLay.visibility    = View.GONE
 
             postView.visibility = View.VISIBLE
+            user = Prefs.Builder().getUser()
             val postUser = PostUser(user.userId,user.userName,if (user.profilPhoto.isNullOrEmpty()) "" else user.profilPhoto)
             postList.posts.forEach { item ->
                 item.user = postUser

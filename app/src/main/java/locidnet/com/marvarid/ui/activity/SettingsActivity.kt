@@ -84,6 +84,22 @@ class SettingsActivity : BaseActivity(), Viewer {
 
         /*FIRST LAST NAME AND USERNAME*/
         name.setText("${userData.first_name} ${userData.last_name}")
+        name.addTextChangedListener(object :TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                if (username.text.toString() == userData.userName)
+                    isLoginFree = true
+
+
+                changed = true
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+        })
         username.setText(userData.userName)
         username.addTextChangedListener(textwatcher)
         /*FIRST LAST NAME AND USERNAME*/
@@ -368,8 +384,8 @@ class SettingsActivity : BaseActivity(), Viewer {
 
     fun send() {
         val jsObject = JS.get()
-        jsObject.put("username", username.text.toString())
-        jsObject.put("name", name.text.trim().toString())
+        jsObject.put("username", username.text.toString().trimEnd().trimStart())
+        jsObject.put("name", name.text.trim().toString().trimEnd().trimStart())
         jsObject.put("gender", map.get(gender.selectedItemPosition))
 
 
@@ -431,9 +447,9 @@ class SettingsActivity : BaseActivity(), Viewer {
 
             Http.CMDS.CHANGE_USER_SETTINGS -> {
                 val user = Base.get.prefs.getUser()
-                user.first_name = name.text.toString()
+                user.first_name = name.text.toString().trimEnd().trimStart()
                 user.gender = map.get(gender.selectedItemPosition)!!
-                user.userName = username.text.toString()
+                user.userName = username.text.toString().trimEnd().trimStart()
 
                 Base.get.prefs.setUser(user)
                 MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
@@ -492,8 +508,14 @@ class SettingsActivity : BaseActivity(), Viewer {
             }
 
             Http.CMDS.LOGIN_YOQLIGINI_TEKSHIRISH -> {
-                isLoginFree = false
-                username.setLoginResult(R.drawable.close_circle_outline)
+                if (username.text.toString() != userData.userName){
+                    isLoginFree = false
+                    username.setLoginResult(R.drawable.close_circle_outline)
+                }else{
+                    isLoginFree = true
+                    username.setLoginResult()
+
+                }
             }
             else -> {
                 Toaster.errror(message)
@@ -506,12 +528,18 @@ class SettingsActivity : BaseActivity(), Viewer {
 
     val textwatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
+
             changed = true
             if(s!!.toString().length >= 6){
-                if(s.toString() != userData.userName)
-                presenter.filterLogin(username)
-                else
+                if(s.toString() != userData.userName) {
+                    log.d("login - ${s.toString()} username ${userData.userName}")
+                    presenter.filterLogin(username)
+                }else{
+                    log.d("login + ${s.toString()} username ${userData.userName}")
+                    username.setLoginResult()
+
                     isLoginFree = true
+                }
             }
             else{
                 username.setLoginResult()

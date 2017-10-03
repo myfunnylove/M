@@ -220,7 +220,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                             reqObj.put("user", user.userId)
 
 
-                            log.d("send data for user info data: ${reqObj}")
+                            log.d("tab select send data for user info data: ${reqObj}")
                             presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
 
                         }
@@ -488,11 +488,31 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                     override fun connected() {
                         val reqObj = JS.get()
                         reqObj.put("user", user.userId)
-
+                        reqObj.put("start",   start)
+                        reqObj.put("end",     end)
                         log.d("send data for user info data: ${reqObj}")
                         presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
 
 
+
+
+
+                    }
+
+                    override fun disconnected() {
+
+                    }
+
+                })
+            }
+
+            Const.GET_15_POST -> {
+                errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                    override fun connected() {
+                        val reqObj = JS.get()
+
+                        log.d("feed page select $reqObj")
+                        presenter.requestAndResponse(reqObj, Http.CMDS.GET_15_POSTS)
 
 
 
@@ -830,7 +850,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                 try{
                     val postList: PostList = Gson().fromJson(result, PostList::class.java)
 
-                    if (postList.posts.size > 0){
+                    if (postList.posts.size > 0 || start == 0){
                         MY_POSTS_STATUS = AFTER_UPDATE
                         profilFragment!!.initBody(postList)
                     }else {
@@ -868,7 +888,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                     val postList: PostList = Gson().fromJson(result, PostList::class.java)
                    feedFragment!!.hideProgress()
-                    if (postList.posts.size > 0){
+                    if (postList.posts.size > 0 || startFeed == 0){
                        FEED_STATUS = AFTER_UPDATE
                        feedFragment!!.swapPosts(postList)
                    }else{

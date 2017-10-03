@@ -523,10 +523,14 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
 
                                             userInfo!!.user.count.postCount = "${userInfo!!.user.count.postCount.toInt()-1}"
-                                            feeds.posts.removeAt(i)
+                                            feeds.posts.removeAt(holder.adapterPosition)
                                             MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
-                                            notifyItemRemoved(i)
-                                            notifyItemRangeChanged(i, feeds.posts.size)
+                                            MainActivity.startFeed = 0
+                                            MainActivity.endFeed = 20
+                                            MainActivity.start = 0
+                                            MainActivity.end = 20
+                                            notifyItemRemoved(holder.adapterPosition)
+                                            notifyItemRangeChanged(holder.adapterPosition, feeds.posts.size)
                                             notifyItemChanged(0)
 
                                             log.d("onresponse from delete post $p1")
@@ -681,7 +685,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 if (h.follow.tag == ProfileFragment.SETTINGS){
                     val goSettingActivity = Intent(ctx, SettingsActivity::class.java)
 
-                    activity!!.startActivityForResult(goSettingActivity,Const.FROM_MAIN_ACTIVITY)
+                    activity!!.startActivityForResult(goSettingActivity,Const.GO_SETTINGS)
                 }else if(h.follow.tag == ProfileFragment.FOLLOW){
 
                     val reqObj =  JS.get()
@@ -817,11 +821,9 @@ class ProfileFeedAdapter(context: FragmentActivity,
     }
 
     fun updateFirstItem(userInfo: UserInfo?){
-        fun swapFirstItem(userInfo: UserInfo?){
             disableAnimation = false
             this.userInfo = userInfo
             notifyItemChanged(0)
-        }
     }
     fun swapLast20Item(postList: PostList){
         log.d("in profilefeed $postList")
