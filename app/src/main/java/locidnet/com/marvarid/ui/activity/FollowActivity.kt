@@ -366,7 +366,7 @@ class FollowActivity : BaseActivity(),
                     if (postList.posts.size > 0){
                         profilFragment!!.initBody(postList)
                     }else {
-                        profilFragment!!.swipeRefreshLayout.isRefreshing = false
+                        profilFragment!!.swipeRefreshLayout!!.isRefreshing = false
                     }
 
                 }catch (e:Exception){
@@ -523,10 +523,7 @@ class FollowActivity : BaseActivity(),
 
         musicSrv!!.playNext()
 
-        if (playbackPaused) {
             setController()
-            playbackPaused = false
-        }
         controller!!.show()
         controller!!.setLoading(true)
 
@@ -541,10 +538,7 @@ class FollowActivity : BaseActivity(),
 
     private fun playPrev() {
         musicSrv!!.playPrev()
-        if (playbackPaused) {
             setController()
-            playbackPaused = false
-        }
         controller!!.show()
         controller!!.setLoading(true)
 
@@ -602,10 +596,7 @@ class FollowActivity : BaseActivity(),
                     musicSrv!!.setSong(position)
                     musicSrv!!.playSong()
                     log.d("playbak is paused $playbackPaused")
-                    if (playbackPaused){
                         setController()
-                        playbackPaused = false
-                    }
 
                 }
 //                    controller!!.show()

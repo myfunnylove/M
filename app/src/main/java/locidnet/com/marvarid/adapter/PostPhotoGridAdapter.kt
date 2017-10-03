@@ -2,6 +2,7 @@ package locidnet.com.marvarid.adapter
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -15,7 +16,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
 
 import locidnet.com.marvarid.R
@@ -39,6 +44,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
     val isVertical = true
     var hierarchyBuilder:GenericDraweeHierarchyBuilder? =null
+    var options:RequestOptions? = null
     //var cachedImages:ArrayList<Bitmap>? = null
     init {
         setHasStableIds(true)
@@ -47,6 +53,13 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                 .setProgressBarImage(VectorDrawableCompat.create(Base.get.resources, R.drawable.image, null))
                 .setPlaceholderImage(VectorDrawableCompat.create(Base.get.resources, R.drawable.image, null))
 
+        if (options == null){
+         options =    RequestOptions().centerCrop()
+
+                    .fallback(ColorDrawable(Color.GRAY))
+//                    .placeholder(ColorDrawable(Color.LTGRAY))
+                    .error(ColorDrawable(Color.LTGRAY))
+        }
     }
     override fun getItemCount(): Int = images.size
     override fun getItemId(position: Int): Long = position.toLong()
@@ -81,10 +94,10 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
         if ((images.size > 2 && images.size != 3)&& i >= 1){
             log.d("params: ${h.container.layoutParams.height}")
-            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,200)
-            p.height = 200
+            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,300)
+            p.height = 300
             h.container.layoutParams = p
-            params.height = 200
+            params.height = 300
         }
         else if (images.size == 3 && i >= 1){
             log.d("params: ${h.container.layoutParams.height}")
@@ -102,13 +115,10 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
         itemView.layoutParams = params
 
-
         Glide.with(context)
                 .load(Functions.checkImageUrl(img.image640))
-                .apply(RequestOptions().centerCrop()
-                                       .fallback(ColorDrawable(Color.GRAY))
-                                       .placeholder(ColorDrawable(Color.LTGRAY))
-                                       .error(ColorDrawable(Color.LTGRAY)))
+
+                .apply(options!!)
                 .into(h.photo)
 
 

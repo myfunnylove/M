@@ -11,7 +11,6 @@ import locidnet.com.marvarid.R
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.log
-import locidnet.com.marvarid.viewmodel.PublishViewmodel
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import kotlin.properties.Delegates
 
@@ -29,6 +28,7 @@ abstract class BaseActivity : AppCompatActivity (){
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+
     }
 
     abstract fun getLayout():Int

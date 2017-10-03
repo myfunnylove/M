@@ -105,7 +105,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 swipeRefreshLayout.isEnabled = mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
 
-
+//                log.d("swipe is ${swipeRefreshLayout.isEnabled}")
                 // If the total item count is zero and the previous isn't, assume the
                 // list is invalidated and should be reset back to initial state
                 if (totalItemCount < previousTotalItemCount) {

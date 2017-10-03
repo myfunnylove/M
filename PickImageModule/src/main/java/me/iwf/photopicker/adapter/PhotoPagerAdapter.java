@@ -77,6 +77,7 @@ public class PhotoPagerAdapter extends PagerAdapter {
         String IMAGE_NAME = "preview.jpg";
         UCrop.Options options = new UCrop.Options();
         options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
+        options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
         options.setFreeStyleCropEnabled(false);
         options.setHideBottomControls(false);
           options.setToolbarColor(ContextCompat.getColor(context,R.color.__picker_colorPrimary));

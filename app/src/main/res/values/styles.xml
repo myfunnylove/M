@@ -47,7 +47,7 @@
 
 
     </style>
-    <style name="AppTheme.SEARCH" parent="Theme.AppCompat">
+    <style name="AppTheme.SEARCH" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/asbestos</item>
         <item name="colorPrimaryDark">@color/headerTextColor</item>
@@ -149,7 +149,7 @@
 
         <item name="android:textSize">@dimen/normalTextSize</item>
         <item name="android:textColor">@color/normalTextColor</item>
-        <item name="fontPath">font/regular.ttf</item>
+        <!--<item name="fontPath">font/regular.ttf</item>-->
 
     </style>
     <style name="ErrorText">
@@ -158,11 +158,8 @@
         <item name="android:textColor">@color/pomegranate</item>
 
     </style>
-    <style name="customTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="actionBarTheme">@style/actionBarTheme</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
+    <style name="customTheme" parent="AppTheme">
 
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
     </style>
 
     <style name="actionBarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -195,11 +192,12 @@
     </style>
 
     <style name="DrawerArrowStyle" >
-        <item name="theme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="android:background">?colorPrimary</item>
         <item name="android:elevation" tools:targetApi="lollipop">4dp</item>
         <item name="navigationIcon">@drawable/arrow_left</item>
     </style>
+
     <style name="SearchToolbar" >
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="android:background">?colorPrimary</item>

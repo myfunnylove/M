@@ -11,6 +11,7 @@ import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,30 +64,32 @@ class ProfileFeedAdapter(context: FragmentActivity,
                          closedProfil:Boolean = false
                   ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var ctx                   = context
+    var ctx:Context?          = context
     var feeds                 = feedsMap
-    var inflater              = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    var clicker               = adapterClicker
+    var inflater:LayoutInflater?              = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    var clicker:AdapterClicker?               = adapterClicker
     val like                  = R.drawable.like_select
     val unLike                = R.drawable.like
     var myProfil              = Base.get.prefs.getUser()
-    val model                 = Model()
+    var model:Model?                 = Model()
     val pOrF                  = profilOrFeed
-    var FOLLOW_TYPE           = followType
-    var user                  = Base.get.prefs.getUser()
+    var FOLLOW_TYPE:String?   = followType
+    var user:User?            = Base.get.prefs.getUser()
     var lastAnimationPosition = -1
     var itemsCount            = 0
-    var activity:FragmentActivity?    = null
+    var activity:FragmentActivity?    = context
     var disableAnimation      = false
     var cachedLists           = HashMap<String,String>()
     var changeId              = -1
-    val player                = musicPlayerListener
+    var player:MusicPlayerListener?                = musicPlayerListener
     var closedProfile         = closedProfil
-    val options               = RequestOptions()
+    val options:RequestOptions?               = RequestOptions()
             .circleCrop()
-            .fallback(ColorDrawable(Color.BLACK))
-            .error(VectorDrawableCompat.create(ctx.resources,R.drawable.account,ctx.theme))
-            .placeholder(ColorDrawable(Color.GRAY))
+
+            .fallback(VectorDrawableCompat.create(ctx!!.resources,R.drawable.account_select,ctx!!.theme))
+
+            .error(VectorDrawableCompat.create(ctx!!.resources,R.drawable.account_select,ctx!!.theme))
+//            .placeholder(ColorDrawable(Color.GRAY))
     companion object {
 
         val ANIMATED_ITEM_COUNT        = 0
@@ -114,7 +117,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
         if (position > ANIMATED_ITEM_COUNT){
             lastAnimationPosition = position
-            this.translationY =Functions.getScreenHeight(ctx).toFloat()
+            this.translationY =Functions.getScreenHeight(ctx!!).toFloat()
             this.animate()
                     .translationY(0f)
                     .setInterpolator(DecelerateInterpolator(3f))
@@ -131,12 +134,12 @@ class ProfileFeedAdapter(context: FragmentActivity,
     override fun onCreateViewHolder(p0: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
 
        if (viewType == HEADER){
-           return ProfileHeaderHolder(inflater.inflate(R.layout.user_profil_header, p0!!, false))
+           return ProfileHeaderHolder(inflater!!.inflate(R.layout.user_profil_header, p0!!, false))
 
        }else if(viewType == BODY){
-           return  Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
+           return  Holder(inflater!!.inflate(R.layout.res_feed_block_image, p0!!, false))
        }else {
-           return  Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
+           return  Holder(inflater!!.inflate(R.layout.res_feed_block_image, p0!!, false))
        }
 
     }
@@ -208,7 +211,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     js.put("post_id",post.id)
                     js.put("quote", JSONObject(Gson().toJson(quote)))
                     log.d ("changequote send data $js")
-                    model.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
+                    model!!.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
                             .enqueue(object : Callback<ResponseData>{
                                 override fun onResponse(p0: Call<ResponseData>?, response: Response<ResponseData>?) {
                                     try{
@@ -247,7 +250,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
             Glide.with(ctx)
                     .load(url)
-                    .apply(options)
+
+                    .apply(options!!)
                     .into(h.avatar)
 
             if (h.quote.tag == null || h.quote.tag != post.id) {
@@ -308,7 +312,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                        }
 
                        val manager = CustomManager(ctx, span)
-                       val adapter = PostPhotoGridAdapter(ctx, post.images)
+                       val adapter = PostPhotoGridAdapter(ctx!!, post.images)
 
                        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                            override fun getSpanSize(i: Int): Int {
@@ -340,10 +344,10 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
 
                     val manager = CustomManager(ctx, span)
-                    val adapter = PostAudioGridAdapter(ctx, post.audios,object :MusicPlayerListener{
+                    val adapter = PostAudioGridAdapter(ctx!!, post.audios,object :MusicPlayerListener{
                         override fun playClick(listSong: ArrayList<Audio>, position: Int) {
                             try{
-                                player.playClick(listSong,position)
+                                player!!.playClick(listSong,position)
 
 
                                 if (FeedFragment.playedSongPosition != -1 ){
@@ -367,7 +371,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
                         }
 
-                    },model)
+                    },model!!)
                      if (FeedFragment.cachedSongAdapters != null){
                          FeedFragment.cachedSongAdapters!!.put(i,adapter)
                      }else{
@@ -426,7 +430,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
                     log.d("request data $reqObj")
 
-                    model.responseCall(Http.getRequestData(reqObj, Http.CMDS.LIKE_BOSISH))
+                    model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.LIKE_BOSISH))
                             .enqueue(object : retrofit2.Callback<ResponseData> {
                                 override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                                     log.d("follow on fail $t")
@@ -480,16 +484,16 @@ class ProfileFeedAdapter(context: FragmentActivity,
                         activity!!.startActivityForResult(goCommentActivity,Const.GO_COMMENT_ACTIVITY)
                         activity!!.overridePendingTransition(0, 0)
                     }else{
-                        ctx.startActivity(goCommentActivity)
+                        ctx!!.startActivity(goCommentActivity)
                     }
                 }
                 h.avatar.setOnClickListener{
-                    if (!pOrF) clicker.click(i)
+                    if (!pOrF) clicker!!.click(i)
 
                 }
                 h.topContainer.setOnClickListener {
 
-                    if (!pOrF) clicker.click(i)
+                    if (!pOrF) clicker!!.click(i)
 
                 }
 
@@ -513,7 +517,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
                                 log.d("request data for delete post $reqObj")
 
-                                model.responseCall(Http.getRequestData(reqObj, Http.CMDS.DELETE_POST)).enqueue(object : Callback<ResponseData>{
+                                model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.DELETE_POST)).enqueue(object : Callback<ResponseData>{
                                     override fun onResponse(p0: Call<ResponseData>?, p1: Response<ResponseData>?) {
                                         try{
 
@@ -556,7 +560,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                             js.put("type",whichButton)
                                             js.put("post",post.id)
 
-                                            model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
+                                            model!!.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
                                                     .enqueue(object : retrofit2.Callback<ResponseData>{
                                                         override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                                                             log.e("complaint fail $t")
@@ -566,7 +570,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                                         override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
 
                                                             log.d("complaint fail ${response!!.body()}")
-                                                            Toast.makeText(ctx,ctx.resources.getString(R.string.thank_data_sent),Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(ctx,ctx!!.resources.getString(R.string.thank_data_sent),Toast.LENGTH_SHORT).show()
                                                         }
 
                                                     })
@@ -574,7 +578,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                         }
                                     })
                                     dialog.show(activity!!.supportFragmentManager,"TAG")
-                                   
+
                             }
                         }
                         false
@@ -611,7 +615,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                         activity!!.startActivityForResult(goCommentActivity,Const.GO_PLAY_LIST)
                         activity!!.overridePendingTransition(0, 0)
                     }else{
-                        ctx.startActivity(goCommentActivity)
+                        ctx!!.startActivity(goCommentActivity)
                     }
                 }
             }else{
@@ -635,9 +639,14 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     .load(Functions.checkImageUrl(userInfo!!.user.info.photoOrg))
                     .apply(Functions.getGlideOpts())
                     .into(h.avatar)
+            Glide.with(ctx)
+                    .load(Functions.checkImageUrl(userInfo!!.user.info.photoOrg))
+
+                    .apply(Functions.getGlideOptsBlur())
+
+                    .into(h.bg)
 
             h.username.text  = userInfo!!.user.info.username
-            h.username.setStyle("#00000000", "#90CAF9", "#EA80FC", 3f, 35)
             h.posts.text  =    userInfo!!.user.count.postCount
 
             if (!userInfo!!.user.info.name.isNullOrEmpty()){
@@ -651,15 +660,15 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
             if(!closedProfile){
                 h.followersLay.setOnClickListener{
-                    clicker.click(Const.TO_FOLLOWERS)
+                    clicker!!.click(Const.TO_FOLLOWERS)
                 }
                 h.followingLay.setOnClickListener{
 
-                    clicker.click(Const.TO_FOLLOWING)
+                    clicker!!.click(Const.TO_FOLLOWING)
                 }
 
                 h.avatar.setOnClickListener{
-                    clicker.click(Const.CHANGE_AVATAR)
+                    clicker!!.click(Const.CHANGE_AVATAR)
 
                 }
             }
@@ -672,14 +681,14 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 if (h.follow.tag == ProfileFragment.SETTINGS){
                     val goSettingActivity = Intent(ctx, SettingsActivity::class.java)
 
-                    ctx.startActivityForResult(goSettingActivity,Const.FROM_MAIN_ACTIVITY)
+                    activity!!.startActivityForResult(goSettingActivity,Const.FROM_MAIN_ACTIVITY)
                 }else if(h.follow.tag == ProfileFragment.FOLLOW){
 
                     val reqObj =  JS.get()
 
                     reqObj.put("user",   userInfo!!.user.info.user_id)
 
-                    model.responseCall(Http.getRequestData(reqObj, Http.CMDS.FOLLOW))
+                    model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.FOLLOW))
                             .enqueue(object : retrofit2.Callback<ResponseData> {
                                 override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                                     log.d("follow on fail $t")
@@ -741,7 +750,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     val reqObj =  JS.get()
 
                     reqObj.put("user",   userInfo!!.user.info.user_id)
-                    model.responseCall(Http.getRequestData(reqObj, Http.CMDS.UN_FOLLOW))
+                    model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.UN_FOLLOW))
                             .enqueue(object : retrofit2.Callback<ResponseData> {
                                 override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                                     log.d("follow on fail $t")
@@ -773,6 +782,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                                 feeds.posts.clear()
                                                 feeds.posts.add(post)
                                                 notifyDataSetChanged()
+                                            }else{
+                                                notifyItemChanged(0)
                                             }
 
 
@@ -856,6 +867,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
             commentLay   = itemView.findViewById<LinearLayout>(R.id.commentLay)
             topContainer = itemView.findViewById<ViewGroup>(R.id.topContainer)
             sendChange   = itemView.findViewById<AppCompatImageButton>(R.id.sendChangedQuote)
+
+
         }
     }
 
@@ -869,9 +882,10 @@ class ProfileFeedAdapter(context: FragmentActivity,
             val   followingLay = rootView.findViewById<LinearLayout>(R.id.followingLay)
             val   playlist     = rootView.findViewById<AppCompatImageView>(R.id.playlist)
             val   avatar       = rootView.findViewById<AppCompatImageView>(R.id.avatar)
+            val   bg           = rootView.findViewById<AppCompatImageView>(R.id.bg)
             val   followers    = rootView.findViewById<TextView>(R.id.followers)
             val   following    = rootView.findViewById<TextView>(R.id.following)
-            val   username     = rootView.findViewById<SGTextView>(R.id.username)
+            val   username     = rootView.findViewById<TextView>(R.id.username)
             val   firstName    = rootView.findViewById<TextView>(R.id.firstName)
             val   posts        = rootView.findViewById<TextView>(R.id.posts)
             val   follow       = rootView.findViewById<Button>(R.id.follow)
@@ -909,72 +923,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
     }
 
 
-//    fun updateHeaderButton(holder:Holder,animated:Boolean){
-//
-//
-//        val liked = VectorDrawableCompat.create(Base.get.resources, like, holder.likeIcon.context.theme)
-//        val unliked = VectorDrawableCompat.create(Base.get.resources,unLike, holder.likeIcon.context.theme)
-//
-//
-//        if (animated){
-//
-//
-//            if (!likeAnimations.containsKey(holder)){
-//                val animatorSet = AnimatorSet()
-//                likeAnimations.put(holder,animatorSet)
-//
-//
-//                val rotationAnim = ObjectAnimator.ofFloat(like, "rotation", 0f, 360f)
-//                rotationAnim.setDuration(300)
-//                rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR)
-//
-//
-//                val bounceAnimX = ObjectAnimator.ofFloat(like, "scaleX", 0.2f, 1f)
-//                bounceAnimX.setDuration(300)
-//                bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR)
-//
-//
-//                val bounceAnimY = ObjectAnimator.ofFloat(like, "scaleY", 0.2f, 1f)
-//                bounceAnimY.setDuration(300)
-//                bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR)
-//                bounceAnimY.addListener(object : Animator.AnimatorListener{
-//                    override fun onAnimationRepeat(p0: Animator?) {
-//
-//                    }
-//
-//                    override fun onAnimationEnd(p0: Animator?) {
-//
-//                        likeAnimations.remove(holder);
-//
-//                    }
-//
-//                    override fun onAnimationCancel(p0: Animator?) {
-//                    }
-//
-//                    override fun onAnimationStart(p0: Animator?) {
-//
-//                            holder.likeIcon.setImageDrawable(liked);
-//
-//                    }
-//
-//
-//
-//                })
-//
-//                animatorSet.play(rotationAnim)
-//                animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim)
-//                animatorSet.start()
-//                log.d("animate")
-//            }else{
-//                log.d("animate 2")
-//
-//                if (likedPositions.contains(holder.getPosition())) {
-//                    holder.likeIcon.setImageDrawable(liked);
-//                    } else {
-//                    holder.likeIcon.setImageDrawable(unliked);
-//                    }
-//            }
-//        }
-//    }
-
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
+        super.onViewRecycled(holder)
+        Glide.get(ctx).clearMemory()
+    }
 }

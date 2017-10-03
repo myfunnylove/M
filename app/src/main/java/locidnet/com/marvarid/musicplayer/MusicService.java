@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.graphics.drawable.VectorDrawableCompat;
@@ -19,6 +20,7 @@ import android.support.v7.widget.AppCompatDrawableManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import locidnet.com.marvarid.BuildConfig;
 import locidnet.com.marvarid.R;
 import locidnet.com.marvarid.base.Base;
 import locidnet.com.marvarid.model.Audio;
@@ -265,11 +267,19 @@ public class MusicService extends Service implements
 
 
     private void setUpRemoteView(RemoteViews remoteView) {
-        remoteView.setImageViewResource(R.id.close, R.drawable.notif_close);
-        remoteView.setImageViewResource(R.id.prev, R.drawable.notif_prev);
-        remoteView.setImageViewResource(R.id.next, R.drawable.notif_next);
-        remoteView.setImageViewResource(R.id.image_view_play_toggle, isPng()
-                ? R.drawable.notif_play : R.drawable.notif_pause);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            remoteView.setImageViewResource(R.id.close, R.drawable.notif_close);
+            remoteView.setImageViewResource(R.id.prev, R.drawable.notif_prev);
+            remoteView.setImageViewResource(R.id.next, R.drawable.notif_next);
+            remoteView.setImageViewResource(R.id.image_view_play_toggle, isPng()
+                    ? R.drawable.notif_play : R.drawable.notif_pause);
+        }else{
+            remoteView.setImageViewResource(R.id.close, R.drawable.png_close);
+            remoteView.setImageViewResource(R.id.prev, R.drawable.png_prev);
+            remoteView.setImageViewResource(R.id.next, R.drawable.png_next);
+            remoteView.setImageViewResource(R.id.image_view_play_toggle, isPng()
+                    ? R.drawable.png_pause : R.drawable.png_play);
+        }
         remoteView.setOnClickPendingIntent(R.id.btn_close, getPendingIntent(ACTION_STOP_SERVICE));
         remoteView.setOnClickPendingIntent(R.id.btn_prev, getPendingIntent(ACTION_PLAY_LAST));
         remoteView.setOnClickPendingIntent(R.id.btn_next, getPendingIntent(ACTION_PLAY_NEXT));
@@ -287,9 +297,13 @@ public class MusicService extends Service implements
         }
 
 
-
-        remoteView.setImageViewResource(R.id.image_view_play_toggle, isPng()
-                ? R.drawable.notif_pause : R.drawable.notif_play);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            remoteView.setImageViewResource(R.id.image_view_play_toggle, isPng()
+                    ? R.drawable.notif_pause : R.drawable.notif_play);
+        }else{
+            remoteView.setImageViewResource(R.id.image_view_play_toggle, isPng()
+                    ? R.drawable.png_pause : R.drawable.png_play);
+        }
 //        Bitmap album = AlbumUtils.parseAlbum(getPlayingSong());
 
             remoteView.setImageViewResource(R.id.album, R.mipmap.ic_launcher);

@@ -4,10 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.graphics.drawable.VectorDrawableCompat
-import android.support.v7.widget.AppCompatImageView
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import android.support.v7.widget.*
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -20,12 +17,14 @@ import android.widget.TextView
 import io.reactivex.Observable
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.FollowAdapter
+import locidnet.com.marvarid.adapter.RecommendedAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.PostList
+import locidnet.com.marvarid.model.RecPost
 import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
@@ -41,22 +40,16 @@ import kotlin.properties.Delegates
  */
 class SearchFragment : BaseFragment(), AdapterClicker{
 
-    var search:Toolbar       by Delegates.notNull<Toolbar>()
-//    var searchResult:TextView by Delegates.notNull<TextView>()
-    var list:RecyclerView     by Delegates.notNull<RecyclerView>()
+    var search:Toolbar?    = null
+    var list:RecyclerView? = null
 
-    var progress           by Delegates.notNull<ProgressBar>()
-    val pattern = "^[\\p{L}0-9]*$"
-
-    var usersList:ArrayList<Users>? = null
-    var adapter:FollowAdapter?      = null
-    val user:User                   = Base.get.prefs.getUser()
+    var recPosts:ArrayList<RecPost>? = null
+    var adapter:FollowAdapter?       = null
+    val user:User                    = Base.get.prefs.getUser()
 
 
-    var changePosition              = -1
 
 
-    /*STATIC PROPERTIES*/
     companion object {
         var TAG:String  = "SearchFragment"
 
@@ -90,14 +83,13 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
         list           = rootView.findViewById<RecyclerView>(R.id.list)
         search         = rootView.findViewById<Toolbar>(R.id.toolbar)
-        progress       = rootView.findViewById<ProgressBar>(R.id.progress)
-        search.setOnClickListener {
+        search!!.setOnClickListener {
             startActivity(Intent(activity,SearchActivity::class.java))
             activity.overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
         }
 
-        list.layoutManager = LinearLayoutManager(activity)
-        list.setHasFixedSize(true)
+        list!!.layoutManager = GridLayoutManager(activity,3)
+        list!!.setHasFixedSize(true)
 
 
 
@@ -106,25 +98,30 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
 
     override fun click(position: Int) {
-
+        val intent = Intent(activity,FollowActivity::class.java)
+        intent.putExtra("user_id",recPosts!!.get(position).userId)
+        intent.putExtra("username",recPosts!!.get(position).username)
+        intent.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
+        startActivity(intent)
     }
 
     override fun data(data: String) {
+
     }
 
     fun hideProgress() {
-        progress.visibility = View.GONE
 
     }
 
-    fun swapPosts(postList: PostList) {
-        progress.visibility = View.GONE
+    fun swapPosts(postList: ArrayList<RecPost>) {
+        recPosts = postList
+        val adapter = RecommendedAdapter(this,Base.get.applicationContext,recPosts!!)
 
+        list!!.adapter = adapter
 
     }
 
     fun failedGetList() {
-        progress.visibility = View.GONE
     }
 
 

@@ -1,8 +1,11 @@
 package me.iwf.photopicker.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,7 +130,6 @@ public class PhotoGridAdapter extends SelectableAdapter<PhotoGridAdapter.PhotoVi
 
       holder.vSelected.setSelected(isChecked);
       holder.ivPhoto.setSelected(isChecked);
-
       holder.ivPhoto.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
           if (onPhotoClickListener != null) {
@@ -174,7 +176,8 @@ public class PhotoGridAdapter extends SelectableAdapter<PhotoGridAdapter.PhotoVi
 
   public static class PhotoViewHolder extends RecyclerView.ViewHolder {
     private ImageView ivPhoto;
-    private View vSelected;
+    private View
+            vSelected;
 
     public PhotoViewHolder(View itemView) {
       super(itemView);

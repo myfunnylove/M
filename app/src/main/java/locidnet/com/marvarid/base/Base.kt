@@ -28,9 +28,7 @@ import locidnet.com.marvarid.resources.utils.Prefs
 import javax.inject.Inject
 
 
-/**
- * Created by Michaelan on 5/18/2017.
- */
+
 class Base : Application (){
 
 
@@ -82,7 +80,7 @@ class Base : Application (){
 
         FacebookSdk.sdkInitialize(context)
 
-        AppEventsLogger.activateApp(context)
+        AppEventsLogger.activateApp(this)
 
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)

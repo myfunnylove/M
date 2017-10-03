@@ -78,7 +78,8 @@ class MyFeedAdapter(context: FragmentActivity,
     var changeId              = -1
     val player                = musicPlayerListener
     var closedProfile         = closedProfil
-
+    val TYPE_POST             = 0
+    val TYPE_AD               = 1
 
     companion object {
 
@@ -121,16 +122,29 @@ class MyFeedAdapter(context: FragmentActivity,
 
     override fun getItemId(position: Int): Long = position.toLong()
 
+    override fun getItemViewType(position: Int): Int {
+
+        return if(feeds.posts.get(position).type == "ad") TYPE_AD else TYPE_POST
+    }
+
     override fun onCreateViewHolder(p0: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
 
+            if (viewType == TYPE_POST)
+
             return  Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
+            else if(viewType == TYPE_AD)
+                return  Holder(inflater.inflate(R.layout.res_feed_block_ad, p0!!, false))
+             else
+                return  Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
 
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, i: Int) {
 
         val type = getItemViewType(i)
-        holder!!.itemView.runEnterAnimation(i)
+
+        if (type == TYPE_POST){
+            holder!!.itemView.runEnterAnimation(i)
 
             val h = holder as Holder
             val post = feeds.posts.get(i)
@@ -228,13 +242,13 @@ class MyFeedAdapter(context: FragmentActivity,
             }
 
 
-        Glide.with(ctx)
-                .load(Functions.checkImageUrl(post.user.photo))
-                .apply(Functions.getGlideOpts())
-                .into(h.avatar)
+            Glide.with(ctx)
+                    .load(Functions.checkImageUrl(post.user.photo))
+                    .apply(Functions.getGlideOpts())
+                    .into(h.avatar)
 
 
-        if (h.quote.tag == null || h.quote.tag != post.id) {
+            if (h.quote.tag == null || h.quote.tag != post.id) {
 
                 h.quote.tag = post.id
 
@@ -479,94 +493,95 @@ class MyFeedAdapter(context: FragmentActivity,
                 }
 
 
-                    h.popup.setOnClickListener {
-                        val popup = PopupMenu(ctx, h.popup)
-                        if (user.userId != post.user.userId) {
+                h.popup.setOnClickListener {
+                    val popup = PopupMenu(ctx, h.popup)
+                    if (user.userId != post.user.userId) {
 
-                            popup.inflate(R.menu.menu_feed)
-                        } else {
-                            popup.inflate(R.menu.menu_own_feed)
+                        popup.inflate(R.menu.menu_feed)
+                    } else {
+                        popup.inflate(R.menu.menu_own_feed)
 
-                        }
-                        popup.show()
-                        popup.setOnMenuItemClickListener { item ->
-                            when (item.itemId) {
-                                R.id.delete -> {
-                                    val reqObj = JS.get()
+                    }
+                    popup.show()
+                    popup.setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.delete -> {
+                                val reqObj = JS.get()
 
-                                    reqObj.put("post_id", post.id)
+                                reqObj.put("post_id", post.id)
 
-                                    log.d("request data for delete post $reqObj")
+                                log.d("request data for delete post $reqObj")
 
-                                    model.responseCall(Http.getRequestData(reqObj, Http.CMDS.DELETE_POST)).enqueue(object : Callback<ResponseData> {
-                                        override fun onResponse(p0: Call<ResponseData>?, p1: Response<ResponseData>?) {
-                                            try {
+                                model.responseCall(Http.getRequestData(reqObj, Http.CMDS.DELETE_POST)).enqueue(object : Callback<ResponseData> {
+                                    override fun onResponse(p0: Call<ResponseData>?, p1: Response<ResponseData>?) {
+                                        try {
 
 
-                                                feeds.posts.removeAt(i)
-                                                MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
-                                                MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
-                                                notifyItemRemoved(i)
-                                                notifyItemRangeChanged(i, feeds.posts.size)
-                                                notifyItemChanged(0)
+                                            feeds.posts.removeAt(i)
+                                            MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
+                                            MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
+                                            notifyItemRemoved(i)
+                                            notifyItemRangeChanged(i, feeds.posts.size)
+                                            notifyItemChanged(0)
 
-                                                log.d("onresponse from delete post $p1")
-                                            } catch (e: Exception) {
+                                            log.d("onresponse from delete post $p1")
+                                        } catch (e: Exception) {
 
-                                            }
                                         }
-
-                                        override fun onFailure(p0: Call<ResponseData>?, p1: Throwable?) {
-                                            log.d("onfail from delete post $p1")
-                                        }
-
-                                    })
-                                }
-
-                                R.id.change -> {
-
-                                    if (changeId == -1) {
-                                        changeId = i
-                                        notifyItemChanged(i)
                                     }
-                                }
 
-                                R.id.report -> {
+                                    override fun onFailure(p0: Call<ResponseData>?, p1: Throwable?) {
+                                        log.d("onfail from delete post $p1")
+                                    }
 
-                                    val dialog = ComplaintsFragment.instance()
+                                })
+                            }
 
-                                    dialog.setDialogClickListener(object : ComplaintsFragment.DialogClickListener {
-                                        override fun click(whichButton: Int) {
-                                            val js = JS.get()
-                                            js.put("type", whichButton)
-                                            js.put("post", post.id)
+                            R.id.change -> {
 
-                                            model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
-                                                    .enqueue(object : retrofit2.Callback<ResponseData> {
-                                                        override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
-                                                            log.e("complaint fail $t")
-
-                                                        }
-
-                                                        override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
-
-                                                            log.d("complaint fail ${response!!.body()}")
-                                                            Toast.makeText(ctx, ctx.resources.getString(R.string.thank_data_sent), Toast.LENGTH_SHORT).show()
-                                                        }
-
-                                                    })
-                                            dialog.dismiss()
-                                        }
-                                    })
-                                    dialog.show(activity!!.supportFragmentManager, "TAG")
-
+                                if (changeId == -1) {
+                                    changeId = i
+                                    notifyItemChanged(i)
                                 }
                             }
-                            false
+
+                            R.id.report -> {
+
+                                val dialog = ComplaintsFragment.instance()
+
+                                dialog.setDialogClickListener(object : ComplaintsFragment.DialogClickListener {
+                                    override fun click(whichButton: Int) {
+                                        val js = JS.get()
+                                        js.put("type", whichButton)
+                                        js.put("post", post.id)
+
+                                        model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
+                                                .enqueue(object : retrofit2.Callback<ResponseData> {
+                                                    override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                                        log.e("complaint fail $t")
+
+                                                    }
+
+                                                    override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+
+                                                        log.d("complaint fail ${response!!.body()}")
+                                                        Toast.makeText(ctx, ctx.resources.getString(R.string.thank_data_sent), Toast.LENGTH_SHORT).show()
+                                                    }
+
+                                                })
+                                        dialog.dismiss()
+                                    }
+                                })
+                                dialog.show(activity!!.supportFragmentManager, "TAG")
+
+                            }
                         }
+                        false
                     }
+                }
 
             }
+        }
 
 
     }

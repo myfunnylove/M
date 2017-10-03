@@ -2,13 +2,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <color name="colorPrimary">@color/white</color>
     <color name="colorPrimaryDark">#494949</color>
-    <color name="colorAccent">@color/material_pink_accent_200</color>
+    <color name="colorAccent">@color/material_pink_400</color>
     <color name="colorAccentDark">#b43b56</color>
     <color name="normalTextColor">#858585</color>
     <color name="headerTextColor">#494949</color>
     <color name="background">#fff</color>
     <color name="white">#fff</color>
-    <color name="sky">#e94c6f</color>
+    <color name="sky">@color/material_pink_400</color>
     <color name="sky_light">#70C1B3</color>
     <color name="turquoise">#1abc9c</color>
     <color name="greenSea">#16a085</color>

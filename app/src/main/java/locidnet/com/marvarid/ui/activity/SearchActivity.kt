@@ -298,11 +298,12 @@ class SearchActivity :BaseActivity() ,Viewer, AdapterClicker{
 
 
                 }
+                adapter!!.notifyDataSetChanged()
+                chooseUserFstatus = ""
+                choosedUserId = ""
             }catch (e:Exception){}
 
-            adapter!!.notifyDataSetChanged()
-            chooseUserFstatus = ""
-            choosedUserId = ""
+
         }
 
     }

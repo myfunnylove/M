@@ -12,12 +12,18 @@
       android:layout_width="@dimen/flag_size"
       android:layout_height="@dimen/flag_size"
       />
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="@color/headerTextColor"
 
+      android:layout_marginLeft="2dp"
+      android:text="+"
+      />
   <TextView
       android:id="@+id/dial_code"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:textColor="@color/material_grey_400"
-      android:layout_marginLeft="2dp"
+      android:textColor="@color/headerTextColor"
       />
 </LinearLayout>

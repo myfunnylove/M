@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorAccent"
+    android:background="@drawable/background_sign"
     >
     <!--<ImageView-->
         <!--android:layout_width="match_parent"-->
@@ -109,7 +109,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/Sign_in"
                 android:background="@drawable/login_button"
-                android:textColor="@color/white"
+                android:textColor="@color/headerTextColor"
                 />
 
             <TextView

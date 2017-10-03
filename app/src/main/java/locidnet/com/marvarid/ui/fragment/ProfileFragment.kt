@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.ProfileFeedAdapter
 import locidnet.com.marvarid.base.Base
@@ -33,16 +34,16 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
 
 
-    var postView               by Delegates.notNull<RecyclerView>()
-    var progressLay            by Delegates.notNull<ViewGroup>()
-    var swipeRefreshLayout     by Delegates.notNull<SwipeRefreshLayout>()
+    var postView:RecyclerView? = null
+    var progressLay:ViewGroup? = null
+    var swipeRefreshLayout:SwipeRefreshLayout? = null
 
-    var user                          = Base.get.prefs.getUser()
+    var user:User?                          = Base.get.prefs.getUser()
     var oldpostList:PostList?         = null
     var postAdapter: ProfileFeedAdapter?      = null
 
     var connectActivity:GoNext?       = null
-    val model                         = Model()
+    var model:Model?                         = Model()
     var manager:LinearLayoutManager?  = null
     var expanded                      = false
     var userInfo:UserInfo?= null
@@ -122,8 +123,8 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                                         .build()
 
         manager = LinearLayoutManager(Base.get)
-        postView.layoutManager = manager
-        postView.setHasFixedSize(true)
+        postView!!.layoutManager = manager
+        postView!!.setHasFixedSize(true)
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 log.d("PROFIL POSTLARI OXIRIGA KELDI ${manager!!.findLastVisibleItemPosition()}")
@@ -140,7 +141,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 var lastVisibleItemPosition = 0
 
                 val totalItemCount = mLayoutManager.itemCount
-                swipeRefreshLayout.isEnabled = mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
+                swipeRefreshLayout!!.isEnabled = mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
 
                 lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
 
@@ -179,16 +180,16 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         }
 
 
-        postView.addOnScrollListener(scroll)
+        postView!!.addOnScrollListener(scroll)
 
-        swipeRefreshLayout.setOnRefreshListener(object :SwipeRefreshLayout.OnRefreshListener{
+        swipeRefreshLayout!!.setOnRefreshListener(object :SwipeRefreshLayout.OnRefreshListener{
             override fun onRefresh() {
                 if (postAdapter != null ){
                     FollowActivity.start = 0
                     FollowActivity.end   = 20
                     connectActivity!!.goNext(Const.REFRESH_PROFILE_FEED,"")
                 }else{
-                    swipeRefreshLayout.isRefreshing = false
+                    swipeRefreshLayout!!.isRefreshing = false
                 }
             }
 
@@ -249,9 +250,9 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         POST_COUNT = userInfo.user.count.postCount
 
         FOLLOW_TYPE = if (fType == ProfileFragment.CLOSE ) ProfileFragment.FOLLOW else fType
-        progressLay.visibility = View.GONE
+        progressLay!!.visibility = View.GONE
         emptyContainer.hide()
-        postView.visibility       = View.VISIBLE
+        postView!!.visibility       = View.VISIBLE
 
 
 
@@ -266,13 +267,13 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
         if (postAdapter == null){
             postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE,isClose)
-            postView.visibility = View.VISIBLE
-            postView.adapter = postAdapter
+            postView!!.visibility = View.VISIBLE
+            postView!!.adapter = postAdapter
         }else{
             postAdapter!!.updateFirstItem(userInfo)
         }
 
-        swipeRefreshLayout.isRefreshing = false
+        swipeRefreshLayout!!.isRefreshing = false
 
     }
 
@@ -285,7 +286,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         try {
             initBody = true
 
-            swipeRefreshLayout.isRefreshing = false
+            swipeRefreshLayout!!.isRefreshing = false
 
             log.d("in body user info $userInfo")
             val postUser = PostUser(userInfo!!.user.info.user_id,
@@ -300,9 +301,9 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
             scroll!!.resetState()
             emptyContainer.hide()
 
-            progressLay.visibility    = View.GONE
+            progressLay!!.visibility    = View.GONE
 
-            postView.visibility = View.VISIBLE
+            postView!!.visibility = View.VISIBLE
 
 
             var photo ="http"
@@ -314,7 +315,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true, FOLLOW_TYPE)
-                postView.adapter = postAdapter
+                postView!!.adapter = postAdapter
 
             }
 
@@ -325,7 +326,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
 
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true, FOLLOW_TYPE)
-                postView.adapter = postAdapter
+                postView!!.adapter = postAdapter
             }else if((FollowActivity.end == 20 && FollowActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 postAdapter!!.swapLast20Item(postList)
@@ -333,8 +334,8 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
             }
 
 
-            swipeRefreshLayout.isRefreshing = false
-            swipeRefreshLayout.isEnabled = true
+            swipeRefreshLayout!!.isRefreshing = false
+            swipeRefreshLayout!!.isEnabled = true
 
 
         }catch (e:Exception){
@@ -368,6 +369,31 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
     override fun onDestroy() {
         MainActivity.musicSubject!!.unsubscribe(this)
+        log.d("profileFragmentDestroy")
+        log.d("free memory before ${Runtime.getRuntime().freeMemory()}")
+        postAdapter!!.feeds.posts.clear()
+        postAdapter!!.FOLLOW_TYPE = null
+        postAdapter!!.activity    = null
+        postAdapter!!.clicker     = null
+        postAdapter!!.inflater    = null
+        postAdapter!!.ctx         = null
+        postAdapter!!.model       = null
+        postAdapter!!.player      = null
+        connectAudioList          = null
+        connectActivity           = null
+        postView                  = null
+        progressLay               = null
+        swipeRefreshLayout        = null
+
+        user                      = null
+        oldpostList               = null
+
+        model                     = null
+        manager                   = null
+        userInfo                  = null
+        postAdapter               = null
+
+        log.d("free memory after ${Runtime.getRuntime().freeMemory()}")
 
         super.onDestroy()
 
@@ -391,5 +417,12 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         super.onViewCreated(view, savedInstanceState)
         if (signalListener != null) signalListener!!.turnOn()
 
+    }
+
+    
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        Glide.with(this).onLowMemory()
     }
 }

@@ -243,8 +243,8 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                                     val res = response!!
                                     log.d("onresponse from push request $res")
                                     if (res.body()!!.res == "0") {
-                                        list.removeAt(position)
-                                        notifyItemRemoved(position)
+                                        list.removeAt(holder.adapterPosition)
+                                        notifyItemRemoved(holder.adapterPosition)
                                         MainActivity.MY_POSTS_STATUS = MainActivity.ONLY_USER_INFO
 
                                     }
@@ -266,8 +266,8 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                                     val res = response!!
                                     log.d("onresponse from push request ${res.body()!!.res}")
                                     if (res.body()!!.res == "0") {
-                                        list.removeAt(position)
-                                        notifyItemRemoved(position)
+                                        list.removeAt(holder.adapterPosition)
+                                        notifyItemRemoved(holder.adapterPosition)
 
                                     }
                                 }

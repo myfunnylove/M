@@ -901,12 +901,12 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
             Http.CMDS.GET_15_POSTS -> {
                 try{
-
-                    val postList: PostList = Gson().fromJson(result, PostList::class.java)
+                    log.d("Get RECOMMENDED POSTS")
+                    val posts: RecommededPosts = Gson().fromJson(result, RecommededPosts::class.java)
                     searchFragment!!.hideProgress()
-                    if (postList.posts.size > 0){
+                    if (posts.posts.size > 0){
                         RECOMMEND_POST = AFTER_UPDATE
-                        searchFragment!!.swapPosts(postList)
+                        searchFragment!!.swapPosts(posts.posts)
                     }else{
                         searchFragment!!.failedGetList()
 

@@ -40,7 +40,6 @@ import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.dialogs.YesNoFragment
-import locidnet.com.marvarid.viewmodel.PublishViewmodel
 import me.iwf.photopicker.PhotoPicker
 import org.json.JSONObject
 import java.io.File
@@ -71,7 +70,6 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
     var idImage:Int   = -1
     var idMusic:Int   = -1
     var user:User?    = null
-    var publishViewModel:PublishViewmodel? = null
 
     companion  object IDS{
         var loadedImagesIds:ArrayList<String>  = ArrayList()

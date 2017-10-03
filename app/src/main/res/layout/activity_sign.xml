@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
+    android:background="@drawable/background_sign"
     >
     <include layout="@layout/res_error_connection_lay"
         android:id="@+id/include" />
@@ -138,8 +138,8 @@
             android:background="@drawable/login_button"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:textColor="@color/white"
             android:layout_marginRight="12dp"
+            android:textColor="@color/headerTextColor"
 
             />
 

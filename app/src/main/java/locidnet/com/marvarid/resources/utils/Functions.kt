@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BlurMaskFilter
 import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
@@ -31,6 +33,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.RequestOptions
+import jp.wasabeef.glide.transformations.BlurTransformation
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.model.Song
@@ -386,11 +389,18 @@ object Functions {
     fun getGlideOpts():RequestOptions{
         return RequestOptions()
                 .circleCrop()
-                .fallback(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
-                .error(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
-                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
+                .fallback(VectorDrawableCompat.create(Base.get.resources,R.drawable.account_select,Base.get.theme))
+                .error(VectorDrawableCompat.create(Base.get.resources,R.drawable.account_select,Base.get.theme))
+//                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
     }
-
+    fun getGlideOptsBlur():RequestOptions{
+        return RequestOptions()
+                .circleCrop()
+                .transform(BlurTransformation(5))
+                .fallback(R.drawable.bg)
+                .error(R.drawable.bg)
+//                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
+    }
     fun getDeviceName(): String? {
         val manufacturer = Build.MANUFACTURER
         val model = Build.MODEL
