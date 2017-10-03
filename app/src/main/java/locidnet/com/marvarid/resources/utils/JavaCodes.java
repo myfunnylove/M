@@ -1,7 +1,10 @@
 package locidnet.com.marvarid.resources.utils;
 
+import android.content.res.Configuration;
 import android.text.Editable;
 import android.text.TextWatcher;
+
+import locidnet.com.marvarid.base.Base;
 
 /**
  * Created by microlab on 06.09.2017.
@@ -68,4 +71,9 @@ public class JavaCodes {
 
         }
     };
+
+    public static int getScreenSize(){
+        return Base.Companion.getGet().getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK;
+    }
 }

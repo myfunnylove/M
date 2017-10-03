@@ -39,7 +39,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/material_grey_400"
-            android:textSize="13sp" />
+             />
 
         <TextView
             android:id="@+id/username"
@@ -58,7 +58,7 @@
             android:layout_marginLeft="3dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textSize="13sp"
+
             android:layout_toRightOf="@+id/username"
             android:layout_below="@+id/time"
 
@@ -85,8 +85,9 @@
                 android:gravity="center"
                 android:padding="6dp"
                 android:textColor="@color/white"
+                android:textSize="@dimen/buttonTextSize"
 
-                android:textSize="13sp" />
+                 />
 
             <Button
                 android:id="@+id/dismiss"
@@ -99,7 +100,8 @@
                 android:gravity="center"
                 android:padding="6dp"
                 android:textColor="@color/headerTextColor"
-                android:textSize="13sp" />
+                android:textSize="@dimen/buttonTextSize"
+                 />
         </LinearLayout>
 
     </RelativeLayout>

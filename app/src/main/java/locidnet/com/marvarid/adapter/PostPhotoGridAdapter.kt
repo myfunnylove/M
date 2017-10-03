@@ -1,6 +1,7 @@
 package locidnet.com.marvarid.adapter
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -28,6 +29,7 @@ import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.Image
 import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.JavaCodes
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.resources.zoomimageview.ImageViewer
 
@@ -45,6 +47,10 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
     val isVertical = true
     var hierarchyBuilder:GenericDraweeHierarchyBuilder? =null
     var options:RequestOptions? = null
+    var screenSize:Int? = null
+    var h1 = 300
+    var h2 = 400
+    var h3 = 600
     //var cachedImages:ArrayList<Bitmap>? = null
     init {
         setHasStableIds(true)
@@ -60,6 +66,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 //                    .placeholder(ColorDrawable(Color.LTGRAY))
                     .error(ColorDrawable(Color.LTGRAY))
         }
+      screenSize = JavaCodes.getScreenSize()
     }
     override fun getItemCount(): Int = images.size
     override fun getItemId(position: Int): Long = position.toLong()
@@ -92,25 +99,55 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
         //if (isVertical) params.width = size else  params.height = size
 
 
+       when(screenSize){
+           Configuration.SCREENLAYOUT_SIZE_SMALL -> {
+               log.d("small size")
+               h1 = 300
+               h2 = 400
+               h3 = 600
+           }
+           Configuration.SCREENLAYOUT_SIZE_NORMAL -> {
+               log.d("normal size")
+
+               h1 = 400
+               h2 = 500
+               h3 = 800
+           }
+           Configuration.SCREENLAYOUT_SIZE_LARGE -> {
+               log.d("large size")
+
+               h1 = 500
+               h2 = 600
+               h3 = 1000
+           }
+           Configuration.SCREENLAYOUT_SIZE_XLARGE -> {
+               log.d("xlarge size")
+
+               h1 = 600
+               h2 = 700
+               h3 = 1200
+           }
+       }
+
         if ((images.size > 2 && images.size != 3)&& i >= 1){
             log.d("params: ${h.container.layoutParams.height}")
-            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,300)
-            p.height = 300
+            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,h1)
+            p.height = h1
             h.container.layoutParams = p
-            params.height = 300
+            params.height = h1
         }
         else if (images.size == 3 && i >= 1){
             log.d("params: ${h.container.layoutParams.height}")
-            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,400)
-            p.height = 400
+            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,h2)
+            p.height = h2
             h.container.layoutParams = p
-            params.height = 400
+            params.height = h2
         }
         else{
-            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,600)
-            p.height = 600
+            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,h3)
+            p.height = h3
             h.container.layoutParams = p
-            params.height = 600
+            params.height = h3
         }
 
         itemView.layoutParams = params

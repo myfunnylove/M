@@ -15,8 +15,8 @@
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/likeIcon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="@dimen/likeSize"
+            android:layout_height="@dimen/likeSize"
             android:padding="3dp"
             app:srcCompat="@drawable/like_select"
 
@@ -36,15 +36,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="3dp"
-                android:textSize="12sp"
+                android:textSize="@dimen/hintTextSize"
 
                 />
+
             <TextView
                 style="@style/NormalText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="3dp"
-                android:textSize="12sp"
+                android:textSize="@dimen/hintTextSize"
 
                 />
         </TextSwitcher>
@@ -54,18 +55,17 @@
         android:id="@+id/commentLay"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="horizontal"
         android:layout_gravity="center"
-        >
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <android.support.v7.widget.AppCompatImageView
 
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            app:srcCompat="@drawable/comment"
-android:layout_gravity="center"
-            />
+            android:layout_width="@dimen/likeSize"
+            android:layout_height="@dimen/likeSize"
+            android:layout_gravity="center"
+            android:padding="3dp"
+            app:srcCompat="@drawable/comment" />
 
         <TextView
             android:id="@+id/commentCount"
@@ -74,6 +74,6 @@ android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="3dp"
-            android:textSize="12sp" />
+            android:textSize="@dimen/hintTextSize" />
     </LinearLayout>
 </LinearLayout>

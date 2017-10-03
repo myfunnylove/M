@@ -64,7 +64,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     var transaction:          FragmentTransaction?  = null
     var lastFragment:         Int                   = 0
 
-    private var controller: MusicController? = null
+//    private var controller: MusicController? = null
 
     @Inject
     lateinit var presenter:Presenter
@@ -151,7 +151,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             }
 
         })
-        setController()
+//        setController()
         sendDataForPush()
 
     }
@@ -1010,36 +1010,36 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     *
     * */
 
-    private fun setController() {
-        if (controller == null){
-            controller = MusicController(this,false)
-            //set previous and next button listeners
-            controller!!.setPrevNextListeners({ playNext() }, { playPrev() },{ goPlayList() })
-            //set and show
-            controller!!.setMediaPlayer(this)
-            controller!!.setAnchorView(findViewById(R.id.pager))
-            controller!!.isEnabled = true
-        }
-    }
+//    private fun setController() {
+//        if (controller == null){
+//            controller = MusicController(this,false)
+//            //set previous and next button listeners
+//            controller!!.setPrevNextListeners({ playNext() }, { playPrev() },{ goPlayList() })
+//            //set and show
+//            controller!!.setMediaPlayer(this)
+//            controller!!.setAnchorView(findViewById(R.id.pager))
+//            controller!!.isEnabled = true
+//        }
+//    }
 
     private fun playNext() {
 
         musicSrv!!.playNext()
 
-        if (playbackPaused) {
-            setController()
-            playbackPaused = false
-        }
+//        if (playbackPaused) {
+//            setController()
+//            playbackPaused = false
+//        }
         musicSubject!!.playMeause("")
 
     }
 
     private fun playPrev() {
         musicSrv!!.playPrev()
-        if (playbackPaused) {
-            setController()
-            playbackPaused = false
-        }
+//        if (playbackPaused) {
+//            setController()
+//            playbackPaused = false
+//        }
         musicSubject!!.playMeause("")
 
     }
@@ -1054,21 +1054,21 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                     musicSrv!!.pausePlayer()
                     pause()
                 }else{
-                    if(controller == null)
-                    {
-                        setController()
-                        controller!!.show()
-                    }
-                    controller!!.setLoading(true)
+//                    if(controller == null)
+//                    {
+//                        setController()
+//                        controller!!.show()
+//                    }
+//                    controller!!.setLoading(true)
 
                     musicSrv!!.setList(listSong)
                     musicSrv!!.setSong(position)
                     musicSrv!!.playSong()
                     log.d("playbak is paused $playbackPaused")
-                    if (playbackPaused){
-                        setController()
-                        playbackPaused = false
-                    }
+//                    if (playbackPaused){
+//                        setController()
+//                        playbackPaused = false
+//                    }
 
 //                        controller!!.show()
                 }
@@ -1078,21 +1078,21 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                     musicSrv!!.go()
                     start()
                 }else{
-                    if(controller == null)
-                    {
-                        setController()
-                        controller!!.show()
-                    }
-                    controller!!.setLoading(true)
+//                    if(controller == null)
+//                    {
+//                        setController()
+//                        controller!!.show()
+//                    }
+//                    controller!!.setLoading(true)
 
                     musicSrv!!.setList(listSong)
                     musicSrv!!.setSong(position)
                     musicSrv!!.playSong()
                     log.d("playbak is paused $playbackPaused")
-                    if (playbackPaused){
-                        setController()
-                        playbackPaused = false
-                    }
+//                    if (playbackPaused){
+//                        setController()
+//                        playbackPaused = false
+//                    }
 
                 }
 //                    controller!!.show()
@@ -1119,9 +1119,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     }
 
     override fun onStop() {
-        if (controller != null){
-            controller!!.hide()
-        }
+//        if (controller != null){
+//            controller!!.hide()
+//        }
         super.onStop()
     }
 
@@ -1140,7 +1140,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                 }
             }
-            if(controller != null) controller!!.show(0)
+//            if(controller != null) controller!!.show(0)
         }
 
     }
@@ -1150,7 +1150,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         log.d("onresume")
         LocalBroadcastManager.getInstance(this).registerReceiver(musicReceiver, IntentFilter(MusicService.ACTION_PLAY_TOGGLE))
         if (paused) {
-            setController()
+//            setController()
             paused = false
         }
     }

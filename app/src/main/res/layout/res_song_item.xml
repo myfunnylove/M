@@ -31,7 +31,7 @@
             android:layout_gravity="center_vertical"
             android:maxLines="1"
             android:text="Bangrarang"
-            android:textSize="15sp" />
+             />
 
         <TextView
             android:id="@+id/songArtist"
@@ -42,7 +42,7 @@
             android:maxLines="1"
 
             android:text="Skrillex"
-            android:textSize="13sp" />
+             />
 
 
         <LinearLayout
@@ -62,7 +62,7 @@
                 android:layout_gravity="center_vertical"
 
                 android:text="10:00:00"
-                android:textSize="13sp" />
+                 />
             <TextView
                 android:id="@+id/songSize"
                 style="@style/NormalText"
@@ -75,7 +75,7 @@
                 android:maxLines="1"
                 android:text="1 mb"
                 android:textColor="@color/silver"
-                android:textSize="13sp" />
+                 />
 
 
         </LinearLayout>
@@ -93,5 +93,5 @@
         android:clickable="false"
         android:focusable="false"
         android:textColor="@color/silver"
-        android:textSize="13sp" />
+         />
 </LinearLayout>

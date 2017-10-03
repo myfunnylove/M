@@ -39,7 +39,7 @@
                 android:maxLines="1"
                 android:layout_weight="1"
                 android:gravity="center|left"
-                android:textSize="15sp" />
+                 />
 
             <TextView
                 android:id="@+id/login"
@@ -51,7 +51,7 @@
                 android:maxLines="1"
                 android:layout_weight="1"
                 android:gravity="center|left"
-                android:textSize="13sp" />
+                 />
 
         </LinearLayout>
     </LinearLayout>
@@ -69,7 +69,7 @@
         android:paddingBottom="2dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:textSize="14sp"
+        android:textSize="@dimen/buttonTextSize"
         android:layout_marginRight="2dp"
         />
 </RelativeLayout>

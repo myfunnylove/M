@@ -70,7 +70,7 @@ class FollowActivity : BaseActivity(),
     var userID                          = ""
     var afterrefresh                    = false
    // var jsUserData:JSONObject? = null
-    private var controller: MusicController? = null
+//    private var controller: MusicController? = null
     var userInfo:UserInfo? = null
     var bundle:Bundle? = null
     override fun getLayout(): Int = R.layout.activity_follow
@@ -90,7 +90,7 @@ class FollowActivity : BaseActivity(),
 
         if (intent.getIntExtra(TYPE,-1) == PROFIL_T || intent.getIntExtra(TYPE,-1) == BLOCKED_ME){
             supportActionBar!!.title = intent.extras.getString("username")
-            setController()
+//            setController()
 
         }
         else if (intent.getIntExtra(TYPE,-1) == FOLLOWING){
@@ -507,25 +507,25 @@ class FollowActivity : BaseActivity(),
    *
    * */
 
-    private fun setController() {
-        if (controller == null){
-            controller = MusicController(this,false)
-            //set previous and next button listeners
-            controller!!.setPrevNextListeners({ playNext() }, { playPrev() },{ goPlayList() })
-            //set and show
-            controller!!.setMediaPlayer(this)
-            controller!!.setAnchorView(findViewById(R.id.container))
-            controller!!.isEnabled = true
-        }
-    }
+//    private fun setController() {
+//        if (controller == null){
+//            controller = MusicController(this,false)
+//            //set previous and next button listeners
+//            controller!!.setPrevNextListeners({ playNext() }, { playPrev() },{ goPlayList() })
+//            //set and show
+//            controller!!.setMediaPlayer(this)
+//            controller!!.setAnchorView(findViewById(R.id.container))
+//            controller!!.isEnabled = true
+//        }
+//    }
 
     private fun playNext() {
 
         musicSrv!!.playNext()
 
-            setController()
-        controller!!.show()
-        controller!!.setLoading(true)
+//            setController()
+//        controller!!.show()
+//        controller!!.setLoading(true)
 
         try {
             if (FeedFragment.cachedSongAdapters != null) {
@@ -538,9 +538,9 @@ class FollowActivity : BaseActivity(),
 
     private fun playPrev() {
         musicSrv!!.playPrev()
-            setController()
-        controller!!.show()
-        controller!!.setLoading(true)
+//            setController()
+//        controller!!.show()
+//        controller!!.setLoading(true)
 
         try {
 
@@ -562,19 +562,19 @@ class FollowActivity : BaseActivity(),
                 if (MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){
                     pause()
                 }else{
-                    if(controller == null)
-                    {
-                        setController()
-                        controller!!.show()
-                    }
-                    controller!!.setLoading(true)
+//                    if(controller == null)
+//                    {
+//                        setController()
+//                        controller!!.show()
+//                    }
+//                    controller!!.setLoading(true)
 
                     musicSrv!!.setList(listSong)
                     musicSrv!!.setSong(position)
                     musicSrv!!.playSong()
                     log.d("playbak is paused $playbackPaused")
                     if (playbackPaused){
-                        setController()
+//                        setController()
                         playbackPaused = false
                     }
 
@@ -585,18 +585,18 @@ class FollowActivity : BaseActivity(),
                 if(MusicService.PLAY_STATUS == MusicService.PAUSED && MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){
                     start()
                 }else{
-                    if(controller == null)
-                    {
-                        setController()
-                        controller!!.show()
-                    }
-                    controller!!.setLoading(true)
+//                    if(controller == null)
+//                    {
+//                        setController()
+//                        controller!!.show()
+//                    }
+//                    controller!!.setLoading(true)
 
                     musicSrv!!.setList(listSong)
                     musicSrv!!.setSong(position)
                     musicSrv!!.playSong()
-                    log.d("playbak is paused $playbackPaused")
-                        setController()
+//                    log.d("playbak is paused $playbackPaused")
+//                        setController()
 
                 }
 //                    controller!!.show()
@@ -624,9 +624,9 @@ class FollowActivity : BaseActivity(),
     }
 
     override fun onStop() {
-        if (controller != null){
-            controller!!.hide()
-        }
+//        if (controller != null){
+//            controller!!.hide()
+//        }
         super.onStop()
     }
 
@@ -645,7 +645,7 @@ class FollowActivity : BaseActivity(),
 
                 }
             }
-            if(controller != null) controller!!.show(0)
+//            if(controller != null) controller!!.show(0)
         }
 
     }
@@ -655,7 +655,7 @@ class FollowActivity : BaseActivity(),
         log.d("onresume")
         LocalBroadcastManager.getInstance(this).registerReceiver(musicReceiver, IntentFilter(MusicService.ACTION_PLAY_TOGGLE))
         if (paused) {
-            setController()
+//            setController()
             paused = false
         }
     }
@@ -748,11 +748,11 @@ class FollowActivity : BaseActivity(),
     override fun pause() {
         playbackPaused = true
         musicSrv!!.pausePlayer()
-        if(controller != null){
-            controller!!.show()
-
-            controller!!.setLoading(false)
-        }
+//        if(controller != null){
+//            controller!!.show()
+//
+//            controller!!.setLoading(false)
+//        }
     }
 
     override fun seekTo(pos: Int) {

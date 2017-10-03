@@ -49,7 +49,8 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="Bangrarang"
-                android:textSize="15sp" />
+                android:ellipsize="end"
+                 />
 
             <TextView
                 android:id="@+id/songArtist"
@@ -59,9 +60,10 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
                 android:maxLines="1"
+                android:ellipsize="end"
 
                 android:text="Skrillex"
-                android:textSize="13sp" />
+                 />
 
 
         </LinearLayout>

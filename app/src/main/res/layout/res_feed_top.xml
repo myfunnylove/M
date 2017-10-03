@@ -10,8 +10,8 @@
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/avatar"
-        android:layout_width="46dp"
-        android:layout_height="46dp"
+        android:layout_width="@dimen/avatar"
+        android:layout_height="@dimen/avatar"
         android:layout_gravity="center_horizontal"
 
         app:srcCompat="@drawable/account"
@@ -36,8 +36,9 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
             android:layout_weight="1"
+
             android:gravity="center_vertical"
-            android:textSize="13sp" />
+             />
 
         <TextView
             android:id="@+id/name"
@@ -50,7 +51,7 @@
             android:layout_weight="1"
             android:visibility="gone"
             android:gravity="center_vertical"
-            android:textSize="15sp" />
+             />
     </LinearLayout>
 
     <LinearLayout
@@ -62,7 +63,7 @@
 
         <android.support.v7.widget.AppCompatImageView
 
-            android:layout_width="18dp"
+            android:layout_width="@dimen/likeSize"
             android:layout_height="18dp"
             android:padding="3dp"
             app:srcCompat="@drawable/clock" />
@@ -75,12 +76,12 @@
 
 
             android:textColor="@color/silver"
-            android:textSize="13sp" />
+             />
     </LinearLayout>
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/popup"
-        android:layout_width="35dp"
+        android:layout_width="@dimen/likeSize"
         android:layout_height="match_parent"
         android:paddingLeft="6dp"
         app:srcCompat="@drawable/dots_vertical" />

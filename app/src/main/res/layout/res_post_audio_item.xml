@@ -15,15 +15,15 @@
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/play"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="@dimen/avatar"
+        android:layout_height="@dimen/avatar"
         app:srcCompat="@drawable/play"
         android:layout_gravity="center_vertical"
         />
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center_vertical"
@@ -36,7 +36,6 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:ellipsize="end"
-            android:textSize="14sp"
             android:paddingLeft="10dp"
             />
         <LinearLayout
@@ -54,7 +53,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="12sp"
+
                 />
             <TextView
                 android:id="@+id/duration"
@@ -63,7 +62,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
                 android:maxLines="1"
-                android:textSize="12sp"
                 />
         </LinearLayout>
 
@@ -73,10 +71,9 @@
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/addFavorite"
         style="@style/NormalText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center|right"
+        android:layout_width="@dimen/likeSize"
+        android:layout_height="@dimen/likeSize"
         android:background="@drawable/gray_when_select_transparent"
-        app:srcCompat="@drawable/plus"
-         />
+        android:gravity="center|right"
+        app:srcCompat="@drawable/plus" />
 </LinearLayout>

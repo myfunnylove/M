@@ -92,7 +92,7 @@
             <TextView
                 android:id="@+id/forgot"
                 style="@style/NormalText"
-                android:textSize="14sp"
+
                 android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,6 +110,8 @@
                 android:text="@string/Sign_in"
                 android:background="@drawable/login_button"
                 android:textColor="@color/headerTextColor"
+                android:textSize="@dimen/buttonTextSize"
+
                 />
 
             <TextView
@@ -182,7 +184,10 @@
                 android:gravity="center"
                 android:text="@string/Sign_up"
                 android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textSize="@dimen/buttonTextSize"
+
+                />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
     <LinearLayout

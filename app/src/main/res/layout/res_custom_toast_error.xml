@@ -11,7 +11,7 @@
     android:paddingRight="16dp"
     android:gravity="center"
     android:textColor="@android:color/white"
-    android:textSize="16sp"
+    android:textSize="@dimen/normalTextSize"
     android:drawableLeft="@drawable/info_"
     android:background="@drawable/button_bg_error"
     />

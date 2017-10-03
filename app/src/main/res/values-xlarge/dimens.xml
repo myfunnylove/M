@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="buttonTextSize">14sp</dimen>
-    <dimen name="headerTextSize">15sp</dimen>
-    <dimen name="normalTextSize">13sp</dimen>
-    <dimen name="hintTextSize">12sp</dimen>
+    <dimen name="buttonTextSize">23sp</dimen>
+    <dimen name="headerTextSize">24sp</dimen>
+    <dimen name="normalTextSize">21sp</dimen>
+    <dimen name="hintTextSize">19sp</dimen>
+    <dimen name="likeSize">39dp</dimen>
+    <dimen name="avatar">58dp</dimen>
+    <dimen name="tabSize">62dp</dimen>
+    <dimen name="recHeight">135dp</dimen>
+
     <dimen name="five">2dp</dimen>
-    <dimen name="likeSize">28dp</dimen>
-    <dimen name="avatar">46dp</dimen>
-    <dimen name="tabSize">50dp</dimen>
-    <dimen name="recHeight">125dp</dimen>
-
-
     <dimen name="staggered_child_small">120dp</dimen>
     <dimen name="staggered_child_medium">230dp</dimen>
     <dimen name="staggered_child_large">310dp</dimen>

@@ -6,7 +6,7 @@
     android:padding="16dp"
     style="@style/NormalText"
     android:textColor="@color/headerTextColor"
-    android:textSize="14sp"
+
 
     >
 

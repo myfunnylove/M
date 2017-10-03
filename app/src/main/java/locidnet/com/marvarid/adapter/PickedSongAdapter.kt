@@ -182,7 +182,7 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
                     .bind(progress)
                     .textColorInt(Color.BLACK)
                     .maskColorInt(Color.argb(90,0,0,0))
-                    .textSize(16f)
+                    .textSize(Base.get.resources.getDimension(R.dimen.normalTextSize))
                     .cornerRadius(4f)
                     .direction(ShapeMask.Direction.DTU)
                     .margin(1f)
