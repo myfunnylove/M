@@ -328,7 +328,8 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
     }
 
     override fun onDestroy() {
-        MainActivity.musicSubject!!.unsubscribe(this)
+        log.d("ondestroy feed")
+//        MainActivity.musicSubject!!.unsubscribe(this)
 
         super.onDestroy()
     }

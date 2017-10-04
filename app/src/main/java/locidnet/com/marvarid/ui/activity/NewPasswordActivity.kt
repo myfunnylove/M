@@ -87,6 +87,7 @@ class NewPasswordActivity : BaseActivity(), Viewer {
 
                         val obj = JSONObject()
                         obj.put("user",intent.getStringExtra("userId"))
+                        obj.put("token",intent.getStringExtra("token"))
                         obj.put("password",pass)
                         presenter.requestAndResponse(obj, Http.CMDS.FORGOT_PASS)
 

@@ -15,7 +15,9 @@ import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
+import locidnet.com.marvarid.connectors.ProfileMusicController
 import locidnet.com.marvarid.model.*
+import locidnet.com.marvarid.musicplayer.MusicService
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
@@ -26,9 +28,7 @@ import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.MainActivity
 import kotlin.properties.Delegates
 
-class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker, MusicPlayerListener,MusicControlObserver {
-
-
+class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker, MusicPlayerListener,MusicControlObserver, ProfileMusicController {
 
 
 
@@ -45,11 +45,13 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     var manager: LinearLayoutManager?  = null
     var expanded                      = false
     var initBody                      = false
+    var profileControl:ProfileMusicController? = null
+
     lateinit var emptyContainer:EmptyContainer
     var scroll: EndlessRecyclerViewScrollListener? = null
     lateinit var userInfo:UserInfo
     companion object {
-        var TAG:String   = "ProfileFragment"
+        var TAG:String   = "MyProfileFragment"
         val FOLLOW       = Base.get.resources.getString(R.string.follow)
         val UN_FOLLOW    = Base.get.resources.getString(R.string.unfollow)
         val REQUEST      = Base.get.resources.getString(R.string.request)
@@ -85,7 +87,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     override fun getFragmentView(): Int = R.layout.fragment_profil_page
 
     override fun init() {
-        Const.TAG = "ProfileFragment"
+        Const.TAG = "MyProfileFragment"
 
         FOLLOW_TYPE = arguments.getString(F_TYPE)
 
@@ -260,6 +262,10 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         }
     }
 
+    fun setProfileMusicController(profileMusicController: ProfileMusicController){
+        this.profileControl = profileMusicController
+    }
+
     fun initHeader(userInfo:UserInfo,fType:String){
         this.userInfo = userInfo
         FOLLOWERS  = userInfo.user.count.followersCount
@@ -289,7 +295,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
 
        if (postAdapter == null){
-           postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,fType,isClose)
+           postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,fType,isClose)
+
            postView.visibility = View.VISIBLE
            postView.adapter = postAdapter
        }else{
@@ -330,7 +337,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
-                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE)
+                postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,FOLLOW_TYPE)
                 postView.adapter = postAdapter
             }else if (postList.posts.size == 1 && (MainActivity.endFeed == 1 && MainActivity.startFeed == 0)){
                 log.d("post qoshildi postni birinchi elementi update qilinadi")
@@ -349,7 +356,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
 
-                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE)
+                postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,FOLLOW_TYPE)
                 postView.adapter = postAdapter
             }else if((MainActivity.end == 20 && MainActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
@@ -370,10 +377,10 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
 
         when(position){
-            Const.CHANGE_AVATAR ->  connectActivity!!.goNext(Const.CHANGE_AVATAR,"")
+            Const.CHANGE_AVATAR -> connectActivity!!.goNext(Const.CHANGE_AVATAR,"")
 
-            Const.TO_FOLLOWING -> connectActivity!!.goNext(Const.TO_FOLLOWING,"")
-            Const.TO_FOLLOWERS -> connectActivity!!.goNext(Const.TO_FOLLOWERS,"")
+            Const.TO_FOLLOWING  -> connectActivity!!.goNext(Const.TO_FOLLOWING,"")
+            Const.TO_FOLLOWERS  -> connectActivity!!.goNext(Const.TO_FOLLOWERS,"")
         }
     }
 
@@ -415,19 +422,31 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     override fun playPause(id: String) {
         try {
 //
-            log.d("PATTERN OBSERVER CALLED MY PROFILE FRAGMENT")
 
             if (FeedFragment.cachedSongAdapters != null) {
                 FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
             }
+            log.d("play button pressed")
+            if (MusicService.PLAY_STATUS == MusicService.PLAYING)
+                postAdapter!!.updateMusicController(ProfileFeedAdapter.PAUSE)
+            else
+                postAdapter!!.updateMusicController(ProfileFeedAdapter.PLAY)
 
         } catch (e: Exception) {
 
         }
     }
+    override fun pressPlay() {
+      profileControl!!.pressPlay()
+    }
 
+    override fun pressNext() {
+        profileControl!!.pressNext()
+    }
     override fun onDestroy() {
-        MainActivity.musicSubject!!.unsubscribe(this)
+        log.d("ondestroy myprofil")
+
+//        MainActivity.musicSubject!!.unsubscribe(this)
         super.onDestroy()
     }
 

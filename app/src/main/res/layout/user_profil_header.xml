@@ -114,6 +114,33 @@
                     app:srcCompat="@drawable/music_accent"
                     tools:targetApi="lollipop" />
 
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/play"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignTop="@+id/follow"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toEndOf="@+id/playlist"
+                    android:layout_toRightOf="@+id/playlist"
+                    android:background="@drawable/style_border_light_gray"
+                    android:padding="6dp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/notif_pause"
+                    tools:targetApi="lollipop" />
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/next"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignTop="@+id/follow"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toEndOf="@+id/play"
+                    android:layout_toRightOf="@+id/play"
+                    android:background="@drawable/style_border_light_gray"
+                    android:padding="6dp"
+                    android:visibility="gone"
+
+                    app:srcCompat="@drawable/notif_next"
+                    tools:targetApi="lollipop" />
 
             </RelativeLayout>
 

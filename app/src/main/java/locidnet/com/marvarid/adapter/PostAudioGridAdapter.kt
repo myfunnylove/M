@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import org.json.JSONObject
@@ -42,7 +43,7 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
 
 
     val featureMap                 = mapOf<Int,VectorDrawableCompat>( 0 to notFeatured!!,1 to featured!! )
-
+    val progress:HashMap<Int,String>? = null
     override fun getItemCount(): Int {
         return audios.size
     }
@@ -167,7 +168,7 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
         var duration:TextView       = view.findViewById<TextView>(R.id.duration)
         var songName:TextView       = view.findViewById<TextView>(R.id.songName)
         var play:AppCompatImageView = view.findViewById<AppCompatImageView>(R.id.play)
-
+        var progress:ProgressBar    = view.findViewById<ProgressBar>(R.id.progress)
         var addFavorite:AppCompatImageView = view.findViewById<AppCompatImageView>(R.id.addFavorite)
 
     }

@@ -1,8 +1,12 @@
 package locidnet.com.marvarid.pattern.MControlObserver
 
+import locidnet.com.marvarid.resources.utils.log
+
 class MusicSubject : Subject {
 
-    var list:ArrayList<MusicControlObserver> = ArrayList()
+    companion object {
+        var list:ArrayList<MusicControlObserver> = ArrayList()
+    }
 
     var id:String = ""
     override fun subscribe(observer: MusicControlObserver) {
@@ -19,6 +23,7 @@ class MusicSubject : Subject {
 
     override fun playControlUpdate() {
         for (item in list){
+            log.d(item.toString())
             item.playPause(id)
         }
 

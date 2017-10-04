@@ -12,11 +12,8 @@ import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.ProfileFeedAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
+import locidnet.com.marvarid.connectors.*
 import locidnet.com.marvarid.rest.Http
-import locidnet.com.marvarid.connectors.AdapterClicker
-import locidnet.com.marvarid.connectors.GoNext
-import locidnet.com.marvarid.connectors.MusicPlayerListener
-import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
@@ -48,7 +45,6 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
     var expanded                      = false
     var userInfo:UserInfo?= null
     var initBody                      = false
-
     var scroll:EndlessRecyclerViewScrollListener? = null
     lateinit var emptyContainer: EmptyContainer
 
@@ -266,7 +262,8 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         val postList = PostList(emptyPost)
         val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
         if (postAdapter == null){
-            postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true,FOLLOW_TYPE,isClose)
+            postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true,FOLLOW_TYPE,isClose)
+
             postView!!.visibility = View.VISIBLE
             postView!!.adapter = postAdapter
         }else{
@@ -314,7 +311,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
-                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true, FOLLOW_TYPE)
+                postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true, FOLLOW_TYPE)
                 postView!!.adapter = postAdapter
 
             }
@@ -325,7 +322,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
 
-                postAdapter = ProfileFeedAdapter(activity,postList,this,this,userInfo,true, FOLLOW_TYPE)
+                postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true, FOLLOW_TYPE)
                 postView!!.adapter = postAdapter
             }else if((FollowActivity.end == 20 && FollowActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
@@ -367,6 +364,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
     }
 
 
+
     override fun onDestroy() {
         MainActivity.musicSubject!!.unsubscribe(this)
         log.d("profileFragmentDestroy")
@@ -379,6 +377,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         postAdapter!!.ctx         = null
         postAdapter!!.model       = null
         postAdapter!!.player      = null
+        postAdapter!!.profileControl = null
         connectAudioList          = null
         connectActivity           = null
         postView                  = null

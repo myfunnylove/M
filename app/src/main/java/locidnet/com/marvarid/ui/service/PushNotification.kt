@@ -2,6 +2,7 @@ package locidnet.com.marvarid.ui.service
 
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.support.v7.app.NotificationCompat
@@ -11,6 +12,7 @@ import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.ui.activity.MainActivity
 import java.util.*
 
 
@@ -52,6 +54,10 @@ class PushNotification :FirebaseMessagingService() {
                 log.d("push kelishda error $e")
             }
         }
+
+        Prefs.Builder().setNotifCount(Prefs.Builder().getNotifCount() + 1)
+
+        sendBroadcast(Intent(MainActivity.notificationTag))
     }
 
 

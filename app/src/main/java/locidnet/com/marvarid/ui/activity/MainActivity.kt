@@ -9,12 +9,15 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.support.design.widget.TabLayout
+import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v7.widget.AppCompatImageView
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.iid.FirebaseInstanceId
@@ -28,6 +31,7 @@ import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
 import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
+import locidnet.com.marvarid.connectors.ProfileMusicController
 import locidnet.com.marvarid.di.DaggerMVPComponent
 import locidnet.com.marvarid.di.modules.ErrorConnModule
 import locidnet.com.marvarid.di.modules.MVPModule
@@ -64,6 +68,13 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     var transaction:          FragmentTransaction?  = null
     var lastFragment:         Int                   = 0
 
+    var notifView:View? = null
+    var notifBadge:TextView? = null
+    var notifIcon:AppCompatImageView? = null
+
+    var profilView:View? = null
+    var profilBadge:AppCompatImageView? = null
+    var profilIcon:AppCompatImageView? = null
 //    private var controller: MusicController? = null
 
     @Inject
@@ -113,7 +124,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         var COMMENT_COUNT       = 0
 
         var tablayoutHeight = 0
-        public var musicSubject:MusicSubject? = null
+        var musicSubject:MusicSubject? = null
+        val notificationTag = "locidnet.com.marvarid.ui.activity.NOTIFICATION"
 
     }
 
@@ -126,7 +138,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         Const.TAG = "MainActivity"
 
         startIntroAnimation()
-
+//        Prefs.Builder().setNotifCount(10)
         DaggerMVPComponent
                 .builder()
                 .mVPModule(MVPModule(this, Model(),this))
@@ -153,6 +165,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         })
 //        setController()
         sendDataForPush()
+        registerReceiver(notificationReceiver,IntentFilter(notificationTag))
 
     }
 
@@ -188,11 +201,27 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
         tablayout.addTab(tablayout.newTab().setIcon(R.drawable.feed_select))
         tablayout.addTab(tablayout.newTab().setIcon(R.drawable.search))
-        val view: View = layoutInflater.inflate(R.layout.res_upload_view, null)
+        var view: View = layoutInflater.inflate(R.layout.res_upload_view, null)
 
         tablayout.addTab(tablayout.newTab().setCustomView(view))
-        tablayout.addTab(tablayout.newTab().setIcon(R.drawable.notification))
-        tablayout.addTab(tablayout.newTab().setIcon(R.drawable.account))
+        notifView  = layoutInflater.inflate(R.layout.res_main_tab_notif_view, null)
+        notifBadge = notifView!!.findViewById<TextView>(R.id.badge)
+        notifIcon = notifView!!.findViewById<AppCompatImageView>(R.id.icon)
+        if (Prefs.Builder().getNotifCount() > 0){
+            notifBadge!!.visibility = View.VISIBLE
+            notifBadge!!.setText("${Prefs.Builder().getNotifCount()}")
+        }else{
+            notifBadge!!.visibility = View.GONE
+
+        }
+
+        tablayout.addTab(tablayout.newTab().setCustomView(notifView))
+
+        profilView  = layoutInflater.inflate(R.layout.res_main_tab_profil_view, null)
+        profilBadge = profilView!!.findViewById<AppCompatImageView>(R.id.badge)
+        profilIcon = profilView!!.findViewById<AppCompatImageView>(R.id.icon)
+
+        tablayout.addTab(tablayout.newTab().setCustomView(profilView))
 
 
 
@@ -203,8 +232,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
             override fun onTabUnselected(p0: TabLayout.Tab?) {
                 log.d("Unselected -> ${p0!!.position}")
-
-                if (p0.position != Const.UPLOAD_FR) p0.setIcon(Const.unselectedTabs.get(p0.position)!!)
+                if (p0.position == Const.NOTIF_FR) notifIcon!!.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notification,theme))
+                else if (p0.position == Const.PROFIL_FR) profilIcon!!.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.account,theme))
+                if (p0.position != Const.UPLOAD_FR && p0.position != Const.NOTIF_FR) p0.setIcon(Const.unselectedTabs.get(p0.position)!!)
             }
 
             override fun onTabSelected(p0: TabLayout.Tab?) {
@@ -225,7 +255,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
                         }
                         lastFragment = p0.position
-                        p0.setIcon(Const.selectedTabs.get(p0.position)!!)
+                        profilBadge!!.visibility = View.GONE
+                        profilIcon!!.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.account_select,theme))
                         setFragment(p0.position)
 
 
@@ -255,8 +286,11 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
 
                     lastFragment = p0.position
+                            Prefs.Builder().setNotifCount(0)
 
-                            p0.setIcon(Const.selectedTabs.get(p0.position)!!)
+                            notifBadge!!.text = ""
+                            notifBadge!!.visibility = View.GONE
+                            notifIcon!!.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notification_select,theme))
                             setFragment(p0.position)
                     }
 
@@ -543,11 +577,30 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         bundle.putString("photo",     user.profilPhoto)
         bundle.putString("username",  user.userName)
         bundle.putString("firstName", user.first_name)
-        bundle.putString("user_id",    user.userId)
+        bundle.putString("user_id",   user.userId)
         bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.SETTINGS)
         profilFragment = MyProfileFragment.newInstance(bundle)
         profilFragment!!.connectAudioPlayer(this)
+        profilFragment!!.setProfileMusicController(object : ProfileMusicController {
+            override fun pressPlay() {
 
+                log.d("play status ${isPlaying}")
+                if(isPlaying)
+                    pause()
+                else
+                    start()
+
+                if (MusicService.PLAY_STATUS == MusicService.PLAYING)
+                    profilFragment!!.postAdapter!!.updateMusicController(ProfileFeedAdapter.PAUSE)
+                else
+                    profilFragment!!.postAdapter!!.updateMusicController(ProfileFeedAdapter.PLAY)
+            }
+
+            override fun pressNext() {
+                playNext()
+            }
+
+        })
         profilFragment!!.connect(this)
         searchFragment = SearchFragment.newInstance()
         searchFragment!!.connect(this)
@@ -909,6 +962,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
             Http.CMDS.GET_NOTIF_LIST ->{
 
+
                 val pushList:PushList = Gson().fromJson(result,PushList::class.java)
 
                 if(pushList.pushes.size > 0){
@@ -1075,7 +1129,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
             }else{
 
                 if(MusicService.PLAY_STATUS == MusicService.PAUSED && MusicService.PLAYING_SONG_URL == listSong.get(position).middlePath){
-                    musicSrv!!.go()
+//                    musicSrv!!.go()
                     start()
                 }else{
 //                    if(controller == null)
@@ -1251,7 +1305,6 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
         playbackPaused = true
         musicSrv!!.pausePlayer()
 
-
         musicSubject!!.playMeause("")
 
 
@@ -1263,6 +1316,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
     override fun start() {
         musicSrv!!.go()
+
         musicSubject!!.playMeause("")
     }
 
@@ -1272,19 +1326,32 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
     }
 
 
+    // get notification countq
+    val notificationReceiver = object : BroadcastReceiver(){
+        override fun onReceive(p0: Context?, intent: Intent?) {
 
+            try{
+                if (tablayout.selectedTabPosition != Const.NOTIF_FR){
+                    notifBadge!!.visibility = View.VISIBLE
+                    notifBadge!!.setText("${Prefs.Builder().getNotifCount()}")
+                }
 
+            }catch (e:Exception){}
+        }
 
+    }
 
     override fun onDestroy() {
         this.stopService(playIntent)
         musicSrv = null
         FeedFragment.cachedSongAdapters = null
         FeedFragment.playedSongPosition = -1
+        unregisterReceiver(notificationReceiver)
         super.onDestroy()
     }
 
 
+    // send data for push
     private fun sendDataForPush() {
         try {
 

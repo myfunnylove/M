@@ -84,6 +84,8 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
             val intent = Intent(this, NewPasswordActivity().javaClass)
             val js= JSONObject(result)
             intent.putExtra("userId",js.optString("user"))
+            intent.putExtra("token",js.optString("token"))
+
             startActivityForResult(intent,Const.FORGOT_PASS)
         }
 

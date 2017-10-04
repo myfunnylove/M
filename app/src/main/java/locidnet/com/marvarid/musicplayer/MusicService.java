@@ -272,7 +272,7 @@ public class MusicService extends Service implements
             remoteView.setImageViewResource(R.id.prev, R.drawable.notif_prev);
             remoteView.setImageViewResource(R.id.next, R.drawable.notif_next);
             remoteView.setImageViewResource(R.id.image_view_play_toggle, isPng()
-                    ? R.drawable.notif_play : R.drawable.notif_pause);
+                    ? R.drawable.notif_pause : R.drawable.notif_play);
         }else{
             remoteView.setImageViewResource(R.id.close, R.drawable.png_close);
             remoteView.setImageViewResource(R.id.prev, R.drawable.png_prev);
@@ -365,6 +365,7 @@ public class MusicService extends Service implements
     public void playNext(){
         if(shuffle){
             int newSong = songPosn;
+
             while(newSong==songPosn){
                 newSong=rand.nextInt(songs.size());
             }

@@ -91,7 +91,7 @@ public class MusicController extends FrameLayout implements MusicControlObserver
     public MusicController(Context context, boolean isPlaylistActivity) {
         super(context);
         mContext = context;
-        MainActivity.MyPostOffset.getMusicSubject().subscribe(this);
+//        MainActivity.MyPostOffset.getMusicSubject().subscribe(this);
         this.isPlaylistActivity = isPlaylistActivity;
 
         initFloatingWindowLayout();
