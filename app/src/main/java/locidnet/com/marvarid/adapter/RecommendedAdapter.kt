@@ -16,6 +16,9 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.model.Color
 import locidnet.com.marvarid.model.RecPost
 import locidnet.com.marvarid.model.RecommededPosts
+import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.rest.Http
 import kotlin.properties.Delegates
 
@@ -36,7 +39,7 @@ class RecommendedAdapter(clicker: AdapterClicker, ctx: Context, list: ArrayList<
         val post = posts.get(i)
 
         Glide.with(context)
-                .load(Http.BASE_URL + post.photo)
+                .load(Functions.checkImageUrl(post.photo)!!.replace(Const.IMAGE.MEDIUM, Prefs.Builder().imageRes()))
                 .apply(options!!)
                 .into(h!!.photo)
         h.photo.setOnClickListener {

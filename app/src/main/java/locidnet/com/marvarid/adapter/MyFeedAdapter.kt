@@ -29,10 +29,7 @@ import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.resources.customviews.CustomManager
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.JS
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
 import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
@@ -339,6 +336,11 @@ class MyFeedAdapter(context: FragmentActivity,
 
 
                     val manager = CustomManager(ctx, span)
+                    post.audios.forEach {
+                        audio ->
+                        audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+
+                    }
                     val adapter = PostAudioGridAdapter(ctx, post.audios,object :MusicPlayerListener{
                         override fun playClick(listSong: ArrayList<Audio>, position: Int) {
                             try{

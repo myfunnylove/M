@@ -404,8 +404,126 @@
                     android:layout_marginTop="2dp"
                     />
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.50dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/silver"
 
+                />
+            <LinearLayout
+                android:id="@+id/imageSizeLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/res_block_gray_when_select"
+                android:orientation="vertical"
 
+                android:paddingLeft="56dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+
+                >
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/image_resolution"
+                    android:textColor="@color/asbestos"
+                    android:textSize="@dimen/hintTextSize" />
+
+                <RadioGroup
+                    android:id="@+id/imageResolution"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/lowImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lowImage"
+                        />
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/mediumImage"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/mediumImage"
+                        android:checked="true"
+                        />
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/highImage"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/highImage"
+                        />
+                </RadioGroup>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.50dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/silver"
+
+                />
+            <LinearLayout
+                android:id="@+id/audioSizeLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/res_block_gray_when_select"
+                android:orientation="vertical"
+
+                android:paddingLeft="56dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+
+                >
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/audio_resolution"
+                    android:textColor="@color/asbestos"
+                    android:textSize="@dimen/hintTextSize" />
+
+                <RadioGroup
+                    android:id="@+id/audioResolution"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/lowAudio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lowImage"
+                        />
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/mediumAudio"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/mediumImage"
+                        android:checked="true"
+                        />
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/highAudio"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/highImage"
+
+                        />
+                </RadioGroup>
+            </LinearLayout>
             <!--<View-->
                 <!--android:layout_width="match_parent"-->
                 <!--android:layout_height="0.50dp"-->

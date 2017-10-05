@@ -178,6 +178,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:orientation="horizontal"
+                android:background="@color/white"
                 android:paddingBottom="4dp"
                 android:paddingTop="4dp">
 

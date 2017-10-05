@@ -1100,6 +1100,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
 
     override fun playClick(listSong: ArrayList<Audio>, position: Int){
         if (musicSrv != null){
+
             log.d("PLAYIN SONG ${musicSrv!!.isPng}")
 
             if(musicSrv!!.isPng){
@@ -1142,6 +1143,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicController.MediaPlayer
                     musicSrv!!.setList(listSong)
                     musicSrv!!.setSong(position)
                     musicSrv!!.playSong()
+                    if(tablayout.selectedTabPosition != Const.PROFIL_FR) profilBadge!!.visibility = View.VISIBLE
                     log.d("playbak is paused $playbackPaused")
 //                    if (playbackPaused){
 //                        setController()

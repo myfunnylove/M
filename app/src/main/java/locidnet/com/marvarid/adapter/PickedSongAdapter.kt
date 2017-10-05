@@ -237,6 +237,7 @@ class PickedSongAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arra
                     if (response!!.body()!!.res == "0")
                     {
                             val resObj = JSONObject(Http.getResponseData(response.body()!!.prms))
+
                             val audioId = resObj.optString("audio_id")
 
 

@@ -11,6 +11,7 @@
     <dimen name="tabSize">50dp</dimen>
     <dimen name="recHeight">125dp</dimen>
 
+    <dimen name="pushBtnHeight">35dp</dimen>
 
     <dimen name="staggered_child_small">120dp</dimen>
     <dimen name="staggered_child_medium">230dp</dimen>

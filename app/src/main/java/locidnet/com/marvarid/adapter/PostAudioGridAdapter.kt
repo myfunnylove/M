@@ -18,7 +18,9 @@ import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.Audio
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.JS
+import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.activity.MainActivity
@@ -49,13 +51,12 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
     }
 
     override fun onBindViewHolder(h: Holder?, i: Int) {
+
+
         val audio = audios.get(i)
 
 
-        log.d("audio $audio")
-
-
-
+        log.d("audio ${audios.get(i).middlePath}")
 
         val playIcon = VectorDrawableCompat.create(Base.get.resources,PLAY,h!!.play.context.theme)
 

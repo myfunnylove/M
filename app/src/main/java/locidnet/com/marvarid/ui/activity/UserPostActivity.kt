@@ -318,6 +318,11 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicController.MediaPlayerCon
 
 
                val manager = CustomManager(this, span)
+               post.audios.forEach {
+                   audio ->
+                   audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+
+               }
                adapter = PostAudioGridAdapter(this, post.audios,this,model)
                if (FeedFragment.cachedSongAdapters != null){
                    FeedFragment.cachedSongAdapters!!.put(0,adapter!!)

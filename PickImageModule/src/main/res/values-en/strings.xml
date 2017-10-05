@@ -10,7 +10,8 @@
   <string name="__picker_confirm_to_delete">Confirm to delete?</string>
   <string name="__picker_yes">Yes</string>
   <string name="__picker_cancel">Cancel</string>
-  <string name="__picker_all_image">ALL IMAGES</string>
+  <string name="__picker_all_image">All images</string>
   <string name="__picker_image_count">%1$d</string>
   <string name="__picker_over_max_count_tips">You can only select %1$d images</string>
+    <string name="__picker_all">All</string>
 </resources>

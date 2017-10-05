@@ -28,9 +28,7 @@ import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.Image
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.JavaCodes
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.resources.zoomimageview.ImageViewer
 
 
@@ -152,8 +150,9 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
         itemView.layoutParams = params
 
+        log.d("image after ${Functions.checkImageUrl(img.image640)!!.replace(Const.IMAGE.LOW, Prefs.Builder().imageRes())}")
         Glide.with(context)
-                .load(Functions.checkImageUrl(img.image640))
+                .load(Functions.checkImageUrl(img.image640)!!.replace(Const.IMAGE.LOW, Prefs.Builder().imageRes()))
 
                 .apply(options!!)
                 .into(h.photo)

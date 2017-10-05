@@ -15,7 +15,8 @@
         />
     <uses-permission android:name="android.permission.WAKE_LOCK"
         />
-
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"
+        />
     <application
         android:name=".base.Base"
         android:allowBackup="true"
@@ -206,5 +207,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
     </application>
 </manifest>

@@ -2,7 +2,7 @@
     <string name="app_name">Marvarid</string>
     <integer name="com_vk_sdk_AppId">6070474</integer>
     <string name="facebook_app_id">1922124241359724</string>
-
+    <string name="secretKey">BoXo</string>
     <string name="fb_login_protocol_scheme">fb1922124241359724</string>
     <string name="error_incorrect_phone">Неправильный номер телефона</string>
     <string name="error_incorrect_mail">Неправильная почта</string>
@@ -120,4 +120,9 @@
     <string name="message">Сообщение</string>
     <string name="feedBack">Обратная связь</string>
     <string name="thank_for_report">Спасибо данные отправлены</string>
+    <string name="lowImage">Низкая</string>
+    <string name="mediumImage">Нормальная</string>
+    <string name="highImage">Оригинал</string>
+    <string name="image_resolution">Разрешение изображения</string>
+    <string name="audio_resolution">Качество музыки</string>
 </resources>

@@ -201,6 +201,9 @@ class SettingsActivity : BaseActivity(), Viewer {
         /*PHONE AND MAIL*/
 
 
+
+
+
         /*GENDER*/
         val genderAdapter = ArrayAdapter<String>(this, R.layout.white_textview, sex)
         genderAdapter.setDropDownViewResource(R.layout.white_textview_adapter)
@@ -266,6 +269,9 @@ class SettingsActivity : BaseActivity(), Viewer {
             changePassDialog!!.show(supportFragmentManager,ChangePassFragment.TAG)
         }
 
+
+
+
         /*QUIT*/
         quitLay.setOnClickListener {
             val dialog = YesNoFragment.instance(
@@ -321,6 +327,34 @@ class SettingsActivity : BaseActivity(), Viewer {
             startActivity(Intent(this,ReportBugActivity::class.java))
             overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 
+        }
+
+        when(Prefs.Builder().imageRes()){
+            Const.IMAGE.LOW -> lowImage.isChecked = true
+            Const.IMAGE.MEDIUM -> mediumImage.isChecked = true
+            Const.IMAGE.ORIGINAL -> highImage.isChecked = true
+        }
+
+        when(Prefs.Builder().audioRes()){
+            Const.AUDIO.LOW -> lowAudio.isChecked = true
+            Const.AUDIO.MEDIUM -> mediumAudio.isChecked = true
+            Const.AUDIO.ORIGINAL -> highAudio.isChecked = true
+        }
+        imageResolution.setOnCheckedChangeListener { radioGroup, i ->
+
+            when(i){
+                R.id.lowImage -> Prefs.Builder().setImageRes(Const.IMAGE.LOW)
+                R.id.mediumImage -> Prefs.Builder().setImageRes(Const.IMAGE.MEDIUM)
+                R.id.highImage -> Prefs.Builder().setImageRes(Const.IMAGE.ORIGINAL)
+            }
+        }
+
+        audioResolution.setOnCheckedChangeListener { radioGroup, i ->
+            when(i){
+                R.id.lowAudio -> Prefs.Builder().setAudioRes(Const.AUDIO.LOW)
+                R.id.mediumAudio -> Prefs.Builder().setAudioRes(Const.AUDIO.MEDIUM)
+                R.id.highAudio -> Prefs.Builder().setAudioRes(Const.AUDIO.ORIGINAL)
+            }
         }
     }
 

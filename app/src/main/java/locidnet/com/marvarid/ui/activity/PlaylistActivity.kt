@@ -28,10 +28,7 @@ import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.JS
-import locidnet.com.marvarid.resources.utils.Toaster
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.fragment.FeedFragment
 import javax.inject.Inject
@@ -93,6 +90,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicController.MediaPlayerCont
         val features = Gson().fromJson(result,Features::class.java)
         features.audios.forEach {
             audio -> audio.isFeatured = 1
+            audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
         }
         adapter =  PostAudioGridAdapter(this,features.audios,this,model,true)
         try{

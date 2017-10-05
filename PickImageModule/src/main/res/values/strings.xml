@@ -13,4 +13,5 @@
   <string name="__picker_all_image">Все рисунки</string>
   <string name="__picker_image_count">%1$d</string>
   <string name="__picker_over_max_count_tips">You can only select %1$d images</string>
+    <string name="__picker_all">Все</string>
 </resources>

@@ -4,6 +4,8 @@
     <dimen name="headerTextSize">13sp</dimen>
     <dimen name="normalTextSize">12sp</dimen>
     <dimen name="hintTextSize">12sp</dimen>
+    <dimen name="pushBtnHeight">32dp</dimen>
+
     <dimen name="five">2dp</dimen>
     <dimen name="likeSize">24dp</dimen>
     <dimen name="avatar">38dp</dimen>

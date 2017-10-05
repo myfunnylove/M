@@ -38,27 +38,31 @@
             android:textColor="@color/material_grey_400"
              />
 
-        <TextView
-            android:id="@+id/username"
-            style="@style/HeaderText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/time"
-            />
+       <LinearLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:layout_below="@+id/time"
 
-        <TextView
-            android:id="@+id/body"
-            style="@style/NormalText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:layout_marginTop="3dp"
-            android:layout_toRightOf="@+id/username"
-            android:layout_below="@+id/time"
+           >
+           <TextView
+               android:id="@+id/username"
+               style="@style/HeaderText"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
 
-            />
+               />
+
+           <TextView
+               android:id="@+id/body"
+               style="@style/NormalText"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:ellipsize="end"
+               android:maxLines="1"
+               android:layout_marginLeft="3dp"
+               />
+       </LinearLayout>
 
 
     </RelativeLayout>

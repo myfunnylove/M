@@ -1,10 +1,13 @@
 package locidnet.com.marvarid.rest
 
-import android.util.Base64
 import org.json.JSONObject
 import locidnet.com.marvarid.pattern.cryptDecorator.AppCrypt
 import locidnet.com.marvarid.pattern.cryptDecorator.B64DecoderCryptDecorator
 import locidnet.com.marvarid.pattern.cryptDecorator.B64EncoderCryptDecorator
+import locidnet.com.marvarid.pattern.signatureDecorator.AppSign
+import locidnet.com.marvarid.pattern.signatureDecorator.MD5SignDecorator
+import locidnet.com.marvarid.pattern.signatureDecorator.UpperSignDecorator
+import locidnet.com.marvarid.resources.utils.log
 
 
 /**
@@ -72,11 +75,15 @@ object Http {
 //        val prm = MCrypt.bytesToHex(MCrypt().encrypt(obj.toString()))
 
         val jsObj = JSONObject()
-
-        jsObj.put(PRMS, B64EncoderCryptDecorator(AppCrypt(obj.toString())).getPrm())
+        val prm = B64EncoderCryptDecorator(AppCrypt(obj.toString())).getPrm()
+        jsObj.put(PRMS, prm)
         jsObj.put(CMD,cmd)
         jsObj.put("lang","ru")
-
+        jsObj.put("sign",UpperSignDecorator(
+                MD5SignDecorator(
+                        AppSign(prm))).getSignature())
+        jsObj.put("time","${System.currentTimeMillis()}")
+        log.d("ready data $jsObj")
         return jsObj.toString()
     }
 

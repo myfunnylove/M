@@ -53,7 +53,7 @@ public class MediaStoreHelper {
       List<PhotoDirectory> directories = new ArrayList<>();
       PhotoDirectory photoDirectoryAll = new PhotoDirectory();
       photoDirectoryAll.setName(context.getString(R.string.__picker_all_image));
-      photoDirectoryAll.setId("ALL");
+      photoDirectoryAll.setId(context.getString(R.string.__picker_all));
 
       while (data.moveToNext()) {
 

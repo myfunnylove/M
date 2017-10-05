@@ -37,7 +37,7 @@ interface API {
 
 
     @Multipart
-    @POST("image.php")
+    @POST("img_post.php")
     fun uploadPhotoDemo(
             @Header("User-Agent") userAgent: String?,
             @Header("Authorization") headerIdAndSess: String,
@@ -57,7 +57,7 @@ interface API {
             @Query("session") session :String): Call<ResponseData>
 
     @Multipart
-    @POST("image.php")
+    @POST("img_profile.php")
     fun uploadAvatar(
             @Header("User-Agent") userAgent: String?,
             @Header("Authorization") headerIdAndSess: String,

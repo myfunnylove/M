@@ -20,6 +20,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.nineoldandroids.animation.AnimatorSet
@@ -36,10 +37,7 @@ import locidnet.com.marvarid.musicplayer.MusicService
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.customviews.SGTextView
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.JS
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.*
 import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
 import locidnet.com.marvarid.ui.fragment.*
@@ -350,6 +348,14 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
 
                     val manager = CustomManager(ctx, span)
+
+                    post.audios.forEach {
+                        audio ->
+                        log.d("audio before ")
+                        audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+                        log.d("audio after ${audio.middlePath} ")
+
+                    }
                     val adapter = PostAudioGridAdapter(ctx!!, post.audios, object : MusicPlayerListener {
                         override fun playClick(listSong: ArrayList<Audio>, position: Int) {
                             try {
@@ -662,6 +668,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     .load(Functions.checkImageUrl(userInfo!!.user.info.photoOrg))
                     .apply(Functions.getGlideOpts())
                     .into(h.avatar)
+
             Glide.with(ctx)
                     .load(Functions.checkImageUrl(userInfo!!.user.info.photoOrg))
 

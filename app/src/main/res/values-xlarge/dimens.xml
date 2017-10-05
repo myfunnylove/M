@@ -9,6 +9,7 @@
     <dimen name="avatar">58dp</dimen>
     <dimen name="tabSize">62dp</dimen>
     <dimen name="recHeight">135dp</dimen>
+    <dimen name="pushBtnHeight">42dp</dimen>
 
     <dimen name="five">2dp</dimen>
     <dimen name="staggered_child_small">120dp</dimen>

@@ -79,4 +79,27 @@ object Prefs {
         }
     }
 
+    fun imageRes():String{
+
+        return prefs!!.getString("imageRes",Const.IMAGE.MEDIUM)
+
+    }
+
+    fun setImageRes(res:String){
+        val editor = prefs!!.edit()
+        editor.putString("imageRes", res)
+        editor.commit()
+    }
+    fun audioRes():String{
+
+        return prefs!!.getString("audioRes",Const.AUDIO.MEDIUM)
+
+    }
+
+    fun setAudioRes(res:String){
+        val editor = prefs!!.edit()
+        editor.putString("audioRes", res)
+        editor.commit()
+    }
+
 }

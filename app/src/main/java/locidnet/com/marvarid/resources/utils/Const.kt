@@ -385,4 +385,17 @@ object Const {
             Complaints(Base.get.resources.getString(R.string.complaintViolence),6),
             Complaints(Base.get.resources.getString(R.string.complaintSuicide),7)
     )
+
+
+    object IMAGE{
+        val LOW = "images/300/"
+        val MEDIUM = "images/640/"
+        val ORIGINAL  = "images/orig/"
+    }
+
+    object AUDIO{
+        val LOW = "audios/low/"
+        val MEDIUM = "audios/middle/"
+        val ORIGINAL  = "audios/high/"
+    }
 }
