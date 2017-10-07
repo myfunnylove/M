@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import locidnet.com.marvarid.R
+import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.adapter.ProfileFeedAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
@@ -58,6 +59,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         val SETTINGS     = Base.get.resources.getString(R.string.settings)
         val F_TYPE       = "fType"
         var FOLLOW_TYPE  = ""
+        var listSong:ArrayList<Audio>? = null
 
         fun newInstance(data: Bundle): MyProfileFragment {
 
@@ -71,7 +73,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         var FOLLOWERS                     = "0"
         var FOLLOWING                     = "0"
         var POST_COUNT                    = "0"
-
+        var cachedSongAdapters:HashMap<Int, PostAudioGridAdapter>? = null
+        var playedSongPosition  = -1
 
     }
 
@@ -334,7 +337,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
             if (postAdapter == null){
                 log.d("birinchi marta postla yuklandi size: ${postList.posts.size}")
-                if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
+                if(MyProfileFragment.cachedSongAdapters == null) MyProfileFragment.cachedSongAdapters = HashMap()
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,FOLLOW_TYPE)
@@ -351,7 +354,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
             else if ((MainActivity.end == 20 && MainActivity.start == 0) && postAdapter != null){
                 log.d("postni boshidan update qisin  F type -> $FOLLOW_TYPE")
-                if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
+                if(MyProfileFragment.cachedSongAdapters == null) MyProfileFragment.cachedSongAdapters = HashMap()
 
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
@@ -410,9 +413,9 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
 
 
-    override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-
-        connectAudioList!!.playClick(listSong,position)
+    override fun playClick(songs: ArrayList<Audio>, position: Int) {
+        listSong = songs
+        connectAudioList!!.playClick(songs,position)
     }
 
     fun createProgressForAvatar(status: Int) {
@@ -423,8 +426,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         try {
 //
 
-            if (FeedFragment.cachedSongAdapters != null) {
-                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+            if (MyProfileFragment.cachedSongAdapters != null) {
+                MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
             }
             log.d("play button pressed")
             if (MusicService.PLAY_STATUS == MusicService.PLAYING)
@@ -449,5 +452,30 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 //        MainActivity.musicSubject!!.unsubscribe(this)
         super.onDestroy()
     }
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden){
+            var key = -1
+            for (i in postAdapter!!.feeds.posts.indices) {
+                if (postAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
+                    key = i
+                }
+            }
+
+            if (key != -1){
+                try{
+                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+
+                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+                    playedSongPosition = key
+                }catch (e:Exception){
+
+                }
+            }
+
+        }
+
+    }
+
 
 }

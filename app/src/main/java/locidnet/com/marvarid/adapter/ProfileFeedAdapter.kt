@@ -358,36 +358,32 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     }
                     val adapter = PostAudioGridAdapter(ctx!!, post.audios, object : MusicPlayerListener {
                         override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-                            try {
                                 player!!.playClick(listSong, position)
 
-                                if (FeedFragment.playedSongPosition != -1) {
-                                    log.d("position $i => ${FeedFragment.playedSongPosition} $position")
+                                if (MyProfileFragment.playedSongPosition != -1) {
+                                    log.d("position $i => ${MyProfileFragment.playedSongPosition} $position")
 
-                                    FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
-
-                                    FeedFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+                                    try {
+                                        MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
+                                    }catch (e:Exception){}
+                                    MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
 
                                 } else {
-                                    log.d("position $i => ${FeedFragment.cachedSongAdapters!!.get(i)} $position")
-                                    FeedFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+                                    log.d("position $i => ${MyProfileFragment.cachedSongAdapters!!.get(i)} $position")
+                                    MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
 
                                 }
                                 notifyItemChanged(0)
-                                FeedFragment.playedSongPosition = i
-                            } catch (e: Exception) {
-                                log.d("null 1 ${e}")
-
-                            }
+                                MyProfileFragment.playedSongPosition = i
 
                         }
 
                     }, model!!)
-                    if (FeedFragment.cachedSongAdapters != null) {
-                        FeedFragment.cachedSongAdapters!!.put(i, adapter)
+                    if (MyProfileFragment.cachedSongAdapters != null) {
+                        MyProfileFragment.cachedSongAdapters!!.put(i, adapter)
                     } else {
-                        FeedFragment.cachedSongAdapters = HashMap()
-                        FeedFragment.cachedSongAdapters!!.put(i, adapter)
+                        MyProfileFragment.cachedSongAdapters = HashMap()
+                        MyProfileFragment.cachedSongAdapters!!.put(i, adapter)
                     }
 //            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
 //                override fun getSpanSize(i: Int): Int {

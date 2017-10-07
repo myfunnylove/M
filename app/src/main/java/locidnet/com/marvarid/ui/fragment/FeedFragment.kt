@@ -1,5 +1,6 @@
 package locidnet.com.marvarid.ui.fragment
 
+import android.arch.lifecycle.Lifecycle
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
@@ -8,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.MyFeedAdapter
 import locidnet.com.marvarid.adapter.ProfileFeedAdapter
@@ -23,6 +25,7 @@ import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
+import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
@@ -61,6 +64,8 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
         var cachedSongAdapters:HashMap<Int,PostAudioGridAdapter>? = null
         var playedSongPosition  = -1
+        var listSong:ArrayList<Audio>? = null
+
     }
 
     var connectActivity: GoNext? = null
@@ -285,9 +290,9 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
 
 
-    override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-
-        connectAudioList!!.playClick(listSong,position)
+    override fun playClick(songs: ArrayList<Audio>, position: Int) {
+        listSong = songs
+        connectAudioList!!.playClick(songs,position)
     }
 
 
@@ -326,6 +331,29 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
             }
     }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden){
+            var key = -1
+            for (i in feedAdapter!!.feeds.posts.indices) {
+                if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
+                    key = i
+                }
+            }
+
+            if (key != -1){
+                try{
+                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+                    playedSongPosition = key
+                }catch (e:Exception){}
+            }
+
+        }
+
+    }
+
 
     override fun onDestroy() {
         log.d("ondestroy feed")

@@ -343,28 +343,24 @@ class MyFeedAdapter(context: FragmentActivity,
                     }
                     val adapter = PostAudioGridAdapter(ctx, post.audios,object :MusicPlayerListener{
                         override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-                            try{
                                 player.playClick(listSong,position)
 
 
                                 if (FeedFragment.playedSongPosition != -1 ){
                                     log.d("position $i => ${FeedFragment.playedSongPosition} $position")
 
-                                    FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+                                    try{
+                                        FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+                                    }catch (e:Exception){}
 
                                     FeedFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
 
                                 }else{
-                                    log.d("position $i => ${FeedFragment.cachedSongAdapters!!.get(i)} $position")
                                     FeedFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
 
                                 }
 
                                 FeedFragment.playedSongPosition = i
-                            }catch (e :Exception){
-                                log.d("null 1 ${e}")
-
-                            }
 
                         }
 
