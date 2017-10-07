@@ -33,8 +33,8 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.connectors.ProfileMusicController
 import locidnet.com.marvarid.model.*
-import locidnet.com.marvarid.musicplayer.MusicService
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.customviews.SGTextView
 import locidnet.com.marvarid.resources.utils.*
@@ -359,31 +359,59 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     val adapter = PostAudioGridAdapter(ctx!!, post.audios, object : MusicPlayerListener {
                         override fun playClick(listSong: ArrayList<Audio>, position: Int) {
                                 player!!.playClick(listSong, position)
+                        if (myProfil.userId == userInfo!!.user.info.user_id) {
+                            if (MyProfileFragment.playedSongPosition != -1) {
+                                log.d("position $i => ${MyProfileFragment.playedSongPosition} $position")
 
-                                if (MyProfileFragment.playedSongPosition != -1) {
-                                    log.d("position $i => ${MyProfileFragment.playedSongPosition} $position")
-
-                                    try {
-                                        MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
-                                    }catch (e:Exception){}
-                                    MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
-                                } else {
-                                    log.d("position $i => ${MyProfileFragment.cachedSongAdapters!!.get(i)} $position")
-                                    MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
+                                try {
+                                    MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
+                                } catch (e: Exception) {
                                 }
-                                notifyItemChanged(0)
-                                MyProfileFragment.playedSongPosition = i
+                                MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
 
+                            } else {
+                                log.d("position $i => ${MyProfileFragment.cachedSongAdapters!!.get(i)} $position")
+                                MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+
+                            }
+                            notifyItemChanged(0)
+                            MyProfileFragment.playedSongPosition = i
+                        }else{
+                            if (ProfileFragment.playedSongPosition != -1) {
+                                log.d("position $i => ${ProfileFragment.playedSongPosition} $position")
+
+                                try {
+                                    ProfileFragment.cachedSongAdapters!!.get(ProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
+                                } catch (e: Exception) {
+                                }
+                                ProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+
+                            } else {
+                                log.d("position $i => ${ProfileFragment.cachedSongAdapters!!.get(i)} $position")
+                                ProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+
+                            }
+//                            notifyItemChanged(0)
+                            ProfileFragment.playedSongPosition = i
+                        }
                         }
 
                     }, model!!)
-                    if (MyProfileFragment.cachedSongAdapters != null) {
-                        MyProfileFragment.cachedSongAdapters!!.put(i, adapter)
-                    } else {
-                        MyProfileFragment.cachedSongAdapters = HashMap()
-                        MyProfileFragment.cachedSongAdapters!!.put(i, adapter)
+
+                    if (myProfil.userId == userInfo!!.user.info.user_id) {
+                        if (MyProfileFragment.cachedSongAdapters != null) {
+                            MyProfileFragment.cachedSongAdapters!!.put(i, adapter)
+                        } else {
+                            MyProfileFragment.cachedSongAdapters = HashMap()
+                            MyProfileFragment.cachedSongAdapters!!.put(i, adapter)
+                        }
+                    }else{
+                        if (ProfileFragment.cachedSongAdapters != null) {
+                            ProfileFragment.cachedSongAdapters!!.put(i, adapter)
+                        } else {
+                            ProfileFragment.cachedSongAdapters = HashMap()
+                            ProfileFragment.cachedSongAdapters!!.put(i, adapter)
+                        }
                     }
 //            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
 //                override fun getSpanSize(i: Int): Int {
@@ -626,8 +654,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                         ctx!!.startActivity(goCommentActivity)
                     }
                 }
-                log.d("play status $playStatus ${MusicService.PLAY_STATUS == MusicService.PLAYING}")
-                if (playStatus != -1 || MusicService.PLAY_STATUS == MusicService.PLAYING){
+                log.d("play status $playStatus ${PlayerService.PLAY_STATUS == PlayerService.PLAYING}")
+                if (playStatus != -1 || PlayerService.PLAY_STATUS == PlayerService.PLAYING){
                     h.play.visibility = View.VISIBLE
                     h.next.visibility = View.VISIBLE
                     h.play.setOnClickListener {
@@ -636,7 +664,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     h.next.setOnClickListener {
                         profileControl!!.pressNext()
                     }
-                    if (MusicService.PLAY_STATUS == MusicService.PLAYING) playStatus = R.drawable.notif_pause else playStatus = R.drawable.notif_play
+                    if (PlayerService.PLAY_STATUS == PlayerService.PLAYING) playStatus = R.drawable.notif_pause else playStatus = R.drawable.notif_play
                     val icon = VectorDrawableCompat.create(Base.get.resources, playStatus!!, Base.get.theme)
                     h.play.setImageDrawable(icon)
                 }

@@ -47,8 +47,8 @@ public class EmptyContainer {
 
         }
         public Builder initLayoutForActivity(AppCompatActivity activity){
-            textView = activity.findViewById(R.id.emptyText);
-            textView.setText(activity.getResources().getString(text));
+//            textView = activity.findViewById(R.id.emptyText);
+//            textView.setText(activity.getResources().getString(text));
             imageView = activity.findViewById(R.id.emptyIcon);
             imageView.setImageDrawable(VectorDrawableCompat.create(activity.getResources(),icon,activity.getTheme()));
             container = activity.findViewById(R.id.emptyContainer);
@@ -56,8 +56,8 @@ public class EmptyContainer {
         }
 
         public Builder initLayoutForFragment(View view){
-            textView = view.findViewById(R.id.emptyText);
-            textView.setText(view.getResources().getString(text));
+//            textView = view.findViewById(R.id.emptyText);
+//            textView.setText(view.getResources().getString(text));
             imageView = view.findViewById(R.id.emptyIcon);
             imageView.setImageDrawable(VectorDrawableCompat.create(view.getResources(),icon,null));
             container = view.findViewById(R.id.emptyContainer);

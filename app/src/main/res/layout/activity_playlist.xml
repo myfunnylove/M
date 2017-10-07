@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/white"
 >
 
     <android.support.design.widget.AppBarLayout
@@ -36,7 +37,7 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="70dp"
+            android:layout_above="@+id/playlistRoot"
             />
 
 
@@ -47,12 +48,63 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="120dp"
             android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:id="@+id/playlistRoot"
+            android:gravity="center"
+            android:background="@color/white"
+            android:paddingTop="8dp"
             >
+            <TextView
+                android:id="@+id/songTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                style="@style/HeaderText"
+                />
+            <TextView
+                android:id="@+id/artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
+                android:gravity="center"
+                style="@style/NormalText"
+                />
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:gravity="center"
+
+           >
+           <android.support.v7.widget.AppCompatImageView
+               android:id="@+id/prev"
+               android:layout_width="40dp"
+               android:layout_height="40dp"
+               android:background="@drawable/gray_when_select"
+
+               app:srcCompat="@drawable/notif_prev"
+               />
+           <android.support.v7.widget.AppCompatImageView
+               android:id="@+id/playPause"
+               android:layout_width="60dp"
+               android:layout_height="60dp"
+               android:layout_marginLeft="16dp"
+               android:layout_marginRight="16dp"
+               android:background="@drawable/gray_when_select"
+               app:srcCompat="@drawable/notif_play"
+               />
+           <android.support.v7.widget.AppCompatImageView
+               android:id="@+id/next"
+               android:layout_width="40dp"
+               android:layout_height="40dp"
+               android:background="@drawable/gray_when_select"
+
+               app:srcCompat="@drawable/notif_next"
+
+               />
+       </LinearLayout>
         </LinearLayout>
 
         <include layout="@layout/res_error_connection_lay"/>

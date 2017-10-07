@@ -15,8 +15,7 @@
         />
     <uses-permission android:name="android.permission.WAKE_LOCK"
         />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"
-        />
+
     <application
         android:name=".base.Base"
         android:allowBackup="true"
@@ -202,6 +201,21 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
+
+        <service
+            android:name=".player.PlayerService"
+            android:exported="true"
+            tools:ignore="ExportedService" >
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
         <service android:name=".ui.service.PushNotification">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

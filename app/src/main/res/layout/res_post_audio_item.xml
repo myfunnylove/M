@@ -19,6 +19,7 @@
         android:layout_height="@dimen/avatar"
         app:srcCompat="@drawable/play"
         android:layout_gravity="center_vertical"
+        android:background="@drawable/circle_button_when_select"
         />
 
     <LinearLayout
@@ -70,6 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:indeterminate="true"
         />
 
     </LinearLayout>

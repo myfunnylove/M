@@ -13,11 +13,11 @@ import com.bumptech.glide.Glide
 import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
-import locidnet.com.marvarid.musicplayer.MusicService
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.Audio
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.Prefs
@@ -72,12 +72,14 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
        }
         h.play.setImageDrawable(playIcon)
 
-        if (audio.middlePath == MusicService.PLAYING_SONG_URL && MusicService.PLAY_STATUS == MusicService.PLAYING){
+        if (audio.middlePath == PlayerService.PLAYING_SONG_URL && PlayerService.PLAY_STATUS == PlayerService.PLAYING){
             h.play.tag = PAUSE
             h.play.setImageDrawable(pauseIcon)
+
         }else{
             h.play.tag = PLAY
             h.play.setImageDrawable(playIcon)
+
         }
 
         h.addFavorite.setOnClickListener{
@@ -144,7 +146,7 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
 
         h.play.setOnClickListener {
 
-
+            h.progress.visibility = View.VISIBLE
             log.d("audio clicked => ${audios.get(i)}")
             player.playClick(audios,i)
         }

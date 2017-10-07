@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import locidnet.com.marvarid.R
+import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.adapter.ProfileFeedAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
@@ -18,6 +19,7 @@ import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
+import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
@@ -71,7 +73,8 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         var FOLLOWERS                     = "0"
         var FOLLOWING                     = "0"
         var POST_COUNT                    = "0"
-
+        var cachedSongAdapters:HashMap<Int, PostAudioGridAdapter>? = null
+        var playedSongPosition  = -1
 
 
     }
@@ -306,9 +309,9 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
             var photo ="http"
 
             if (postAdapter == null){
+                if(ProfileFragment.cachedSongAdapters == null) ProfileFragment.cachedSongAdapters = HashMap()
 
                 log.d("birinchi marta postla yuklandi size: ${postList.posts.size}")
-                if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true, FOLLOW_TYPE)
@@ -317,7 +320,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
             }
 
             else if ((FollowActivity.end == 20 && FollowActivity.start == 0) && postAdapter != null){
-                if(FeedFragment.cachedSongAdapters == null) FeedFragment.cachedSongAdapters = HashMap()
+                if(ProfileFragment.cachedSongAdapters == null) ProfileFragment.cachedSongAdapters = HashMap()
 
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
@@ -401,11 +404,15 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
     override fun playPause(id: String) {
         try {
 //
-            log.d("PATTERN OBSERVER CALLED OTHER PROFILE FRAGMENT")
 
-            if (FeedFragment.cachedSongAdapters != null) {
-                FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+            if (ProfileFragment.cachedSongAdapters != null) {
+                ProfileFragment.cachedSongAdapters!!.get(ProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
             }
+            log.d("play button pressed")
+            if (PlayerService.PLAY_STATUS == PlayerService.PLAYING)
+                postAdapter!!.updateMusicController(ProfileFeedAdapter.PAUSE)
+            else
+                postAdapter!!.updateMusicController(ProfileFeedAdapter.PLAY)
 
         } catch (e: Exception) {
 
@@ -418,7 +425,30 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
     }
 
-    
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && postAdapter != null){
+            var key = -1
+            for (i in postAdapter!!.feeds.posts.indices) {
+                if (postAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong || postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
+                    key = i
+                }
+            }
+
+            if (key != -1){
+                try{
+                    if (ProfileFragment.playedSongPosition != -1) ProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
+
+                    ProfileFragment.cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+                    ProfileFragment.playedSongPosition = key
+                }catch (e:Exception){
+
+                }
+            }
+
+        }
+
+    }
 
     override fun onLowMemory() {
         super.onLowMemory()

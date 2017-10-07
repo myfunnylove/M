@@ -323,6 +323,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
         try {
             log.d("PATTERN OBSERVER CALLED FEEDFRAGMENT")
 //
+
                 if (FeedFragment.cachedSongAdapters != null) {
                     FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
                 }
@@ -334,7 +335,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden){
+        if (!hidden && feedAdapter != null){
             var key = -1
             for (i in feedAdapter!!.feeds.posts.indices) {
                 if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
@@ -357,7 +358,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
     override fun onDestroy() {
         log.d("ondestroy feed")
-//        MainActivity.musicSubject!!.unsubscribe(this)
+        MainActivity.musicSubject!!.unsubscribe(this)
 
         super.onDestroy()
     }

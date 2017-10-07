@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.adapter.ProfileFeedAdapter
@@ -18,10 +19,10 @@ import locidnet.com.marvarid.connectors.GoNext
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.connectors.ProfileMusicController
 import locidnet.com.marvarid.model.*
-import locidnet.com.marvarid.musicplayer.MusicService
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
+import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Prefs
@@ -430,7 +431,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
             }
             log.d("play button pressed")
-            if (MusicService.PLAY_STATUS == MusicService.PLAYING)
+            if (PlayerService.PLAY_STATUS == PlayerService.PLAYING)
                 postAdapter!!.updateMusicController(ProfileFeedAdapter.PAUSE)
             else
                 postAdapter!!.updateMusicController(ProfileFeedAdapter.PLAY)
@@ -449,15 +450,15 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     override fun onDestroy() {
         log.d("ondestroy myprofil")
 
-//        MainActivity.musicSubject!!.unsubscribe(this)
+        MainActivity.musicSubject!!.unsubscribe(this)
         super.onDestroy()
     }
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden){
+        if (!hidden && postAdapter != null){
             var key = -1
             for (i in postAdapter!!.feeds.posts.indices) {
-                if (postAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
+                if (postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
                     key = i
                 }
             }
@@ -467,7 +468,10 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                     if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
 
                     cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+
                     playedSongPosition = key
+
+                    postAdapter!!.notifyItemChanged(0)
                 }catch (e:Exception){
 
                 }
