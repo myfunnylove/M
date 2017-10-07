@@ -88,7 +88,7 @@
                     android:textColor="@color/headerTextColor"
                     android:theme="@style/MyEditText"
                     android:textSize="@dimen/normalTextSize"
-
+                    android:layout_marginLeft="-4dp"
                     />
 
 
@@ -124,6 +124,7 @@
                     android:theme="@style/MyEditText"
                     android:textSize="@dimen/normalTextSize"
                     android:maxLength="20"
+                    android:layout_marginLeft="-4dp"
 
                     />
 
@@ -402,6 +403,7 @@
                     app:sb_shadow_effect="true"
                     app:sb_uncheck_color="@color/silver"
                     android:layout_marginTop="2dp"
+
                     />
             </LinearLayout>
             <View
@@ -439,11 +441,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:layout_marginLeft="-6dp"
                     >
                     <android.support.v7.widget.AppCompatRadioButton
                         android:id="@+id/lowImage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawablePadding="0dp"
                         android:text="@string/lowImage"
                         />
                     <android.support.v7.widget.AppCompatRadioButton
@@ -452,6 +456,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/mediumImage"
+                        android:drawablePadding="0dp"
+
                         android:checked="true"
                         />
                     <android.support.v7.widget.AppCompatRadioButton
@@ -459,6 +465,8 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawablePadding="0dp"
+
                         android:text="@string/highImage"
                         />
                 </RadioGroup>
@@ -499,11 +507,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:layout_marginLeft="-6dp"
+
                     >
                     <android.support.v7.widget.AppCompatRadioButton
                         android:id="@+id/lowAudio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawablePadding="0dp"
+
                         android:text="@string/lowImage"
                         />
                     <android.support.v7.widget.AppCompatRadioButton
@@ -512,6 +524,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/mediumImage"
+                        android:drawablePadding="0dp"
+
                         android:checked="true"
                         />
                     <android.support.v7.widget.AppCompatRadioButton
@@ -519,6 +533,8 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawablePadding="0dp"
+
                         android:text="@string/highImage"
 
                         />

@@ -1104,6 +1104,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
                     PlayerService.PLAYING_SONG_URL == listSong.get(position).middlePath) {
                 if(tablayout.selectedTabPosition != Const.PROFIL_FR) profilBadge!!.visibility = View.VISIBLE
+                showLoading()
 
                 if (musicSrv != null) musicSrv!!.pressPauseFromControl = -1
                 mediaController!!.getTransportControls().play()
@@ -1111,6 +1112,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING &&
                     PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
                 if(tablayout.selectedTabPosition != Const.PROFIL_FR) profilBadge!!.visibility = View.VISIBLE
+                showLoading()
 
                 if (musicSrv != null) musicSrv!!.pressPauseFromControl = -1
                 mediaController!!.getTransportControls().play()
@@ -1118,11 +1120,14 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
                     PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
                 if(tablayout.selectedTabPosition != Const.PROFIL_FR) profilBadge!!.visibility = View.VISIBLE
+                showLoading()
+
                 mediaController!!.getTransportControls().play()
                 if (musicSrv != null) musicSrv!!.pressPauseFromControl = -1
 
             }else {
                 if(tablayout.selectedTabPosition != Const.PROFIL_FR) profilBadge!!.visibility = View.VISIBLE
+                showLoading()
                 mediaController!!.getTransportControls().play()
                 if (musicSrv != null) musicSrv!!.pressPauseFromControl = -1
 
@@ -1146,6 +1151,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as PlayerService.PlayerServiceBinder
             musicSrv = binder.service
+            musicSrv!!.setActivity(this@MainActivity)
             musicBound = true
 
         }
@@ -1166,7 +1172,12 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
     }
 
-
+    fun hideLoading(){
+        loading.visibility = View.GONE
+    }
+    fun showLoading(){
+        loading.visibility = View.VISIBLE
+    }
 
     // get notification countq
     val notificationReceiver = object : BroadcastReceiver(){

@@ -360,12 +360,15 @@ class ProfileFeedAdapter(context: FragmentActivity,
                         override fun playClick(listSong: ArrayList<Audio>, position: Int) {
                                 player!!.playClick(listSong, position)
                         if (myProfil.userId == userInfo!!.user.info.user_id) {
+                            log.d("played song position ${MyProfileFragment.playedSongPosition != -1}")
                             if (MyProfileFragment.playedSongPosition != -1) {
                                 log.d("position $i => ${MyProfileFragment.playedSongPosition} $position")
 
                                 try {
                                     MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
                                 } catch (e: Exception) {
+                                    log.d("position $e")
+
                                 }
                                 MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
 

@@ -190,7 +190,6 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
         }, Context.BIND_AUTO_CREATE)
 
 
-
         playPause.setOnClickListener {
             if (songPosition != -1){
                 playClick(adapter.audios,songPosition)
@@ -215,8 +214,10 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
         }
         prev.setOnClickListener {
             if(musicSrv!!.currentAudio != null){
-                songTitle.text = musicSrv!!.currentAudio.title
-                artist.text = musicSrv!!.currentAudio.artist
+                songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
+
+                artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
+
             }
             if (mediaController != null) mediaController!!.transportControls.skipToPrevious()
 
@@ -224,8 +225,9 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
 
         next.setOnClickListener{
             if(musicSrv!!.currentAudio != null){
-                songTitle.text = musicSrv!!.currentAudio.title
-                artist.text = musicSrv!!.currentAudio.artist
+                songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
+
+                artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
             }
             if (mediaController != null) mediaController!!.transportControls.skipToNext()
 
@@ -274,8 +276,9 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
 
             }
 
-                songTitle.text = listSong.get(position).title
-                artist.text = listSong.get(position).artist
+            songTitle.text = if (listSong.get(position).title.isEmpty()) Base.get.resources.getString(R.string.unknown) else listSong.get(position).title
+
+            artist.text = if (listSong.get(position).artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else listSong.get(position).artist
 
         }else{
             Toast.makeText(Base.get,Base.get.resources.getString(R.string.error_something),Toast.LENGTH_SHORT).show()
@@ -314,12 +317,23 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
         Handler().postDelayed({
             if(musicSrv != null && musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING){
                 if(musicSrv!!.currentAudio != null){
-                    songTitle.text = musicSrv!!.currentAudio.title
-                    artist.text = musicSrv!!.currentAudio.artist
+                    songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
+
+                    artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
                 }
 
                 playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_pause,theme))
-            }else{
+            }
+            else if(musicSrv != null && musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED){
+                if(musicSrv!!.currentAudio != null){
+                    songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
+
+                    artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
+                }
+                playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_play,theme))
+
+            }
+            else{
                 playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_play,theme))
 
             }

@@ -81,6 +81,11 @@ public class PlayerService extends Service implements MusicControlObserver {
     private RemoteViews mContentViewBig, mContentViewSmall;
     private Audio currentAudio;
 
+    public void setActivity(MainActivity activity) {
+        this.activity = activity;
+    }
+
+    private MainActivity activity;
     private final MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder();
 
     private final PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder().setActions(
@@ -369,6 +374,8 @@ public class PlayerService extends Service implements MusicControlObserver {
             log.INSTANCE.d("onPlayerStateChanged + "+playWhenReady + " "+playbackState);
             if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
                 mediaSessionCallback.onSkipToNext();
+            }else if (playWhenReady && playbackState == ExoPlayer.STATE_READY){
+                activity.hideLoading();
             }
         }
 

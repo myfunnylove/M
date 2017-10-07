@@ -415,6 +415,23 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
 
     override fun playClick(songs: ArrayList<Audio>, position: Int) {
+        if (postAdapter != null){
+            var key = -1
+            for (i in postAdapter!!.feeds.posts.indices) {
+                if (postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
+                    key = i
+                }
+            }
+
+            if (key != -1){
+                try{
+                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+                    playedSongPosition = key
+                }catch (e:Exception){}
+            }
+
+        }
         listSong = songs
         connectAudioList!!.playClick(songs,position)
     }

@@ -146,7 +146,6 @@ class PostAudioGridAdapter(private val context:Context,list:ArrayList<Audio>,pri
 
         h.play.setOnClickListener {
 
-            h.progress.visibility = View.VISIBLE
             log.d("audio clicked => ${audios.get(i)}")
             player.playClick(audios,i)
         }

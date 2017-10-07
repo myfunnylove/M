@@ -291,7 +291,25 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
 
     override fun playClick(songs: ArrayList<Audio>, position: Int) {
+        if (feedAdapter != null){
+            var key = -1
+            for (i in feedAdapter!!.feeds.posts.indices) {
+                if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
+                    key = i
+                }
+            }
+
+            if (key != -1){
+                try{
+                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+                    playedSongPosition = key
+                }catch (e:Exception){}
+            }
+
+        }
         listSong = songs
+
         connectAudioList!!.playClick(songs,position)
     }
 
