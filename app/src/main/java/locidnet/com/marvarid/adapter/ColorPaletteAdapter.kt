@@ -27,13 +27,10 @@ class ColorPaletteAdapter(clicker:AdapterClicker, ctx:Context, map:HashMap<Int,C
         p0.view.setOnClickListener { adapterClicker.click(p1) }
     }
 
-    override fun getItemCount(): Int {
-        return colors.size
-    }
+    override fun getItemCount(): Int = colors.size
 
-    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): Adapter {
-        return Adapter(inflater.inflate(R.layout.res_color_palette_list_item,p0,false))
-    }
+    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): Adapter =
+            Adapter(inflater.inflate(R.layout.res_color_palette_list_item,p0,false))
 
     class Adapter(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

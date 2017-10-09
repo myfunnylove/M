@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:layout_gravity="bottom"
+    >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="8dp"
+        >
+
+        <TextView
+            android:id="@+id/songTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            style="@style/HeaderText"
+            />
+        <TextView
+            android:id="@+id/artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+
+            style="@style/NormalText"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+
+            <TextView
+                android:id="@+id/exo_position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingEnd="4dip"
+                android:paddingStart="4dip"
+                android:textColor="@color/normalTextColor"
+                android:textSize="@dimen/normalTextSize"
+                android:textStyle="bold"
+
+                />
+
+            <com.google.android.exoplayer2.ui.DefaultTimeBar
+                android:id="@+id/exo_progress"
+                android:layout_width="0dip"
+                android:layout_height="14dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                app:played_color="@color/colorAccent"
+                app:buffered_color="@color/material_red_200"
+                app:unplayed_color="@color/silver"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/exo_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingEnd="4dip"
+                android:paddingStart="4dip"
+                android:textColor="@color/normalTextColor"
+
+                android:textSize="@dimen/normalTextSize"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+
+            >
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/prev"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/gray_when_select"
+
+                app:srcCompat="@drawable/notif_prev" />
+
+            <RelativeLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/exo_play"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+
+                    android:background="@drawable/gray_when_select"
+                    app:srcCompat="@drawable/notif_play" />
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/exo_pause"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:visibility="gone"
+                    android:background="@drawable/gray_when_select"
+                    app:srcCompat="@drawable/notif_pause" />
+            </RelativeLayout>
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/next"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/gray_when_select"
+
+                app:srcCompat="@drawable/notif_next"
+
+                />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

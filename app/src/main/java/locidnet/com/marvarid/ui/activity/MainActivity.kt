@@ -9,7 +9,6 @@ import android.support.design.widget.TabLayout
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v7.widget.AppCompatImageView
@@ -58,19 +57,20 @@ import javax.inject.Inject
 class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
 
-    var profilFragment:       MyProfileFragment?    = null
-    var searchFragment:       SearchFragment?       = null
-    var notificationFragment: NotificationFragment? = null
-    var feedFragment:         FeedFragment?         = null
+    private var profilFragment:       MyProfileFragment?    = null
+    private var searchFragment:       SearchFragment?       = null
+    private var notificationFragment: NotificationFragment? = null
+    private var feedFragment:         FeedFragment?         = null
     var manager:              FragmentManager?      = null
-    var transaction:          FragmentTransaction?  = null
+    private var transaction:          FragmentTransaction?  = null
     var lastFragment:         Int                   = 0
 
-    var notifView:View? = null
+
+    private var notifView:View? = null
     var notifBadge:TextView? = null
     var notifIcon:AppCompatImageView? = null
 
-    var profilView:View? = null
+    private var profilView:View? = null
     var profilBadge:AppCompatImageView? = null
     var profilIcon:AppCompatImageView? = null
     var musicSrv:PlayerService? = null
@@ -104,7 +104,6 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         var endFeed        = 20
         var startNotif     = 0
         var endNotif       = 20
-        var getFirst       = 1
         var startFollowers = 0
         var endFollowers   = 20
         var startFollowing = 0
@@ -119,7 +118,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         val FIRST_TIME     = "0"
         val NEED_UPDATE    = "1"
         val AFTER_UPDATE   = "2"
-        val ONLY_USER_INFO = "3"
+        val ONLY_USER_INFO = "s3"
 
         var COMMENT_POST_UPDATE = 0
         var COMMENT_COUNT       = 0
@@ -130,10 +129,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
     }
 
-    override fun getLayout(): Int {
-
-        return R.layout.activity_main
-    }
+    override fun getLayout(): Int = R.layout.activity_main
 
     override fun initView() {
         Const.TAG = "MainActivity"
@@ -171,8 +167,11 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         bindService(Intent(this, PlayerService::class.java), object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 playerServiceBinder = service as PlayerService.PlayerServiceBinder
+                musicSrv = service.service
+                musicSrv!!.setActivity(this@MainActivity)
+                musicBound = true
                 try {
-                    mediaController = MediaControllerCompat(this@MainActivity, playerServiceBinder!!.getMediaSessionToken())
+                    mediaController = MediaControllerCompat(this@MainActivity, playerServiceBinder!!.mediaSessionToken)
                     mediaController!!.registerCallback(object : MediaControllerCompat.Callback() {
                         override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
                             log.d("MEDIACONTROLL $state")
@@ -191,12 +190,14 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
             override fun onServiceDisconnected(name: ComponentName) {
                 playerServiceBinder = null
                 mediaController = null
+                musicBound = false
             }
         }, Context.BIND_AUTO_CREATE)
 
     }
 
-    fun setPager(): Unit {
+    @SuppressLint("InflateParams")
+    fun setPager() {
         initFragments()
         setFragment(Const.FEED_FR)
 
@@ -228,7 +229,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
         tablayout.addTab(tablayout.newTab().setIcon(R.drawable.feed_select))
         tablayout.addTab(tablayout.newTab().setIcon(R.drawable.search))
-        var view: View = layoutInflater.inflate(R.layout.res_upload_view, null)
+        val view: View = layoutInflater.inflate(R.layout.res_upload_view, null)
 
         tablayout.addTab(tablayout.newTab().setCustomView(view))
         notifView  = layoutInflater.inflate(R.layout.res_main_tab_notif_view, null)
@@ -236,7 +237,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         notifIcon = notifView!!.findViewById<AppCompatImageView>(R.id.icon)
         if (Prefs.Builder().getNotifCount() > 0){
             notifBadge!!.visibility = View.VISIBLE
-            notifBadge!!.setText("${Prefs.Builder().getNotifCount()}")
+            notifBadge!!.text = "${Prefs.Builder().getNotifCount()}"
         }else{
             notifBadge!!.visibility = View.GONE
 
@@ -261,7 +262,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                 log.d("Unselected -> ${p0!!.position}")
                 if (p0.position == Const.NOTIF_FR) notifIcon!!.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notification,theme))
                 else if (p0.position == Const.PROFIL_FR) profilIcon!!.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.account,theme))
-                if (p0.position != Const.UPLOAD_FR && p0.position != Const.NOTIF_FR) p0.setIcon(Const.unselectedTabs.get(p0.position)!!)
+                if (p0.position != Const.UPLOAD_FR && p0.position != Const.NOTIF_FR) p0.setIcon(Const.unselectedTabs[p0.position]!!)
             }
 
             override fun onTabSelected(p0: TabLayout.Tab?) {
@@ -277,7 +278,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                             reqObj.put("user", user.userId)
 
 
-                            log.d("tab select send data for user info data: ${reqObj}")
+                            log.d("tab select send data for user info data: $reqObj")
                             presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
 
                         }
@@ -343,7 +344,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                         }
                         lastFragment = p0.position
 
-                        p0.setIcon(Const.selectedTabs.get(p0.position)!!)
+                        p0.setIcon(Const.selectedTabs[p0.position]!!)
                         setFragment(p0.position)
                     }
 
@@ -376,7 +377,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                         }
                         lastFragment = p0.position
 
-                        p0.setIcon(Const.selectedTabs.get(p0.position)!!)
+                        p0.setIcon(Const.selectedTabs[p0.position]!!)
                         setFragment(p0.position)
                     }
                     Const.UPLOAD_FR -> {
@@ -384,7 +385,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                     }
                     else -> {
                         lastFragment = p0.position
-                        p0.setIcon(Const.selectedTabs.get(p0.position)!!)
+                        p0.setIcon(Const.selectedTabs[p0.position]!!)
                         setFragment(p0.position)
                     }
                 }
@@ -551,7 +552,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                         reqObj.put("user", user.userId)
                         reqObj.put("start",   start)
                         reqObj.put("end",     end)
-                        log.d("send data for user info data: ${reqObj}")
+                        log.d("send data for user info data: $reqObj")
                         presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
 
 
@@ -598,9 +599,10 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
     }
 
 
-    fun initFragments() {
+    private fun initFragments() {
 
-        var bundle = Bundle()
+
+        val bundle = Bundle()
         bundle.putString("photo",     user.profilPhoto)
         bundle.putString("username",  user.userName)
         bundle.putString("firstName", user.first_name)
@@ -611,7 +613,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         profilFragment!!.setProfileMusicController(object : ProfileMusicController {
             override fun pressPlay() {
                 if (mediaController != null){
-                    mediaController!!.getTransportControls().play()
+                    mediaController!!.transportControls.play()
 
                 }
 
@@ -625,7 +627,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
             override fun pressNext() {
                 if (mediaController != null){
-                    mediaController!!.getTransportControls().skipToNext()
+                    mediaController!!.transportControls.skipToNext()
 
                 }
             }
@@ -724,7 +726,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        log.d("MainActivity -> OnactivityResult: req:${requestCode} res: ${resultCode} intent: ${data != null}")
+        log.d("MainActivity -> OnactivityResult: req:$requestCode res: $resultCode intent: ${data != null}")
         var photos: List<String>? = null
 
 
@@ -765,16 +767,15 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
                             }
                             if (photos != null) {
-                                log.d("picked photo ${photos.get(0)}")
+                                log.d("picked photo ${photos[0]}")
 
-                                photos.get(0).uploadAvatar()
+                                photos[0].uploadAvatar()
                             }
                         }
                         Const.GO_COMMENT_ACTIVITY -> {
                             if (feedFragment != null && !feedFragment!!.isHidden) {
                                 try {
 
-                                    //TODO COMMENTLANI SONINI OLIB KELISH
 //                               feedFragment!!.feedAdapter!!.feeds.posts.get(COMMENT_POST_UPDATE).comments = COMMENT_COUNT.toString()
 //                               feedFragment!!.feedAdapter!!.notifyItemChanged(COMMENT_POST_UPDATE)
                                 } catch (e: Exception) {
@@ -796,7 +797,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                     MY_POSTS_STATUS = NEED_UPDATE
 
                     val tab = tablayout.getTabAt(0)
-                    tab!!.setIcon(Const.selectedTabs.get(0)!!)
+                    tab!!.setIcon(Const.selectedTabs[0]!!)
                     tab.select()
 
                 }
@@ -810,7 +811,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
                 else -> {
 
-                    log.d("lastfragment -> ${lastFragment}")
+                    log.d("lastfragment -> $lastFragment")
                     log.d("profil followers count -> ${FFFFragment.followersCount}")
                     log.d("my post status $MY_POSTS_STATUS")
 
@@ -831,13 +832,13 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                         val reqObj = JS.get()
                         reqObj.put("user", user.userId)
 
-                        log.d("send data for user info data: ${reqObj}")
+                        log.d("send data for user info data: $reqObj")
                         presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
 
 
                     }
                     val tab = tablayout.getTabAt(lastFragment)
-                    tab!!.setIcon(Const.selectedTabs.get(lastFragment)!!)
+                    tab!!.setIcon(Const.selectedTabs[lastFragment]!!)
                     tab.select()
 
                     setFragment(lastFragment)
@@ -846,7 +847,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
             }
         }
     }
-    var doubleBackToExitPressedOnce = false
+    private var doubleBackToExitPressedOnce = false
     override fun onBackPressed() {
 
         log.d("onbackpressed")
@@ -1067,7 +1068,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
     }
 
 
-    fun startIntroAnimation(){
+    private fun startIntroAnimation(){
 
         val actionbarsize = Functions.DPtoPX(56f,Base.get)
         tablayout.translationY = actionbarsize.toFloat()
@@ -1097,38 +1098,38 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         if (mediaController != null) {
 
             if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING &&
-                    PlayerService.PLAYING_SONG_URL == listSong.get(position).middlePath) {
+                    PlayerService.PLAYING_SONG_URL == listSong[position].middlePath) {
                 if (musicSrv != null) musicSrv!!.pressPauseFromControl = 1
-                mediaController!!.getTransportControls().pause()
+                mediaController!!.transportControls.pause()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
-                    PlayerService.PLAYING_SONG_URL == listSong.get(position).middlePath) {
+                    PlayerService.PLAYING_SONG_URL == listSong[position].middlePath) {
                 if(tablayout.selectedTabPosition != Const.PROFIL_FR) profilBadge!!.visibility = View.VISIBLE
                 showLoading()
 
                 if (musicSrv != null) musicSrv!!.pressPauseFromControl = -1
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING &&
-                    PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
+                    PlayerService.PLAYING_SONG_URL != listSong[position].middlePath) {
                 if(tablayout.selectedTabPosition != Const.PROFIL_FR) profilBadge!!.visibility = View.VISIBLE
                 showLoading()
 
                 if (musicSrv != null) musicSrv!!.pressPauseFromControl = -1
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
-                    PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
+                    PlayerService.PLAYING_SONG_URL != listSong[position].middlePath) {
                 if(tablayout.selectedTabPosition != Const.PROFIL_FR) profilBadge!!.visibility = View.VISIBLE
                 showLoading()
 
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
                 if (musicSrv != null) musicSrv!!.pressPauseFromControl = -1
 
             }else {
                 if(tablayout.selectedTabPosition != Const.PROFIL_FR) profilBadge!!.visibility = View.VISIBLE
                 showLoading()
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
                 if (musicSrv != null) musicSrv!!.pressPauseFromControl = -1
 
             }
@@ -1143,39 +1144,15 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
 
 
-    private var playIntent: Intent? = null
     private var musicBound = false
 
-    val musicConnection = object : ServiceConnection {
 
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder = service as PlayerService.PlayerServiceBinder
-            musicSrv = binder.service
-            musicSrv!!.setActivity(this@MainActivity)
-            musicBound = true
 
-        }
 
-        override fun onServiceDisconnected(name: ComponentName) {
-            musicBound = false
-        }
-    }
-    override fun onStart() {
-        super.onStart()
-        if (playIntent == null) {
-
-            playIntent = Intent(this, PlayerService::class.java)
-            this.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
-            this.startService(playIntent)
-
-        }
-
-    }
-
-    fun hideLoading(){
+    override fun hideLoading(){
         loading.visibility = View.GONE
     }
-    fun showLoading(){
+    override fun showLoading(){
         loading.visibility = View.VISIBLE
     }
 
@@ -1197,43 +1174,40 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
 
     // send data for push
-    private fun sendDataForPush() {
-        try {
+    private fun sendDataForPush() = try {
 
-            var token = Prefs.Builder().getTokenId()
-            log.d("Firebase da token bormi -> " + if (token.isEmpty()) "yo'q" else "bor -> $token ")
-
-
-            if (token.isEmpty()) {
-                log.d("Firebase da token yo'q -> ")
-
-                token = FirebaseInstanceId.getInstance().token!!
-                Prefs.Builder().setTokenId(token)
-                log.d("Firebase da token olindi -> " + Prefs.Builder().getTokenId())
-
-                //                Http.sendDataForPush();
+        var token = Prefs.Builder().getTokenId()
+        log.d("Firebase da token bormi -> " + if (token.isEmpty()) "yo'q" else "bor -> $token ")
 
 
-            }
+        if (token.isEmpty()) {
+            log.d("Firebase da token yo'q -> ")
 
-            val tokenJs = JS.get()
+            token = FirebaseInstanceId.getInstance().token!!
+            Prefs.Builder().setTokenId(token)
+            log.d("Firebase da token olindi -> " + Prefs.Builder().getTokenId())
 
-            tokenJs.put("token",Prefs.Builder().getTokenId())
-            tokenJs.put("device","android")
-            tokenJs.put("app","marvarid")
-            try{
-                tokenJs.put("version",BuildConfig.VERSION_NAME)
-            }catch (e:Exception){
-                tokenJs.put("version","none")
-            }
-
-            presenter.requestAndResponse(tokenJs,Http.CMDS.SET_TOKEN_DATA)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            log.d("Firebase da tokenni olishda exception-> " + e.toString())
+            //                Http.sendDataForPush();
 
 
         }
+
+        val tokenJs = JS.get()
+
+        tokenJs.put("token",Prefs.Builder().getTokenId())
+        tokenJs.put("device","android")
+        tokenJs.put("app","marvarid")
+        try{
+            tokenJs.put("version",BuildConfig.VERSION_NAME)
+        }catch (e:Exception){
+            tokenJs.put("version","none")
+        }
+
+        presenter.requestAndResponse(tokenJs,Http.CMDS.SET_TOKEN_DATA)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        log.d("Firebase da tokenni olishda exception-> " + e.toString())
+
 
     }
 

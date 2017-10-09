@@ -1,9 +1,6 @@
 package locidnet.com.marvarid.ui.activity
 
 import android.content.Intent
-import android.graphics.Color
-import android.os.Handler
-import android.support.graphics.drawable.VectorDrawableCompat
 import android.view.View
 import android.widget.Toast
 import locidnet.com.marvarid.R
@@ -22,8 +19,6 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 class SignActivity : BaseActivity() ,Viewer{

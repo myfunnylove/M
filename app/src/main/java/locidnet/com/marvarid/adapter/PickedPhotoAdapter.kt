@@ -25,7 +25,6 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.resources.customviews.imageuploadmask.ImageUploadMask
 import locidnet.com.marvarid.resources.customviews.imageuploadmask.ShapeMask
 import locidnet.com.marvarid.resources.utils.CustomAnim
-import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.publish.PublishUniversalActivity
 import retrofit2.Call
@@ -34,9 +33,7 @@ import retrofit2.Response
 import java.io.File
 import kotlin.properties.Delegates
 
-/**
- * Created by Michaelan on 5/30/2017.
- */
+
 class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:ArrayList<PhotoUpload>) : RecyclerView.Adapter<PickedPhotoAdapter.Holder>() {
 
 
@@ -44,24 +41,18 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
     var clicker:AdapterClicker = adapterClicker
     var inflater:LayoutInflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     var list = listPhoto
-    var isFirst = true
-    object Photo{
-        val UPLOAD = 0
-        val UPDATE = 1
-    }
+    private var isFirst = true
+
     val user = Base.get.prefs.getUser()
-    val name = RequestBody.create(MediaType.parse("text/plain"),"test_image")
+    val name = RequestBody.create(MediaType.parse("text/plain"),"test_image")!!
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    override fun getItemCount(): Int = list.size
 
-    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): Holder {
-       return Holder(inflater.inflate(R.layout.res_photo_item,p0,false))
-    }
+    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): Holder =
+            Holder(inflater.inflate(R.layout.res_photo_item,p0,false))
 
     override fun onBindViewHolder(h: Holder?, p1: Int) {
-       val photo:PhotoUpload = list.get(p1)
+       val photo:PhotoUpload = list[p1]
 
         log.d("$photo")
 
@@ -73,8 +64,8 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
 
 
                 if (p1 != -1){
-                    list.get(p1).progress = percentage
-                    h.pr!!.setProgress(list.get(p1).progress.toFloat())
+                    list[p1].progress = percentage
+                    h.pr!!.setProgress(list[p1].progress.toFloat())
                 }
 
             }
@@ -164,10 +155,10 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
         notifyItemInserted(list.size)
     }
     class Holder(itemView:View) : RecyclerView.ViewHolder(itemView) {
-        var image:AppCompatImageView by Delegates.notNull<AppCompatImageView>()
-        var container:ViewGroup by Delegates.notNull<ViewGroup>()
-        var errorImg:AppCompatImageView by Delegates.notNull<AppCompatImageView>()
-        var remove by Delegates.notNull<AppCompatImageView>()
+        var image     by Delegates.notNull<AppCompatImageView>()
+        var container by Delegates.notNull<ViewGroup>()
+        var errorImg  by Delegates.notNull<AppCompatImageView>()
+        var remove    by Delegates.notNull<AppCompatImageView>()
 
         var pr:ImageUploadMask? = null
         init {
@@ -212,12 +203,12 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
     fun setProgress(position:Int,model: PhotoUpload){
         log.d("update holder: $position $model")
         isFirst = false
-        list.set(position,model)
+        list[position] = model
 
         notifyItemChanged(position)
     }
 
-    fun Call<ResponseData>.uploadAudioByUri (id:Int, path:String){
+    private fun Call<ResponseData>.uploadAudioByUri (id:Int, path:String){
 
 
 
@@ -250,7 +241,7 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
 
                             PublishUniversalActivity.loadedImagesIds.add(audioId)
 
-                            val song = list.get(id)
+                            val song = list[id]
                             song.progress = 100
                             song.onFail = 0
                             song.loaded = true

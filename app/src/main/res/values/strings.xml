@@ -125,4 +125,5 @@
     <string name="highImage">Оригинал</string>
     <string name="image_resolution">Разрешение изображения</string>
     <string name="audio_resolution">Качество музыки</string>
+    <string name="error_cannot_remove">Вы не можете удалить из плейлиста во время воспроизведения</string>
 </resources>

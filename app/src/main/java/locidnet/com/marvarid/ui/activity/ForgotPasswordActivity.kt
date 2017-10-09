@@ -27,9 +27,9 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
 
 
     var signMode   = -1
-    val PHONE_MODE = 77
-    val MAIL_MODE  = 129
-    val SMS_MODE   = 3
+    private val PHONE_MODE = 77
+    private val MAIL_MODE  = 129
+    private val SMS_MODE   = 3
 
     @Inject
     lateinit var presenter: Presenter

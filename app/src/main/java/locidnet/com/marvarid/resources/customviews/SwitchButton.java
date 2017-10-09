@@ -31,7 +31,7 @@ public class SwitchButton extends View implements Checkable {
      * 动画状态：
      * 1.静止
      * 2.进入拖动
-     * 3.处于拖动
+     * s3.处于拖动
      * 4.拖动-复位
      * 5.拖动-切换
      * 6.点击切换

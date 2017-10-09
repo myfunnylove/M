@@ -5,12 +5,9 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import locidnet.com.marvarid.resources.utils.bindView
 import kotlin.properties.Delegates
 
-/**
- * Created by Michaelan on 5/18/2017.
- */
+
 abstract class BaseFragment : Fragment(){
 
     var rootView by Delegates.notNull<View>()
@@ -27,6 +24,6 @@ abstract class BaseFragment : Fragment(){
 
     abstract fun getFragmentView():Int
 
-    abstract fun init():Unit
+    abstract fun init()
 
 }

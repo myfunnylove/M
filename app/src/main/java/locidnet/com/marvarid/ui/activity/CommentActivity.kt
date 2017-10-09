@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -19,17 +18,14 @@ import locidnet.com.marvarid.base.BaseActivity
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.mvp.Viewer
 import kotlinx.android.synthetic.main.activity_comment.*
-import org.json.JSONObject
 import locidnet.com.marvarid.adapter.CommentAdapter
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.Comments
 import locidnet.com.marvarid.mvp.Presenter
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.AbsListView
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
-import android.widget.Toast
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.di.DaggerMVPComponent
@@ -44,9 +40,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-/**
- * Created by Michaelan on 7/10/2017.
- */
+
 class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
 
@@ -62,7 +56,7 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
     var manager:LinearLayoutManager? = null
  //   var commentList:   ArrayList<Comment>? = null
     var commentAdapter:CommentAdapter?     = null
-    var drawingStartLocation               = 0
+    private var drawingStartLocation               = 0
     companion object {
 
         var start = 0
@@ -165,32 +159,29 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
             }
 
         })
-        commentText.setOnEditorActionListener(object : OnEditorActionListener {
-            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    if(commentText.text.isNotEmpty()){
+        commentText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                if(commentText.text.isNotEmpty()){
 
-                        errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                            override fun connected() {
-                                send()
+                    errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                        override fun connected() {
+                            send()
 
-                            }
+                        }
 
-                            override fun disconnected() {
-                            }
+                        override fun disconnected() {
+                        }
 
-                        })
+                    })
 
-                    }else{
-                        Toaster.info(resources.getString(R.string.error_empty_comment))
+                }else{
+                    Toaster.info(resources.getString(R.string.error_empty_comment))
 
-                    }
-                    return true
                 }
-
-                return false
+                return@OnEditorActionListener true
             }
 
+            false
         })
         manager = LinearLayoutManager(this)
 
@@ -262,7 +253,7 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
                         val obj =  JS.get()
                         obj.put("post_id",postId)
                         start = commentAdapter!!.comments.size
-                        obj.put("comm",    commentAdapter!!.comments.get(commentAdapter!!.comments.size - 1).commentId)
+                        obj.put("comm",    commentAdapter!!.comments[commentAdapter!!.comments.size - 1].commentId)
                         obj.put("order",  "ASC")
 
                         presenter.requestAndResponse(obj, Http.CMDS.GET_LAST_COMMENTS)

@@ -56,7 +56,7 @@ class SimpleoAuth private constructor(builder: Builder):SocialNetwork {
 
 
         } else {
-            val pattern  =Pattern.compile(REGEXP.loginAndPasswordRegExp)
+             val pattern  =Pattern.compile(REGEXP.loginAndPasswordRegExp)
 
             if (pattern.matcher(username).matches() && pattern.matcher(password).matches())
             authorizeConnector.onSuccess(username,password)

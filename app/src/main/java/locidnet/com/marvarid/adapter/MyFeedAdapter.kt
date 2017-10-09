@@ -1,5 +1,6 @@
 package locidnet.com.marvarid.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.support.graphics.drawable.VectorDrawableCompat
@@ -12,9 +13,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.OvershootInterpolator
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
@@ -50,54 +49,34 @@ class MyFeedAdapter(context: FragmentActivity,
 
                     adapterClicker: AdapterClicker,
                     musicPlayerListener: MusicPlayerListener,
-                    profilOrFeed:Boolean = false,
-                    followType:String = "",
-                    val postUser: PostUser? = null,
-                    closedProfil:Boolean = false
+                    profilOrFeed:Boolean = false
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var ctx                   = context
     var feeds                 = feedsMap
     var inflater              = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     var clicker               = adapterClicker
-    val like                  = R.drawable.like_select
-    val unLike                = R.drawable.like
-    var profile               = Base.get.prefs.getUser()
+    private val like                  = R.drawable.like_select
+    private val unLike                = R.drawable.like
     val model                 = Model()
-    val pOrF                  = profilOrFeed
-    var FOLLOW_TYPE           = followType
+    private val pOrF                  = profilOrFeed
     var user                  = Base.get.prefs.getUser()
-    var lastAnimationPosition = -1
-    var itemsCount            = 0
+    private var lastAnimationPosition = -1
     var activity:FragmentActivity?    = context
-    var disableAnimation      = false
-    var cachedLists           = HashMap<String,String>()
+    private var disableAnimation      = false
     var changeId              = -1
     val player                = musicPlayerListener
-    var closedProfile         = closedProfil
-    val TYPE_POST             = 0
-    val TYPE_AD               = 1
+    private val TYPE_POST             = 0
+    private val TYPE_AD               = 1
 
     companion object {
 
         val ANIMATED_ITEM_COUNT        = 0
-        val HEADER                     = 1
-        val BODY                       = 2
-        val ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button"
-        val ACTION_LIKE_IMAGE_CLICKED  = "action_like_image_button"
-        val VIEW_TYPE_DEFAULT          = 1
-        val VIEW_TYPE_LOADER           = 2
-        val ACCELERATE_INTERPOLATOR    = AccelerateInterpolator()
-        val OVERSHOOT_INTERPOLATOR     = OvershootInterpolator(4f)
         val likeAnimations             = HashMap<RecyclerView.ViewHolder,AnimatorSet>()
-        var avatarUpdated              = -1
-        var SHOW_PROGRESS              = 1
-        var HIDE_PROGRESS              = 0
-        var CANCEL_PROGRESS            = 2
     }
 
 
-    fun View.runEnterAnimation(position:Int){
+    private fun View.runEnterAnimation(position:Int){
         if(disableAnimation || position < lastAnimationPosition){
             return
         }
@@ -119,24 +98,18 @@ class MyFeedAdapter(context: FragmentActivity,
 
     override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun getItemViewType(position: Int): Int {
+    override fun getItemViewType(position: Int): Int =
+            if(feeds.posts[position].type == "ad") TYPE_AD else TYPE_POST
 
-        return if(feeds.posts.get(position).type == "ad") TYPE_AD else TYPE_POST
-    }
+    override fun onCreateViewHolder(p0: ViewGroup?, viewType: Int): RecyclerView.ViewHolder =
+            when (viewType) {
+                TYPE_POST -> Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
+                TYPE_AD -> Holder(inflater.inflate(R.layout.res_feed_block_ad, p0!!, false))
+                else -> Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
+            }
 
-    override fun onCreateViewHolder(p0: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-
-            if (viewType == TYPE_POST)
-
-            return  Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
-            else if(viewType == TYPE_AD)
-                return  Holder(inflater.inflate(R.layout.res_feed_block_ad, p0!!, false))
-             else
-                return  Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
-
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, i: Int) {
+    @SuppressLint("SimpleDateFormat")
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, @SuppressLint("RecyclerView") i: Int) {
 
         val type = getItemViewType(i)
 
@@ -144,7 +117,7 @@ class MyFeedAdapter(context: FragmentActivity,
             holder!!.itemView.runEnterAnimation(i)
 
             val h = holder as Holder
-            val post = feeds.posts.get(i)
+            val post = feeds.posts[i]
             log.e("=============== posts count => ${feeds.posts.size}")
 
             log.wtf("=============== start => ")
@@ -161,11 +134,10 @@ class MyFeedAdapter(context: FragmentActivity,
             log.wtf("=============== end ; ")
 
 
-            val icon: VectorDrawableCompat?
-            if (post.like == "0")
-                icon = VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme)
+            val icon = if (post.like == "0")
+                VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme)
             else
-                icon = VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme)
+                VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme)
 
             h.likeIcon.setImageDrawable(icon)
 
@@ -174,7 +146,7 @@ class MyFeedAdapter(context: FragmentActivity,
 
 
             if (likeAnimations.containsKey(h)){
-                likeAnimations.get(h)!!.cancel()
+                likeAnimations[h]!!.cancel()
             }
 
             likeAnimations.remove(h)
@@ -206,9 +178,9 @@ class MyFeedAdapter(context: FragmentActivity,
                                     try{
                                         log.d("result change quote success $response")
                                         log.d("result change quote success ${response!!.body()}")
-                                        log.d("result after changed ${feeds.posts.get(changeId)}")
+                                        log.d("result after changed ${feeds.posts[changeId]}")
                                         if (response.body()!!.res == "0"){
-                                            feeds.posts.get(changeId).quote.text = h.quoteEdit.text.toString()
+                                            feeds.posts[changeId].quote.text = h.quoteEdit.text.toString()
                                             val newChange = changeId
                                             changeId = -1
                                             notifyItemChanged(newChange)
@@ -278,7 +250,7 @@ class MyFeedAdapter(context: FragmentActivity,
                 }
                 try {
 
-                    h.quote.setTextColor(ContextCompat.getColor(Base.get, Const.colorPalette.get(post.quote.textColor.toInt())!!.drawable))
+                    h.quote.setTextColor(ContextCompat.getColor(Base.get, Const.colorPalette[post.quote.textColor.toInt()]!!.drawable))
 
                 } catch (e: Exception) {
 
@@ -291,16 +263,14 @@ class MyFeedAdapter(context: FragmentActivity,
 
                     h.images.visibility = View.VISIBLE
 
-                    var span = (post.images.size - 1)
-
-                    if ((post.images.size > 1)) {
+                    val span: Int = if ((post.images.size > 1)) {
                         if (post.images.size == 2) {
-                            span = 2
+                            2
                         } else {
-                            span = (post.images.size - 1)
+                            (post.images.size - 1)
                         }
                     } else {
-                        span = 1
+                        1
                     }
 
                     val manager = CustomManager(ctx, span)
@@ -308,12 +278,12 @@ class MyFeedAdapter(context: FragmentActivity,
 
                     manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(i: Int): Int {
-                            if (i == 0) {
+                            return if (i == 0) {
                                 if (post.images.size == 2)
-                                    return 1
+                                    1
                                 else
-                                    return (manager.spanCount)
-                            } else return 1
+                                    (manager.spanCount)
+                            } else 1
                         }
 
                     }
@@ -350,13 +320,13 @@ class MyFeedAdapter(context: FragmentActivity,
                                     log.d("position $i => ${FeedFragment.playedSongPosition} $position")
 
                                     try{
-                                        FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+                                        FeedFragment.cachedSongAdapters!![FeedFragment.playedSongPosition]!!.notifyDataSetChanged()
                                     }catch (e:Exception){}
 
-                                    FeedFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+                                    FeedFragment.cachedSongAdapters!![i]!!.notifyDataSetChanged()
 
                                 }else{
-                                    FeedFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+                                    FeedFragment.cachedSongAdapters!![i]!!.notifyDataSetChanged()
 
                                 }
 
@@ -393,15 +363,15 @@ class MyFeedAdapter(context: FragmentActivity,
 
 
                 h.likeLay.setOnClickListener {
-                    if (feeds.posts.get(i).like == "0") {
+                    if (feeds.posts[i].like == "0") {
 
-                        feeds.posts.get(i).like = "1"
-                        feeds.posts.get(i).likes = (feeds.posts.get(i).likes.toInt() + 1).toString()
+                        feeds.posts[i].like = "1"
+                        feeds.posts[i].likes = (feeds.posts[i].likes.toInt() + 1).toString()
                         h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme))
                     } else {
-                        feeds.posts.get(i).likes = (feeds.posts.get(i).likes.toInt() - 1).toString()
+                        feeds.posts[i].likes = (feeds.posts[i].likes.toInt() - 1).toString()
 
-                        feeds.posts.get(i).like = "0"
+                        feeds.posts[i].like = "0"
                         h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme))
 
                     }
@@ -589,14 +559,11 @@ class MyFeedAdapter(context: FragmentActivity,
     }
 
 
-    fun swapPhotoProgress(status:Int){
-        avatarUpdated = status
-        notifyItemChanged(0)
-    }
+
 
     fun swapFirstItem(postList: PostList){
         disableAnimation = false
-        feeds.posts.add(0,postList.posts.get(0))
+        feeds.posts.add(0, postList.posts[0])
         notifyDataSetChanged()
     }
     fun swapLast20Item(postList: PostList){
@@ -648,22 +615,8 @@ class MyFeedAdapter(context: FragmentActivity,
 
 
 
-    fun updateProfilPhoto(path: String) {
-        postUser!!.photo = Http.BASE_URL + path
-        feeds.posts.forEach { post ->
-
-            post.user = postUser
-
-
-        }
-        avatarUpdated = HIDE_PROGRESS
-        notifyDataSetChanged()
-
-
-    }
-
-    fun Holder.updateLikesCounter(animated:Boolean){
-        val currentLikesCount  = feeds.posts.get(this.adapterPosition).likes.toInt()
+    private fun Holder.updateLikesCounter(animated:Boolean){
+        val currentLikesCount  = feeds.posts[this.adapterPosition].likes.toInt()
         if (animated){
             this.likeCount.setText(currentLikesCount.toString())
         }else{

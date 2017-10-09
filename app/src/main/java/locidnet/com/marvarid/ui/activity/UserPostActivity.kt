@@ -4,7 +4,6 @@ import android.content.*
 import android.os.IBinder
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v7.widget.AppCompatImageButton
@@ -19,7 +18,7 @@ import com.google.gson.Gson
 import com.nineoldandroids.animation.AnimatorSet
 import kotlinx.android.synthetic.main.activity_post.*
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.adapter.MyFeedAdapter
+import locidnet.com.marvarid.R.string.post
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.adapter.PostPhotoGridAdapter
 import locidnet.com.marvarid.base.Base
@@ -41,7 +40,6 @@ import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.fragment.FeedFragment
-import org.json.JSONObject
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
 import retrofit2.Response
@@ -51,9 +49,7 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
-/**
- * Created by myfunnylove on 24.09.17.
- */
+
 class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicControlObserver {
 
 
@@ -67,24 +63,19 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
     lateinit var errorConn: ErrorConnection
     lateinit var emptyContainer:EmptyContainer
 
-    lateinit var postContainer:ViewGroup
+    private lateinit var postContainer:ViewGroup
     var postId = -1
 
     lateinit var user:User
 
     val model                 = Model()
 
-    //service
-    private var playIntent: Intent? = null
     //binding
     private var musicBound = false
     var musicSrv:PlayerService? = null
     internal var playerServiceBinder: PlayerService.PlayerServiceBinder? = null
     internal var mediaController: MediaControllerCompat? = null
 
-    //activity and playback pause flags
-    private var paused = false
-    var playbackPaused = false
 
     /*
     *
@@ -92,25 +83,24 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
     *
     * */
 
-    var images        by Delegates.notNull<RecyclerView>()
-    var audios        by Delegates.notNull<RecyclerView>()
-    var avatar        by Delegates.notNull<AppCompatImageView>()
-    var name          by Delegates.notNull<TextView>()
-    var quote         by Delegates.notNull<TextView>()
-    var quoteEdit     by Delegates.notNull<EditText>()
-    var likeCount     by Delegates.notNull<TextSwitcher>()
-    var commentCount  by Delegates.notNull<TextView>()
-    var time          by Delegates.notNull<TextView>()
-    var username      by Delegates.notNull<TextView>()
-    var likeIcon      by Delegates.notNull<AppCompatImageView>()
-    var popup         by Delegates.notNull<AppCompatImageView>()
-    var likeLay       by Delegates.notNull<LinearLayout>()
-    var commentLay    by Delegates.notNull<LinearLayout>()
-    var topContainer  by Delegates.notNull<ViewGroup>()
-    var sendChange    by Delegates.notNull<AppCompatImageButton>()
-    val like                  = R.drawable.like_select
-    val unLike                = R.drawable.like
-    val likeAnimations             = HashMap<RecyclerView.ViewHolder, AnimatorSet>()
+    private var images        by Delegates.notNull<RecyclerView>()
+    private var audios        by Delegates.notNull<RecyclerView>()
+    private var avatar        by Delegates.notNull<AppCompatImageView>()
+    private var name          by Delegates.notNull<TextView>()
+    private var quote         by Delegates.notNull<TextView>()
+    private var quoteEdit     by Delegates.notNull<EditText>()
+    private var likeCount     by Delegates.notNull<TextSwitcher>()
+    private var commentCount  by Delegates.notNull<TextView>()
+    private var time          by Delegates.notNull<TextView>()
+    private var username      by Delegates.notNull<TextView>()
+    private var likeIcon      by Delegates.notNull<AppCompatImageView>()
+    private var popup         by Delegates.notNull<AppCompatImageView>()
+    private var likeLay       by Delegates.notNull<LinearLayout>()
+    private var commentLay    by Delegates.notNull<LinearLayout>()
+    private var topContainer  by Delegates.notNull<ViewGroup>()
+    private var sendChange    by Delegates.notNull<AppCompatImageButton>()
+    private val like                  = R.drawable.like_select
+    private val unLike                = R.drawable.like
     var adapter:PostAudioGridAdapter? = null
     override fun initView() {
 
@@ -173,6 +163,9 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
         bindService(Intent(this, PlayerService::class.java), object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 playerServiceBinder = service as PlayerService.PlayerServiceBinder
+                musicSrv = service.service
+
+                musicBound = true
                 try {
                     mediaController = MediaControllerCompat(this@UserPostActivity, playerServiceBinder!!.getMediaSessionToken())
                     mediaController!!.registerCallback(object : MediaControllerCompat.Callback() {
@@ -191,6 +184,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
             }
 
             override fun onServiceDisconnected(name: ComponentName) {
+                musicBound = false
                 playerServiceBinder = null
                 mediaController = null
             }
@@ -212,31 +206,25 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
     }
 
-    override fun onSuccess(from: String, result: String) {
-
-       try{
-           postContainer.visibility = View.VISIBLE
+    override fun onSuccess(from: String, result: String) = try{
+        postContainer.visibility = View.VISIBLE
 
 
-           val post: Posts = Gson().fromJson(result,Posts::class.java)
+        val post: Posts = Gson().fromJson(result,Posts::class.java)
 
-           val icon: VectorDrawableCompat?
-           if (post.like == "0")
-               icon = VectorDrawableCompat.create(Base.get.resources, unLike, likeIcon.context.theme)
-           else
-               icon = VectorDrawableCompat.create(Base.get.resources, like, likeIcon.context.theme)
+        val icon: VectorDrawableCompat?
+        icon = if (post.like == "0")
+            VectorDrawableCompat.create(Base.get.resources, unLike, likeIcon.context.theme)
+        else
+            VectorDrawableCompat.create(Base.get.resources, like, likeIcon.context.theme)
 
-           likeIcon.setImageDrawable(icon)
+        likeIcon.setImageDrawable(icon)
 
-           likeCount.setCurrentText(post.likes)
-           supportActionBar!!.title = post.user.username
+        likeCount.setCurrentText(post.likes)
+        supportActionBar!!.title = post.user.username
 
-           val currentLikesCount  = post.likes.toInt()
-           if (true){
-               likeCount.setText(currentLikesCount.toString())
-           }else{
-               likeCount.setCurrentText(currentLikesCount.toString())
-           }
+        val currentLikesCount  = post.likes.toInt()
+        likeCount.setText(currentLikesCount.toString())
 
 
 //           if (likeAnimations.containsKey()){
@@ -245,140 +233,139 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 //
 //           likeAnimations.remove(1);
 
-           quote.visibility     = View.VISIBLE
-           quote.text           = post.quote.text
-           quoteEdit.visibility = View.GONE
-           quoteEdit.clearComposingText()
-           sendChange.visibility = View.GONE
+        quote.visibility     = View.VISIBLE
+        quote.text           = post.quote.text
+        quoteEdit.visibility = View.GONE
+        quoteEdit.clearComposingText()
+        sendChange.visibility = View.GONE
 
-           Glide.with(this)
-                   .load(Functions.checkImageUrl(post.user.photo))
-                   .apply(Functions.getGlideOpts())
-                   .into(avatar)
-           quote.tag = post.id
+        Glide.with(this)
+                .load(Functions.checkImageUrl(post.user.photo))
+                .apply(Functions.getGlideOpts())
+                .into(avatar)
+        quote.tag = post.id
 
-           username.text = post.user.username
+        username.text = post.user.username
 
-           val prettyTime = PrettyTime()
-           val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-           val date2 = formatter.parse(post.time) as Date
-
-
-           time.text = prettyTime.format(date2)
+        val prettyTime = PrettyTime()
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val date2 = formatter.parse(post.time) as Date
 
 
-           if (post.quote.textSize != "") {
-               try {
-                   quote.textSize = post.quote.textSize.toFloat()
-               } catch (e: Exception) {
-               }
-           }
-           try {
-
-               quote.setTextColor(ContextCompat.getColor(Base.get, Const.colorPalette.get(post.quote.textColor.toInt())!!.drawable))
-
-           } catch (e: Exception) {
-
-           }
-           /*
-           *
-           * INIT IMAGES
-           *
-           * */
-           if (post.images.size > 0) {
+        time.text = prettyTime.format(date2)
 
 
-               images.visibility = View.VISIBLE
+        if (post.quote.textSize != "") {
+            try {
+                quote.textSize = post.quote.textSize.toFloat()
+            } catch (e: Exception) {
+            }
+        }
+        try {
 
-               var span = (post.images.size - 1)
+            quote.setTextColor(ContextCompat.getColor(Base.get, Const.colorPalette[post.quote.textColor.toInt()]!!.drawable))
 
-               if ((post.images.size > 1)) {
-                   if (post.images.size == 2) {
-                       span = 2
-                   } else {
-                       span = (post.images.size - 1)
-                   }
-               } else {
-                   span = 1
-               }
+        } catch (e: Exception) {
 
-               val manager = CustomManager(this, span)
-               val adapter = PostPhotoGridAdapter(this, post.images)
+        }
+        /*
+        *
+        * INIT IMAGES
+        *
+        * */
+        if (post.images.size > 0) {
 
-               manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                   override fun getSpanSize(i: Int): Int {
-                       if (i == 0) {
-                           if (post.images.size == 2)
-                               return 1
-                           else
-                               return (manager.spanCount)
-                       } else return 1
-                   }
 
-               }
+            images.visibility = View.VISIBLE
 
-               images.layoutManager = manager
-               images.setHasFixedSize(true)
-               images.adapter = adapter
 
+            val span = if ((post.images.size > 1)) {
+                if (post.images.size == 2) {
+                    2
+                } else {
+                    (post.images.size - 1)
+                }
+            } else {
+                1
+            }
+
+            val manager = CustomManager(this, span)
+            val adapter = PostPhotoGridAdapter(this, post.images)
+
+            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(i: Int): Int {
+                    return if (i == 0) {
+                        if (post.images.size == 2)
+                            1
+                        else
+                            (manager.spanCount)
+                    } else 1
+                }
+
+            }
+
+            images.layoutManager = manager
+            images.setHasFixedSize(true)
+            images.adapter = adapter
 
 
 
-           } else {
-               images.visibility = View.GONE
-           }
+
+        } else {
+            images.visibility = View.GONE
+        }
 
 
 
-           /*
-           *
-           * INIT AUDIOS
-           *
-           * */
+        /*
+        *
+        * INIT AUDIOS
+        *
+        * */
 
-           if (post.audios.size > 0) {
-               audios.visibility = View.VISIBLE
+        if (post.audios.size > 0) {
+            audios.visibility = View.VISIBLE
 
-               val span = 1
-
-
-               val manager = CustomManager(this, span)
-               post.audios.forEach {
-                   audio ->
-                   audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
-
-               }
-               adapter = PostAudioGridAdapter(this, post.audios,this,model)
-               if (FeedFragment.cachedSongAdapters != null){
-                   FeedFragment.cachedSongAdapters!!.put(0,adapter!!)
-               }else{
-                   FeedFragment.cachedSongAdapters = HashMap()
-                   FeedFragment.cachedSongAdapters!!.put(0,adapter!!)
-               }
+            val span = 1
 
 
-               audios.layoutManager = manager
-               audios.setHasFixedSize(true)
-               audios.adapter = adapter
+            val manager = CustomManager(this, span)
+            post.audios.forEach {
+                audio ->
+                audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
 
-           } else {
-               audios.visibility = View.GONE
-           }
+            }
+            adapter = PostAudioGridAdapter(this, post.audios,this,model)
+            if (FeedFragment.cachedSongAdapters != null){
+                FeedFragment.cachedSongAdapters!!.put(0,adapter!!)
+            }else{
+                FeedFragment.cachedSongAdapters = HashMap()
+                FeedFragment.cachedSongAdapters!!.put(0,adapter!!)
+            }
 
 
-                   likeLay.setOnClickListener {
-               if (post.like == "0") {
+            audios.layoutManager = manager
+            audios.setHasFixedSize(true)
+            audios.adapter = adapter
 
-                   post.like = "1"
-                   post.likes = (post.likes.toInt() + 1).toString()
-                   likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, likeIcon.context.theme))
-               } else {
-                   post.likes = (post.likes.toInt() - 1).toString()
+        } else {
+            audios.visibility = View.GONE
+        }
 
-                   post.like = "0"
-                   likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, likeIcon.context.theme))
 
-               }
+                likeLay.setOnClickListener {
+            if (post.like == "0") {
+
+                post.like = "1"
+                post.likes = (post.likes.toInt() + 1).toString()
+                likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, likeIcon.context.theme))
+            } else {
+                post.likes = (post.likes.toInt() - 1).toString()
+
+                post.like = "0"
+                likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, likeIcon.context.theme))
+
+            }
 
 
 //                    notifyDataSetChanged()
@@ -388,38 +375,38 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
 
 
-               val reqObj = JS.get()
+            val reqObj = JS.get()
 
-               reqObj.put("post_id", post.id)
+            reqObj.put("post_id", post.id)
 
-               log.d("request data $reqObj")
+            log.d("request data $reqObj")
 
-               model.responseCall(Http.getRequestData(reqObj, Http.CMDS.LIKE_BOSISH))
-                       .enqueue(object : retrofit2.Callback<ResponseData> {
-                           override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
-                               log.d("follow on fail $t")
-                           }
+            model.responseCall(Http.getRequestData(reqObj, Http.CMDS.LIKE_BOSISH))
+                    .enqueue(object : retrofit2.Callback<ResponseData> {
+                        override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                            log.d("follow on fail $t")
+                        }
 
-                           override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+                        override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
 
 
-                           }
+                        }
 
-                       })
-           }
+                    })
+        }
 
-           commentLay.setOnClickListener {
-               val goCommentActivity = Intent(this, CommentActivity::class.java)
-               goCommentActivity.putExtra("postId", post.id.toInt())
-               val startingLocation = IntArray(2)
-               commentLay.getLocationOnScreen(startingLocation)
-               goCommentActivity.putExtra(CommentActivity.LOCATION, startingLocation[1])
+        commentLay.setOnClickListener {
+            val goCommentActivity = Intent(this, CommentActivity::class.java)
+            goCommentActivity.putExtra("postId", post.id.toInt())
+            val startingLocation = IntArray(2)
+            commentLay.getLocationOnScreen(startingLocation)
+            goCommentActivity.putExtra(CommentActivity.LOCATION, startingLocation[1])
 
-                   MainActivity.COMMENT_POST_UPDATE = 0
-                   startActivityForResult(goCommentActivity,Const.GO_COMMENT_ACTIVITY)
-                   overridePendingTransition(0, 0)
+                MainActivity.COMMENT_POST_UPDATE = 0
+                startActivityForResult(goCommentActivity,Const.GO_COMMENT_ACTIVITY)
+                overridePendingTransition(0, 0)
 
-           }
+        }
 //           avatar.setOnClickListener{
 //               clicker.click(i)
 //
@@ -429,11 +416,8 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 //               if (!pOrF) clicker.click(i)
 //
 //           }
-       }catch (e:Exception){
-           onFailure(from,"","")
-       }
-
-
+    }catch (e:Exception){
+        onFailure(from,"","")
     }
 
     override fun onFailure(from: String, message: String, erroCode: String) {
@@ -445,7 +429,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
     }
 
 
-    fun initViews(){
+    private fun initViews(){
         images       = findViewById<RecyclerView>(R.id.images)
         audios       = findViewById<RecyclerView>(R.id.audios)
         avatar       = findViewById<AppCompatImageView>(R.id.avatar)
@@ -474,25 +458,25 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
         if (mediaController != null) {
 
             if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING &&
-                    PlayerService.PLAYING_SONG_URL == listSong.get(position).middlePath) {
+                    PlayerService.PLAYING_SONG_URL == listSong[position].middlePath) {
 
-                mediaController!!.getTransportControls().pause()
+                mediaController!!.transportControls.pause()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
-                    PlayerService.PLAYING_SONG_URL == listSong.get(position).middlePath) {
+                    PlayerService.PLAYING_SONG_URL == listSong[position].middlePath) {
 
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING &&
-                    PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
-                mediaController!!.getTransportControls().play()
+                    PlayerService.PLAYING_SONG_URL != listSong[position].middlePath) {
+                mediaController!!.transportControls.play()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
-                    PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
-                mediaController!!.getTransportControls().play()
+                    PlayerService.PLAYING_SONG_URL != listSong[position].middlePath) {
+                mediaController!!.transportControls.play()
 
             }else {
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
 
             }
 
@@ -505,29 +489,8 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
 
 
-    val musicConnection = object : ServiceConnection {
 
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder = service as PlayerService.PlayerServiceBinder
-            musicSrv = binder.service
-            musicBound = true
 
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            musicBound = false
-        }
-    }
-    override fun onStart() {
-        super.onStart()
-        if (playIntent == null) {
-
-            playIntent = Intent(this, PlayerService::class.java)
-            this.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
-            this.startService(playIntent)
-
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()

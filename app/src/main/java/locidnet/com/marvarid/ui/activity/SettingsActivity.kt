@@ -63,7 +63,7 @@ class SettingsActivity : BaseActivity(), Viewer {
     override fun getLayout(): Int = R.layout.activity_settings
 
     override fun initView() {
-        log.d("userdata: ${userData}")
+        log.d("userdata: $userData")
         DaggerMVPComponent
                 .builder()
                 .mVPModule(MVPModule(this, Model(), this))
@@ -208,12 +208,14 @@ class SettingsActivity : BaseActivity(), Viewer {
         val genderAdapter = ArrayAdapter<String>(this, R.layout.white_textview, sex)
         genderAdapter.setDropDownViewResource(R.layout.white_textview_adapter)
         gender.adapter = genderAdapter
-        gender.setSelection(if (userData.gender == "N") 0
-        else if (userData.gender == "F") 1
-        else 2)
+        gender.setSelection(when {
+            userData.gender == "N" -> 0
+            userData.gender == "F" -> 1
+            else -> 2
+        })
         /*GENDER*/
         switchCloseAccount.isChecked = Base.get.prefs.getUser().close == 1
-        switchCloseAccount.setOnCheckedChangeListener { view, isChecked ->
+        switchCloseAccount.setOnCheckedChangeListener { _, isChecked ->
             val js = JS.get()
             model.responseCall(Http.getRequestData(js, Http.CMDS.CLOSE_PROFIL))
                     .enqueue(object : Callback<ResponseData> {
@@ -319,13 +321,13 @@ class SettingsActivity : BaseActivity(), Viewer {
 
         /*ALLOW NOTIFICATION*/
         switchNotification.isChecked = Base.get.prefs.isALlowNotif()
-        switchNotification.setOnCheckedChangeListener { view, isChecked -> Base.get.prefs.allowNotif(isChecked) }
+        switchNotification.setOnCheckedChangeListener { _, isChecked -> Base.get.prefs.allowNotif(isChecked) }
         /*ALLOW NOTIFICATION*/
 
 
         reportBugLay.setOnClickListener {
             startActivity(Intent(this,ReportBugActivity::class.java))
-            overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+            overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
 
         }
 
@@ -340,7 +342,7 @@ class SettingsActivity : BaseActivity(), Viewer {
             Const.AUDIO.MEDIUM -> mediumAudio.isChecked = true
             Const.AUDIO.ORIGINAL -> highAudio.isChecked = true
         }
-        imageResolution.setOnCheckedChangeListener { radioGroup, i ->
+        imageResolution.setOnCheckedChangeListener { _, i ->
 
             when(i){
                 R.id.lowImage -> Prefs.Builder().setImageRes(Const.IMAGE.LOW)
@@ -349,7 +351,7 @@ class SettingsActivity : BaseActivity(), Viewer {
             }
         }
 
-        audioResolution.setOnCheckedChangeListener { radioGroup, i ->
+        audioResolution.setOnCheckedChangeListener { _, i ->
             when(i){
                 R.id.lowAudio -> Prefs.Builder().setAudioRes(Const.AUDIO.LOW)
                 R.id.mediumAudio -> Prefs.Builder().setAudioRes(Const.AUDIO.MEDIUM)
@@ -375,7 +377,7 @@ class SettingsActivity : BaseActivity(), Viewer {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
 
-        if (changed || map.get(gender.selectedItemPosition) != Base.get.prefs.getUser().gender) {
+        if (changed || map[gender.selectedItemPosition] != Base.get.prefs.getUser().gender) {
 
 
             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener {
@@ -420,7 +422,7 @@ class SettingsActivity : BaseActivity(), Viewer {
         val jsObject = JS.get()
         jsObject.put("username", username.text.toString().trimEnd().trimStart())
         jsObject.put("name", name.text.trim().toString().trimEnd().trimStart())
-        jsObject.put("gender", map.get(gender.selectedItemPosition))
+        jsObject.put("gender", map[gender.selectedItemPosition])
 
 
         presenter.requestAndResponse(jsObject, Http.CMDS.CHANGE_USER_SETTINGS)
@@ -482,7 +484,7 @@ class SettingsActivity : BaseActivity(), Viewer {
             Http.CMDS.CHANGE_USER_SETTINGS -> {
                 val user = Base.get.prefs.getUser()
                 user.first_name = name.text.toString().trimEnd().trimStart()
-                user.gender = map.get(gender.selectedItemPosition)!!
+                user.gender = map[gender.selectedItemPosition]!!
                 user.userName = username.text.toString().trimEnd().trimStart()
 
                 Base.get.prefs.setUser(user)
@@ -566,10 +568,10 @@ class SettingsActivity : BaseActivity(), Viewer {
             changed = true
             if(s!!.toString().length >= 6){
                 if(s.toString() != userData.userName) {
-                    log.d("login - ${s.toString()} username ${userData.userName}")
+                    log.d("login - $s username ${userData.userName}")
                     presenter.filterLogin(username)
                 }else{
-                    log.d("login + ${s.toString()} username ${userData.userName}")
+                    log.d("login + $s username ${userData.userName}")
                     username.setLoginResult()
 
                     isLoginFree = true

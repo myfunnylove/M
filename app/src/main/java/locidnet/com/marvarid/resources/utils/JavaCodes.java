@@ -3,6 +3,7 @@ package locidnet.com.marvarid.resources.utils;
 import android.content.res.Configuration;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 
 import locidnet.com.marvarid.base.Base;
 
@@ -76,4 +77,6 @@ public class JavaCodes {
         return Base.Companion.getGet().getResources().getConfiguration().screenLayout &
                 Configuration.SCREENLAYOUT_SIZE_MASK;
     }
+
+
 }

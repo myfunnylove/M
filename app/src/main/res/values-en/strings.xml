@@ -124,4 +124,5 @@
     <string name="highImage">Original</string>
     <string name="image_resolution">Image resolution</string>
     <string name="audio_resolution">Quality of music</string>
+    <string name="error_cannot_remove">You can not remove from the playlist during playing</string>
 </resources>

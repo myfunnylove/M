@@ -3,8 +3,10 @@ package locidnet.com.marvarid.model
 import com.google.gson.annotations.SerializedName
 
 /**
+ *
  * Created by Michaelan on 6/27/2017.
- */
+ *
+ **/
 
 data class PostList(@SerializedName("posts")     var posts:ArrayList<Posts>
                     )
@@ -33,7 +35,9 @@ data class Audio(@SerializedName("audio_id")     var audioId:String,
 data class Image(@SerializedName("photo_id")     var photoId:String,
                  @SerializedName("post_id")      var postId: String,
                  @SerializedName("image_orig")   var image: String,
-                 @SerializedName("image_640")    var image640:String)
+                 @SerializedName("width")        var width:String,
+                 @SerializedName("height")    var height:String
+                 )
 
 data class PostUser(@SerializedName("user_id") var userId:String, @SerializedName("username") var username:String, @SerializedName("photo_150") var photo:String)
 

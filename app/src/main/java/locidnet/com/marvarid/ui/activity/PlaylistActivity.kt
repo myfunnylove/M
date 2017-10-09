@@ -3,16 +3,19 @@ package locidnet.com.marvarid.ui.activity
 import android.content.*
 import android.os.Handler
 import android.os.IBinder
-import android.support.graphics.drawable.VectorDrawableCompat
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.DefaultTimeBar
+import com.google.android.exoplayer2.ui.PlaybackControlView
+import com.google.android.exoplayer2.util.RepeatModeUtil
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_playlist.*
-import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.base.Base
@@ -28,38 +31,26 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
-import locidnet.com.marvarid.pattern.MControlObserver.MusicSubject
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
-import locidnet.com.marvarid.ui.fragment.FeedFragment
 import javax.inject.Inject
 
-/**
- * Created by Sarvar on 09.09.2017.
- */
+
 class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicControlObserver {
 
 
-
-    var drawingStartLocation               = 0
     var user  = Base.get.prefs.getUser()
     val model = Model()
 
-    //service
-    private var playIntent: Intent? = null
-    //binding
     private var musicBound = false
     var musicSrv:PlayerService? = null
     internal var playerServiceBinder: PlayerService.PlayerServiceBinder? = null
     internal var mediaController: MediaControllerCompat? = null
     //controller
 
-    //activity and playback pause flags
-    private var paused = false
-    var playbackPaused = false
     @Inject
     lateinit var presenter:Presenter
 
@@ -68,7 +59,16 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
 
     lateinit var adapter:PostAudioGridAdapter
     lateinit var emptyContainer: EmptyContainer
-    var songPosition = -1;
+    private lateinit var songTitle:TextView
+    private lateinit var artist:TextView
+    private lateinit var exoPlay:AppCompatImageView
+    private lateinit var exoPause:AppCompatImageView
+    private lateinit var exoPrev: AppCompatImageView
+    private lateinit var exoNext:AppCompatImageView
+    private lateinit var exoDuration:TextView
+    private lateinit var exoPosition:TextView
+    private lateinit var exoProgress: DefaultTimeBar
+    private var songPosition = -1
     override fun initProgress() {
 
     }
@@ -166,17 +166,32 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
         bindService(Intent(this, PlayerService::class.java), object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 playerServiceBinder = service as PlayerService.PlayerServiceBinder
+                musicSrv = service.service
+                player.player = musicSrv?.exoPlayer
+
+                player.show()
+
+                player.setShowMultiWindowTimeBar(true)
+
+
+                        musicBound = true
                 try {
-                    mediaController = MediaControllerCompat(this@PlaylistActivity, playerServiceBinder!!.getMediaSessionToken())
+                    mediaController = MediaControllerCompat(this@PlaylistActivity, playerServiceBinder!!.mediaSessionToken)
                     mediaController!!.registerCallback(object : MediaControllerCompat.Callback() {
                         override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
                             log.d("MEDIACONTROLL $state")
                             if (state == null)
                                 return
 //                            val playing = state.state == PlaybackStateCompat.STATE_PLAYING
-
                         }
+
+
+
+
                     })
+
+
+                    updateControl()
                 } catch (e: Throwable) {
                     mediaController = null
                 }
@@ -184,54 +199,105 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
             }
 
             override fun onServiceDisconnected(name: ComponentName) {
+                musicBound = false
                 playerServiceBinder = null
                 mediaController = null
             }
         }, Context.BIND_AUTO_CREATE)
 
+        songTitle = player.rootView!!.findViewById<TextView>(R.id.songTitle);
+        artist = player.rootView!!.findViewById<TextView>(R.id.artist);
+        exoDuration = player.rootView!!.findViewById<TextView>(R.id.exo_duration);
+        exoPosition = player.rootView!!.findViewById<TextView>(R.id.exo_position);
+        exoProgress = player.rootView!!.findViewById<DefaultTimeBar>(R.id.exo_progress);
+        exoPlay = player.rootView!!.findViewById<AppCompatImageView>(R.id.exo_play);
+        exoPause = player.rootView!!.findViewById<AppCompatImageView>(R.id.exo_pause);
+        exoPrev = player.rootView!!.findViewById<AppCompatImageView>(R.id.prev);
+        exoNext = player.rootView!!.findViewById<AppCompatImageView>(R.id.next);
+        exoPlay.setOnClickListener {
 
-        playPause.setOnClickListener {
-            if (songPosition != -1){
-                playClick(adapter.audios,songPosition)
-            }else{
-                if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING ) {
-                    playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_play,theme))
 
-                    mediaController!!.getTransportControls().pause()
-
-                } else {
-                    playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_pause,theme))
 
                   if (PlayerService.songs != null && PlayerService.songs.size > 0){
-                      mediaController!!.getTransportControls().play()
+                      mediaController!!.transportControls.play()
                   }else{
-                      playClick(adapter.audios,0)
+                          playClick(adapter.audios,0)
 
                   }
 
+
+
+            Handler().postDelayed({
+                if(musicSrv!!.currentAudio != null){
+                    songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
+
+                    artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
                 }
-            }
+            },500)
         }
-        prev.setOnClickListener {
-            if(musicSrv!!.currentAudio != null){
-                songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
 
-                artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
+        exoPause.setOnClickListener {
+            if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING ) {
+
+                mediaController!!.getTransportControls().pause()
 
             }
+
+            Handler().postDelayed({
+                if(musicSrv!!.currentAudio != null){
+                    songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
+
+                    artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
+                }
+            },500)
+        }
+
+        exoPrev.setOnClickListener {
+
             if (mediaController != null) mediaController!!.transportControls.skipToPrevious()
+            Handler().postDelayed({
+                if (musicSrv!!.currentAudio != null) {
+
+                    songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
+
+                    artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
+
+                }
+            },500)
 
         }
+        exoNext.setOnClickListener{
 
-        next.setOnClickListener{
-            if(musicSrv!!.currentAudio != null){
-                songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
-
-                artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
-            }
             if (mediaController != null) mediaController!!.transportControls.skipToNext()
 
+            Handler().postDelayed({
+                if(musicSrv!!.currentAudio != null){
+                    songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
+
+                    artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
+                }
+            },500)
         }
+
+        player.setControlDispatcher(object : PlaybackControlView.ControlDispatcher{
+            override fun dispatchSeekTo(player: Player?, windowIndex: Int, positionMs: Long): Boolean {
+                player?.seekTo(positionMs)
+                return true
+            }
+
+            override fun dispatchSetPlayWhenReady(player: Player?, playWhenReady: Boolean): Boolean =
+                    true
+
+            override fun dispatchSetRepeatMode(player: Player?, repeatMode: Int): Boolean {
+                player!!.repeatMode = Player.REPEAT_MODE_OFF
+
+                return true
+
+            }
+
+        })
+
+        player.repeatToggleModes = RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE
     }
 
 
@@ -242,43 +308,37 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
     override fun playClick(listSong: ArrayList<Audio>, position: Int){
         PlayerService.songs = listSong
         PlayerService.songPosn = position
-        log.d("PLAYCLICKED")
         if (mediaController != null) {
 
             if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING &&
-                    PlayerService.PLAYING_SONG_URL == listSong.get(position).middlePath) {
-                playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_play,theme))
+                    PlayerService.PLAYING_SONG_URL == listSong[position].middlePath) {
 
-                mediaController!!.getTransportControls().pause()
+                mediaController!!.transportControls.pause()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
-                    PlayerService.PLAYING_SONG_URL == listSong.get(position).middlePath) {
-                playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_pause,theme))
+                    PlayerService.PLAYING_SONG_URL == listSong[position].middlePath) {
 
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING &&
-                    PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
-                playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_pause,theme))
+                    PlayerService.PLAYING_SONG_URL != listSong[position].middlePath) {
 
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
-                    PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
-                playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_pause,theme))
+                    PlayerService.PLAYING_SONG_URL != listSong[position].middlePath) {
 
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
 
             }else {
-                playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_pause,theme))
 
-                mediaController!!.getTransportControls().play()
+                mediaController!!.transportControls.play()
 
             }
 
-            songTitle.text = if (listSong.get(position).title.isEmpty()) Base.get.resources.getString(R.string.unknown) else listSong.get(position).title
+            songTitle.text = if (listSong[position].title.isEmpty()) Base.get.resources.getString(R.string.unknown) else listSong[position].title
 
-            artist.text = if (listSong.get(position).artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else listSong.get(position).artist
+            artist.text = if (listSong[position].artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else listSong[position].artist
 
         }else{
             Toast.makeText(Base.get,Base.get.resources.getString(R.string.error_something),Toast.LENGTH_SHORT).show()
@@ -289,30 +349,8 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
 
 
 
-    val musicConnection = object : ServiceConnection {
 
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder = service as PlayerService.PlayerServiceBinder
-            musicSrv = binder.service
-            musicBound = true
 
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            musicBound = false
-        }
-    }
-    override fun onStart() {
-        super.onStart()
-        if (playIntent == null) {
-
-            playIntent = Intent(this, PlayerService::class.java)
-            this.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
-            this.startService(playIntent)
-
-        }
-        updateControl();
-    }
     fun updateControl(){
         Handler().postDelayed({
             if(musicSrv != null && musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING){
@@ -322,7 +360,6 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
                     artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
                 }
 
-                playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_pause,theme))
             }
             else if(musicSrv != null && musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED){
                 if(musicSrv!!.currentAudio != null){
@@ -330,17 +367,21 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
 
                     artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
                 }
-                playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_play,theme))
 
             }
             else{
-                playPause.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.notif_play,theme))
 
             }
         },1000)
     }
     override fun playPause(id: String) {
-     adapter.notifyDataSetChanged()
+        if(musicSrv!!.currentAudio != null){
+            songTitle.text = if (musicSrv!!.currentAudio.title.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.title
+
+            artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
+        }
+
+        adapter.notifyDataSetChanged()
     }
 
     override fun onDestroy() {

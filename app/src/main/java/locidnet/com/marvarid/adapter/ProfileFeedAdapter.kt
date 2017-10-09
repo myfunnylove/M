@@ -305,16 +305,14 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
                     h.images.visibility = View.VISIBLE
 
-                    var span = (post.images.size - 1)
-
-                    if ((post.images.size > 1)) {
+                    val span = if ((post.images.size > 1)) {
                         if (post.images.size == 2) {
-                            span = 2
+                             2
                         } else {
-                            span = (post.images.size - 1)
+                            (post.images.size - 1)
                         }
                     } else {
-                        span = 1
+                         1
                     }
 
                     val manager = CustomManager(ctx, span)

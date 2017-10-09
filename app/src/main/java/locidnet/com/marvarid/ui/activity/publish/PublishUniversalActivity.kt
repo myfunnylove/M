@@ -49,8 +49,8 @@ import javax.inject.Inject
 class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
 
 
-    var listMusic:ArrayList<Song>        = ArrayList()
-    var listImage:ArrayList<PhotoUpload> = ArrayList()
+    private var listMusic:ArrayList<Song>        = ArrayList()
+    private var listImage:ArrayList<PhotoUpload> = ArrayList()
     var imageAdapter:PickedPhotoAdapter? = null
     var songAdapter:PickedSongAdapter?   = null
 
@@ -104,8 +104,8 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
                             if (loading == false && logicImage && logicAudio){
 
                                 val quote = Quote(commentText.text.toString(), // quote text
-                                        "${TEXT_SIZE}", // quote text size
-                                        "${TEXT_COLOR_ID}") //quote text color
+                                        "$TEXT_SIZE", // quote text size
+                                        "$TEXT_COLOR_ID") //quote text color
 
 
                                 val post = Post(user!!.userId,
@@ -228,7 +228,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
                 actionMenu.collapse()
 
 
-                if (visibly == false)
+                if (!visibly)
                 {
                     quoteSettings.visibility = View.VISIBLE
                                      visibly = true
@@ -300,7 +300,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        log.d("save ${commentText.text.toString()} $TEXT_SIZE $TEXT_COLOR_ID")
+        log.d("save ${commentText.text} $TEXT_SIZE $TEXT_COLOR_ID")
         outState!!.putString("quoteText",commentText.text.toString())
         outState.putFloat("quoteSize",TEXT_SIZE)
         outState.putInt("quoteColor",TEXT_COLOR_ID)
@@ -316,7 +316,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
             commentText.setText(savedInstanceState.getString("quoteText"))
             commentText.textSize = TEXT_SIZE
             commentText.setTextColor(ContextCompat.getColor(applicationContext,
-                    Const.colorPalette.get(TEXT_COLOR_ID)!!.drawable))
+                    Const.colorPalette[TEXT_COLOR_ID]!!.drawable))
 
         }catch (e:Exception){
 
@@ -325,7 +325,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
     var photo:File? = null
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        log.d("MainActivity -> OnactivityResult: req:${requestCode} res: ${resultCode} intent: ${data != null}" )
+        log.d("MainActivity -> OnactivityResult: req:$requestCode res: $resultCode intent: ${data != null}" )
         if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
             setResult(Const.SESSION_OUT)
             finish()
@@ -344,7 +344,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
                 if (photos != null) {
 
 
-                    listImage.add(PhotoUpload(Uri.fromFile(File(photos.get(0)))))
+                    listImage.add(PhotoUpload(Uri.fromFile(File(photos[0]))))
                     idImage = listImage.size - 1
                     if (imageAdapter == null) {
 

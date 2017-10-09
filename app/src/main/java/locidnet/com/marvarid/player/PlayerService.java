@@ -16,21 +16,18 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
 import android.widget.RemoteViews;
 
-import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
@@ -55,6 +52,7 @@ import java.util.ArrayList;
 
 import locidnet.com.marvarid.R;
 import locidnet.com.marvarid.base.Base;
+import locidnet.com.marvarid.base.BaseActivity;
 import locidnet.com.marvarid.model.Audio;
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver;
 import locidnet.com.marvarid.resources.utils.log;
@@ -62,7 +60,9 @@ import locidnet.com.marvarid.ui.activity.MainActivity;
 import okhttp3.OkHttpClient;
 
 /**
+ *
  * Created by myfunnylove on 07.10.17.
+ *
  */
 
 public class PlayerService extends Service implements MusicControlObserver {
@@ -78,14 +78,14 @@ public class PlayerService extends Service implements MusicControlObserver {
     public static ArrayList<Audio> songs;
     public static int songPosn = 0;
     private int pressPauseFromControl = 1;
-    private RemoteViews mContentViewBig, mContentViewSmall;
+    private RemoteViews  mContentViewSmall;
     private Audio currentAudio;
 
-    public void setActivity(MainActivity activity) {
+    public void setActivity(BaseActivity activity) {
         this.activity = activity;
     }
 
-    private MainActivity activity;
+    private BaseActivity activity;
     private final MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder();
 
     private final PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder().setActions(
@@ -109,7 +109,9 @@ public class PlayerService extends Service implements MusicControlObserver {
     @Override
     public void onCreate() {
         super.onCreate();
-        MainActivity.MyPostOffset.getMusicSubject().subscribe(this);
+        if (MainActivity.MyPostOffset.getMusicSubject() != null) {
+            MainActivity.MyPostOffset.getMusicSubject().subscribe(this);
+        }
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
@@ -127,6 +129,11 @@ public class PlayerService extends Service implements MusicControlObserver {
 
         exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
         exoPlayer.addListener(exoPlayerListener);
+
+        exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
+
+        log.INSTANCE.d("repeat mode" + exoPlayer.getRepeatMode());
+
         DataSource.Factory httpDataSourceFactory = new OkHttpDataSourceFactory(new OkHttpClient(), Util.getUserAgent(this, getString(R.string.app_name)), null);
 
         String folderName ="marvarid";
@@ -148,6 +155,9 @@ public class PlayerService extends Service implements MusicControlObserver {
     }
 
 
+    public int getPressPauseFromControl() {
+        return pressPauseFromControl;
+    }
 
     @Override
     public void onDestroy() {
@@ -170,30 +180,37 @@ public class PlayerService extends Service implements MusicControlObserver {
 
             log.INSTANCE.d("PLAY "+exoPlayer.getPlayWhenReady());
             if (!exoPlayer.getPlayWhenReady()) {
-                PLAY_STATUS = PLAYING;
+                if (songs.size() > 0){
+                    PLAY_STATUS = PLAYING;
 
-                startService(new Intent(getApplicationContext(), PlayerService.class));
-                Audio playSong = songs.get(songPosn);
+                    startService(new Intent(getApplicationContext(), PlayerService.class));
+                    Audio playSong = songs.get(songPosn);
 
-                PlayerService.PLAYING_SONG_URL = playSong.getMiddlePath();
+                    PlayerService.PLAYING_SONG_URL = playSong.getMiddlePath();
 
-                prepareToPlay(Uri.parse("http://api.maydon.net/new/"+playSong.getMiddlePath()));
+                    prepareToPlay(Uri.parse("http://api.maydon.net/new/"+playSong.getMiddlePath()));
 
-                int audioFocusResult = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-                if (audioFocusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
-                    return;
+                    int audioFocusResult = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+                    if (audioFocusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
+                        return;
 
-                mediaSession.setActive(true); // Сразу после получения фокуса
-                mediaSession.setPlaybackState(stateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1).build());
-                currentState = PlaybackStateCompat.STATE_PLAYING;
-                updateMetadataFromTrack(playSong);
+                    mediaSession.setActive(true); // Сразу после получения фокуса
+                    mediaSession.setPlaybackState(stateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1).build());
+                    currentState = PlaybackStateCompat.STATE_PLAYING;
+                    updateMetadataFromTrack(playSong);
 
-                refreshNotificationAndForegroundStatus(currentState);
+                    refreshNotificationAndForegroundStatus(currentState);
 
-                registerReceiver(becomingNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
+                    registerReceiver(becomingNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
 
-                exoPlayer.setPlayWhenReady(true);
-                MainActivity.MyPostOffset.getMusicSubject().playMeause("");
+                    exoPlayer.setPlayWhenReady(true);
+
+                    if (MainActivity.MyPostOffset.getMusicSubject() != null) {
+                        MainActivity.MyPostOffset.getMusicSubject().playMeause("");
+                    }
+                }else{
+                    onStop();
+                }
             }else{
                 if (currentState == PlaybackStateCompat.STATE_PLAYING){
                     log.INSTANCE.d("is equal" +songs.get(songPosn).getMiddlePath()+" "+PLAYING_SONG_URL);
@@ -249,11 +266,12 @@ public class PlayerService extends Service implements MusicControlObserver {
         @Override
         public void onSkipToNext() {
             pressPauseFromControl = -1;
-
-            songPosn--;
-            if (songPosn < 0) songPosn = songs.size() - 1;
+            log.INSTANCE.d("onSkipToNext");
+            songPosn++;
+            if (songPosn >= songs.size()) songPosn = 0;
 
             PLAY_STATUS = PLAYING;
+
             Audio playSong = songs.get(songPosn);
 
             PlayerService.PLAYING_SONG_URL = playSong.getMiddlePath();
@@ -266,23 +284,22 @@ public class PlayerService extends Service implements MusicControlObserver {
             prepareToPlay(Uri.parse("http://api.maydon.net/new/"+playSong.getMiddlePath()));
         }
 
-        @Override
-        public void onSeekTo(long pos) {
-            super.onSeekTo(pos);
-            log.INSTANCE.d("start $-> "+pos);
-        }
+
+
+
 
 
 
         @Override
         public void onSkipToPrevious() {
+
+
             pressPauseFromControl = -1;
 
-            songPosn++;
-            if (songPosn >= songs.size()) songPosn = 0;
+            songPosn--;
+            if (songPosn < 0) songPosn = songs.size() - 1;
 
             PLAY_STATUS = PLAYING;
-
             Audio playSong = songs.get(songPosn);
 
             PlayerService.PLAYING_SONG_URL = playSong.getMiddlePath();
@@ -322,9 +339,6 @@ public class PlayerService extends Service implements MusicControlObserver {
 
 
 
-    public MediaSessionCompat getMediaSession() {
-        return mediaSession;
-    }
 
     private AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
@@ -341,6 +355,7 @@ public class PlayerService extends Service implements MusicControlObserver {
                 default:
                     if (pressPauseFromControl == -1)
                     mediaSessionCallback.onPause();
+
                     break;
             }
         }
@@ -356,27 +371,43 @@ public class PlayerService extends Service implements MusicControlObserver {
         }
     };
 
-    private ExoPlayer.EventListener exoPlayerListener = new ExoPlayer.EventListener() {
+
+
+    private Player.EventListener exoPlayerListener = new Player.EventListener() {
         @Override
         public void onTimelineChanged(Timeline timeline, Object manifest) {
+            log.INSTANCE.d("onTimelineChanged");
         }
 
         @Override
         public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+
         }
 
         @Override
         public void onLoadingChanged(boolean isLoading) {
+            log.INSTANCE.d("onLoadingChanged");
+
         }
+
+
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             log.INSTANCE.d("onPlayerStateChanged + "+playWhenReady + " "+playbackState);
-            if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
+            if (playWhenReady && playbackState == Player.STATE_ENDED) {
                 mediaSessionCallback.onSkipToNext();
-            }else if (playWhenReady && playbackState == ExoPlayer.STATE_READY){
+            }else if (playWhenReady && playbackState == Player.STATE_READY){
                 activity.hideLoading();
             }
+        }
+
+
+
+        @Override
+        public void onRepeatModeChanged(int repeatMode) {
+
         }
 
         @Override
@@ -392,6 +423,8 @@ public class PlayerService extends Service implements MusicControlObserver {
             log.INSTANCE.d("onPlaybackParametersChanged");
 
         }
+
+
     };
 
     @Nullable
@@ -406,9 +439,6 @@ public class PlayerService extends Service implements MusicControlObserver {
 
     }
 
-    public int getPressPauseFromControl() {
-        return pressPauseFromControl;
-    }
 
     public void setPressPauseFromControl(int pressPauseFromControl) {
         this.pressPauseFromControl = pressPauseFromControl;
@@ -421,6 +451,7 @@ public class PlayerService extends Service implements MusicControlObserver {
         public PlayerService getService() {
             return PlayerService.this;
         }
+
     }
 
     public int getCurrentState() {
@@ -455,6 +486,7 @@ public class PlayerService extends Service implements MusicControlObserver {
                 .setCustomContentView(getSmallContentView(playbackState))
                 .setPriority(android.support.v4.app.NotificationCompat.PRIORITY_MAX)
                 .setOngoing(true)
+
                 .build();
 
         return not;
@@ -469,8 +501,11 @@ public class PlayerService extends Service implements MusicControlObserver {
         return mContentViewSmall;
     }
 
+    public SimpleExoPlayer getExoPlayer() {
+        return exoPlayer;
+    }
 
-    private void setUpRemoteView(RemoteViews remoteView,int state) {
+    private void setUpRemoteView(RemoteViews remoteView, int state) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             remoteView.setImageViewResource(R.id.close, R.drawable.notif_close);
             remoteView.setImageViewResource(R.id.prev, R.drawable.notif_prev);

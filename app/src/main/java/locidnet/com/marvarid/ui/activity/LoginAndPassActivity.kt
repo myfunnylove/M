@@ -3,7 +3,6 @@ package locidnet.com.marvarid.ui.activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Handler
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatEditText
 import android.text.Editable
@@ -29,14 +28,11 @@ import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import javax.inject.Inject
 
-/**
- * Created by Michaelan on 6/16/2017.
- */
+
 class LoginAndPassActivity :BaseActivity(),Viewer{
 
     @Inject

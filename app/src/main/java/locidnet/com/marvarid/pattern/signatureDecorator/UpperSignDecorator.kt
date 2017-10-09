@@ -7,7 +7,7 @@ import locidnet.com.marvarid.resources.utils.log
  */
 class UpperSignDecorator(val appSignature: AppSignature) :SignDecorator() {
     override fun getSignature(): String {
-        log.d("sign 3 step : ${appSignature.getSignature().toUpperCase()}")
+        log.d("sign s3 step : ${appSignature.getSignature().toUpperCase()}")
 
         return appSignature.getSignature().toUpperCase()
     }

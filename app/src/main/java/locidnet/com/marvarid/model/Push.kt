@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
 
 data class PushList(@SerializedName("list") var pushes:ArrayList<Push>)
 
-data class Push (@SerializedName("type") var type:Int, //  1 - like,2 - comment,3 - follow,4 - request
+data class Push (@SerializedName("type") var type:Int, //  1 - like,2 - comment,s3 - follow,4 - request
                  @SerializedName("time") var time:String,
                  @SerializedName("user") var user:PushUser,
 

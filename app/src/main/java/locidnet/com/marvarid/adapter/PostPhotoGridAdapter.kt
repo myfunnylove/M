@@ -2,39 +2,31 @@ package locidnet.com.marvarid.adapter
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
+import jp.wasabeef.glide.transformations.internal.Utils
 
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
+import locidnet.com.marvarid.base.BaseActivity
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.Image
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.resources.zoomimageview.ImageViewer
 
 
-/**
- * Created by Michaelan on 6/28/2017.
- */
 class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Adapter<PostPhotoGridAdapter.Holder>() {
 
 
@@ -42,13 +34,13 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
     val images = list
     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-    val isVertical = true
-    var hierarchyBuilder:GenericDraweeHierarchyBuilder? =null
-    var options:RequestOptions? = null
-    var screenSize:Int? = null
-    var h1 = 300
-    var h2 = 400
-    var h3 = 600
+    private var hierarchyBuilder:GenericDraweeHierarchyBuilder? =null
+    private var options:RequestOptions? = null
+    private var screenSize:Int? = null
+    private var h1 = 300
+    private var h2 = 400
+    private var h3 = 600
+    private var h4 = 500
     //var cachedImages:ArrayList<Bitmap>? = null
     init {
         setHasStableIds(true)
@@ -58,10 +50,8 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                 .setPlaceholderImage(VectorDrawableCompat.create(Base.get.resources, R.drawable.image, null))
 
         if (options == null){
-         options =    RequestOptions().centerCrop()
-
+         options =    RequestOptions()
                     .fallback(ColorDrawable(Color.GRAY))
-//                    .placeholder(ColorDrawable(Color.LTGRAY))
                     .error(ColorDrawable(Color.LTGRAY))
         }
       screenSize = JavaCodes.getScreenSize()
@@ -69,32 +59,15 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
     override fun getItemCount(): Int = images.size
     override fun getItemId(position: Int): Long = position.toLong()
     override fun onBindViewHolder(h: Holder?, i: Int) {
-        val img = images.get(i)
+        val img = images[i]
 
-      //  var dimenId = -1
         val itemView = h!!.itemView
 
 
 
-        //if(i == 0)  dimenId = R.dimen.staggered_child_xlarge else   dimenId = R.dimen.staggered_child_small
-//        if (i % 3 == 0)
-//            dimenId = R.dimen.staggered_child_medium
-//        else if (i % 5 == 0)
-//            dimenId = R.dimen.staggered_child_large
-//        else if (i % 7 == 0)
-//            dimenId = R.dimen.staggered_child_xlarge
-//        else
-//            dimenId = R.dimen.staggered_child_small
 
+       val params: GridLayoutManager.LayoutParams = itemView.layoutParams as GridLayoutManager.LayoutParams
 
-        val span = if (i == 0) (images.size - 1) else 1
-
-
-     //   val size = Base.get.resources.getDimensionPixelSize(dimenId)
-
-        val params: GridLayoutManager.LayoutParams = itemView.layoutParams as GridLayoutManager.LayoutParams
-
-        //if (isVertical) params.width = size else  params.height = size
 
 
        when(screenSize){
@@ -102,7 +75,10 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                log.d("small size")
                h1 = 300
                h2 = 400
+
                h3 = 600
+               h4 = 500
+
            }
            Configuration.SCREENLAYOUT_SIZE_NORMAL -> {
                log.d("normal size")
@@ -110,6 +86,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                h1 = 400
                h2 = 500
                h3 = 800
+               h4 = 700
            }
            Configuration.SCREENLAYOUT_SIZE_LARGE -> {
                log.d("large size")
@@ -117,6 +94,8 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                h1 = 500
                h2 = 600
                h3 = 1000
+               h4 = 800
+
            }
            Configuration.SCREENLAYOUT_SIZE_XLARGE -> {
                log.d("xlarge size")
@@ -124,15 +103,19 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                h1 = 600
                h2 = 700
                h3 = 1200
+               h4 = 800
+
            }
        }
-
+        log.d("screen width width image - ${img.width} ${img.height}")
         if ((images.size > 2 && images.size != 3)&& i >= 1){
             log.d("params: ${h.container.layoutParams.height}")
             val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,h1)
             p.height = h1
             h.container.layoutParams = p
             params.height = h1
+            options!!.centerCrop()
+
         }
         else if (images.size == 3 && i >= 1){
             log.d("params: ${h.container.layoutParams.height}")
@@ -140,31 +123,70 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
             p.height = h2
             h.container.layoutParams = p
             params.height = h2
+            options!!.centerCrop()
+        }else if(images.size == 2){
+            log.d("params: ${h.container.layoutParams.height}")
+            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,h2)
+            p.height = h2
+            h.container.layoutParams = p
+            params.height = h2
+            options!!.centerCrop()
         }
         else{
-            val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,h3)
-            p.height = h3
-            h.container.layoutParams = p
-            params.height = h3
+            if (img.width == "0" || img.height == "0"){
+
+            options!!.centerCrop()
+                val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,h3)
+                p.height = h3
+                h.container.layoutParams = p
+                params.height = h3
+            }
+            else{
+
+//                if (img.width.toInt() <= img.height.toInt()) {
+                    options!!.centerCrop()
+                    val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,h3)
+                    p.height = h3
+                    h.container.layoutParams = p
+                    params.height = h3
+//                }else {
+//                    log.d("myscreen ${Functions.getScreenHeight()}")
+//                    log.d("myscreen w: ${img.width.toInt()} h: ${img.height.toInt()}")
+//                    log.d("myscreen result1: ${Functions.getScreenWidth() - (img.width.toInt() - img.height.toInt())}")
+//                    log.d("myscreen result2: ${(img.width.toInt() - img.height.toInt())}")
+//                    log.d("myscreen result3: ${(Functions.getScreenWidth() - img.height.toInt())}")
+//                    log.d("myscreen result4: ${(Functions.getScreenWidth() - img.width.toInt())}")
+//
+//                    h3 = Functions.getScreenWidth() - (img.width.toInt() )
+//                    val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, h3)
+//                    p.height = h3
+//                    h.container.layoutParams = p
+//                    params.height = h3
+//                }
+            }
+
+
         }
 
         itemView.layoutParams = params
 
-        log.d("image after ${Functions.checkImageUrl(img.image640)!!.replace(Const.IMAGE.LOW, Prefs.Builder().imageRes())}")
+        log.d("image after ${Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.LOW, Prefs.Builder().imageRes())}")
+
         Glide.with(context)
-                .load(Functions.checkImageUrl(img.image640)!!.replace(Const.IMAGE.LOW, Prefs.Builder().imageRes()))
+                .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.LOW, Prefs.Builder().imageRes()))
 
                 .apply(options!!)
                 .into(h.photo)
+
+
+
 
 
         h.photo.setOnClickListener {
 
             ImageViewer.Builder(context,images)
                     .setFormatter(object : ImageViewer.Formatter<Image>{
-                        override fun format(t: Image?): String {
-                            return Http.BASE_URL+t!!.image
-                        }
+                        override fun format(t: Image?): String = Http.BASE_URL+t!!.image
 
                     })
                     .setStartPosition(i)
@@ -179,10 +201,8 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
         }
     }
 
-    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): Holder {
-
-        return Holder(inflater.inflate(R.layout.res_post_photo_item,p0,false))
-    }
+    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): Holder =
+            Holder(inflater.inflate(R.layout.res_post_photo_item,p0,false))
 
     class Holder(view: View) : RecyclerView.ViewHolder(view) {
 

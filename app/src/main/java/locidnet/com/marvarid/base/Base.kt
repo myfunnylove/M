@@ -1,5 +1,6 @@
 package locidnet.com.marvarid.base
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -41,7 +42,7 @@ class Base : Application (){
     @Inject
     lateinit var prefs:Prefs
 
-    val vkAccessTokenTracker = object : VKAccessTokenTracker(){
+    private val vkAccessTokenTracker = object : VKAccessTokenTracker(){
         override fun onVKAccessTokenChanged(oldToken: VKAccessToken?, newToken: VKAccessToken?) {
             if (newToken == null) {
                 log.d("new token is null")
@@ -105,6 +106,7 @@ class Base : Application (){
     companion object {
 
 
+        @SuppressLint("StaticFieldLeak")
         lateinit var get: Base
             private set
     }

@@ -31,9 +31,7 @@ import locidnet.com.marvarid.rest.Http
 import org.json.JSONObject
 import javax.inject.Inject
 
-/**
- * Created by Michaelan on 6/16/2017.
- */
+
 class NewPasswordActivity : BaseActivity(), Viewer {
 
     @Inject
@@ -41,7 +39,6 @@ class NewPasswordActivity : BaseActivity(), Viewer {
     @Inject
     lateinit var errorConn: ErrorConnection
 
-    var isLoginFree = false
     var pass = ""
     var passAgain = ""
     var from = -1
@@ -75,7 +72,7 @@ class NewPasswordActivity : BaseActivity(), Viewer {
                     pass = newpass.text.toString()
                     passAgain =    newsPassAgain.text.toString()
 
-                    if (!pass.equals(passAgain)){
+                    if (pass != passAgain){
                         Toast.makeText(this@NewPasswordActivity, resources.getString(R.string.password_doesnot_match), Toast.LENGTH_SHORT).show()
 
                     }
@@ -149,14 +146,12 @@ class NewPasswordActivity : BaseActivity(), Viewer {
             finish()
         }
     }
-    fun AppCompatEditText.setLoginResult(drawable:Int = 0){
-        if(drawable != 0){
-            val drawableCompat = VectorDrawableCompat.create(resources, drawable, this.context.theme)
-            this.setCompoundDrawablesWithIntrinsicBounds(null,null,drawableCompat,null)
-        }else{
-            this.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null)
+    fun AppCompatEditText.setLoginResult(drawable:Int = 0) = if(drawable != 0){
+        val drawableCompat = VectorDrawableCompat.create(resources, drawable, this.context.theme)
+        this.setCompoundDrawablesWithIntrinsicBounds(null,null,drawableCompat,null)
+    }else{
+        this.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null)
 
-        }
     }
 
 

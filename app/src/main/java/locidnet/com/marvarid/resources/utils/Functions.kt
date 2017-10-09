@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BlurMaskFilter
@@ -432,5 +433,7 @@ object Functions {
         return phrase.toString()
     }
 
+    fun getScreenWidth(): Int = Resources.getSystem().getDisplayMetrics().widthPixels
 
+    fun getScreenHeight(): Int = Resources.getSystem().getDisplayMetrics().heightPixels
 }

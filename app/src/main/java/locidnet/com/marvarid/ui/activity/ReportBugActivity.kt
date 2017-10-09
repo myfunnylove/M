@@ -19,12 +19,8 @@ import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.rest.Http
-import org.json.JSONObject
 import javax.inject.Inject
 
-/**
- * Created by myfunnylove on 02.10.17.
- */
 class ReportBugActivity : BaseActivity(),Viewer {
 
 
@@ -101,7 +97,7 @@ class ReportBugActivity : BaseActivity(),Viewer {
 
     override fun finish() {
         super.finish()
-        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+        overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
 
     }
 }

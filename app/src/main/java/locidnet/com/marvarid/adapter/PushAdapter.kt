@@ -1,5 +1,6 @@
 package locidnet.com.marvarid.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -42,38 +43,39 @@ import java.util.*
 class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    val options               = RequestOptions()
+    private val options               = RequestOptions()
             .centerCrop()
             .fallback(VectorDrawableCompat.create(Base.get.resources,R.drawable.image, Base.get.theme))
             .error(VectorDrawableCompat.create(Base.get.resources,R.drawable.image, Base.get.theme))
-            .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.image, Base.get.theme))
+            .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.image, Base.get.theme))!!
 
     val model = Model()
     val user = Prefs.Builder().getUser()
-    val prettyTime = PrettyTime()
-    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    private val prettyTime = PrettyTime()
+    @SuppressLint("SimpleDateFormat")
+    private val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     override fun getItemCount(): Int = list.size
 
-    override fun getItemViewType(position: Int): Int = list.get(position).type
+    override fun getItemViewType(position: Int): Int = list[position].type
 
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder =
+            when (viewType) {
 
-            Const.Push.LIKE -> return Like(inflater.inflate(R.layout.res_item_push_like, parent, false))
+                Const.Push.LIKE -> Like(inflater.inflate(R.layout.res_item_push_like, parent, false))
 
-            Const.Push.COMMENT -> return Comment(inflater.inflate(R.layout.res_item_push_like, parent, false))
+                Const.Push.COMMENT -> Comment(inflater.inflate(R.layout.res_item_push_like, parent, false))
 
-            Const.Push.FOLLOW -> return Requested(inflater.inflate(R.layout.res_item_push_requested, parent, false))
-            Const.Push.REQUESTED -> return Requested(inflater.inflate(R.layout.res_item_push_requested, parent, false))
+                Const.Push.FOLLOW -> Requested(inflater.inflate(R.layout.res_item_push_requested, parent, false))
+                Const.Push.REQUESTED -> Requested(inflater.inflate(R.layout.res_item_push_requested, parent, false))
 
-            else -> return Other(inflater.inflate(R.layout.res_item_push_requested, parent, false))
-        }
-    }
+                else -> Other(inflater.inflate(R.layout.res_item_push_requested, parent, false))
+            }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+    @SuppressLint("SetTextI18n")
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, @SuppressLint("RecyclerView") position: Int) {
 
-        val push = list.get(position)
+        val push = list[position]
 
         val date2 = formatter.parse(push.time) as Date
 
@@ -93,7 +95,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
 
                     if (push.user.userId != user.userId){
-                        var type = ProfileFragment.FOLLOW
+                        val type = ProfileFragment.FOLLOW
 
 
 
@@ -121,7 +123,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
 
 
-                like.time.text = "${prettyTime.format(date2)} - "
+                like.time.text = prettyTime.format(date2)
 
 
 
@@ -151,7 +153,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
 
                     if (push.user.userId != user.userId){
-                        var type = ProfileFragment.FOLLOW
+                        val type = ProfileFragment.FOLLOW
 
 
 
@@ -202,7 +204,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
 
                     if (push.user.userId != user.userId){
-                        var type = ProfileFragment.FOLLOW
+                        val type = ProfileFragment.FOLLOW
 
 
 
@@ -294,7 +296,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 follow.avatar.setOnClickListener{
 
                     if (push.user.userId != user.userId){
-                        var type = ProfileFragment.FOLLOW
+                        val type = ProfileFragment.FOLLOW
 
 
 
@@ -307,7 +309,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                         bundle.putString("photo",   if (push.user.userPhoto.isNullOrEmpty()) "" else push.user.userPhoto)
                         bundle.putString("user_id",  push.user.userId)
                         bundle.putString(ProfileFragment.F_TYPE,type)
-                        log.d("result from search user -> ${bundle}")
+                        log.d("result from search user -> $bundle")
 
                         go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
 
@@ -323,20 +325,24 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
                 follow.dismiss.visibility = View.GONE
 
-                log.d("push:  ${push}")
+                log.d("push:  $push")
                 try{
-                    if (push.user.actions.requestIt == "1") {
-                        follow.accept.tag = ProfileFragment.REQUEST
-                        follow.accept.text = Functions.getString(R.string.request)
-                    }else if(push.user.actions.followIt == "1") {
-                        follow.accept.tag = ProfileFragment.UN_FOLLOW
+                    when {
+                        push.user.actions.requestIt == "1" -> {
+                            follow.accept.tag = ProfileFragment.REQUEST
+                            follow.accept.text = Functions.getString(R.string.request)
+                        }
+                        push.user.actions.followIt == "1" -> {
+                            follow.accept.tag = ProfileFragment.UN_FOLLOW
 
-                        follow.accept.text = Functions.getString(R.string.unfollow)
+                            follow.accept.text = Functions.getString(R.string.unfollow)
 
-                    }else {
-                        follow.accept.tag = ProfileFragment.FOLLOW
+                        }
+                        else -> {
+                            follow.accept.tag = ProfileFragment.FOLLOW
 
-                        follow.accept.text = Functions.getString(R.string.follow)
+                            follow.accept.text = Functions.getString(R.string.follow)
+                        }
                     }
                 }catch (e:Exception){
                     follow.accept.tag = ProfileFragment.FOLLOW
@@ -366,13 +372,13 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                                                 val req = JSONObject(Http.getResponseData(response.body()!!.prms))
                                                 if (req.optString("request") == "1"){
 
-                                                    list.get(position).user.actions.followIt  = "0"
-                                                    list.get(position).user.actions.requestIt = "1"
+                                                    list[position].user.actions.followIt  = "0"
+                                                    list[position].user.actions.requestIt = "1"
                                                     notifyItemChanged(position)
 
                                                 }else if (req.optString("request") == "0"){
-                                                    list.get(position).user.actions.followIt  = "1"
-                                                    list.get(position).user.actions.requestIt = "0"
+                                                    list[position].user.actions.followIt  = "1"
+                                                    list[position].user.actions.requestIt = "0"
                                                     notifyItemChanged(position)
                                                     MainActivity.MY_POSTS_STATUS = MainActivity.ONLY_USER_INFO
                                                 }
@@ -401,8 +407,8 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
                                     override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
                                         if (response!!.isSuccessful){
-                                            list.get(position).user.actions.followIt  = "0"
-                                            list.get(position).user.actions.requestIt = "0"
+                                            list[position].user.actions.followIt  = "0"
+                                            list[position].user.actions.requestIt = "0"
                                             notifyItemChanged(position)
                                             MainActivity.MY_POSTS_STATUS = MainActivity.ONLY_USER_INFO
 

@@ -11,6 +11,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_follow.*
@@ -131,7 +132,12 @@ class FollowActivity : BaseActivity(),
             bindService(Intent(this, PlayerService::class.java), object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName, service: IBinder) {
                     playerServiceBinder = service as PlayerService.PlayerServiceBinder
+                    musicSrv = service.service
+                    musicSrv!!.setActivity(this@FollowActivity)
+
+                    musicBound = true
                     try {
+
                         mediaController = MediaControllerCompat(this@FollowActivity, playerServiceBinder!!.getMediaSessionToken())
                         mediaController!!.registerCallback(object : MediaControllerCompat.Callback() {
                             override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
@@ -149,6 +155,7 @@ class FollowActivity : BaseActivity(),
                 }
 
                 override fun onServiceDisconnected(name: ComponentName) {
+                    musicBound = false
                     playerServiceBinder = null
                     mediaController = null
                 }
@@ -553,22 +560,29 @@ class FollowActivity : BaseActivity(),
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
                     PlayerService.PLAYING_SONG_URL == listSong.get(position).middlePath) {
+                showLoading()
 
                 mediaController!!.getTransportControls().play()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PLAYING &&
                     PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
+                showLoading()
+
                 mediaController!!.getTransportControls().play()
 
             } else if (musicSrv!!.currentState == PlaybackStateCompat.STATE_PAUSED &&
                     PlayerService.PLAYING_SONG_URL != listSong.get(position).middlePath) {
+                showLoading()
+
                 mediaController!!.getTransportControls().play()
 
             }else {
+                showLoading()
+
                 mediaController!!.getTransportControls().play()
 
             }
-
+        windowManager
         }else{
             Toast.makeText(Base.get,Base.get.resources.getString(R.string.error_something), Toast.LENGTH_SHORT).show()
         }
@@ -593,18 +607,7 @@ class FollowActivity : BaseActivity(),
             musicBound = false
         }
     }
-    override fun onStart() {
-        super.onStart()
-        if (playIntent == null) {
 
-            playIntent = Intent(this, PlayerService::class.java)
-            this.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
-            this.startService(playIntent)
-
-        }
-
-
-    }
 
 
     override fun turnOn() {
@@ -641,6 +644,12 @@ class FollowActivity : BaseActivity(),
         }
     }
 
+    override fun hideLoading(){
+        loading.visibility = View.GONE
+    }
+    override fun showLoading(){
+        loading.visibility = View.VISIBLE
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){

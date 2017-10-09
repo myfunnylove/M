@@ -14,7 +14,6 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.Comment
@@ -27,12 +26,11 @@ import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import org.json.JSONObject
 
 
-class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClicker) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: AdapterClicker) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val ctx= context
     var comments = list
     val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    val clicker = clicker
 
     var animationsLocked = false
     var lastAnimatedPosition = -1
@@ -123,15 +121,13 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
 
     override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): RecyclerView.ViewHolder {
 
-       if (p1 == BODY)
-        return Holder(inflater.inflate(R.layout.res_comment_box,p0,false))
+        return if (p1 == BODY)
+            Holder(inflater.inflate(R.layout.res_comment_box,p0,false))
         else
-           return LoadMoreHolder(inflater.inflate(R.layout.pull_loadmore_layout,p0,false))
+            LoadMoreHolder(inflater.inflate(R.layout.pull_loadmore_layout,p0,false))
     }
 
-    override fun getItemCount(): Int {
-        return comments.size
-    }
+    override fun getItemCount(): Int = comments.size
 
     class Holder(view: View) :RecyclerView.ViewHolder(view){
         val avatar    = view.findViewById<AppCompatImageView>(R.id.avatar)
@@ -145,10 +141,6 @@ class CommentAdapter(context:Context,list:ArrayList<Comment>,clicker:AdapterClic
         val container = view.findViewById<ViewGroup>(R.id.container)
     }
 
-    fun  swapList(list:ArrayList<Comment>){
-        comments = list
-        notifyDataSetChanged()
-    }
 
     fun swapLast(list: ArrayList<Comment>) {
         val lastItemPostition = (comments.size + 1)

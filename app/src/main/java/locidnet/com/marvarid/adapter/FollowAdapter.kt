@@ -4,10 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
-import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -18,7 +15,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 
 import org.json.JSONObject
 import locidnet.com.marvarid.R
@@ -28,8 +24,6 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.mvp.Model
-import locidnet.com.marvarid.pattern.cryptDecorator.AppCrypt
-import locidnet.com.marvarid.pattern.cryptDecorator.B64EncoderCryptDecorator
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
@@ -41,37 +35,30 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.properties.Delegates
 
-/**
- * Created by Michaelan on 5/19/2017.
- */
+
 class FollowAdapter(context:Context,
                     follows:ArrayList<Users>,
-                    adapterClicker: AdapterClicker,which:Int  = 0) : RecyclerView.Adapter<FollowAdapter.Holder>() {
+                    adapterClicker: AdapterClicker, private val which: Int = 0) : RecyclerView.Adapter<FollowAdapter.Holder>() {
 
     var ctx      = context
     var users    = follows
     var inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     var clicker  = adapterClicker
-    var profile  = Base.get.prefs.getUser()
     val model    = Model()
-    val which    = which
 
     var animationsLocked     = false
-    var lastAnimatedPosition = -1
-    var delayEnterAnimation  = true
+    private var lastAnimatedPosition = -1
+    private var delayEnterAnimation  = true
 
-    override fun getItemCount(): Int {
-        return users.size
-    }
+    override fun getItemCount(): Int = users.size
 
 
-    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): Holder {
-        return Holder(inflater.inflate(R.layout.res_follower_list_item,p0,false))
-    }
+    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): Holder =
+            Holder(inflater.inflate(R.layout.res_follower_list_item,p0,false))
 
     override fun onBindViewHolder(h: Holder?, @SuppressLint("RecyclerView") p1: Int) {
 
-        val user = users.get(p1)
+        val user = users[p1]
 
         h!!.itemView.runEnterAnimation(p1)
         log.d("$user")
@@ -150,7 +137,7 @@ class FollowAdapter(context:Context,
 
 //            reqObj.put("user_id",profile.userId)
 //            reqObj.put("session",profile.session)
-            reqObj.put("user",   users.get(p1).userId)
+            reqObj.put("user",   users[p1].userId)
 
             log.d("request data $reqObj")
             if (h.follow.tag == ProfileFragment.FOLLOW){
@@ -168,13 +155,13 @@ class FollowAdapter(context:Context,
                                             val req = JSONObject(Http.getResponseData(response.body()!!.prms))
                                             if (req.optString("request") == "1"){
 
-                                                users.get(p1).follow  = 0
-                                                users.get(p1).request = 1
+                                                users[p1].follow  = 0
+                                                users[p1].request = 1
                                                 swapItems(users,p1)
 
                                             }else if (req.optString("request") == "0"){
-                                                users.get(p1).follow  = 1
-                                                users.get(p1).request = 0
+                                                users[p1].follow  = 1
+                                                users[p1].request = 0
                                                 swapItems(users,p1)
                                                 if (FFFFragment.followersCount != -1) FFFFragment.followersCount++
                                                 MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
@@ -212,8 +199,8 @@ class FollowAdapter(context:Context,
                                     log.d("follow on text     ${h.follow.text}")
 
 
-                                        users.get(p1).request = 0
-                                        users.get(p1).follow  = 0
+                                        users[p1].request = 0
+                                        users[p1].follow  = 0
                                         swapItems(users,p1)
                                         if (FFFFragment.followersCount != -1) FFFFragment.followersCount--
                                         MainActivity.MY_POSTS_STATUS = MainActivity.ONLY_USER_INFO
