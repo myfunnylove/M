@@ -8,19 +8,17 @@ import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
-import jp.wasabeef.glide.transformations.internal.Utils
 
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
-import locidnet.com.marvarid.base.BaseActivity
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.Image
 import locidnet.com.marvarid.resources.utils.*
@@ -149,6 +147,38 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                     p.height = h3
                     h.container.layoutParams = p
                     params.height = h3
+
+//                    }else{
+
+//                    log.d("screen w: ${Functions.getScreenWidth()} image w: ${img.width.toInt()}")
+//                    if(img.width.toInt() > Functions.getScreenWidth()){
+//                        val koef = Functions.getScreenWidth() / img.width.toInt()
+//                    val fin  = koef * img.height.toInt()
+//
+//                    val imageParam = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,fin)
+//                    imageParam.height = fin
+//                    h.photo.layoutParams = imageParam
+//
+//                    val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT)
+////                    p.height = fin
+//                    h.container.layoutParams = p
+////                    params.height = h3
+//                    }else{
+//                        val koef = Functions.getScreenWidth() / img.width.toInt()
+//                        val fin  = (koef * img.height.toInt()) * 2
+//
+//                        val imageParam = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,fin)
+//                        imageParam.height = fin
+//                        h.photo.layoutParams = imageParam
+//
+//                        val p = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,fin)
+//
+//                        p.height = fin
+//                        h.container.layoutParams = p
+//                        params.height = fin
+//                    }
+
+//                }
 //                }else {
 //                    log.d("myscreen ${Functions.getScreenHeight()}")
 //                    log.d("myscreen w: ${img.width.toInt()} h: ${img.height.toInt()}")

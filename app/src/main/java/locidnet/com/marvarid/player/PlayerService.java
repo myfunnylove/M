@@ -130,7 +130,7 @@ public class PlayerService extends Service implements MusicControlObserver {
         exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
         exoPlayer.addListener(exoPlayerListener);
 
-        exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
+        exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
 
         log.INSTANCE.d("repeat mode" + exoPlayer.getRepeatMode());
 
@@ -326,7 +326,7 @@ public class PlayerService extends Service implements MusicControlObserver {
             currentAudio = track;
             metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BitmapFactory.decodeResource(getResources(), R.drawable.bg));
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, (track.getTitle().isEmpty()) ? Base.Companion.getGet().getResources().getString(R.string.unknown) : track.getTitle());
-            metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM,(track.getArtist().isEmpty()) ? Base.Companion.getGet().getResources().getString(R.string.unknown) : track.getArtist());
+            metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM,(Base.Companion.getGet().getResources().getString(R.string.app_name)));
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, (track.getArtist().isEmpty()) ? Base.Companion.getGet().getResources().getString(R.string.unknown) : track.getArtist());
 //            metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DURATION,track.getDuration());
             mediaSession.setMetadata(metadataBuilder.build());
@@ -397,6 +397,15 @@ public class PlayerService extends Service implements MusicControlObserver {
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             log.INSTANCE.d("onPlayerStateChanged + "+playWhenReady + " "+playbackState);
             if (playWhenReady && playbackState == Player.STATE_ENDED) {
+
+                if (songPosn == songs.size() - 1) {
+//                    songPosn = 0;
+
+                    mediaSessionCallback.onSkipToNext();
+                    exoPlayer.seekTo(0);
+                    exoPlayer.setPlayWhenReady(true);
+
+                }else
                 mediaSessionCallback.onSkipToNext();
             }else if (playWhenReady && playbackState == Player.STATE_READY){
                 activity.hideLoading();
