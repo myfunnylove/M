@@ -97,7 +97,6 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                                  user.userMail   = if (userInfo.user.info.mail.isNullOrEmpty()) "" else userInfo.user.info.mail
                                  user.first_name  = if (userInfo.user.info.name.isNullOrEmpty()) "" else userInfo.user.info.name
                                  user.gender      = if (userInfo.user.info.gender.isNullOrEmpty()) "" else userInfo.user.info.gender
-                                         //TODO GENDER AND NAME SHOULD BE GET
                                  Base.get.prefs.setUser(user)
                                  Observable.just(infoUser)
                              }else{

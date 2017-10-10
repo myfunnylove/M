@@ -200,6 +200,7 @@ class PickedPhotoAdapter(ctx:Context,adapterClicker:AdapterClicker,listPhoto:Arr
 
     }
 
+
     fun setProgress(position:Int,model: PhotoUpload){
         log.d("update holder: $position $model")
         isFirst = false

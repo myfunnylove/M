@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.MyFeedAdapter
@@ -30,6 +31,8 @@ import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
 import kotlin.properties.Delegates
+import android.support.v7.widget.LinearSmoothScroller
+import locidnet.com.marvarid.resources.adapterAnim.*
 
 
 /**
@@ -100,8 +103,13 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                                        .initLayoutForFragment(rootView)
                                        .build()
         manager = LinearLayoutManager(Base.get)
+
+//        manager!!.startSmoothScroll(smoothScroller)
         listFeed.layoutManager = manager
         listFeed.setHasFixedSize(true)
+        listFeed.smoothScrollToPosition(-10)
+        listFeed.itemAnimator = ScaleInBottomAnimator()
+
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
                 var lastVisibleItemPosition = 0
@@ -252,7 +260,11 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 cachedSongAdapters = HashMap()
                 feedAdapter = MyFeedAdapter(activity,postList,this,this)
                 feedAdapter!!.activity = activity!!
-                listFeed.adapter = feedAdapter
+                var slideAdapter:SlideInBottomAnimationAdapter? =SlideInBottomAnimationAdapter(feedAdapter)
+                slideAdapter!!.setInterpolator(OvershootInterpolator())
+                slideAdapter.setDuration(400)
+                listFeed.adapter = slideAdapter
+                slideAdapter = null
             }else if (postList.posts.size == 1 && (MainActivity.endFeed == 1 && MainActivity.startFeed == 0)){
                 log.d("post qoshildi postni birinchi elementi update qilinadi")
                 MainActivity.startFeed = feedAdapter!!.feeds.posts.size
@@ -265,7 +277,14 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 cachedSongAdapters = HashMap()
 
                 feedAdapter = MyFeedAdapter(activity,postList,this,this)
-                listFeed.adapter = feedAdapter
+                var slideAdapter:SlideInBottomAnimationAdapter? =SlideInBottomAnimationAdapter(feedAdapter)
+
+
+                slideAdapter!!.setInterpolator(OvershootInterpolator())
+                slideAdapter.setDuration(400)
+                listFeed.adapter = slideAdapter
+                slideAdapter = null
+
             }else if((MainActivity.endFeed == 20 && MainActivity.startFeed != 0) && feedAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 feedAdapter!!.swapLast20Item(postList)

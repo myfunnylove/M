@@ -645,10 +645,10 @@ class FollowActivity : BaseActivity(),
     }
 
     override fun hideLoading(){
-        loading.visibility = View.GONE
+//        loading.visibility = View.GONE
     }
     override fun showLoading(){
-        loading.visibility = View.VISIBLE
+//        loading.visibility = View.VISIBLE
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

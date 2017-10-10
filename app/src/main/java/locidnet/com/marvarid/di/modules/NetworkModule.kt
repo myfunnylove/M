@@ -22,7 +22,7 @@ class NetworkModule {
 
     @Provides
     fun getFile(ctx: Context):File {
-        return File(ctx.cacheDir,"app_cache")
+        return File(ctx.cacheDir,"marvarid_cache")
     }
 
 

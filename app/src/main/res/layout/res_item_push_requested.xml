@@ -75,7 +75,7 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/block"
             android:layout_marginTop="8dp"
-            android:gravity="center"
+            android:gravity="center|left"
             android:orientation="horizontal">
 
             <Button

@@ -146,6 +146,14 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
 
             />
+
+        <activity
+            android:name=".ui.activity.AboutUsActivity"
+            android:screenOrientation="portrait"
+
+            android:windowSoftInputMode="adjustResize|stateHidden"
+
+            />
         <activity
             android:name=".ui.activity.ReportBugActivity"
             android:screenOrientation="portrait"
@@ -188,19 +196,6 @@
 
             />
 
-        <service
-            android:name=".musicplayer.MusicService"
-            android:exported="false">
-            <intent-filter>
-
-                <action android:name="locidnet.com.marvarid.ACTION.PLAY_TOGGLE" />
-                <action android:name="locidnet.com.marvarid.ACTION.PLAY_LAST" />
-                <action android:name="locidnet.com.marvarid.ACTION.PLAY_NEXT" />
-                <action android:name="locidnet.com.marvarid.ACTION.STOP_SERVICE" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </service>
 
         <service
             android:name=".player.PlayerService"
@@ -216,7 +211,7 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-        <service android:name=".ui.service.PushNotification">
+        <service android:name=".ui.service.PushNotification" android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

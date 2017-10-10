@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_settings.*
+import locidnet.com.marvarid.BuildConfig
 import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
@@ -358,6 +359,10 @@ class SettingsActivity : BaseActivity(), Viewer {
                 R.id.highAudio -> Prefs.Builder().setAudioRes(Const.AUDIO.ORIGINAL)
             }
         }
+
+        version.text = "${resources.getString(R.string.app_name)} ${BuildConfig.VERSION_NAME}"
+
+        aboutApp.setOnClickListener { startActivity(Intent(this,AboutUsActivity::class.java)) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

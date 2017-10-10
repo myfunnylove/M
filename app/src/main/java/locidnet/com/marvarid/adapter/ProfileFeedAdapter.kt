@@ -160,7 +160,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, i: Int) {
 
         val type = getItemViewType(i)
-        holder!!.itemView.runEnterAnimation(i)
+        holder!!.itemView
 
         if (type == BODY) {
             val h = holder as Holder
@@ -431,6 +431,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     h.audios.adapter = adapter
 
                 } else {
+                    h.line.visibility = View.GONE
+
                     h.audios.visibility = View.GONE
                 }
 
@@ -892,41 +894,43 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-
         var images by Delegates.notNull<RecyclerView>()
-        var audios by Delegates.notNull<RecyclerView>()
-        var avatar by Delegates.notNull<AppCompatImageView>()
-        var name by Delegates.notNull<TextView>()
-        var quote by Delegates.notNull<TextView>()
-        var quoteEdit by Delegates.notNull<EditText>()
-        var likeCount by Delegates.notNull<TextSwitcher>()
+
+        var line         by Delegates.notNull<View>()
+        var audios       by Delegates.notNull<RecyclerView>()
+        var avatar       by Delegates.notNull<AppCompatImageView>()
+        var name         by Delegates.notNull<TextView>()
+        var quote        by Delegates.notNull<TextView>()
+        var quoteEdit    by Delegates.notNull<EditText>()
+        var likeCount    by Delegates.notNull<TextSwitcher>()
         var commentCount by Delegates.notNull<TextView>()
-        var time by Delegates.notNull<TextView>()
-        var username by Delegates.notNull<TextView>()
-        var likeIcon by Delegates.notNull<AppCompatImageView>()
-        var popup by Delegates.notNull<AppCompatImageView>()
-        var likeLay by Delegates.notNull<LinearLayout>()
-        var commentLay by Delegates.notNull<LinearLayout>()
+        var time         by Delegates.notNull<TextView>()
+        var username     by Delegates.notNull<TextView>()
+        var likeIcon     by Delegates.notNull<AppCompatImageView>()
+        var popup        by Delegates.notNull<AppCompatImageView>()
+        var likeLay      by Delegates.notNull<LinearLayout>()
+        var commentLay   by Delegates.notNull<LinearLayout>()
         var topContainer by Delegates.notNull<ViewGroup>()
-        var sendChange by Delegates.notNull<AppCompatImageButton>()
+        var sendChange   by Delegates.notNull<AppCompatImageButton>()
 
         init {
-            images = itemView.findViewById<RecyclerView>(R.id.images)
-            audios = itemView.findViewById<RecyclerView>(R.id.audios)
-            avatar = itemView.findViewById<AppCompatImageView>(R.id.avatar)
-            name = itemView.findViewById<TextView>(R.id.name)
-            quote = itemView.findViewById<TextView>(R.id.commentText)
-            quoteEdit = itemView.findViewById<EditText>(R.id.commentEditText)
-            likeCount = itemView.findViewById<TextSwitcher>(R.id.likeCount)
+            images       = itemView.findViewById<RecyclerView>(R.id.images)
+            line         = itemView.findViewById<View>(R.id.line)
+            audios       = itemView.findViewById<RecyclerView>(R.id.audios)
+            avatar       = itemView.findViewById<AppCompatImageView>(R.id.avatar)
+            name         = itemView.findViewById<TextView>(R.id.name)
+            quote        = itemView.findViewById<TextView>(R.id.commentText)
+            quoteEdit    = itemView.findViewById<EditText>(R.id.commentEditText)
+            likeCount    = itemView.findViewById<TextSwitcher>(R.id.likeCount)
             commentCount = itemView.findViewById<TextView>(R.id.commentCount)
-            time = itemView.findViewById<TextView>(R.id.time)
-            username = itemView.findViewById<TextView>(R.id.username)
-            likeIcon = itemView.findViewById<AppCompatImageView>(R.id.likeIcon)
-            popup = itemView.findViewById<AppCompatImageView>(R.id.popup)
-            likeLay = itemView.findViewById<LinearLayout>(R.id.likeLay)
-            commentLay = itemView.findViewById<LinearLayout>(R.id.commentLay)
+            time         = itemView.findViewById<TextView>(R.id.time)
+            username     = itemView.findViewById<TextView>(R.id.username)
+            likeIcon     = itemView.findViewById<AppCompatImageView>(R.id.likeIcon)
+            popup        = itemView.findViewById<AppCompatImageView>(R.id.popup)
+            likeLay      = itemView.findViewById<LinearLayout>(R.id.likeLay)
+            commentLay   = itemView.findViewById<LinearLayout>(R.id.commentLay)
             topContainer = itemView.findViewById<ViewGroup>(R.id.topContainer)
-            sendChange = itemView.findViewById<AppCompatImageButton>(R.id.sendChangedQuote)
+            sendChange   = itemView.findViewById<AppCompatImageButton>(R.id.sendChangedQuote)
 
 
         }

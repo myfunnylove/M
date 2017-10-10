@@ -6,6 +6,8 @@ import android.content.Intent
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewCompat
+import android.support.v4.view.ViewPropertyAnimatorListener
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
@@ -27,6 +29,7 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.MusicPlayerListener
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.resources.adapterAnim.AnimateViewHolder
 import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.CommentActivity
@@ -52,6 +55,9 @@ class MyFeedAdapter(context: FragmentActivity,
                     profilOrFeed:Boolean = false
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+
+
+
     var ctx                   = context
     var feeds                 = feedsMap
     var inflater              = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -76,22 +82,22 @@ class MyFeedAdapter(context: FragmentActivity,
     }
 
 
-    private fun View.runEnterAnimation(position:Int){
-        if(disableAnimation || position < lastAnimationPosition){
-            return
-        }
-
-
-        if (position > ANIMATED_ITEM_COUNT){
-            lastAnimationPosition = position
-            this.translationY =Functions.getScreenHeight(ctx).toFloat()
-            this.animate()
-                    .translationY(0f)
-                    .setInterpolator(DecelerateInterpolator(3f))
-                    .setDuration(700)
-                    .start()
-        }
-    }
+//    private fun View.runEnterAnimation(position:Int){
+//        if(disableAnimation || position < lastAnimationPosition){
+//            return
+//        }
+//
+//
+//        if (position > ANIMATED_ITEM_COUNT){
+//            lastAnimationPosition = position
+//            this.translationY =Functions.getScreenHeight(ctx).toFloat()
+//            this.animate()
+//                    .translationY(0f)
+//                    .setInterpolator(DecelerateInterpolator(3f))
+//                    .setDuration(700)
+//                    .start()
+//        }
+//    }
 
     override fun getItemCount(): Int = feeds.posts.size
 
@@ -112,9 +118,8 @@ class MyFeedAdapter(context: FragmentActivity,
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, @SuppressLint("RecyclerView") i: Int) {
 
         val type = getItemViewType(i)
-
         if (type == TYPE_POST){
-            holder!!.itemView.runEnterAnimation(i)
+            holder!!.itemView
 
             val h = holder as Holder
             val post = feeds.posts[i]
@@ -358,6 +363,7 @@ class MyFeedAdapter(context: FragmentActivity,
                     h.audios.adapter = adapter
 
                 } else {
+                    h.line.visibility = View.GONE
                     h.audios.visibility = View.GONE
                 }
 
@@ -573,10 +579,11 @@ class MyFeedAdapter(context: FragmentActivity,
         feeds.posts.addAll(postList.posts)
         notifyItemRangeInserted(lastItemPostition,postList.posts.size)
     }
-    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView), AnimateViewHolder {
 
 
         var images        by Delegates.notNull<RecyclerView>()
+        var line          by Delegates.notNull<View>()
         var audios        by Delegates.notNull<RecyclerView>()
         var avatar        by Delegates.notNull<AppCompatImageView>()
         var name          by Delegates.notNull<TextView>()
@@ -594,6 +601,7 @@ class MyFeedAdapter(context: FragmentActivity,
         var sendChange    by Delegates.notNull<AppCompatImageButton>()
         init {
             images       = itemView.findViewById<RecyclerView>(R.id.images)
+            line         = itemView.findViewById<View>(R.id.line)
             audios       = itemView.findViewById<RecyclerView>(R.id.audios)
             avatar       = itemView.findViewById<AppCompatImageView>(R.id.avatar)
             name         = itemView.findViewById<TextView>(R.id.name)
@@ -609,6 +617,32 @@ class MyFeedAdapter(context: FragmentActivity,
             commentLay   = itemView.findViewById<LinearLayout>(R.id.commentLay)
             topContainer = itemView.findViewById<ViewGroup>(R.id.topContainer)
             sendChange   = itemView.findViewById<AppCompatImageButton>(R.id.sendChangedQuote)
+        }
+
+        override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
+            ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
+            ViewCompat.setAlpha(itemView, 0f);
+        }
+
+        override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?) {
+        }
+
+        override fun animateAddImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+
+        override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(-itemView.getHeight() * 0.3f)
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
         }
     }
 

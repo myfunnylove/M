@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -51,6 +53,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
     val model = Model()
     val user = Prefs.Builder().getUser()
+    var wrapParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT)
     private val prettyTime = PrettyTime()
     @SuppressLint("SimpleDateFormat")
     private val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -293,6 +296,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                         .apply(Functions.getGlideOpts())
                         .into(follow.avatar)
 
+                follow.accept.layoutParams = wrapParams
                 follow.avatar.setOnClickListener{
 
                     if (push.user.userId != user.userId){
@@ -324,23 +328,30 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 follow.time.text = "${prettyTime.format(date2)} - "
 
                 follow.dismiss.visibility = View.GONE
-
+                val params =
                 log.d("push:  $push")
                 try{
                     when {
                         push.user.actions.requestIt == "1" -> {
                             follow.accept.tag = ProfileFragment.REQUEST
                             follow.accept.text = Functions.getString(R.string.request)
+                            follow.accept.setTextColor(ctx.resources.getColor(R.color.white))
+
+                            follow.accept.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
                         }
                         push.user.actions.followIt == "1" -> {
                             follow.accept.tag = ProfileFragment.UN_FOLLOW
 
                             follow.accept.text = Functions.getString(R.string.unfollow)
+                            follow.accept.setTextColor(ctx.resources.getColor(R.color.headerTextColor))
 
+                            follow.accept.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_deselect))
                         }
                         else -> {
                             follow.accept.tag = ProfileFragment.FOLLOW
+                            follow.accept.setTextColor(ctx.resources.getColor(R.color.white))
 
+                            follow.accept.setBackgroundDrawable(ctx.resources.getDrawable(R.drawable.button_accent_select))
                             follow.accept.text = Functions.getString(R.string.follow)
                         }
                     }

@@ -728,6 +728,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         super.onActivityResult(requestCode, resultCode, data)
         log.d("MainActivity -> OnactivityResult: req:$requestCode res: $resultCode intent: ${data != null}")
         var photos: List<String>? = null
+        if (musicSrv != null)  musicSrv!!.setActivity(this@MainActivity)
 
 
         if (requestCode == Const.SESSION_OUT || resultCode == Const.SESSION_OUT){
@@ -810,7 +811,6 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                 }
 
                 else -> {
-
                     log.d("lastfragment -> $lastFragment")
                     log.d("profil followers count -> ${FFFFragment.followersCount}")
                     log.d("my post status $MY_POSTS_STATUS")
@@ -1150,10 +1150,11 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
 
     override fun hideLoading(){
-        loading.visibility = View.GONE
+        log.d("hide loading")
+//        loading.visibility = View.GONE
     }
     override fun showLoading(){
-        loading.visibility = View.VISIBLE
+//        loading.visibility = View.VISIBLE
     }
 
     // get notification countq

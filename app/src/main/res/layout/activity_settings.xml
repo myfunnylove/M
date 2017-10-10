@@ -580,42 +580,6 @@
 
 
 
-            <View
-            android:layout_width="match_parent"
-            android:layout_height="0.50dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/silver"
-
-            />
-
-
-            <LinearLayout
-                android:id="@+id/quitLay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    app:srcCompat="@drawable/exit"
-
-                    />
-
-                <TextView
-                    android:id="@+id/quit"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="16dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/quit"
-                    android:textColor="@color/headerTextColor"
-                    android:textSize="@dimen/normalTextSize"
-                    android:textStyle="bold" />
-            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -623,6 +587,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="@color/silver"
+                android:layout_marginTop="16dp"
 
                 />
 
@@ -662,6 +627,7 @@
                 />
 
             <LinearLayout
+                android:id="@+id/aboutApp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -687,15 +653,49 @@
                     />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.50dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/silver"
+
+                />
+
+
+            <LinearLayout
+                android:id="@+id/quitLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    app:srcCompat="@drawable/exit"
+
+                    />
+
+                <TextView
+                    android:id="@+id/quit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/quit"
+                    android:textColor="@color/headerTextColor"
+                    android:textSize="@dimen/normalTextSize"
+                    android:textStyle="bold" />
+            </LinearLayout>
             <TextView
+                android:id="@+id/version"
                 style="@style/HeaderText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:padding="16dp"
-                android:text="V1.0.0 beta"
-                android:textColor="@color/silver"
                 android:textSize="@dimen/normalTextSize" />
         </LinearLayout>
 

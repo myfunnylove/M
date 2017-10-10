@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Binder;
@@ -22,6 +23,10 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.widget.RemoteViews;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -105,7 +110,7 @@ public class PlayerService extends Service implements MusicControlObserver {
     private ExtractorsFactory extractorsFactory;
     private DataSource.Factory dataSourceFactory;
 
-
+    Context appContext;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -119,7 +124,7 @@ public class PlayerService extends Service implements MusicControlObserver {
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setCallback(mediaSessionCallback);
 
-        Context appContext = getApplicationContext();
+        appContext = getApplicationContext();
 
         Intent activityIntent = new Intent(appContext, MainActivity.class);
         mediaSession.setSessionActivity(PendingIntent.getActivity(appContext, 0, activityIntent, 0));
@@ -324,6 +329,7 @@ public class PlayerService extends Service implements MusicControlObserver {
 
         private void updateMetadataFromTrack(Audio track) {
             currentAudio = track;
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BitmapFactory.decodeResource(getResources(), R.drawable.bg));
             metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BitmapFactory.decodeResource(getResources(), R.drawable.bg));
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, (track.getTitle().isEmpty()) ? Base.Companion.getGet().getResources().getString(R.string.unknown) : track.getTitle());
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM,(Base.Companion.getGet().getResources().getString(R.string.app_name)));

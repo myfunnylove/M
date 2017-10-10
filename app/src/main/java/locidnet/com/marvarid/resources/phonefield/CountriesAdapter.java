@@ -33,9 +33,10 @@ public class CountriesAdapter extends ArrayAdapter<Country> implements SpinnerAd
     if (convertView == null) {
       convertView = mInflater.inflate(R.layout.spinner_value, parent, false);
     }
-    ImageView imageView = convertView.findViewById(R.id.flag);
-    imageView.setImageResource(country.getResId(getContext()));
-
+//    ImageView imageView = convertView.findViewById(R.id.flag);
+//    imageView.setImageResource(country.getResId(getContext()));
+    TextView countryText = convertView.findViewById(R.id.country);
+    countryText.setText(country.getCode() +" +");
     TextView textView = convertView.findViewById(R.id.dial_code);
     textView.setText(String.valueOf(country.getDialCode()));
 

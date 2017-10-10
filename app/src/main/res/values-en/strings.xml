@@ -125,4 +125,5 @@
     <string name="image_resolution">Image resolution</string>
     <string name="audio_resolution">Quality of music</string>
     <string name="error_cannot_remove">You can not remove from the playlist during playing</string>
+    <string name="about_app_title">Marvarid for Android</string>
 </resources>

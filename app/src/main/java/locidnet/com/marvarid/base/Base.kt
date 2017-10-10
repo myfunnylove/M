@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.os.Environment
 import android.support.multidex.MultiDex
 import android.support.v7.app.AppCompatDelegate
 import com.facebook.FacebookSdk
@@ -20,12 +21,14 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.facebook.imagepipeline.decoder.SimpleProgressiveJpegConfig
 import com.facebook.imagepipeline.core.ImagePipelineConfig
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import locidnet.com.marvarid.rest.API
 import locidnet.com.marvarid.di.DaggerAppComponent
 import locidnet.com.marvarid.di.modules.ApiModule
 import locidnet.com.marvarid.di.modules.ContextModule
 import locidnet.com.marvarid.di.modules.NetworkModule
 import locidnet.com.marvarid.resources.utils.Prefs
+import java.io.File
 import javax.inject.Inject
 
 
@@ -41,6 +44,7 @@ class Base : Application (){
 
     @Inject
     lateinit var prefs:Prefs
+
 
     private val vkAccessTokenTracker = object : VKAccessTokenTracker(){
         override fun onVKAccessTokenChanged(oldToken: VKAccessToken?, newToken: VKAccessToken?) {
@@ -75,6 +79,9 @@ class Base : Application (){
                 .networkModule(NetworkModule())
                 .build()
                 .inject(this)
+        val conf = ImageLoaderConfiguration.Builder(context)
+                .build()
+
 
         vkAccessTokenTracker.startTracking()
         VKSdk.initialize(context)

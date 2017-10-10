@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.resources.utils.Prefs
 import javax.inject.Singleton
 
@@ -27,6 +26,7 @@ class ContextModule(private val application: Application) {
     @Provides
     @Singleton
     fun getPrefs() : Prefs = Prefs.Builder()
+
 
 
 }
