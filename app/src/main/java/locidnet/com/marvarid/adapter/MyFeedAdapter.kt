@@ -445,11 +445,17 @@ class MyFeedAdapter(context: FragmentActivity,
                 h.commentLay.setOnClickListener {
                     val goCommentActivity = Intent(ctx, CommentActivity::class.java)
                     goCommentActivity.putExtra("postId", post.id.toInt())
+                    goCommentActivity.putExtra("postUsername",post.user.username)
+                    goCommentActivity.putExtra("postUserPhoto",post.user.photo)
+                    goCommentActivity.putExtra("postQuoteText",post.quote.text)
+                    goCommentActivity.putExtra("postQuoteColor",post.quote.textColor)
+                    goCommentActivity.putExtra("postQuoteSize",post.quote.textSize)
+
                     val startingLocation = IntArray(2)
                     h.commentLay.getLocationOnScreen(startingLocation)
                     goCommentActivity.putExtra(CommentActivity.LOCATION, startingLocation[1])
                     if (activity != null){
-                        MainActivity.COMMENT_POST_UPDATE = i
+                        MainActivity.COMMENT_POST_UPDATE = holder.adapterPosition
                         activity!!.startActivityForResult(goCommentActivity,Const.GO_COMMENT_ACTIVITY)
                         activity!!.overridePendingTransition(0, 0)
                     }else{
@@ -518,8 +524,8 @@ class MyFeedAdapter(context: FragmentActivity,
                             R.id.change -> {
 
                                 if (changeId == -1) {
-                                    changeId = i
-                                    notifyItemChanged(i)
+                                    changeId = holder.adapterPosition
+                                    notifyItemChanged(holder.adapterPosition)
                                 }
                             }
 
@@ -638,7 +644,7 @@ class MyFeedAdapter(context: FragmentActivity,
 
         override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
             ViewCompat.animate(itemView)
-                    .translationY(-itemView.getHeight() * 0.3f)
+                    .translationY(-itemView.getHeight() * 0.1f)
                     .alpha(0f)
                     .setDuration(300)
                     .setListener(listener)

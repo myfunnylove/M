@@ -34,6 +34,7 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
     private int mLastPosition = -1;
 
     private boolean isFirstOnly = true;
+    private boolean disableFirst = false;
 
     public AnimationAdapter(RecyclerView.Adapter<RecyclerView.ViewHolder> adapter) {
         mAdapter = adapter;
@@ -58,6 +59,7 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
 
         int adapterPosition = holder.getAdapterPosition();
         if (!isFirstOnly || adapterPosition > mLastPosition) {
+            if (!disableFirst && adapterPosition != 0)
             for (Animator anim : getAnimators(holder.itemView)) {
                 anim.setDuration(mDuration).start();
                 anim.setInterpolator(mInterpolator);
@@ -94,7 +96,9 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
     public void setFirstOnly(boolean firstOnly) {
         isFirstOnly = firstOnly;
     }
-
+    public void setFirstItem(boolean firstItem){
+        disableFirst = firstItem;
+    }
     @Override public int getItemViewType(int position) {
         return mAdapter.getItemViewType(position);
     }

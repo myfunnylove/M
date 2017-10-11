@@ -57,9 +57,9 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
         if (options == null){
          options =    RequestOptions()
-                    .fallback(ColorDrawable(Color.WHITE))
+                    .fallback(ColorDrawable(Color.parseColor("#d5d9dc")))
                     .error(ColorDrawable(Color.WHITE))
-                    .placeholder(ColorDrawable(Color.WHITE))
+                    .placeholder(ColorDrawable(Color.parseColor("#d5d9dc")))
 
         }
       screenSize = JavaCodes.getScreenSize()
@@ -160,7 +160,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
                 Glide.with(context)
 
-                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.LOW, Prefs.Builder().imageRes()))
+                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, Prefs.Builder().imageRes()))
 
                         .apply(options!!.diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                         .into(h.photo)
@@ -196,7 +196,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
                 Glide.with(context)
 
-                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.LOW, Prefs.Builder().imageRes()))
+                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, Prefs.Builder().imageRes()))
 
                         .apply(options!!.diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                         .into(h.photo)

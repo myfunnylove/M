@@ -7,6 +7,8 @@ import android.graphics.drawable.ColorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewCompat
+import android.support.v4.view.ViewPropertyAnimatorListener
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
@@ -35,6 +37,7 @@ import locidnet.com.marvarid.connectors.ProfileMusicController
 import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.player.PlayerService
+import locidnet.com.marvarid.resources.adapterAnim.AnimateViewHolder
 import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.customviews.SGTextView
 import locidnet.com.marvarid.resources.utils.*
@@ -511,6 +514,12 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 h.commentLay.setOnClickListener {
                     val goCommentActivity = Intent(ctx, CommentActivity::class.java)
                     goCommentActivity.putExtra("postId", post.id.toInt())
+                    goCommentActivity.putExtra("postUserPhoto",post.user.photo)
+
+                    goCommentActivity.putExtra("postUsername",post.user.username)
+                    goCommentActivity.putExtra("postQuoteText",post.quote.text)
+                    goCommentActivity.putExtra("postQuoteColor",post.quote.textColor)
+                    goCommentActivity.putExtra("postQuoteSize",post.quote.textSize)
                     val startingLocation = IntArray(2)
                     h.commentLay.getLocationOnScreen(startingLocation)
                     goCommentActivity.putExtra(CommentActivity.LOCATION, startingLocation[1])
@@ -892,7 +901,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
         notifyItemChanged(0)
     }
 
-    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) , AnimateViewHolder {
 
         var images by Delegates.notNull<RecyclerView>()
 
@@ -933,6 +942,31 @@ class ProfileFeedAdapter(context: FragmentActivity,
             sendChange   = itemView.findViewById<AppCompatImageButton>(R.id.sendChangedQuote)
 
 
+        }
+        override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
+            ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
+            ViewCompat.setAlpha(itemView, 0f);
+        }
+
+        override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?) {
+        }
+
+        override fun animateAddImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+
+        override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(-itemView.getHeight() * 0.3f)
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
         }
     }
 

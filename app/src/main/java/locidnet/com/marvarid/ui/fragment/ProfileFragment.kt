@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import com.bumptech.glide.Glide
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
@@ -20,6 +21,10 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.player.PlayerService
+import locidnet.com.marvarid.resources.adapterAnim.LinearLayoutManagerWithSmoothScroller
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInAnimationAdapter
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInBottomAnimator
+import locidnet.com.marvarid.resources.adapterAnim.SlideInBottomAnimationAdapter
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
@@ -43,7 +48,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
     var connectActivity:GoNext?       = null
     var model:Model?                         = Model()
-    var manager:LinearLayoutManager?  = null
+    var manager:LinearLayoutManagerWithSmoothScroller?  = null
     var expanded                      = false
     var userInfo:UserInfo?= null
     var initBody                      = false
@@ -121,9 +126,10 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
                                         .build()
 
-        manager = LinearLayoutManager(Base.get)
+        manager = LinearLayoutManagerWithSmoothScroller(Base.get)
         postView!!.layoutManager = manager
         postView!!.setHasFixedSize(true)
+        postView!!.itemAnimator = ScaleInBottomAnimator()
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 log.d("PROFIL POSTLARI OXIRIGA KELDI ${manager!!.findLastVisibleItemPosition()}")
@@ -266,9 +272,13 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
         if (postAdapter == null){
             postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true,FOLLOW_TYPE,isClose)
+            var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+            slideAdapter!!.setDuration(500)
+            slideAdapter.setFirstOnly(false)
 
             postView!!.visibility = View.VISIBLE
-            postView!!.adapter = postAdapter
+            postView!!.adapter = slideAdapter
+            slideAdapter = null
         }else{
             postAdapter!!.updateFirstItem(userInfo)
         }
@@ -315,7 +325,15 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true, FOLLOW_TYPE)
-                postView!!.adapter = postAdapter
+                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+
+
+                slideAdapter!!.setFirstOnly(false)
+
+                slideAdapter.setInterpolator(OvershootInterpolator())
+                slideAdapter.setDuration(500)
+                postView!!.adapter = slideAdapter
+                slideAdapter = null
 
             }
 
@@ -326,7 +344,15 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
 
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true, FOLLOW_TYPE)
-                postView!!.adapter = postAdapter
+                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+
+
+                slideAdapter!!.setFirstOnly(false)
+
+                slideAdapter.setInterpolator(OvershootInterpolator())
+                slideAdapter.setDuration(500)
+                postView!!.adapter = slideAdapter
+                slideAdapter = null
             }else if((FollowActivity.end == 20 && FollowActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 postAdapter!!.swapLast20Item(postList)

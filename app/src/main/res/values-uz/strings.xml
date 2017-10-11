@@ -127,4 +127,5 @@
     <string name="audio_resolution">Musiqa sifati</string>
     <string name="error_cannot_remove">Siz musiqani yangrayotgan payti o\'chirolmaysiz </string>
     <string name="about_app_title">Marvarid Android uchun</string>
+    <string name="sendAgain">Отправить заново</string>
 </resources>

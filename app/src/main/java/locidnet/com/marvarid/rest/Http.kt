@@ -23,7 +23,7 @@ object Http {
 
         val TELEFONNI_JONATISH         = "1"
         val SMSNI_JONATISH             = "2"
-        val LOGIN_YOQLIGINI_TEKSHIRISH = "s3"
+        val LOGIN_YOQLIGINI_TEKSHIRISH = "3"
         val ROYXATDAN_OTISH            = "4"
         val LOGIN_PAYTI                = "5"
         val FB_ORQALI_LOGIN            = "6"

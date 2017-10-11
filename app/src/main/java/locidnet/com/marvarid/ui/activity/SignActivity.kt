@@ -59,10 +59,35 @@ class SignActivity : BaseActivity() ,Viewer{
 
         if(from == Http.CMDS.TELEFONNI_JONATISH){
 
-
+            val testUser = Prefs.Builder().getUser()
+            testUser.phoneOrMail
             selectMail.isEnabled  = false
             selectPhone.isEnabled = false
             smsCode.visibility = View.VISIBLE
+            sendAgain.visibility = View.VISIBLE
+            sendAgain.setOnClickListener {
+                if(signMode == PHONE_MODE){
+                    if (phone.isValid){
+                        val sendObject = JSONObject()
+                        phoneStr = phone.phoneNumber!!
+                        sendObject.put("phone",phoneStr)
+
+                        presenter.requestAndResponse(sendObject, Http.CMDS.TELEFONNI_JONATISH)
+                    }else
+                        Toaster.errror(R.string.error_incorrect_phone)
+                }else{
+                    if (!Const.VALID_EMAIL_ADDRESS_REGEX.matcher(mail.text.toString()).find()){
+
+                        mail.error = resources.getString(R.string.error_incorrect_mail)
+                    }else{
+                        val sendObject = JSONObject()
+                        phoneStr = mail.text.toString()
+                        sendObject.put("phone",phoneStr)
+
+                        presenter.requestAndResponse(sendObject, Http.CMDS.TELEFONNI_JONATISH)
+                    }
+                }
+            }
             signMode = SMS_MODE
             signUp.text = resources.getString(R.string.Sign_up)
 

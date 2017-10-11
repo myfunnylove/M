@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,6 +28,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.di.DaggerMVPComponent
@@ -56,7 +60,12 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
     var manager:LinearLayoutManager? = null
  //   var commentList:   ArrayList<Comment>? = null
     var commentAdapter:CommentAdapter?     = null
-    private var drawingStartLocation               = 0
+    private var drawingStartLocation       = 0
+    var postUsername:String?    =null
+    var postQuoteText:String?   =null
+    var postQuoteColor:String?  =null
+    var postQuoteSize:String?   =null
+    var postUserPhoto:String?   =null
     companion object {
 
         var start = 0
@@ -76,6 +85,46 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
                 .build()
                 .inject(this)
+        try{
+
+            postUsername = intent.getStringExtra("postUsername")
+            postUserPhoto = intent.getStringExtra("postUserPhoto")
+            postQuoteText = intent.getStringExtra("postQuoteText")
+            postQuoteColor = intent.getStringExtra("postQuoteColor")
+            postQuoteSize = intent.getStringExtra("postQuoteSize")
+
+            val url = Functions.checkImageUrl(postUserPhoto)
+
+            Glide.with(this)
+                    .load(url)
+
+                    .apply(RequestOptions()
+                            .circleCrop()
+
+                            .fallback(VectorDrawableCompat.create(resources, R.drawable.account_select,theme))
+
+                            .error(VectorDrawableCompat.create(resources, R.drawable.account_select, theme)))
+                    .into(avatar)
+
+            username.text = postUsername!!
+            quote.text = postQuoteText!!
+
+            if (!postQuoteSize.isNullOrEmpty()) {
+                try {
+                   quote.textSize = postQuoteSize!!.toFloat()
+                } catch (e: Exception) {
+                }
+            }
+            try {
+
+                quote.setTextColor(ContextCompat.getColor(Base.get, Const.colorPalette.get(postQuoteColor!!.toInt())!!.drawable))
+
+            } catch (e: Exception) {
+
+            }
+        }catch (e:Exception){
+            quoteOwner.visibility = View.GONE
+        }
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
         supportActionBar!!.title = resources.getString(R.string.headerComment)

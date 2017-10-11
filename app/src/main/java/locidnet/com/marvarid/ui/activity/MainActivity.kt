@@ -118,7 +118,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         val FIRST_TIME     = "0"
         val NEED_UPDATE    = "1"
         val AFTER_UPDATE   = "2"
-        val ONLY_USER_INFO = "s3"
+        val ONLY_USER_INFO = "3"
 
         var COMMENT_POST_UPDATE = 0
         var COMMENT_COUNT       = 0

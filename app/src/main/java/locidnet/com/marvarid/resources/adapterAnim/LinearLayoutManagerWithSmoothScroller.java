@@ -5,15 +5,17 @@ import android.graphics.PointF;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 
 /**
  * Created by myfunnylove on 10.10.17.
  */
 
 public class LinearLayoutManagerWithSmoothScroller extends LinearLayoutManager {
-
+    private Context context;
     public LinearLayoutManagerWithSmoothScroller(Context context) {
         super(context, VERTICAL, false);
+        this.context = context;
     }
 
     public LinearLayoutManagerWithSmoothScroller(Context context, int orientation, boolean reverseLayout) {
@@ -21,9 +23,17 @@ public class LinearLayoutManagerWithSmoothScroller extends LinearLayoutManager {
     }
 
     @Override
-    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state,
-                                       int position) {
-        RecyclerView.SmoothScroller smoothScroller = new TopSnappedSmoothScroller(recyclerView.getContext());
+    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+        LinearSmoothScroller smoothScroller = new LinearSmoothScroller(context) {
+
+            private static final float SPEED = 300f;// Change this value (default=25f)
+
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                return SPEED / displayMetrics.densityDpi;
+            }
+
+        };
         smoothScroller.setTargetPosition(position);
         startSmoothScroll(smoothScroller);
     }

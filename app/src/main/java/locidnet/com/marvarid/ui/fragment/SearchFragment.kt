@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -30,6 +31,8 @@ import locidnet.com.marvarid.model.RecPost
 import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInAnimationAdapter
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInBottomAnimator
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Prefs
@@ -96,7 +99,7 @@ class SearchFragment : BaseFragment(), AdapterClicker{
         manager = GridLayoutManager(activity,3)
         list!!.layoutManager =  manager
         list!!.setHasFixedSize(true)
-
+        list!!.itemAnimator = ScaleInBottomAnimator()
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
 
@@ -181,8 +184,14 @@ class SearchFragment : BaseFragment(), AdapterClicker{
         swipe!!.isRefreshing  = false
         recPosts = postList
         val adapter = RecommendedAdapter(this,Base.get.applicationContext,recPosts!!)
+        var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(adapter)
 
-        list!!.adapter = adapter
+        slideAdapter!!.setFirstItem(true)
+        slideAdapter.setFirstOnly(true)
+
+        slideAdapter.setInterpolator(OvershootInterpolator())
+        slideAdapter.setDuration(500)
+        list!!.adapter = slideAdapter
 
     }
 

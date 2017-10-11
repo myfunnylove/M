@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.view.ViewCompat
+import android.support.v4.view.ViewPropertyAnimatorListener
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
@@ -23,6 +25,7 @@ import locidnet.com.marvarid.model.Push
 import locidnet.com.marvarid.model.PushList
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.resources.adapterAnim.AnimateViewHolder
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.activity.FollowActivity
@@ -53,7 +56,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
     val model = Model()
     val user = Prefs.Builder().getUser()
-    var wrapParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT)
+//    var wrapParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT)
     private val prettyTime = PrettyTime()
     @SuppressLint("SimpleDateFormat")
     private val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -179,7 +182,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 }
                 comment.username.text = push.user.userName
                 comment.body.text = ctx.resources.getString(R.string.pushCommentBody)
-                comment.time.text = "${prettyTime.format(date2)} - "
+                comment.time.text = "${prettyTime.format(date2)}"
 
                 Glide.with(ctx)
                         .load(Functions.checkImageUrl(push.action.actionPhoto))
@@ -233,7 +236,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
                 requested.body.text = ctx.resources.getString(R.string.pushRequestBody)
 
-                requested.time.text ="${prettyTime.format(date2)} - "
+                requested.time.text ="${prettyTime.format(date2)}"
 
                 requested.accept.text = Functions.getString(R.string.allow)
                 requested.dismiss.text = Functions.getString(R.string.ignore)
@@ -296,7 +299,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                         .apply(Functions.getGlideOpts())
                         .into(follow.avatar)
 
-                follow.accept.layoutParams = wrapParams
+//                follow.accept.layoutParams = wrapParams
                 follow.avatar.setOnClickListener{
 
                     if (push.user.userId != user.userId){
@@ -325,7 +328,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 follow.username.text = push.user.userName
 
                 follow.body.text = ctx.resources.getString(R.string.pushFollowBody)
-                follow.time.text = "${prettyTime.format(date2)} - "
+                follow.time.text = "${prettyTime.format(date2)}"
 
                 follow.dismiss.visibility = View.GONE
                 val params =
@@ -440,7 +443,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
     }
 
 
-    class Like(view: View) : RecyclerView.ViewHolder(view) {
+    class Like(view: View) : RecyclerView.ViewHolder(view), AnimateViewHolder {
 
         val container = view.findViewById<ViewGroup>(R.id.container)
         val username = view.findViewById<TextView>(R.id.username)
@@ -448,19 +451,69 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
         val body = view.findViewById<TextView>(R.id.body)
         val time = view.findViewById<TextView>(R.id.time)
         val mypost = view.findViewById<AppCompatImageView>(R.id.actionPhoto)
+        override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
+            ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
+            ViewCompat.setAlpha(itemView, 0f);
+        }
 
+        override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?) {
+        }
+
+        override fun animateAddImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+
+        override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(-itemView.getHeight() * 0.3f)
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
     }
 
-    class Comment(view: View) : RecyclerView.ViewHolder(view) {
+    class Comment(view: View) : RecyclerView.ViewHolder(view), AnimateViewHolder {
         val container = view.findViewById<ViewGroup>(R.id.container)
         val username = view.findViewById<TextView>(R.id.username)
         val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
         val body = view.findViewById<TextView>(R.id.body)
         val time = view.findViewById<TextView>(R.id.time)
         val mypost = view.findViewById<AppCompatImageView>(R.id.actionPhoto)
+
+        override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
+            ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
+            ViewCompat.setAlpha(itemView, 0f);
+        }
+
+        override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?) {
+        }
+
+        override fun animateAddImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+
+        override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(-itemView.getHeight() * 0.3f)
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
     }
 
-    class Requested(view: View) : RecyclerView.ViewHolder(view) {
+    class Requested(view: View) : RecyclerView.ViewHolder(view), AnimateViewHolder {
         val container = view.findViewById<ViewGroup>(R.id.container)
         val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
         val username = view.findViewById<TextView>(R.id.username)
@@ -469,9 +522,35 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
         val dismiss = view.findViewById<Button>(R.id.dismiss)
         val time = view.findViewById<TextView>(R.id.time)
 
+        override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
+            ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
+            ViewCompat.setAlpha(itemView, 0f);
+        }
+
+        override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?) {
+        }
+
+        override fun animateAddImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+
+        override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(-itemView.getHeight() * 0.3f)
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+
     }
 
-    class Other(view: View) : RecyclerView.ViewHolder(view) {
+    class Other(view: View) : RecyclerView.ViewHolder(view), AnimateViewHolder {
         val container = view.findViewById<ViewGroup>(R.id.container)
         val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
         val username = view.findViewById<TextView>(R.id.username)
@@ -479,6 +558,32 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
         val accept = view.findViewById<Button>(R.id.accept)
         val dismiss = view.findViewById<Button>(R.id.dismiss)
         val time = view.findViewById<TextView>(R.id.time)
+
+        override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
+            ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
+            ViewCompat.setAlpha(itemView, 0f);
+        }
+
+        override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?) {
+        }
+
+        override fun animateAddImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+
+        override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(-itemView.getHeight() * 0.3f)
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
 
     }
 

@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Typeface
+import android.support.v4.view.ViewCompat
+import android.support.v4.view.ViewPropertyAnimatorListener
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -24,6 +26,7 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.model.Users
 import locidnet.com.marvarid.mvp.Model
+import locidnet.com.marvarid.resources.adapterAnim.AnimateViewHolder
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
@@ -229,7 +232,7 @@ class FollowAdapter(context:Context,
         notifyItemChanged(position)
     }
 
-    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) , AnimateViewHolder {
 
         var img by Delegates.notNull<AppCompatImageView>()
         var name by Delegates.notNull<TextView>()
@@ -244,6 +247,32 @@ class FollowAdapter(context:Context,
             follow = itemView.findViewById<Button>(R.id.follow)
             container = itemView.findViewById<ViewGroup>(R.id.container)
 
+        }
+
+        override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
+            ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
+            ViewCompat.setAlpha(itemView, 0f);
+        }
+
+        override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?) {
+        }
+
+        override fun animateAddImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+
+        override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
+            ViewCompat.animate(itemView)
+                    .translationY(-itemView.getHeight() * 0.3f)
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
         }
     }
 

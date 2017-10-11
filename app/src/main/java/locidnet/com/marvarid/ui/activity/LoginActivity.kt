@@ -111,7 +111,11 @@ class LoginActivity : BaseActivity(), Viewer {
             }
 
             signUp.setOnClickListener {
-                startActivity(Intent(this, SignActivity().javaClass))
+              if(Prefs.Builder().getUser().smsCode.isNullOrEmpty() || Prefs.Builder().getUser().phoneOrMail.isNullOrEmpty())
+                  startActivity(Intent(this,SignActivity::class.java))
+                else
+                  startActivity(Intent(this,LoginAndPassActivity::class.java))
+
                 this.finish()
             }
 

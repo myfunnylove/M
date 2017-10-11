@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_settings.*
 import locidnet.com.marvarid.R
@@ -18,6 +19,8 @@ import locidnet.com.marvarid.model.PushList
 import locidnet.com.marvarid.model.User
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInAnimationAdapter
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInBottomAnimator
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Prefs
@@ -70,6 +73,7 @@ class NotificationFragment : BaseFragment(){
         manager = LinearLayoutManager(activity)
         list!!.layoutManager = manager
         list!!.setHasFixedSize(true)
+        list!!.itemAnimator = ScaleInBottomAnimator()
 
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
@@ -153,7 +157,14 @@ class NotificationFragment : BaseFragment(){
         list!!.visibility = View.VISIBLE
         if (adapter == null || (MainActivity.startNotif == 0 && MainActivity.endNotif == 20)){
             adapter = PushAdapter(activity,pushList.pushes)
-            list!!.adapter = adapter
+            var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(adapter)
+
+
+            slideAdapter!!.setFirstOnly(true)
+
+            slideAdapter.setInterpolator(OvershootInterpolator())
+            slideAdapter.setDuration(500)
+            list!!.adapter = slideAdapter
         }else {
             adapter!!.swapItems(pushList)
         }

@@ -27,7 +27,7 @@ import android.view.View;
 
 public class ScaleInAnimationAdapter extends AnimationAdapter {
 
-    private static final float DEFAULT_SCALE_FROM = .5f;
+    private static final float DEFAULT_SCALE_FROM = .4f;
     private final float mFrom;
 
     public ScaleInAnimationAdapter(RecyclerView.Adapter adapter) {

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
@@ -23,6 +24,10 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.player.PlayerService
+import locidnet.com.marvarid.resources.adapterAnim.LinearLayoutManagerWithSmoothScroller
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInAnimationAdapter
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInBottomAnimator
+import locidnet.com.marvarid.resources.adapterAnim.SlideInBottomAnimationAdapter
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Prefs
@@ -44,7 +49,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
     var connectActivity: GoNext?       = null
     val model                         = Model()
-    var manager: LinearLayoutManager?  = null
+    var manager: LinearLayoutManagerWithSmoothScroller?  = null
     var expanded                      = false
     var initBody                      = false
     var profileControl:ProfileMusicController? = null
@@ -114,9 +119,10 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 .build()
 
 
-        manager = LinearLayoutManager(Base.get)
+        manager = LinearLayoutManagerWithSmoothScroller(Base.get)
         postView.layoutManager = manager
         postView.setHasFixedSize(true)
+        postView.itemAnimator = ScaleInBottomAnimator()
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 log.d("PROFIL POSTLARI OXIRIGA KELDI ${manager!!.findLastVisibleItemPosition()}")
@@ -300,9 +306,13 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
        if (postAdapter == null){
            postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,fType,isClose)
+           var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+           slideAdapter!!.setFirstOnly(false)
+           slideAdapter.setDuration(500)
 
            postView.visibility = View.VISIBLE
-           postView.adapter = postAdapter
+           postView.adapter = slideAdapter
+           slideAdapter = null
        }else{
            log.d("update first item $userInfo")
            postAdapter!!.updateFirstItem(userInfo)
@@ -342,7 +352,15 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,FOLLOW_TYPE)
-                postView.adapter = postAdapter
+                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+
+
+                slideAdapter!!.setFirstOnly(false)
+
+                slideAdapter!!.setInterpolator(OvershootInterpolator())
+                slideAdapter.setDuration(500)
+                postView.adapter = slideAdapter
+                slideAdapter = null
             }else if (postList.posts.size == 1 && (MainActivity.endFeed == 1 && MainActivity.startFeed == 0)){
                 log.d("post qoshildi postni birinchi elementi update qilinadi")
                 MainActivity.start = postAdapter!!.feeds.posts.size
@@ -361,7 +379,13 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
 
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,FOLLOW_TYPE)
-                postView.adapter = postAdapter
+                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+
+
+                slideAdapter!!.setInterpolator(OvershootInterpolator())
+                slideAdapter.setDuration(500)
+                postView.adapter = slideAdapter
+                slideAdapter = null
             }else if((MainActivity.end == 20 && MainActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 postAdapter!!.swapLast20Item(postList)

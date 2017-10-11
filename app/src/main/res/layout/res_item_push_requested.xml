@@ -75,12 +75,12 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/block"
             android:layout_marginTop="8dp"
-            android:gravity="center|left"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/accept"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/pushBtnHeight"
                 android:layout_gravity="center"
 
@@ -90,12 +90,11 @@
                 android:padding="6dp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/buttonTextSize"
-
                  />
 
             <Button
                 android:id="@+id/dismiss"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/pushBtnHeight"
                 android:layout_gravity="center"
                 android:layout_marginLeft="6dp"

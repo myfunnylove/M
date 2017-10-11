@@ -262,7 +262,7 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
 
                 ProfileFragment.UN_FOLLOW ->{
                     adapter!!.users.forEach { user -> if (user.userId == OZGARGAN_USERNI_IDSI.toString()){
-                        log.d("Onresume s3 $OZGARGAN_USERNI_IDSI $QAYSI_HOLATGA_OZGARDI")
+                        log.d("Onresume 3 $OZGARGAN_USERNI_IDSI $QAYSI_HOLATGA_OZGARDI")
 
                         user.follow = 1
                         user.request =0

@@ -36,7 +36,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
             android:layout_weight="1"
-
+            android:maxLines="1"
+            android:ellipsize="end"
             android:gravity="center_vertical"
              />
 
@@ -47,8 +48,9 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
-            android:maxLines="1"
             android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:visibility="gone"
             android:gravity="center_vertical"
              />
@@ -63,9 +65,9 @@
 
         <android.support.v7.widget.AppCompatImageView
 
-            android:layout_width="@dimen/likeSize"
+            android:layout_width="20dp"
             android:layout_height="18dp"
-            android:padding="3dp"
+            android:padding="1dp"
             app:srcCompat="@drawable/clock" />
 
         <TextView
@@ -73,8 +75,8 @@
             style="@style/NormalText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="@color/silver"
              />
     </LinearLayout>

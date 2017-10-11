@@ -398,6 +398,11 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
         commentLay.setOnClickListener {
             val goCommentActivity = Intent(this, CommentActivity::class.java)
             goCommentActivity.putExtra("postId", post.id.toInt())
+            goCommentActivity.putExtra("postUsername",post.user.username)
+            goCommentActivity.putExtra("postUserPhoto",post.user.photo)
+            goCommentActivity.putExtra("postQuoteText",post.quote.text)
+            goCommentActivity.putExtra("postQuoteColor",post.quote.textColor)
+            goCommentActivity.putExtra("postQuoteSize",post.quote.textSize)
             val startingLocation = IntArray(2)
             commentLay.getLocationOnScreen(startingLocation)
             goCommentActivity.putExtra(CommentActivity.LOCATION, startingLocation[1])

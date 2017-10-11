@@ -48,7 +48,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
     var swipeRefreshLayout     by Delegates.notNull<SwipeRefreshLayout>()
     //  var refreshLayout  by Delegates.notNull<RecyclerRefreshLayout>()
     val user = Base.get.prefs.getUser()
-    var manager:LinearLayoutManager?                      = null
+    var manager:LinearLayoutManagerWithSmoothScroller?                      = null
     var scroll:EndlessRecyclerViewScrollListener?         = null
 
     lateinit var emptyContainer:EmptyContainer
@@ -102,13 +102,14 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                                        .setText(R.string.error_empty_feed)
                                        .initLayoutForFragment(rootView)
                                        .build()
-        manager = LinearLayoutManager(Base.get)
+        manager = LinearLayoutManagerWithSmoothScroller(Base.get)
+
 
 //        manager!!.startSmoothScroll(smoothScroller)
         listFeed.layoutManager = manager
         listFeed.setHasFixedSize(true)
-        listFeed.smoothScrollToPosition(-10)
-        listFeed.itemAnimator = ScaleInBottomAnimator()
+//        listFeed.smoothScrollToPosition(-10)
+        listFeed.itemAnimator = SlideInUpAnimator(OvershootInterpolator(1f))
 
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
@@ -260,9 +261,9 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 cachedSongAdapters = HashMap()
                 feedAdapter = MyFeedAdapter(activity,postList,this,this)
                 feedAdapter!!.activity = activity!!
-                var slideAdapter:SlideInBottomAnimationAdapter? =SlideInBottomAnimationAdapter(feedAdapter)
+                var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
                 slideAdapter!!.setInterpolator(OvershootInterpolator())
-                slideAdapter.setDuration(400)
+                slideAdapter.setDuration(500)
                 listFeed.adapter = slideAdapter
                 slideAdapter = null
             }else if (postList.posts.size == 1 && (MainActivity.endFeed == 1 && MainActivity.startFeed == 0)){
@@ -277,11 +278,11 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 cachedSongAdapters = HashMap()
 
                 feedAdapter = MyFeedAdapter(activity,postList,this,this)
-                var slideAdapter:SlideInBottomAnimationAdapter? =SlideInBottomAnimationAdapter(feedAdapter)
+                var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
 
 
                 slideAdapter!!.setInterpolator(OvershootInterpolator())
-                slideAdapter.setDuration(400)
+                slideAdapter.setDuration(500)
                 listFeed.adapter = slideAdapter
                 slideAdapter = null
 

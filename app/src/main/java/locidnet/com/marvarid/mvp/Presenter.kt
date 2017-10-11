@@ -161,7 +161,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                 .filter { beforeText -> beforeText.text().toString().length >= 6 }
                 .map { filteredText ->
 
-                    val obj = JS.get()
+                    val obj = JSONObject()
                     obj.put("username",filteredText.text().toString())
 
 

@@ -19,6 +19,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -41,6 +42,9 @@ import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
+import locidnet.com.marvarid.resources.adapterAnim.LinearLayoutManagerWithSmoothScroller
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInAnimationAdapter
+import locidnet.com.marvarid.resources.adapterAnim.ScaleInBottomAnimator
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.log
@@ -103,10 +107,10 @@ class SearchActivity :BaseActivity() ,Viewer, AdapterClicker{
                 .inject(this)
 
 
-        list.layoutManager = LinearLayoutManager(this)
+        list.layoutManager = LinearLayoutManagerWithSmoothScroller(this)
         list.setHasFixedSize(true)
 
-
+        list.itemAnimator = ScaleInBottomAnimator()
 
         emptyContainer = EmptyContainer.Builder()
                 .setIcon(R.drawable.search_light)
@@ -181,8 +185,16 @@ class SearchActivity :BaseActivity() ,Viewer, AdapterClicker{
 
             usersList                 = users
             adapter                   = FollowAdapter(Base.get,users,this,1)
+            var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(adapter)
+
+            slideAdapter!!.setFirstItem(true)
+
+            slideAdapter.setFirstOnly(true)
+
+            slideAdapter.setInterpolator(OvershootInterpolator())
+            slideAdapter.setDuration(500)
             list.visibility           = View.VISIBLE
-            list.adapter              = adapter
+            list.adapter              = slideAdapter
 
 
         }else{
