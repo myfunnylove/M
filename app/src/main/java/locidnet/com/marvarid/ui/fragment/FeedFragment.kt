@@ -1,6 +1,5 @@
 package locidnet.com.marvarid.ui.fragment
 
-import android.arch.lifecycle.Lifecycle
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
@@ -10,10 +9,8 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
-import android.widget.Toast
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.MyFeedAdapter
-import locidnet.com.marvarid.adapter.ProfileFeedAdapter
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
@@ -26,12 +23,10 @@ import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
 import kotlin.properties.Delegates
-import android.support.v7.widget.LinearSmoothScroller
 import locidnet.com.marvarid.resources.adapterAnim.*
 
 

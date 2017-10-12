@@ -6,14 +6,15 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.resources.utils.Functions
+import okhttp3.CacheControl
 import retrofit2.Call
 import retrofit2.http.*
 
 interface API {
 
-    @POST("index.php")
-    @FormUrlEncoded
-    fun request(@Header("User-Agent") userAgent: String?, @Header("Authorization") headerIdAndSess: String, @Field("data") data: String): Observable<ResponseData>
+    @GET("index.php")
+//    @FormUrlEncoded
+    fun request(@Header("User-Agent") userAgent: String?, @Header("Authorization") headerIdAndSess: String, @Query("data") data: String): Observable<ResponseData>
 
     @POST("index.php")
     @FormUrlEncoded

@@ -4,6 +4,7 @@ import android.support.v7.widget.AppCompatEditText
 import com.google.gson.Gson
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
+import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
@@ -13,6 +14,9 @@ import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
+import locidnet.com.marvarid.model.Audio
+import locidnet.com.marvarid.model.Features
+import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.UserInfo
 import locidnet.com.marvarid.pattern.builder.SessionOut
@@ -50,7 +54,6 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                  Observable.just(model.response(Http.getRequestData(data,cmd)))
 
                            .subscribeOn(Schedulers.io())
-
                             .flatMap({res -> res})
                             .flatMap({
                              res ->
@@ -106,8 +109,39 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                             }
                          })
 
-                           .cache()
+                         .doOnNext { onNext -> if (cmd == Http.CMDS.GET_PLAYLIST){
+                             log.d("Playlistni joylash")
+
+                             var result:String? = Http.getResponseData(onNext.prms)
+                             var features:Features? = Gson().fromJson(result, Features::class.java)
+                             Base.get.appDb.playListDAO().insertAudios(features!!.audios)
+                             log.d("Playlistni joylashdan kelgan rezultat ")
+                             result = null
+                             features = null
+
+                         }
+
+                         }
+                         .onErrorResumeNext{
+                             throwable:Throwable ->
+                             if(cmd == Http.CMDS.GET_PLAYLIST){
+                                 var resultList:List<Audio>? = Base.get.appDb.playListDAO().allAudios
+                                 log.d("xato tufayli localdan oberdi ${resultList == null} ")
+                                 if (resultList != null) {
+                                     var features:Features? = Features(ArrayList(resultList))
+
+
+                                     Observable.just(ResponseData("707","ok",Gson().toJson(features!!)))
+                                 }else
+                                     Observable.just(ResponseData("404","ok",""))
+                             }else
+                                 Observable.error(throwable)
+
+
+                         }
+
                            .observeOn(AndroidSchedulers.mainThread())
+
                            .subscribe({
                                 response ->
                                log.d("CMD : ${cmd} \n RES: ${response.res} \n IN PRM ${Http.getResponseData(response.prms)}")
@@ -118,9 +152,10 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
 
 
                                 when(response.res){
-
+                                    "707"  -> view.onSuccess(cmd, response.prms)
                                     "0"    -> view.onSuccess(cmd, Http.getResponseData(response.prms))
                                     "1996" -> view.onFailure("",Base.get.resources.getString(R.string.error_no_type))
+                                    "404"  ->  view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
                                     "96"   -> {
                                         val sesion = SessionOut.Builder(context)
                                                 .setErrorCode(96)
@@ -141,14 +176,16 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                                     log.d("RESPONSE FAILER =========>")
                                     log.e(fail.toString())
                                                   view.hideProgress()
-                               when (fail) {
-                                   is SocketTimeoutException ->  view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
-                                   is UnknownHostException ->    view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
-                                   is HttpException ->           view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
-                                   else -> {
-                                       view.onFailure(cmd,Base.get.resources.getString(R.string.error_something))
+
+                                   when (fail) {
+                                       is SocketTimeoutException ->  view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
+                                       is UnknownHostException ->    view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
+                                       is HttpException ->           view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
+                                       else -> {
+                                           view.onFailure(cmd,Base.get.resources.getString(R.string.error_something))
+                                       }
                                    }
-                               }
+
                              })
 
 

@@ -22,11 +22,11 @@ class ApiModule {
     fun gson():Gson = GsonBuilder().setLenient().create()
 
     @Provides
-    fun retrofit(client: OkHttpClient,gson: Gson):Retrofit{
+    fun retrofit(okHttpClient: OkHttpClient,gson: Gson):Retrofit{
         return Retrofit.Builder()
                 .baseUrl(Http.BASE_URL)
 
-                .client(client)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()

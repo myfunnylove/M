@@ -1036,7 +1036,16 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         when(from){
             Http.CMDS.FEED        -> Handler().postDelayed({feedFragment!!.failedGetList(message)},1500)
 
-//            Http.CMDS.MY_POSTS    -> Handler().postDelayed({profilFragment!!.failedGetList(message)},1500)
+            Http.CMDS.USER_INFO    -> Handler().postDelayed({
+                var userInfoForCache = Prefs.getUserInfo()
+                if (userInfoForCache != null)
+                    profilFragment!!.initHeader(userInfoForCache,ProfileFragment.SETTINGS)
+                else
+                    profilFragment!!.showOnlyHeader()
+
+                userInfoForCache = null
+
+            },1500)
 
         }
     }

@@ -22,11 +22,13 @@ import com.orhanobut.logger.Logger
 import com.facebook.imagepipeline.decoder.SimpleProgressiveJpegConfig
 import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
+import locidnet.com.marvarid.PlayListRoom.AppDB
 import locidnet.com.marvarid.rest.API
 import locidnet.com.marvarid.di.DaggerAppComponent
 import locidnet.com.marvarid.di.modules.ApiModule
 import locidnet.com.marvarid.di.modules.ContextModule
 import locidnet.com.marvarid.di.modules.NetworkModule
+import locidnet.com.marvarid.di.modules.OrmModule
 import locidnet.com.marvarid.resources.utils.Prefs
 import java.io.File
 import javax.inject.Inject
@@ -45,6 +47,8 @@ class Base : Application (){
     @Inject
     lateinit var prefs:Prefs
 
+    @Inject
+    lateinit var appDb:AppDB
 
     private val vkAccessTokenTracker = object : VKAccessTokenTracker(){
         override fun onVKAccessTokenChanged(oldToken: VKAccessToken?, newToken: VKAccessToken?) {
@@ -77,8 +81,14 @@ class Base : Application (){
                 .apiModule(ApiModule())
                 .contextModule(ContextModule(this))
                 .networkModule(NetworkModule())
+                .ormModule(OrmModule())
+
                 .build()
                 .inject(this)
+
+
+
+
         val conf = ImageLoaderConfiguration.Builder(context)
                 .build()
 
@@ -109,6 +119,8 @@ class Base : Application (){
                         .build())
 
     }
+
+
 
     companion object {
 

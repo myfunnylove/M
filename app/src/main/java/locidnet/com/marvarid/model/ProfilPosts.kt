@@ -1,5 +1,7 @@
 package locidnet.com.marvarid.model
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -22,15 +24,7 @@ data class Posts(      @SerializedName("id")     var id:String,
                        @SerializedName("user")   var user:PostUser,
                        @SerializedName("type")   var type:String = "post")// if post will be ad, type should be "ad"
 
-data class Audio(@SerializedName("audio_id")     var audioId:String,
-                 @SerializedName("post_id")      var postId:String,
-                 @SerializedName("duration")     var duration:String,
-                 @SerializedName("size")         var size:String,
-                 @SerializedName("middle_path")  var middlePath:String,
-                 @SerializedName("bitrate")      var bitrate:String,
-                 @SerializedName("title")        var title:String,
-                 @SerializedName("artist")       var artist:String,
-                 @SerializedName("isFeatured")   var isFeatured:Int = -1)
+
 
 data class Image(@SerializedName("photo_id")     var photoId:String,
                  @SerializedName("post_id")      var postId: String,

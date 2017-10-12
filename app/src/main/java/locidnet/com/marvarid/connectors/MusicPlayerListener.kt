@@ -8,5 +8,5 @@ import locidnet.com.marvarid.model.Audio
 interface MusicPlayerListener {
 
 
-    fun playClick(listSong:ArrayList<Audio>,position:Int)
+    fun playClick(listSong:ArrayList<Audio>, position:Int)
 }

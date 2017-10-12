@@ -24,14 +24,14 @@ public class ErrorConnection {
     private final boolean showLayout;
     public ErrorConnection checkNetworkConnection(ErrorListener listener){
         this.errorListener = listener;
-        if (isConnected()){
+//        if (isConnected()){
             hideErrorLayout();
             errorListener.connected();
-        }else {
-            errorListener.disconnected();
-            if (showLayout) showErrorLayout();
-
-        }
+//        }else {
+//            errorListener.disconnected();
+//            if (showLayout) showErrorLayout();
+//
+//        }
 
         return this;
     }

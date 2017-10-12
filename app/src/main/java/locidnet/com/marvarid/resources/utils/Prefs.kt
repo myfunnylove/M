@@ -5,7 +5,10 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.google.gson.Gson
 import locidnet.com.marvarid.base.Base
+import locidnet.com.marvarid.model.Info
 import locidnet.com.marvarid.model.User
+import locidnet.com.marvarid.model.UserData
+import locidnet.com.marvarid.model.UserInfo
 
 /**
  * Created by Michaelan on 6/18/2017.
@@ -15,6 +18,7 @@ object Prefs {
     private var prefs:SharedPreferences? = null
 
     private val USER = "user"
+    private val USER_INFO = "userInfo"
 
     fun Builder():Prefs{
         if (prefs == null) prefs = PreferenceManager.getDefaultSharedPreferences(Base.get)
@@ -102,4 +106,20 @@ object Prefs {
         editor.commit()
     }
 
+    fun setUserInfo(userInfo: UserInfo) {
+        log.d("set user profile $userInfo")
+
+        @SuppressLint("CommitPrefEdits")
+        val writer = prefs!!.edit()
+        writer.putString(USER_INFO,Gson().toJson(userInfo))
+        writer.commit()
+    }
+    fun getUserInfo():UserInfo?{
+        val user = prefs!!.getString(USER_INFO,"")
+        log.d("get user profile $user")
+        if (user != "")
+            return Gson().fromJson(user,UserInfo::class.java)
+        else
+            return null
+    }
 }

@@ -8,12 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
@@ -23,10 +21,6 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.widget.RemoteViews;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -141,11 +135,8 @@ public class PlayerService extends Service implements MusicControlObserver {
 
         DataSource.Factory httpDataSourceFactory = new OkHttpDataSourceFactory(new OkHttpClient(), Util.getUserAgent(this, getString(R.string.app_name)), null);
 
-        String folderName ="marvarid";
-        File f = new File(Environment.getExternalStorageDirectory(),folderName);
-        if (!f.exists()) f.mkdirs();
 
-        File inner = new File(Environment.getExternalStorageDirectory() +"/" + folderName,"music");
+        File inner = new File(appContext.getExternalCacheDir(),"music");
         if (!inner.exists()) inner.mkdirs();
 
         Cache cache = new SimpleCache(inner, new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 100)); // 100 Mb max

@@ -11,6 +11,7 @@ import android.graphics.BlurMaskFilter
 import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -436,4 +437,13 @@ object Functions {
     fun getScreenWidth(): Int = Resources.getSystem().getDisplayMetrics().widthPixels
 
     fun getScreenHeight(): Int = Resources.getSystem().getDisplayMetrics().heightPixels
+    fun getCacheHeader(): String {
+        val infoInternet: NetworkInfo?
+                = (Base.get.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo
+
+        return  if(infoInternet != null && infoInternet.isConnected)
+            "public, max-age=2419200"
+        else
+            "public, only-if-cached, max-stale=2419200"
+    }
 }

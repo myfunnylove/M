@@ -278,6 +278,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
     fun initHeader(userInfo:UserInfo,fType:String){
         this.userInfo = userInfo
+        Prefs.Builder().setUserInfo(this.userInfo)
         FOLLOWERS  = userInfo.user.count.followersCount
         FOLLOWING  = userInfo.user.count.followingCount
         POST_COUNT = userInfo.user.count.postCount
@@ -520,6 +521,45 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
         }
 
+    }
+
+    fun showOnlyHeader() {
+        FOLLOWERS  = "0"
+        FOLLOWING  = "0"
+        POST_COUNT = "0"
+
+
+        progressLay.visibility = View.GONE
+        emptyContainer.hide()
+        postView.visibility       = View.VISIBLE
+
+
+
+        userInfo = UserInfo(UserData(
+                Info(user.profilPhoto,user.userName,user.first_name,user.gender,"","",0,user.userId)
+                ,Count("0","0","0"),0,0,"0","0"))
+
+        val emptyPost = ArrayList<Posts>()
+        emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","",PostUser("","","")))
+
+        val postList = PostList(emptyPost)
+
+
+        if (postAdapter == null){
+            postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,ProfileFragment.SETTINGS,false)
+            var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+            slideAdapter!!.setFirstOnly(false)
+            slideAdapter.setDuration(500)
+
+            postView.visibility = View.VISIBLE
+            postView.adapter = slideAdapter
+            slideAdapter = null
+        }else{
+            log.d("update first item $userInfo")
+            postAdapter!!.updateFirstItem(userInfo)
+        }
+//        swipeRefreshLayout.isEnabled = false
+        swipeRefreshLayout.isRefreshing = false
     }
 
 
