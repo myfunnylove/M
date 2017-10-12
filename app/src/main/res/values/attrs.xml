@@ -73,4 +73,10 @@
         <attr name="sb_background" format="reference|color"/>
         <attr name="sb_enable_effect" format="reference|boolean"/>
     </declare-styleable>
+
+
+    <declare-styleable name="ParallaxImageView">
+        <attr name="parallax_ratio" format="float" />
+        <attr name="center_crop" format="boolean" />
+    </declare-styleable>
 </resources>
