@@ -145,22 +145,22 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
         list.setHasFixedSize(true)
 
 
-        errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-            override fun connected() {
-                log.d("connected")
+//        errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+//            override fun connected() {
+//                log.d("connected")
 
                 val js =  JS.get()
                 presenter.requestAndResponse(js, Http.CMDS.GET_PLAYLIST)
 
-            }
-
-            override fun disconnected() {
-                log.d("disconnected")
-
-
-            }
-
-        })
+//            }
+//
+//            override fun disconnected() {
+//                log.d("disconnected")
+//
+//
+//            }
+//
+//        })
 
 
         bindService(Intent(this, PlayerService::class.java), object : ServiceConnection {

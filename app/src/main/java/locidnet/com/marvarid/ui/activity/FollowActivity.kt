@@ -657,4 +657,10 @@ class FollowActivity : BaseActivity(),
             finish()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        start = 0
+        end   = 20
+    }
 }

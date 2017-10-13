@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.ImageViewTarget
@@ -158,12 +159,15 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                     itemView.layoutParams = params
                 }
 
+//                val reqbuilder = Glide.with(context).load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, "blur"))
                 Glide.with(context)
 
                         .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, Prefs.Builder().imageRes()))
+                        .thumbnail(0.1f)
 
                         .apply(options!!.diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                         .into(h.photo)
+
 
 
                 h.photo.setOnClickListener {
@@ -192,12 +196,13 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                   val laParams = h.photo.layoutParams as PercentFrameLayout.LayoutParams
                 laParams.percentLayoutInfo.aspectRatio = img.width.toFloat() / img.height.toFloat()
                 h.photo.layoutParams = laParams
+//                val reqbuilder = Glide.with(context).load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, "blur"))
 
 
                 Glide.with(context)
 
                         .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, Prefs.Builder().imageRes()))
-
+                        .thumbnail(0.1f)
                         .apply(options!!.diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                         .into(h.photo)
 //                Base.get.picassoBuilder

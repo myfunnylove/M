@@ -11,9 +11,6 @@ import android.widget.Button;
 import locidnet.com.marvarid.R;
 import locidnet.com.marvarid.base.Base;
 
-/**
- * Created by Sarvar on 11.09.2017.
- */
 
 public class ErrorConnection {
 
@@ -24,14 +21,14 @@ public class ErrorConnection {
     private final boolean showLayout;
     public ErrorConnection checkNetworkConnection(ErrorListener listener){
         this.errorListener = listener;
-//        if (isConnected()){
+        if (isConnected()){
             hideErrorLayout();
             errorListener.connected();
-//        }else {
-//            errorListener.disconnected();
-//            if (showLayout) showErrorLayout();
-//
-//        }
+        }else {
+            if (showLayout) showErrorLayout();
+            errorListener.disconnected();
+
+        }
 
         return this;
     }

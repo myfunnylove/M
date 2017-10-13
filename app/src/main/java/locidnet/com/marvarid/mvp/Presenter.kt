@@ -133,7 +133,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
 
                                      Observable.just(ResponseData("707","ok",Gson().toJson(features!!)))
                                  }else
-                                     Observable.just(ResponseData("404","ok",""))
+                                     Observable.error(throwable)
                              }else
                                  Observable.error(throwable)
 
@@ -144,7 +144,11 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
 
                            .subscribe({
                                 response ->
-                               log.d("CMD : ${cmd} \n RES: ${response.res} \n IN PRM ${Http.getResponseData(response.prms)}")
+                               try{
+                                   log.d("CMD : ${cmd} \n RES: ${response.res} \n IN PRM ${Http.getResponseData(response.prms)}")
+                               }catch(e:Exception){
+                                   log.d("CND :${cmd} Exception: $e")
+                               }
 
 
 

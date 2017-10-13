@@ -136,7 +136,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 if (postAdapter != null && postAdapter!!.feeds.posts.size >= 20){
                     FollowActivity.start = (postAdapter!!.feeds.posts.size - 1)
                     FollowActivity.end   = 20
-                    connectActivity!!.goNext(Const.REFRESH_PROFILE_FEED,"")
+                    connectActivity!!.goNext(Const.PROFIL_PAGE,FollowActivity.start.toString())
                 }
 
 

@@ -272,16 +272,28 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                 when (p0!!.position) {
 
                     Const.PROFIL_FR -> {
-                        if (MY_POSTS_STATUS != AFTER_UPDATE) {
+                        errorConn.hideErrorLayout()
+                        errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                            override fun connected() {
+                                if (MY_POSTS_STATUS != AFTER_UPDATE) {
 
-                            val reqObj = JS.get()
-                            reqObj.put("user", user.userId)
+                                    val reqObj = JS.get()
+                                    reqObj.put("user", user.userId)
 
 
-                            log.d("tab select send data for user info data: $reqObj")
-                            presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
+                                    log.d("tab select send data for user info data: $reqObj")
+                                    presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
 
-                        }
+                                }
+                            }
+                                override fun disconnected() {
+                                    errorConn.hideErrorLayout()
+
+                                    onFailure(Http.CMDS.USER_INFO,resources.getString(R.string.internet_conn_error),"")
+                                }
+
+
+                            })
                         lastFragment = p0.position
                         profilBadge!!.visibility = View.GONE
                         profilIcon!!.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.account_select,theme))
@@ -903,25 +915,29 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                 if (MY_POSTS_STATUS != ONLY_USER_INFO || !profilFragment!!.initBody) {
 
 
-                    errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                        override fun connected() {
+//                    errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+//                        override fun connected() {
 
 
 
-                            val reqObj = JS.get()
-                            reqObj.put("user",    user.userId)
-                            reqObj.put("start",   start)
-                            reqObj.put("end",     end)
-                            presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
+                          if (Functions.isNetworkAvailable(Base.get.context)){
+
+                              val reqObj = JS.get()
+                              reqObj.put("user",    user.userId)
+                              reqObj.put("start",   start)
+                              reqObj.put("end",     end)
+                              presenter.requestAndResponse(reqObj, Http.CMDS.MY_POSTS)
+
+                          }
 
 
-                        }
-
-                        override fun disconnected() {
-
-                        }
-
-                    })
+//                        }
+//
+//                        override fun disconnected() {
+//
+//                        }
+//
+//                    })
 
                 }else{
                     profilFragment!!.updateUserInfo(userInfo,fType)
@@ -1223,6 +1239,29 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
     override fun onDestroy() {
         super.onDestroy()
+         start          = 0
+         end            = 20
+         startFeed      = 0
+         endFeed        = 20
+         startNotif     = 0
+         endNotif       = 20
+         startFollowers = 0
+         endFollowers   = 20
+         startFollowing = 0
+         endFollowing   = 20
+         startSearch    = 0
+         endSearch      = 20
+
+        MY_POSTS_STATUS = "-1"
+         RECOMMEND_POST  = "-1"
+         FEED_STATUS     = "1"
+
+
+
+         COMMENT_POST_UPDATE = 0
+         COMMENT_COUNT       = 0
+
+         tablayoutHeight = 0
         unregisterReceiver(notificationReceiver)
     }
 }
