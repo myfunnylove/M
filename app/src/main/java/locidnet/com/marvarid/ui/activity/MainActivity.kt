@@ -272,35 +272,55 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                 when (p0!!.position) {
 
                     Const.PROFIL_FR -> {
-                        errorConn.hideErrorLayout()
-                        errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                            override fun connected() {
-                                if (MY_POSTS_STATUS != AFTER_UPDATE) {
 
-                                    val reqObj = JS.get()
-                                    reqObj.put("user", user.userId)
-
-
-                                    log.d("tab select send data for user info data: $reqObj")
-                                    presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
-
-                                }
-                            }
-                                override fun disconnected() {
-                                    errorConn.hideErrorLayout()
-
-                                    onFailure(Http.CMDS.USER_INFO,resources.getString(R.string.internet_conn_error),"")
-                                }
-
-
-                            })
+//                        errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+//                            override fun connected() {
+//                                if (MY_POSTS_STATUS != AFTER_UPDATE) {
+//
+//                                    val reqObj = JS.get()
+//                                    reqObj.put("user", user.userId)
+//
+//
+//                                    log.d("tab select send data for user info data: $reqObj")
+//                                    presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
+//
+//                                }
+//                            }
+//                                override fun disconnected() {
+//                                    errorConn.hideErrorLayout()
+//
+//                                    onFailure(Http.CMDS.USER_INFO,resources.getString(R.string.internet_conn_error),"")
+//                                }
+//
+//
+//                            })
                         lastFragment = p0.position
                         profilBadge!!.visibility = View.GONE
                         profilIcon!!.setImageDrawable(VectorDrawableCompat.create(resources,R.drawable.account_select,theme))
                         setFragment(p0.position)
 
 
+                        errorConn.hideErrorLayout()
+                        Handler().postDelayed({
+                            if(Functions.isNetworkAvailable(this@MainActivity)){
+                                if (MY_POSTS_STATUS != AFTER_UPDATE) {
+                                    val reqObj = JS.get()
+                                    reqObj.put("user", user.userId)
 
+
+                                    log.d("tab select send data for user info data: $reqObj")
+                                    presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
+                                }
+                            }else{
+                                var userInfoForCache = Prefs.getUserInfo()
+                                if (userInfoForCache != null)
+                                    profilFragment!!.initHeader(userInfoForCache,ProfileFragment.SETTINGS)
+                                else
+                                    profilFragment!!.showOnlyHeader()
+
+                                userInfoForCache = null
+                            }
+                        },100)
 
                     }
 

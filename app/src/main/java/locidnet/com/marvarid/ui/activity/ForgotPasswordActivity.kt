@@ -36,9 +36,9 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
     @Inject
     lateinit var errorConn: ErrorConnection
 
-    var phoneStr:String      = ""
-    var smsStr:  String      = ""
-
+    var phoneStr:String?      = null
+    var smsStr:  String?      = null
+    var userId:  String ?     = null
     override fun initProgress() {
 
         progressLay.visibility = View.VISIBLE
@@ -61,7 +61,8 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
         log.d("from $from result $result")
         if(from == Http.CMDS.FORGOT_PHONE){
 
-
+            val js= JSONObject(result)
+            userId = js.optString("user");
             selectMail.isEnabled  = false
             selectPhone.isEnabled = false
             smsCode.visibility = View.VISIBLE
@@ -77,13 +78,13 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
             val phone = if(Const.ONLY_DIGITS.matcher(phoneStr).find()) phoneStr else ""
             val mail  = if(Const.VALID_EMAIL_ADDRESS_REGEX.matcher(phoneStr).find()) phoneStr else ""
 
-            val user = User("", "", "", "", "", "N", phoneStr, smsStr, "", "", "", signMode,
-                    phone, mail)
+            val user = User(userId!!, "", "", "", "", "N", phoneStr!!, smsStr!!, "", "", "", signMode,
+                    phone!!, mail!!)
 
             Prefs.setUser(user)
             val intent = Intent(this, NewPasswordActivity().javaClass)
             val js= JSONObject(result)
-            intent.putExtra("userId",js.optString("user"))
+            intent.putExtra("userId",userId!!)
             intent.putExtra("token",js.optString("token"))
 
             startActivityForResult(intent,Const.FORGOT_PASS)
@@ -141,10 +142,8 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
 
                     smsStr = smsCode.text.toString()
 
-                    sendObject.put("type",if(signMode == PHONE_MODE) "1" else "2")
-                    sendObject.put("input",phoneStr)
                     sendObject.put("code",smsStr)
-
+                    sendObject.put("user",userId)
 
                     presenter.requestAndResponse(sendObject, Http.CMDS.FORGOT_SMS)
                 }
@@ -274,5 +273,12 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
             finish()
 
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+         phoneStr      = null
+         smsStr      = null
+         userId    = null
     }
 }

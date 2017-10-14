@@ -245,6 +245,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
             POST_COUNT = userInfo.user.count.postCount
 
 
+
             progressLay.visibility = View.GONE
             emptyContainer.hide()
             postView.visibility       = View.VISIBLE
