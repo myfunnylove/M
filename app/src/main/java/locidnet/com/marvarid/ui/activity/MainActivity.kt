@@ -114,6 +114,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         var MY_POSTS_STATUS = "-1"
         var RECOMMEND_POST  = "-1"
         var FEED_STATUS     = "1"
+        var NOTIF_STATUS    = "0"
 
         val FIRST_TIME     = "0"
         val NEED_UPDATE    = "1"
@@ -145,6 +146,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                 .inject(this)
 
         musicSubject = MusicSubject()
+        NOTIF_STATUS = NEED_UPDATE
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         setPager()
@@ -325,24 +327,27 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                     }
 
                     Const.NOTIF_FR -> {
-                        errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                            override fun connected() {
-                                val reqObj = JS.get()
-                                reqObj.put("start",   startNotif)
-                                reqObj.put("end",     endNotif)
+                            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                                override fun connected() {
+                                    if (NOTIF_STATUS == NEED_UPDATE){
 
-                                log.d("feed page select $reqObj")
-                                presenter.requestAndResponse(reqObj, Http.CMDS.GET_NOTIF_LIST)
+                                        val reqObj = JS.get()
+                                    reqObj.put("start",   startNotif)
+                                    reqObj.put("end",     endNotif)
+
+                                    log.d("feed page select $reqObj")
+                                    presenter.requestAndResponse(reqObj, Http.CMDS.GET_NOTIF_LIST)
+
+                                    }
 
 
+                                }
 
-                            }
+                                override fun disconnected() {
 
-                            override fun disconnected() {
+                                }
 
-                            }
-
-                        })
+                            })
 
 
                     lastFragment = p0.position
@@ -576,28 +581,27 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
 
             Const.REFRESH_PROFILE_FEED ->{
-
-
-                errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                    override fun connected() {
+                errorConn.hideErrorLayout()
+                Handler().postDelayed({
+                    if(Functions.isNetworkAvailable(this@MainActivity)){
                         val reqObj = JS.get()
                         reqObj.put("user", user.userId)
                         reqObj.put("start",   start)
                         reqObj.put("end",     end)
                         log.d("send data for user info data: $reqObj")
                         presenter.requestAndResponse(reqObj, Http.CMDS.USER_INFO)
+                    }else{
+                        var userInfoForCache = Prefs.getUserInfo()
+                        if (userInfoForCache != null)
+                            profilFragment!!.initHeader(userInfoForCache,ProfileFragment.SETTINGS)
+                        else
+                            profilFragment!!.showOnlyHeader()
 
-
-
-
-
+                        userInfoForCache = null
                     }
+                },100)
 
-                    override fun disconnected() {
 
-                    }
-
-                })
             }
 
             Const.GET_15_POST -> {
@@ -1029,7 +1033,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
             Http.CMDS.GET_NOTIF_LIST ->{
 
-
+                NOTIF_STATUS = AFTER_UPDATE
                 val pushList:PushList = Gson().fromJson(result,PushList::class.java)
 
                 if(pushList.pushes.size > 0){
@@ -1257,22 +1261,24 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
     }
 
+
+
     override fun onDestroy() {
         super.onDestroy()
-         start          = 0
-         end            = 20
-         startFeed      = 0
-         endFeed        = 20
-         startNotif     = 0
-         endNotif       = 20
-         startFollowers = 0
-         endFollowers   = 20
-         startFollowing = 0
-         endFollowing   = 20
-         startSearch    = 0
-         endSearch      = 20
-
-        MY_POSTS_STATUS = "-1"
+         start           = 0
+         end             = 20
+         startFeed       = 0
+         endFeed         = 20
+         startNotif      = 0
+         endNotif        = 20
+         startFollowers  = 0
+         endFollowers    = 20
+         startFollowing  = 0
+         endFollowing    = 20
+         startSearch     = 0
+         endSearch       = 20
+         NOTIF_STATUS    = NEED_UPDATE
+         MY_POSTS_STATUS = "-1"
          RECOMMEND_POST  = "-1"
          FEED_STATUS     = "1"
 
@@ -1282,7 +1288,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
          COMMENT_COUNT       = 0
 
          tablayoutHeight = 0
-        unregisterReceiver(notificationReceiver)
+         unregisterReceiver(notificationReceiver)
     }
 }
 

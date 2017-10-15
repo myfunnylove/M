@@ -396,6 +396,13 @@ object Functions {
                 .error(VectorDrawableCompat.create(Base.get.resources,R.drawable.account_select,Base.get.theme))
 //                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
     }
+    fun getGlideOptsForAvatar():RequestOptions{
+        return RequestOptions()
+                .circleCrop()
+                .fallback(Base.get.resources.getDrawable(R.drawable.no_photo))
+                .error(Base.get.resources.getDrawable(R.drawable.no_photo))
+//                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
+    }
     fun getGlideOptsBlur():RequestOptions{
         return RequestOptions()
                 .circleCrop()

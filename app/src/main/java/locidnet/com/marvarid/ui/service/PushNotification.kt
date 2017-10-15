@@ -1,6 +1,7 @@
 package locidnet.com.marvarid.ui.service
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -21,13 +22,19 @@ class PushNotification :FirebaseMessagingService() {
 
     override fun onMessageReceived(msg: RemoteMessage?) {
         super.onMessageReceived(msg)
+        MainActivity.NOTIF_STATUS = MainActivity.NEED_UPDATE
+
         if(Prefs.Builder().isALlowNotif()){
             try{
-
                 log.d("Push keldi: -> ${msg!!.data}")
+                val intent =Intent(this,MainActivity::class.java)
 
                 val builder = NotificationCompat.Builder(this)
+                val pending = PendingIntent.getActivity(this,0,intent,0)
+
                 builder.setSmallIcon(getNotificationIcon(builder))
+
+                        .setContentIntent(pending)
                         .setTicker(Base.get.resources.getString(R.string.app_name))
                         .setContentText(msg.data.get("body"))
                         .setContentTitle(msg.data.get("title"))

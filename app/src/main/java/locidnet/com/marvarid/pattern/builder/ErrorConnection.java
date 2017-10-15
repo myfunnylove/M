@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import locidnet.com.marvarid.R;
 import locidnet.com.marvarid.base.Base;
+import locidnet.com.marvarid.ui.activity.MainActivity;
 
 
 public class ErrorConnection {
@@ -101,6 +102,10 @@ public class ErrorConnection {
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            MainActivity.MyPostOffset.setNOTIF_STATUS(MainActivity.MyPostOffset.getNEED_UPDATE());
+            MainActivity.MyPostOffset.setMY_POSTS_STATUS(MainActivity.MyPostOffset.getNEED_UPDATE());
+            MainActivity.MyPostOffset.setFEED_STATUS(MainActivity.MyPostOffset.getNEED_UPDATE());
+            
             checkNetworkConnection(errorListener);
         }
     };

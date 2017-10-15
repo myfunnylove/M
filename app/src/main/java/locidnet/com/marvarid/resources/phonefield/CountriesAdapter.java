@@ -35,10 +35,8 @@ public class CountriesAdapter extends ArrayAdapter<Country> implements SpinnerAd
     }
 //    ImageView imageView = convertView.findViewById(R.id.flag);
 //    imageView.setImageResource(country.getResId(getContext()));
-    TextView countryText = convertView.findViewById(R.id.country);
-    countryText.setText(country.getCode() +" +");
     TextView textView = convertView.findViewById(R.id.dial_code);
-    textView.setText(String.valueOf(country.getDialCode()));
+    textView.setText("+"+String.valueOf(country.getDialCode()));
 
     return convertView;
   }

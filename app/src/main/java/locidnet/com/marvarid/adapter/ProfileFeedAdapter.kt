@@ -319,7 +319,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     }
 
                     val manager = CustomManager(ctx, span)
-                    val adapter = PostPhotoGridAdapter(ctx!!, post.images)
+                    var adapter:PostPhotoGridAdapter? = PostPhotoGridAdapter(ctx!!, post.images)
 
                     manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(i: Int): Int {
@@ -337,7 +337,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     h.images.setHasFixedSize(true)
                     h.images.adapter = adapter
 
-
+                    adapter = null
                 } else {
                     h.images.visibility = View.GONE
                 }
@@ -357,7 +357,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                         log.d("audio after ${audio.middlePath} ")
 
                     }
-                    val adapter = PostAudioGridAdapter(ctx!!, post.audios, object : MusicPlayerListener {
+                    var adapter:PostAudioGridAdapter? = PostAudioGridAdapter(ctx!!, post.audios, object : MusicPlayerListener {
                         override fun playClick(listSong: ArrayList<Audio>, position: Int) {
                                 player!!.playClick(listSong, position)
                         if (myProfil.userId == userInfo!!.user.info.user_id) {
@@ -404,17 +404,17 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
                     if (myProfil.userId == userInfo!!.user.info.user_id) {
                         if (MyProfileFragment.cachedSongAdapters != null) {
-                            MyProfileFragment.cachedSongAdapters!!.put(i, adapter)
+                            MyProfileFragment.cachedSongAdapters!!.put(i, adapter!!)
                         } else {
                             MyProfileFragment.cachedSongAdapters = HashMap()
-                            MyProfileFragment.cachedSongAdapters!!.put(i, adapter)
+                            MyProfileFragment.cachedSongAdapters!!.put(i, adapter!!)
                         }
                     }else{
                         if (ProfileFragment.cachedSongAdapters != null) {
-                            ProfileFragment.cachedSongAdapters!!.put(i, adapter)
+                            ProfileFragment.cachedSongAdapters!!.put(i, adapter!!)
                         } else {
                             ProfileFragment.cachedSongAdapters = HashMap()
-                            ProfileFragment.cachedSongAdapters!!.put(i, adapter)
+                            ProfileFragment.cachedSongAdapters!!.put(i, adapter!!)
                         }
                     }
 //            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
@@ -432,7 +432,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     h.audios.layoutManager = manager
                     h.audios.setHasFixedSize(true)
                     h.audios.adapter = adapter
-
+                    adapter = null
                 } else {
                     h.line.visibility = View.GONE
 
@@ -702,7 +702,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
             Glide.with(ctx)
                     .load(Functions.checkImageUrl(userInfo!!.user.info.photoOrg))
-                    .apply(Functions.getGlideOpts())
+                    .apply(Functions.getGlideOptsForAvatar())
                     .into(h.avatar)
 
             Glide.with(ctx)
