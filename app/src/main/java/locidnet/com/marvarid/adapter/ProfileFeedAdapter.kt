@@ -14,6 +14,12 @@ import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Layout
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
+import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +32,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.nineoldandroids.animation.AnimatorSet
+import io.reactivex.Observable
 
 import org.json.JSONObject
 import locidnet.com.marvarid.R
@@ -213,7 +220,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 h.sendChange.visibility = View.VISIBLE
                 h.sendChange.setOnClickListener {
 
-                    val quote: Quote = post.quote
+                    val quote:Quote = post.quote
                     quote.text = h.quoteEdit.text.toString()
 
                     val js = JS.get()
@@ -249,10 +256,37 @@ class ProfileFeedAdapter(context: FragmentActivity,
             } else {
 
                 h.quote.visibility = View.VISIBLE
-                h.quote.text = post.quote.text
                 h.quoteEdit.visibility = View.GONE
                 h.quoteEdit.clearComposingText()
                 h.sendChange.visibility = View.GONE
+
+                //New Style read more...
+
+
+                if (post.quote.text.length > 100) {
+                    var trimmed:String? = post.quote.text.substring(0,100)
+                    var readMore: String? = Base.get.resources.getString(R.string.read_more)
+                    var spannable: Spannable? = SpannableString("$trimmed $readMore")
+                    var flag: Int? = Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    spannable?.setSpan(ForegroundColorSpan(Color.BLUE), 100, spannable.length, flag!!)
+                    spannable?.setSpan(object : ClickableSpan() {
+                        override fun onClick(p0: View?) {
+                            h.quote.text = post.quote.text
+                            notifyItemChanged(h.adapterPosition)
+                        }
+
+                    }, 100, spannable.length, flag!!)
+                    trimmed  = null
+                    flag     = null
+                    readMore = null
+
+                    h.quote.text = spannable
+                    spannable = null
+
+                }else
+                    h.quote.text = post.quote.text
+
+
 
             }
             val url = Functions.checkImageUrl(post.user.photo)

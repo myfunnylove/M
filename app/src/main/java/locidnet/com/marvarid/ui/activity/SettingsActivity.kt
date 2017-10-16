@@ -303,6 +303,8 @@ class SettingsActivity : BaseActivity(), Viewer {
                         MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
                         MainActivity.COMMENT_POST_UPDATE = 0
                         MainActivity.COMMENT_COUNT = 0
+                        Prefs.Builder().setNotifCount(0)
+
                         setResult(Const.QUIT)
                         finish()
 //                        val sesion = SessionOut.Builder(this@SettingsActivity)

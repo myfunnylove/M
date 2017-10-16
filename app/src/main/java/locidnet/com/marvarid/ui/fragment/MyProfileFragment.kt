@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
+import io.reactivex.Observable
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.adapter.ProfileFeedAdapter
@@ -274,9 +275,9 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     fun initHeader(userInfo:UserInfo,fType:String){
         this.userInfo = userInfo
         Prefs.Builder().setUserInfo(this.userInfo)
-        FOLLOWERS  = userInfo.user.count.followersCount
-        FOLLOWING  = userInfo.user.count.followingCount
-        POST_COUNT = userInfo.user.count.postCount
+        FOLLOWERS  = if(!userInfo.user.count.followersCount.isNullOrEmpty()) userInfo.user.count.followersCount else "0"
+        FOLLOWING  = if(!userInfo.user.count.followingCount.isNullOrEmpty()) userInfo.user.count.followingCount else "0"
+        POST_COUNT = if(!userInfo.user.count.postCount.isNullOrEmpty()) userInfo.user.count.postCount else "0"
 
 
         progressLay.visibility = View.GONE
@@ -502,7 +503,11 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     fun update(){
         var key = -1
 
+
+       
+
         for (i in postAdapter!!.feeds.posts.indices) {
+
             if (postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
                 key = i
             }
@@ -512,18 +517,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
 
         if (key != -1){
-            try{
-                if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
 
-                cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
-
-                playedSongPosition = key
-
-            }catch (e:Exception){
-
-            }
-
-            postAdapter!!.notifyItemChanged(0)
 
         }else {
 

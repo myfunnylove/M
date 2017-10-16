@@ -128,4 +128,5 @@
     <string name="error_cannot_remove">Вы не можете удалить из плейлиста во время воспроизведения</string>
     <string name="about_app_title">Marvarid для Андроид</string>
     <string name="sendAgain">Отправить заново</string>
+    <string name="read_more">read more...</string>
 </resources>

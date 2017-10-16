@@ -42,7 +42,8 @@ data class User (
 
 data class UserInfo(@SerializedName("user")      var user:UserData)
 
-data class UserData(@SerializedName("info")  var info:Info,
+data class UserData(@SerializedName("info")  var info:Info
+                    ,
                     @SerializedName("count") var count:Count,
                     @SerializedName("follow") var follow:Int,
                     @SerializedName("request") var request:Int,

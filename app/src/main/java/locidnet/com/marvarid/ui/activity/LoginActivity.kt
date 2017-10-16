@@ -97,7 +97,10 @@ class LoginActivity : BaseActivity(), Viewer {
 
 
             loginVk.setOnClickListener {
-
+                Prefs.Builder().setNotifCount(0)
+                Prefs.Builder().allowNotif(true)
+                Prefs.Builder().setImageRes(Const.IMAGE.MEDIUM)
+                Prefs.Builder().setAudioRes(Const.AUDIO.MEDIUM)
 
                 vkAuth.authorizeWithThisBridge()
 
@@ -105,13 +108,20 @@ class LoginActivity : BaseActivity(), Viewer {
 
 
             loginFb.setOnClickListener {
-
+                Prefs.Builder().setNotifCount(0)
+                Prefs.Builder().allowNotif(true)
+                Prefs.Builder().setImageRes(Const.IMAGE.MEDIUM)
+                Prefs.Builder().setAudioRes(Const.AUDIO.MEDIUM)
                 facebookoAuth.authorizeWithThisBridge()
 
             }
 
             signUp.setOnClickListener {
-              if(Prefs.Builder().getUser().smsCode.isNullOrEmpty() || Prefs.Builder().getUser().phoneOrMail.isNullOrEmpty())
+                Prefs.Builder().setNotifCount(0)
+                Prefs.Builder().allowNotif(true)
+                Prefs.Builder().setImageRes(Const.IMAGE.MEDIUM)
+                Prefs.Builder().setAudioRes(Const.AUDIO.MEDIUM)
+                if(Prefs.Builder().getUser().smsCode.isNullOrEmpty() || Prefs.Builder().getUser().phoneOrMail.isNullOrEmpty())
                   startActivity(Intent(this,SignActivity::class.java))
                 else
                   startActivity(Intent(this,LoginAndPassActivity::class.java))
@@ -252,7 +262,6 @@ class LoginActivity : BaseActivity(), Viewer {
 
     val fb = object : AuthorizeConnector{
         override fun onSuccess(idUser: String, token: String) {
-
             val sendObj = JSONObject()
             sendObj.put("fb_id", idUser)
             sendObj.put("token", token)

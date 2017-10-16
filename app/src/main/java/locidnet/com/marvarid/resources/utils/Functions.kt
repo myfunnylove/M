@@ -8,6 +8,7 @@ import android.content.res.Resources
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BlurMaskFilter
+import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
@@ -20,11 +21,9 @@ import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.AppCompatImageView
-import android.text.Editable
-import android.text.InputType
-import android.text.TextUtils
-import android.text.TextWatcher
+import android.text.*
 import android.text.method.NumberKeyListener
+import android.text.style.ForegroundColorSpan
 import android.util.TypedValue
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -35,6 +34,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.RequestOptions
+import io.reactivex.Observable
 import jp.wasabeef.glide.transformations.BlurTransformation
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
@@ -453,4 +453,8 @@ object Functions {
         else
             "public, only-if-cached, max-stale=2419200"
     }
+
+
+
+
 }

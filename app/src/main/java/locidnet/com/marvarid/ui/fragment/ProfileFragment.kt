@@ -250,9 +250,9 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         log.d("ProfileFragment => initheader $fType")
 
         this.userInfo = userInfo
-        FOLLOWERS  = userInfo.user.count.followersCount
-        FOLLOWING  = userInfo.user.count.followersCount
-        POST_COUNT = userInfo.user.count.postCount
+        FOLLOWERS  = if(!userInfo.user.count.followersCount.isNullOrEmpty()) userInfo.user.count.followersCount else "0"
+        FOLLOWING  = if(!userInfo.user.count.followingCount.isNullOrEmpty()) userInfo.user.count.followingCount else "0"
+        POST_COUNT = if(!userInfo.user.count.postCount.isNullOrEmpty()) userInfo.user.count.postCount else "0"
 
         FOLLOW_TYPE = if (fType == ProfileFragment.CLOSE ) ProfileFragment.FOLLOW else fType
         progressLay!!.visibility = View.GONE

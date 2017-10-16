@@ -127,4 +127,5 @@
     <string name="error_cannot_remove">You can not remove from the playlist during playing</string>
     <string name="about_app_title">Marvarid for Android</string>
     <string name="sendAgain">Отправить заново</string>
+    <string name="read_more">read more...</string>
 </resources>
