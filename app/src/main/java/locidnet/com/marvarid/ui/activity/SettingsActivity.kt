@@ -384,7 +384,7 @@ class SettingsActivity : BaseActivity(), Viewer {
 
         if (changed || map[gender.selectedItemPosition] != Base.get.prefs.getUser().gender) {
 
-
+            if (username.text.toString().trim() == userData.userName) isLoginFree = true
             errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener {
                 override fun connected() {
                     log.d("connected")

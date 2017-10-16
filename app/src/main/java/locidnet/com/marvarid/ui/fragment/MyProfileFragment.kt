@@ -251,18 +251,11 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
             emptyContainer.hide()
             postView.visibility       = View.VISIBLE
 
-            var photo ="http"
-            try{
-                photo = if (arguments!!.getString("photo").startsWith("http")) arguments.getString("photo") else Http.BASE_URL+arguments.getString("photo")
-            }catch (e:Exception){
-
-            }
 
 
             val emptyPost = ArrayList<Posts>()
             emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","",PostUser("","","")))
 
-            val postList = PostList(emptyPost)
 
 //            val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
                 postAdapter!!.userInfo = userInfo
