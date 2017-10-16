@@ -861,6 +861,10 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
                     }
 
+                    if(requestCode == Const.GO_PLAY_LIST){
+                        profilFragment!!.update()
+                    }
+
                     if (lastFragment == 4 && profilFragment != null && MY_POSTS_STATUS != AFTER_UPDATE) {
 
 //                    MY_POSTS_STATUS = ONLY_USER_INFO

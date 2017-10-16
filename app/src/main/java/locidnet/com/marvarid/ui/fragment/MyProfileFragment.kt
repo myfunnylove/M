@@ -31,6 +31,7 @@ import locidnet.com.marvarid.resources.adapterAnim.SlideInBottomAnimationAdapter
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Prefs
+import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.MainActivity
 import kotlin.properties.Delegates
@@ -499,11 +500,51 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden && postAdapter != null){
-            var key = -1
+
+            update()
+        }
+
+    }
+
+    fun update(){
+        var key = -1
+
+        for (i in postAdapter!!.feeds.posts.indices) {
+            if (postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
+                key = i
+            }
+
+        }
+
+
+
+        if (key != -1){
+            try{
+                if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+
+                cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+
+                playedSongPosition = key
+
+            }catch (e:Exception){
+
+            }
+
+            postAdapter!!.notifyItemChanged(0)
+
+        }else {
+
             for (i in postAdapter!!.feeds.posts.indices) {
-                if (postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
-                    key = i
+                for(j in postAdapter!!.feeds.posts.get(i).audios.indices){
+                    if (!PlayerService.PLAYING_SONG_URL.isNullOrEmpty() &&
+                            postAdapter!!.feeds.posts.get(i).audios.get(j).middlePath
+                                    ==
+                            PlayerService.PLAYING_SONG_URL
+                            ){
+                     key = i
+                    }
                 }
+
             }
 
             if (key != -1){
@@ -514,14 +555,14 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
                     playedSongPosition = key
 
-                    postAdapter!!.notifyItemChanged(0)
                 }catch (e:Exception){
 
                 }
+
+                postAdapter!!.notifyItemChanged(0)
+
             }
-
         }
-
     }
 
     fun showOnlyHeader() {

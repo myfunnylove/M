@@ -21,6 +21,7 @@ import locidnet.com.marvarid.model.Audio
 import locidnet.com.marvarid.model.PostList
 import locidnet.com.marvarid.pattern.MControlObserver.MusicControlObserver
 import locidnet.com.marvarid.pattern.builder.EmptyContainer
+import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.customviews.loadmorerecyclerview.EndlessRecyclerViewScrollListener
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.log
@@ -369,25 +370,57 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden && feedAdapter != null){
-            var key = -1
-            for (i in feedAdapter!!.feeds.posts.indices) {
-                if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
-                    key = i
-                }
-            }
-
-            if (key != -1){
-                try{
-                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
-                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
-                    playedSongPosition = key
-                }catch (e:Exception){}
-            }
+           update()
 
         }
 
     }
 
+
+    fun update(){
+        var key = -1
+        for (i in feedAdapter!!.feeds.posts.indices) {
+            if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
+                key = i
+            }
+        }
+
+        if (key != -1){
+            try{
+                if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+                cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+                playedSongPosition = key
+            }catch (e:Exception){}
+        }else{
+            for (i in feedAdapter!!.feeds.posts.indices) {
+                for(j in feedAdapter!!.feeds.posts.get(i).audios.indices){
+                    if (!PlayerService.PLAYING_SONG_URL.isNullOrEmpty() &&
+                            feedAdapter!!.feeds.posts.get(i).audios.get(j).middlePath
+                                    ==
+                                    PlayerService.PLAYING_SONG_URL
+                            ){
+                        key = i
+                    }
+                }
+
+            }
+
+            if (key != -1){
+                try{
+                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+
+                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+
+                    playedSongPosition = key
+
+                }catch (e:Exception){
+
+                }
+
+
+            }
+        }
+    }
 
     override fun onDestroy() {
         log.d("ondestroy feed")
