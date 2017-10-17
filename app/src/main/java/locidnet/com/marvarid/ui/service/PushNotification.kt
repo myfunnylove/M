@@ -1,5 +1,6 @@
 package locidnet.com.marvarid.ui.service
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -17,6 +18,8 @@ import locidnet.com.marvarid.ui.activity.MainActivity
 import java.util.*
 
 
+
+
 class PushNotification :FirebaseMessagingService() {
 
 
@@ -28,7 +31,8 @@ class PushNotification :FirebaseMessagingService() {
             try{
                 log.d("Push keldi: -> ${msg!!.data}")
                 val intent =Intent(this,MainActivity::class.java)
-
+                intent.putExtra("Push",1)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 val builder = NotificationCompat.Builder(this)
                 val pending = PendingIntent.getActivity(this,0,intent,0)
 
@@ -39,6 +43,7 @@ class PushNotification :FirebaseMessagingService() {
                         .setContentText(msg.data.get("body"))
                         .setContentTitle(msg.data.get("title"))
                         .setGroup("marvarid")
+                        .setAutoCancel(true)
 
 
 
@@ -55,7 +60,7 @@ class PushNotification :FirebaseMessagingService() {
                         .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
 
-
+                builder.getNotification().flags = builder.getNotification().flags or Notification.FLAG_AUTO_CANCEL
                 notificationManager.notify(Base.get.resources.getString(R.string.app_name),m, builder.build())
             }catch (e:Exception){
                 log.d("push kelishda error $e")

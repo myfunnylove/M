@@ -73,78 +73,87 @@
                 android:textColor="@color/silver" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/quoteOwner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:orientation="vertical"
-            android:paddingBottom="8dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp">
+        <!--<LinearLayout-->
+            <!--android:id="@+id/quoteOwner"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="1dp"-->
+            <!--android:orientation="vertical"-->
+            <!--android:paddingBottom="8dp"-->
+            <!--android:paddingLeft="20dp"-->
+            <!--android:paddingRight="16dp"-->
+            <!--android:paddingTop="8dp">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:orientation="horizontal">-->
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/avatar"
-                    android:layout_width="46dp"
-                    android:layout_height="46dp"
-                    android:layout_gravity="center_vertical"
-                    app:srcCompat="@drawable/account" />
+                <!--<android.support.v7.widget.AppCompatImageView-->
+                    <!--android:id="@+id/avatar"-->
+                    <!--android:layout_width="46dp"-->
+                    <!--android:layout_height="46dp"-->
+                    <!--android:layout_gravity="center_vertical"-->
+                    <!--app:srcCompat="@drawable/account" />-->
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="vertical"
-                    android:paddingBottom="8dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:paddingTop="8dp">
+                <!--<LinearLayout-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginRight="8dp"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:paddingBottom="8dp"-->
+                    <!--android:paddingLeft="8dp"-->
+                    <!--android:paddingRight="8dp"-->
+                    <!--android:paddingTop="8dp">-->
 
-                    <TextView
-                        android:id="@+id/username"
-                        style="@style/HeaderText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
+                    <!--<TextView-->
+                        <!--android:id="@+id/username"-->
+                        <!--style="@style/HeaderText"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:layout_gravity="center_vertical"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:text="username"-->
+                        <!--android:maxLines="1"-->
+                        <!--android:textSize="15sp" />-->
 
-                        android:maxLines="1"
-                        android:textSize="15sp" />
+                    <!--<TextView-->
+                        <!--android:id="@+id/quote"-->
+                        <!--style="@style/NormalText"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:layout_gravity="center_vertical"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:text="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod-->
+<!--tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,-->
+<!--quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo-->
+<!--consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse-->
+<!--cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non-->
+<!--proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod-->
+<!--tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,-->
+<!--quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo-->
+<!--consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse-->
+<!--cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non-->
+<!--proident, sunt in culpa qui officia deserunt mollit anim id est laborum."-->
+                        <!--/>-->
 
-                    <TextView
-                        android:id="@+id/quote"
-                        style="@style/NormalText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-
-                        />
-
-                </LinearLayout>
-            </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.1dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/silver"/>
-        </LinearLayout>
+                <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
+            <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0.1dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:background="@color/silver"/>-->
+        <!--</LinearLayout>-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/commentBoxLay"
-            android:layout_below="@+id/quoteOwner"
 
             />
 

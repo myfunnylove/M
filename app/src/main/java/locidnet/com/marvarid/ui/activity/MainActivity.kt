@@ -195,6 +195,7 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                 musicBound = false
             }
         }, Context.BIND_AUTO_CREATE)
+        if (intent != null && intent.getIntExtra("Push",-1) == 1)  Toaster.info("erere")
 
     }
 
@@ -434,6 +435,14 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
     }
 
 
+
+    override fun onNewIntent(intent: Intent?) {
+
+//        if (intent != null && intent.getIntExtra("Push",-1) == 1){
+
+            tablayout.getTabAt(Const.NOTIF_FR)!!.select()
+//        }
+    }
     override fun goNext(to: Int, data: String) {
 
         var intent: Intent? = null
@@ -1042,10 +1051,11 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
                 if(pushList.pushes.size > 0){
                     notificationFragment!!.swapPushes(pushList)
-                }else{
-                    notificationFragment!!.onFail("")
-
                 }
+//                else{
+//                    notificationFragment!!.onFail("")
+//
+//                }
             }
 
             Http.CMDS.GET_15_POSTS -> {

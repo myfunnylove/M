@@ -3,7 +3,6 @@ package locidnet.com.marvarid.adapter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
@@ -13,11 +12,9 @@ import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.Layout
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.BackgroundColorSpan
+import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
@@ -28,11 +25,9 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.nineoldandroids.animation.AnimatorSet
-import io.reactivex.Observable
 
 import org.json.JSONObject
 import locidnet.com.marvarid.R
@@ -46,7 +41,7 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.adapterAnim.AnimateViewHolder
 import locidnet.com.marvarid.resources.customviews.CustomManager
-import locidnet.com.marvarid.resources.customviews.SGTextView
+import locidnet.com.marvarid.resources.expandableTextView.ExpandableTextView
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.*
 import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
@@ -260,30 +255,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 h.quoteEdit.clearComposingText()
                 h.sendChange.visibility = View.GONE
 
-                //New Style read more...
 
-
-                if (post.quote.text.length > 100) {
-                    var trimmed:String? = post.quote.text.substring(0,100)
-                    var readMore: String? = Base.get.resources.getString(R.string.read_more)
-                    var spannable: Spannable? = SpannableString("$trimmed $readMore")
-                    var flag: Int? = Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    spannable?.setSpan(ForegroundColorSpan(Color.BLUE), 100, spannable.length, flag!!)
-                    spannable?.setSpan(object : ClickableSpan() {
-                        override fun onClick(p0: View?) {
-                            h.quote.text = post.quote.text
-                            notifyItemChanged(h.adapterPosition)
-                        }
-
-                    }, 100, spannable.length, flag!!)
-                    trimmed  = null
-                    flag     = null
-                    readMore = null
-
-                    h.quote.text = spannable
-                    spannable = null
-
-                }else
                     h.quote.text = post.quote.text
 
 
@@ -323,7 +295,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
                 if (post.quote.textSize != "") {
                     try {
-                        h.quote.textSize = post.quote.textSize.toFloat()
+                        h.quote.setTextSize(post.quote.textSize.toFloat())
                     } catch (e: Exception) {
                     }
                 }
@@ -943,7 +915,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
         var audios       by Delegates.notNull<RecyclerView>()
         var avatar       by Delegates.notNull<AppCompatImageView>()
         var name         by Delegates.notNull<TextView>()
-        var quote        by Delegates.notNull<TextView>()
+        var quote        by Delegates.notNull<ExpandableTextView>()
         var quoteEdit    by Delegates.notNull<EditText>()
         var likeCount    by Delegates.notNull<TextSwitcher>()
         var commentCount by Delegates.notNull<TextView>()
@@ -962,7 +934,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
             audios       = itemView.findViewById<RecyclerView>(R.id.audios)
             avatar       = itemView.findViewById<AppCompatImageView>(R.id.avatar)
             name         = itemView.findViewById<TextView>(R.id.name)
-            quote        = itemView.findViewById<TextView>(R.id.commentText)
+            quote        = itemView.findViewById<ExpandableTextView>(R.id.expand_text_view)
             quoteEdit    = itemView.findViewById<EditText>(R.id.commentEditText)
             likeCount    = itemView.findViewById<TextSwitcher>(R.id.likeCount)
             commentCount = itemView.findViewById<TextView>(R.id.commentCount)

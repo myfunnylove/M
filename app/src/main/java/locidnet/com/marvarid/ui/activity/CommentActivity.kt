@@ -85,46 +85,46 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
                 .build()
                 .inject(this)
-        try{
-
-            postUsername = intent.getStringExtra("postUsername")
-            postUserPhoto = intent.getStringExtra("postUserPhoto")
-            postQuoteText = intent.getStringExtra("postQuoteText")
-            postQuoteColor = intent.getStringExtra("postQuoteColor")
-            postQuoteSize = intent.getStringExtra("postQuoteSize")
-
-            val url = Functions.checkImageUrl(postUserPhoto)
-
-            Glide.with(this)
-                    .load(url)
-
-                    .apply(RequestOptions()
-                            .circleCrop()
-
-                            .fallback(VectorDrawableCompat.create(resources, R.drawable.account_select,theme))
-
-                            .error(VectorDrawableCompat.create(resources, R.drawable.account_select, theme)))
-                    .into(avatar)
-
-            username.text = postUsername!!
-            quote.text = postQuoteText!!
-
-            if (!postQuoteSize.isNullOrEmpty()) {
-                try {
-                   quote.textSize = postQuoteSize!!.toFloat()
-                } catch (e: Exception) {
-                }
-            }
-            try {
-
-                quote.setTextColor(ContextCompat.getColor(Base.get, Const.colorPalette.get(postQuoteColor!!.toInt())!!.drawable))
-
-            } catch (e: Exception) {
-
-            }
-        }catch (e:Exception){
-            quoteOwner.visibility = View.GONE
-        }
+//        try{
+//
+//            postUsername = intent.getStringExtra("postUsername")
+//            postUserPhoto = intent.getStringExtra("postUserPhoto")
+//            postQuoteText = intent.getStringExtra("postQuoteText")
+//            postQuoteColor = intent.getStringExtra("postQuoteColor")
+//            postQuoteSize = intent.getStringExtra("postQuoteSize")
+//
+//            val url = Functions.checkImageUrl(postUserPhoto)
+//
+//            Glide.with(this)
+//                    .load(url)
+//
+//                    .apply(RequestOptions()
+//                            .circleCrop()
+//
+//                            .fallback(VectorDrawableCompat.create(resources, R.drawable.account_select,theme))
+//
+//                            .error(VectorDrawableCompat.create(resources, R.drawable.account_select, theme)))
+//                    .into(avatar)
+//
+//            username.text = postUsername!!
+//            quote.text = postQuoteText!!
+//
+//            if (!postQuoteSize.isNullOrEmpty()) {
+//                try {
+//                   quote.textSize = postQuoteSize!!.toFloat()
+//                } catch (e: Exception) {
+//                }
+//            }
+//            try {
+//
+//                quote.setTextColor(ContextCompat.getColor(Base.get, Const.colorPalette.get(postQuoteColor!!.toInt())!!.drawable))
+//
+//            } catch (e: Exception) {
+//
+//            }
+//        }catch (e:Exception){
+//            quoteOwner.visibility = View.GONE
+//        }
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
         supportActionBar!!.title = resources.getString(R.string.headerComment)

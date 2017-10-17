@@ -15,7 +15,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.DecelerateInterpolator
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
@@ -31,6 +30,7 @@ import locidnet.com.marvarid.model.*
 import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.resources.adapterAnim.AnimateViewHolder
 import locidnet.com.marvarid.resources.customviews.CustomManager
+import locidnet.com.marvarid.resources.expandableTextView.ExpandableTextView
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
@@ -249,7 +249,7 @@ class MyFeedAdapter(context: FragmentActivity,
 
                 if (post.quote.textSize != "") {
                     try {
-                        h.quote.textSize = post.quote.textSize.toFloat()
+                        h.quote.setTextSize(post.quote.textSize.toFloat())
                     } catch (e: Exception) {
                     }
                 }
@@ -593,7 +593,7 @@ class MyFeedAdapter(context: FragmentActivity,
         var audios        by Delegates.notNull<RecyclerView>()
         var avatar        by Delegates.notNull<AppCompatImageView>()
         var name          by Delegates.notNull<TextView>()
-        var quote         by Delegates.notNull<TextView>()
+        var quote         by Delegates.notNull<ExpandableTextView>()
         var quoteEdit     by Delegates.notNull<EditText>()
         var likeCount     by Delegates.notNull<TextSwitcher>()
         var commentCount  by Delegates.notNull<TextView>()
@@ -611,7 +611,7 @@ class MyFeedAdapter(context: FragmentActivity,
             audios       = itemView.findViewById<RecyclerView>(R.id.audios)
             avatar       = itemView.findViewById<AppCompatImageView>(R.id.avatar)
             name         = itemView.findViewById<TextView>(R.id.name)
-            quote        = itemView.findViewById<TextView>(R.id.commentText)
+            quote        = itemView.findViewById<ExpandableTextView>(R.id.expand_text_view)
             quoteEdit    = itemView.findViewById<EditText>(R.id.commentEditText)
             likeCount    = itemView.findViewById<TextSwitcher>(R.id.likeCount)
             commentCount = itemView.findViewById<TextView>(R.id.commentCount)
