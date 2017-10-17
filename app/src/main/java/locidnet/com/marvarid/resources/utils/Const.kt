@@ -281,7 +281,8 @@ object Const {
     object IMAGE{
         val LOW = "images/300/"
         val MEDIUM = "images/640/"
-        val ORIGINAL  = "images/orig/"
+        val ORIGINAL  = "images/1280/"
+        val TITLE  = "images/orig/"
     }
 
     object AUDIO{

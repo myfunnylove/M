@@ -14,6 +14,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
@@ -42,6 +43,7 @@ import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.adapterAnim.AnimateViewHolder
 import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.expandableTextView.ExpandableTextView
+import locidnet.com.marvarid.resources.hashtag.HashTagHelper
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.*
 import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
@@ -52,6 +54,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.properties.Delegates
@@ -256,8 +260,19 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 h.sendChange.visibility = View.GONE
 
 
+
+
                     h.quote.text = post.quote.text
 
+                    var hashTag = HashTagHelper.Creator.create(
+                            Base.get.resources.getColor(R.color.material_blue_300),
+                                    object : HashTagHelper.OnHashTagClickListener{
+                                        override fun onHashTagClicked(hashTag: String?) {
+                                            Toaster.info(if(hashTag != null ) hashTag else "null")
+                                        }
+
+                                    })
+                    hashTag.handle(h.quote.getmTv())
 
 
             }

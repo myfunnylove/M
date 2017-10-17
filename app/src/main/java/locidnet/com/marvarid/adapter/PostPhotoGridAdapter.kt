@@ -162,7 +162,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 //                val reqbuilder = Glide.with(context).load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, "blur"))
                 Glide.with(context)
 
-                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, Prefs.Builder().imageRes()))
+                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.TITLE, Prefs.Builder().imageRes()))
                         .thumbnail(0.1f)
 
                         .apply(options!!.diskCacheStrategy(DiskCacheStrategy.RESOURCE))
@@ -174,7 +174,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
                     ImageViewer.Builder(context,images)
                             .setFormatter(object : ImageViewer.Formatter<Image>{
-                                override fun format(t: Image?): String = Http.BASE_URL+t!!.image
+                                override fun format(t: Image?): String = Http.BASE_URL+t!!.image.replace(Const.IMAGE.TITLE, Const.IMAGE.TITLE)
 
                             })
                             .setStartPosition(i)
@@ -201,7 +201,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
                 Glide.with(context)
 
-                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, Prefs.Builder().imageRes()))
+                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.TITLE, Prefs.Builder().imageRes()))
                         .thumbnail(0.1f)
                         .apply(options!!.diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                         .into(h.photo)
@@ -221,7 +221,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
                     ImageViewer.Builder(context,images)
                             .setFormatter(object : ImageViewer.Formatter<Image>{
-                                override fun format(t: Image?): String = Http.BASE_URL+t!!.image
+                                override fun format(t: Image?): String = Http.BASE_URL+t!!.image.replace(Const.IMAGE.TITLE, Const.IMAGE.TITLE)
 
                             })
                             .setStartPosition(i)

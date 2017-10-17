@@ -48,14 +48,31 @@
                 style="@style/NormalText"
 
                 />
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@id/expand_collapse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+           <LinearLayout
+               android:id="@+id/readMoreLay"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="horizontal"
+               android:gravity="left|center"
+               android:layout_gravity="left|bottom"
+
+               >
+               <android.support.v7.widget.AppCompatImageView
+                   android:id="@id/expand_collapse"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
 
 
-                android:layout_gravity="left|bottom"
-                android:background="@android:color/transparent"/>
+                   android:layout_gravity="left|bottom"
+                   android:background="@android:color/transparent"/>
+               <TextView
+                   android:id="@+id/readMore"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:text="@string/read_more"
+                   android:layout_marginLeft="6dp"
+                   />
+           </LinearLayout>
         </locidnet.com.marvarid.resources.expandableTextView.ExpandableTextView>
         <TextView
             android:id="@+id/commentText"

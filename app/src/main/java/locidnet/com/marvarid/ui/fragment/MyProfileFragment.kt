@@ -518,7 +518,16 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
         if (key != -1){
 
+            try{
+                if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
 
+                cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+
+                playedSongPosition = key
+                postAdapter
+            }catch (e:Exception){
+
+            }
         }else {
 
             for (i in postAdapter!!.feeds.posts.indices) {
@@ -546,9 +555,12 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
                 }
 
-                postAdapter!!.notifyItemChanged(0)
 
             }
+        }
+
+        if (!PlayerService.PLAYING_SONG_URL.isNullOrEmpty()){
+            postAdapter!!.notifyItemChanged(0)
         }
     }
 

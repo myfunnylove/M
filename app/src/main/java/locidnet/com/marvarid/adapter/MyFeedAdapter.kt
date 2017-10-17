@@ -31,6 +31,7 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.resources.adapterAnim.AnimateViewHolder
 import locidnet.com.marvarid.resources.customviews.CustomManager
 import locidnet.com.marvarid.resources.expandableTextView.ExpandableTextView
+import locidnet.com.marvarid.resources.hashtag.HashTagHelper
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
@@ -208,11 +209,20 @@ class MyFeedAdapter(context: FragmentActivity,
             }else{
 
                 h.quote.visibility     = View.VISIBLE
-                h.quote.text           = post.quote.text
                 h.quoteEdit.visibility = View.GONE
                 h.quoteEdit.clearComposingText()
                 h.sendChange.visibility = View.GONE
+                h.quote.text           = post.quote.text
 
+                var hashTag = HashTagHelper.Creator.create(
+                        Base.get.resources.getColor(R.color.material_blue_300),
+                        object : HashTagHelper.OnHashTagClickListener{
+                            override fun onHashTagClicked(hashTag: String?) {
+                                Toaster.info(if(hashTag != null ) hashTag else "null")
+                            }
+
+                        })
+                hashTag.handle(h.quote.getmTv())
             }
 
 

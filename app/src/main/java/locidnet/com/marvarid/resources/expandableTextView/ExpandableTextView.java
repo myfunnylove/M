@@ -44,6 +44,8 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     private static final float DEFAULT_ANIM_ALPHA_START = 0.7f;
 
     protected TextView mTv;
+    protected LinearLayout readMoreLay;
+    protected TextView readMoreTitle;
 
     protected AppCompatImageView mButton; // Button to expand/collapse
 
@@ -174,6 +176,8 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         // Setup with optimistic case
         // i.e. Everything fits. No button needed
         mButton.setVisibility(View.GONE);
+        readMoreTitle.setVisibility(View.GONE);
+
         mTv.setMaxLines(Integer.MAX_VALUE);
 
         // Measure
@@ -193,6 +197,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
             mTv.setMaxLines(mMaxCollapsedLines);
         }
         mButton.setVisibility(View.VISIBLE);
+        readMoreTitle.setVisibility(View.VISIBLE);
 
         // Re-measure with new setup
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -250,6 +255,10 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         return mTv.getText();
     }
 
+    public TextView getmTv() {
+        return mTv;
+    }
+
     private void init(AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.ExpandableTextView);
         mMaxCollapsedLines = typedArray.getInt(R.styleable.ExpandableTextView_maxCollapsedLines, MAX_COLLAPSED_LINES);
@@ -260,11 +269,11 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
         if (mExpandDrawable == null) {
             mExpandDrawable = getDrawable(getContext(), R.drawable.chevron_down);
+
         }
         if (mCollapseDrawable == null) {
             mCollapseDrawable = getDrawable(getContext(), R.drawable.chevron_up);
         }
-
         typedArray.recycle();
 
         // enforces vertical orientation
@@ -276,9 +285,13 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
     private void findViews() {
         mTv =  findViewById(R.id.expandable_text);
-        mTv.setOnClickListener(this);
+        readMoreLay = findViewById(R.id.readMoreLay);
+        readMoreLay.setOnClickListener(this);
+        readMoreTitle = findViewById(R.id.readMore);
+
         mButton = findViewById(R.id.expand_collapse);
         mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
+
         mButton.setOnClickListener(this);
     }
 
