@@ -156,7 +156,7 @@ public final class HashTagHelper implements ClickableForegroundColorSpan.OnHashT
 
             char sign = text.charAt(index);
 
-            boolean isValidSign = true || mAdditionalHashTagChars.contains(sign);
+            boolean isValidSign = Character.isLetterOrDigit(sign) || mAdditionalHashTagChars.contains(sign) || sign == '_';
             if (!isValidSign) {
                 nonLetterDigitCharIndex = index;
                 break;

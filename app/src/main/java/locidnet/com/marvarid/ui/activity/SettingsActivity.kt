@@ -292,9 +292,9 @@ class SettingsActivity : BaseActivity(), Viewer {
                         dialog.dismiss()
 
                         MainActivity.start = 0
-                        MainActivity.end = 20
+                        MainActivity.end = 10
                         MainActivity.startFeed = 0
-                        MainActivity.endFeed = 20
+                        MainActivity.endFeed = 10
                         MainActivity.startFollowers = 0
                         MainActivity.endFollowers = 20
                         MainActivity.startFollowing = 0

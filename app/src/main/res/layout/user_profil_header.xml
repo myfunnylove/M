@@ -154,9 +154,9 @@
         android:id="@+id/postsLay"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_below="@+id/topContainer"
         android:layout_gravity="bottom"
         android:background="@color/white"
+        android:baselineAligned="false"
         android:orientation="horizontal">
         <LinearLayout
 
@@ -253,6 +253,12 @@
         </LinearLayout>
 
     </LinearLayout>
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
     <LinearLayout
         android:id="@+id/closedProfilLay"
         android:layout_width="match_parent"

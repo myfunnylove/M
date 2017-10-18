@@ -32,6 +32,7 @@ import com.nineoldandroids.animation.AnimatorSet
 
 import org.json.JSONObject
 import locidnet.com.marvarid.R
+import locidnet.com.marvarid.R.string.feeds
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.AdapterClicker
@@ -52,6 +53,7 @@ import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
@@ -90,10 +92,12 @@ class ProfileFeedAdapter(context: FragmentActivity,
     var activity: FragmentActivity? = context
     var disableAnimation = false
     var cachedLists = HashMap<String, String>()
-    var changeId = -1
     var player: MusicPlayerListener? = musicPlayerListener
     var closedProfile = closedProfil
     var profileControl: ProfileMusicController? = profileController
+    var callback:Call<ResponseData>? = null
+    var changeId = -1
+
     val options: RequestOptions? = RequestOptions()
             .circleCrop()
 
@@ -121,6 +125,9 @@ class ProfileFeedAdapter(context: FragmentActivity,
         val PLAY = R.drawable.notif_play
         val PAUSE = R.drawable.notif_pause
         var playStatus: Int? = -1
+
+
+
 
     }
 
@@ -226,31 +233,33 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     js.put("post_id", post.id)
                     js.put("quote", JSONObject(Gson().toJson(quote)))
                     log.d("changequote send data $js")
-                    model!!.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
-                            .enqueue(object : Callback<ResponseData> {
-                                override fun onResponse(p0: Call<ResponseData>?, response: Response<ResponseData>?) {
-                                    try {
-                                        log.d("result change quote success $response")
-                                        log.d("result change quote success ${response!!.body()}")
-                                        log.d("result after changed ${feeds.posts.get(changeId)}")
-                                        if (response.body()!!.res == "0") {
-                                            feeds.posts.get(changeId).quote.text = h.quoteEdit.text.toString()
-                                            val newChange = changeId
-                                            changeId = -1
-                                            notifyItemChanged(newChange)
-                                        }
-                                    } catch (e: Exception) {
+                    callback = model!!.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
 
-                                    }
-
+                    callback!!.enqueue(object :  Callback<ResponseData> {
+                        val h:WeakReference<Holder> = WeakReference<Holder>(holder)
+                        override fun onResponse(p0: Call<ResponseData>?, response: Response<ResponseData>?) {
+                            try {
+                                log.d("result change quote success $response")
+                                log.d("result change quote success ${response!!.body()}")
+                                log.d("result after changed ${feeds.posts.get(changeId)}")
+                                if (response.body()!!.res == "0") {
+                                    feeds.posts.get(changeId).quote.text = h.quoteEdit.text.toString()
+                                    val newChange = changeId
+                                    changeId = -1
+                                    notifyItemChanged(newChange)
                                 }
+                            } catch (e: Exception) {
 
-                                override fun onFailure(p0: Call<ResponseData>?, p1: Throwable?) {
+                            }
 
-                                    log.d("result change quote failer $p1")
-                                }
+                        }
 
-                            })
+                        override fun onFailure(p0: Call<ResponseData>?, p1: Throwable?) {
+
+                            log.d("result change quote failer $p1")
+                        }
+
+                    })
                 }
             } else {
 
@@ -265,7 +274,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     h.quote.text = post.quote.text
 
                     var hashTag = HashTagHelper.Creator.create(
-                            Base.get.resources.getColor(R.color.material_blue_300),
+                            Base.get.resources.getColor(R.color.material_pink_300),
                                     object : HashTagHelper.OnHashTagClickListener{
                                         override fun onHashTagClicked(hashTag: String?) {
                                             Toaster.info(if(hashTag != null ) hashTag else "null")
@@ -488,9 +497,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     reqObj.put("post_id", post.id)
 
                     log.d("request data $reqObj")
-
-                    model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.LIKE_BOSISH))
-                            .enqueue(object : retrofit2.Callback<ResponseData> {
+                    callback =model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.LIKE_BOSISH))
+                    callback!!.enqueue(object : retrofit2.Callback<ResponseData> {
                                 override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                                     log.d("follow on fail $t")
                                 }
@@ -530,6 +538,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                 }
 
                             })
+
                 }
 
                 h.commentLay.setOnClickListener {
@@ -580,8 +589,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                 reqObj.put("post_id", post.id)
 
                                 log.d("request data for delete post $reqObj")
-
-                                model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.DELETE_POST)).enqueue(object : Callback<ResponseData> {
+                                callback = model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.DELETE_POST))
+                                callback!!.enqueue(object : Callback<ResponseData> {
                                     override fun onResponse(p0: Call<ResponseData>?, p1: Response<ResponseData>?) {
                                         try {
 
@@ -590,9 +599,9 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                             feeds.posts.removeAt(holder.adapterPosition)
                                             MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
                                             MainActivity.startFeed = 0
-                                            MainActivity.endFeed = 20
+                                            MainActivity.endFeed = 10
                                             MainActivity.start = 0
-                                            MainActivity.end = 20
+                                            MainActivity.end = 10
                                             notifyItemRemoved(holder.adapterPosition)
                                             notifyItemRangeChanged(holder.adapterPosition, feeds.posts.size)
                                             notifyItemChanged(0)
@@ -627,9 +636,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                                         val js = JS.get()
                                         js.put("type", whichButton)
                                         js.put("post", post.id)
-
-                                        model!!.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
-                                                .enqueue(object : retrofit2.Callback<ResponseData> {
+                                    callback = model!!.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
+                                    callback!!.enqueue(object : retrofit2.Callback<ResponseData> {
                                                     override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                                                         log.e("complaint fail $t")
 
@@ -774,9 +782,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     val reqObj = JS.get()
 
                     reqObj.put("user", userInfo!!.user.info.user_id)
-
-                    model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.FOLLOW))
-                            .enqueue(object : retrofit2.Callback<ResponseData> {
+                    callback = model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.FOLLOW))
+                    callback!!.enqueue(object : retrofit2.Callback<ResponseData> {
                                 override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                                     log.d("follow on fail $t")
                                 }
@@ -837,8 +844,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     val reqObj = JS.get()
 
                     reqObj.put("user", userInfo!!.user.info.user_id)
-                    model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.UN_FOLLOW))
-                            .enqueue(object : retrofit2.Callback<ResponseData> {
+                    callback = model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.UN_FOLLOW))
+                    callback!!.enqueue(object : retrofit2.Callback<ResponseData> {
                                 override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
                                     log.d("follow on fail $t")
                                 }
@@ -888,6 +895,12 @@ class ProfileFeedAdapter(context: FragmentActivity,
             }
         }
     }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+        if (callback != null) callback!!.cancel()
+    }
+
+
 
 
     fun swapPhotoProgress(status: Int) {

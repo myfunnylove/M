@@ -20,7 +20,9 @@
             android:id="@+id/postList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/clouds" />
+            android:background="@color/clouds"
+
+            />
 
         <include layout="@layout/res_empty_container"/>
 
@@ -30,10 +32,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="top|center_horizontal"
-
             >
 
             <ProgressBar
+                android:id="@+id/progress"
                 android:theme="@style/CircularProgress"
                 style="@style/Widget.AppCompat.ProgressBar"
                 android:layout_width="45dp"

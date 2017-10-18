@@ -99,9 +99,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
     companion object MyPostOffset {
 
         var start          = 0
-        var end            = 20
+        var end            = 10
         var startFeed      = 0
-        var endFeed        = 20
+        var endFeed        = 10
         var startNotif     = 0
         var endNotif       = 20
         var startFollowers = 0
@@ -906,9 +906,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
             MyPostOffset.startNotif     = 0
             MyPostOffset.endNotif       = 20
             MyPostOffset.start          = 0
-            MyPostOffset.end            = 20
+            MyPostOffset.end            = 10
             MyPostOffset.startFeed      = 0
-            MyPostOffset.endFeed        = 20
+            MyPostOffset.endFeed        = 10
             MyPostOffset.startFollowers = 0
             MyPostOffset.endFollowers   = 20
             MyPostOffset.startFollowing = 0
@@ -1280,9 +1280,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
     override fun onDestroy() {
         super.onDestroy()
          start           = 0
-         end             = 20
+         end             = 10
          startFeed       = 0
-         endFeed         = 20
+         endFeed         = 10
          startNotif      = 0
          endNotif        = 20
          startFollowers  = 0

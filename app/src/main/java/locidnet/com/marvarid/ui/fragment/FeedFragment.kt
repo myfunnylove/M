@@ -137,7 +137,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 // the visibleThreshold and need to reload more data.
                 // If we do need to reload some more data, we execute onLoadMore to fetch the data.
                 // threshold should reflect how many total columns there are too
-                if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount) {
+                if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount - 2) {
                     currentPage++
                     Log.d("APPLICATION_DEMO", "currentPage" + currentPage)
                     onLoadMore(currentPage, totalItemCount, view)
@@ -146,10 +146,10 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
             }
 
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                if (feedAdapter != null && feedAdapter!!.feeds.posts.size >= 20){
+                if (feedAdapter != null && feedAdapter!!.feeds.posts.size >= 10){
                     log.d("on more $page $totalItemsCount ")
                     MainActivity.startFeed = feedAdapter!!.feeds.posts.size
-                    MainActivity.endFeed = 20
+                    MainActivity.endFeed = 10
 
                     log.d("FeedFragment => method onload more => startfrom: ${MainActivity.startFeed}")
 
@@ -164,7 +164,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
             override fun onRefresh() {
                 if (feedAdapter != null){
                     MainActivity.startFeed = 0
-                    MainActivity.endFeed   = 20
+                    MainActivity.endFeed   = 10
                     connectActivity!!.goNext(Const.REFRESH_FEED,"")
                 }else{
                     swipeRefreshLayout.isRefreshing = false
@@ -266,10 +266,10 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 log.d("post qoshildi postni birinchi elementi update qilinadi")
                 MainActivity.startFeed = feedAdapter!!.feeds.posts.size
 
-                MainActivity.endFeed = 20
+                MainActivity.endFeed = 10
                 feedAdapter!!.swapFirstItem(postList)
                 listFeed.scrollToPosition(0)
-            }else if ((MainActivity.endFeed == 20 && MainActivity.startFeed == 0) && feedAdapter != null){
+            }else if ((MainActivity.endFeed == 10 && MainActivity.startFeed == 0) && feedAdapter != null){
                 log.d("postni boshidan update qisin")
                 cachedSongAdapters = HashMap()
 
@@ -282,7 +282,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 listFeed.adapter = slideAdapter
                 slideAdapter = null
 
-            }else if((MainActivity.endFeed == 20 && MainActivity.startFeed != 0) && feedAdapter != null){
+            }else if((MainActivity.endFeed == 10 && MainActivity.startFeed != 0) && feedAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 feedAdapter!!.swapLast20Item(postList)
 

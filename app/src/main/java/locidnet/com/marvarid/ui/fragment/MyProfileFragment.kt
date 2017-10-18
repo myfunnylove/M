@@ -128,9 +128,9 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 log.d("PROFIL POSTLARI OXIRIGA KELDI ${manager!!.findLastVisibleItemPosition()}")
-                if (postAdapter != null && postAdapter!!.feeds.posts.size >= 20){
+                if (postAdapter != null && postAdapter!!.feeds.posts.size >= 10){
                     MainActivity.start = (postAdapter!!.feeds.posts.size - 1)
-                    MainActivity.end = 20
+                    MainActivity.end = 10
                     connectActivity!!.goNext(Const.REFRESH_PROFILE_FEED,"")
                 }
 
@@ -168,7 +168,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 // If we do need to reload some more data, we execute onLoadMore to fetch the data.
                 // threshold should reflect how many total columns there are too
 
-                if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount) {
+                if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount - 2) {
                     currentPage++
                     Log.d("APPLICATION_DEMO", "currentPage" + currentPage)
                     onLoadMore(currentPage, totalItemCount, view)
@@ -186,7 +186,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
             override fun onRefresh() {
                 if (postAdapter != null){
                     MainActivity.start = 0
-                    MainActivity.end = 20
+                    MainActivity.end = 10
                     connectActivity!!.goNext(Const.REFRESH_PROFILE_FEED,"")
                 }else{
                     swipeRefreshLayout.isRefreshing = false
@@ -358,17 +358,17 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 slideAdapter.setDuration(500)
                 postView.adapter = slideAdapter
                 slideAdapter = null
-            }else if (postList.posts.size == 1 && (MainActivity.endFeed == 1 && MainActivity.startFeed == 0)){
+            }else if (postList.posts.size == 1 && (MainActivity.end == 1 && MainActivity.start == 0)){
                 log.d("post qoshildi postni birinchi elementi update qilinadi")
                 MainActivity.start = postAdapter!!.feeds.posts.size
 
-                MainActivity.end = 20
+                MainActivity.end = 10
                 postAdapter!!.swapFirstItem(postList)
                 postView.smoothScrollBy(0,postView.getChildAt(0).height * postAdapter!!.feeds.posts.size)
 
             }
 
-            else if ((MainActivity.end == 20 && MainActivity.start == 0) && postAdapter != null){
+            else if ((MainActivity.end == 10 && MainActivity.start == 0) && postAdapter != null){
                 log.d("postni boshidan update qisin  F type -> $FOLLOW_TYPE")
                 if(MyProfileFragment.cachedSongAdapters == null) MyProfileFragment.cachedSongAdapters = HashMap()
 
@@ -383,7 +383,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 slideAdapter.setDuration(500)
                 postView.adapter = slideAdapter
                 slideAdapter = null
-            }else if((MainActivity.end == 20 && MainActivity.start != 0) && postAdapter != null){
+            }else if((MainActivity.end == 10 && MainActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 postAdapter!!.swapLast20Item(postList)
 

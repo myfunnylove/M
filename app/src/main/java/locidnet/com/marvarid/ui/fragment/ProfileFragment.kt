@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
+import android.widget.ProgressBar
 import com.bumptech.glide.Glide
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
@@ -39,9 +40,8 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
 
     var postView:RecyclerView? = null
-    var progressLay:ViewGroup? = null
     var swipeRefreshLayout:SwipeRefreshLayout? = null
-
+//    var progress:ProgressBar?  = null
     var user:User?                          = Base.get.prefs.getUser()
     var oldpostList:PostList?         = null
     var postAdapter: ProfileFeedAdapter?      = null
@@ -53,6 +53,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
     var userInfo:UserInfo?= null
     var initBody                      = false
     var scroll:EndlessRecyclerViewScrollListener? = null
+
     lateinit var emptyContainer: EmptyContainer
 
     companion object {
@@ -112,11 +113,9 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         log.d("init profil fragment")
 
 
-        progressLay    = rootView.findViewById<ViewGroup>(R.id.progressLay)
         swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
 
         postView     = rootView.findViewById<RecyclerView>(R.id.postList)
-
 
 
         emptyContainer = EmptyContainer.Builder()
@@ -133,9 +132,9 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 log.d("PROFIL POSTLARI OXIRIGA KELDI ${manager!!.findLastVisibleItemPosition()}")
-                if (postAdapter != null && postAdapter!!.feeds.posts.size >= 20){
+                if (postAdapter != null && postAdapter!!.feeds.posts.size >= 10){
                     FollowActivity.start = (postAdapter!!.feeds.posts.size - 1)
-                    FollowActivity.end   = 20
+                    FollowActivity.end   = 10
                     connectActivity!!.goNext(Const.PROFIL_PAGE,FollowActivity.start.toString())
                 }
 
@@ -173,7 +172,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 // If we do need to reload some more data, we execute onLoadMore to fetch the data.
                 // threshold should reflect how many total columns there are too
 
-                if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount) {
+                if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount - 2) {
                     currentPage++
                     Log.d("APPLICATION_DEMO", "currentPage" + currentPage)
                     onLoadMore(currentPage, totalItemCount, view)
@@ -191,7 +190,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
             override fun onRefresh() {
                 if (postAdapter != null ){
                     FollowActivity.start = 0
-                    FollowActivity.end   = 20
+                    FollowActivity.end   = 10
                     connectActivity!!.goNext(Const.REFRESH_PROFILE_FEED,"")
                 }else{
                     swipeRefreshLayout!!.isRefreshing = false
@@ -245,7 +244,6 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
 
 
-
     fun initHeader(userInfo:UserInfo,fType:String){
         log.d("ProfileFragment => initheader $fType")
 
@@ -255,7 +253,6 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         POST_COUNT = if(!userInfo.user.count.postCount.isNullOrEmpty()) userInfo.user.count.postCount else "0"
 
         FOLLOW_TYPE = if (fType == ProfileFragment.CLOSE ) ProfileFragment.FOLLOW else fType
-        progressLay!!.visibility = View.GONE
         emptyContainer.hide()
         postView!!.visibility       = View.VISIBLE
 
@@ -311,7 +308,6 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
             scroll!!.resetState()
             emptyContainer.hide()
 
-            progressLay!!.visibility    = View.GONE
 
             postView!!.visibility = View.VISIBLE
 
@@ -337,7 +333,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
             }
 
-            else if ((FollowActivity.end == 20 && FollowActivity.start == 0) && postAdapter != null){
+            else if ((FollowActivity.end == 10 && FollowActivity.start == 0) && postAdapter != null){
                 if(ProfileFragment.cachedSongAdapters == null) ProfileFragment.cachedSongAdapters = HashMap()
 
 
@@ -353,7 +349,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 slideAdapter.setDuration(500)
                 postView!!.adapter = slideAdapter
                 slideAdapter = null
-            }else if((FollowActivity.end == 20 && FollowActivity.start != 0) && postAdapter != null){
+            }else if((FollowActivity.end == 10 && FollowActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 postAdapter!!.swapLast20Item(postList)
 
@@ -426,7 +422,6 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         connectAudioList          = null
         connectActivity           = null
         postView                  = null
-        progressLay               = null
         swipeRefreshLayout        = null
 
         user                      = null

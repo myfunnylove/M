@@ -129,4 +129,5 @@
     <string name="about_app_title">Marvarid Android uchun</string>
     <string name="sendAgain">Отправить заново</string>
     <string name="read_more">davomini o\'qish...</string>
+    <string name="close">yopish</string>
 </resources>

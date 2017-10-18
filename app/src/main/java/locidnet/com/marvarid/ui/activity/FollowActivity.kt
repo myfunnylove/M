@@ -53,7 +53,7 @@ class FollowActivity : BaseActivity(),
         val TYPE      = "type"
 
         var start     = 0
-        var end       = 20
+        var end       = 10
 
         var SHOW_POST = ""
     }
@@ -401,9 +401,12 @@ class FollowActivity : BaseActivity(),
         log.d("Profil postlani olib kelindi $result")
 
         when(from){
+
             Http.CMDS.MY_POSTS -> {
 
                 try{
+                    progress.visibility = View.GONE
+
                     val postList: PostList = Gson().fromJson(result, PostList::class.java)
 
 
@@ -520,6 +523,9 @@ class FollowActivity : BaseActivity(),
 
             Http.CMDS.GET_FOLLOWING     -> Handler().postDelayed({followersFragment!!.failedGetList(message)},1500)
             Http.CMDS.GET_FOLLOWERS     -> Handler().postDelayed({followersFragment!!.failedGetList(message)},1500)
+            Http.CMDS.MY_POSTS ->          progress.visibility = View.VISIBLE
+
+
         }
     }
 
@@ -612,6 +618,7 @@ class FollowActivity : BaseActivity(),
 
     override fun turnOn() {
         val otherUser = userInfo!!.user
+        progress.visibility = View.VISIBLE
 
         val fType = if (intent.extras.getString(ProfileFragment.F_TYPE) != null && intent.extras.getString(ProfileFragment.F_TYPE) == ProfileFragment.SETTINGS)
             ProfileFragment.SETTINGS
@@ -661,6 +668,6 @@ class FollowActivity : BaseActivity(),
     override fun onDestroy() {
         super.onDestroy()
         start = 0
-        end   = 20
+        end   = 10
     }
 }

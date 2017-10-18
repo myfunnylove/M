@@ -215,7 +215,7 @@ class MyFeedAdapter(context: FragmentActivity,
                 h.quote.text           = post.quote.text
 
                 var hashTag = HashTagHelper.Creator.create(
-                        Base.get.resources.getColor(R.color.material_blue_300),
+                        Base.get.resources.getColor(R.color.material_pink_300),
                         object : HashTagHelper.OnHashTagClickListener{
                             override fun onHashTagClicked(hashTag: String?) {
                                 Toaster.info(if(hashTag != null ) hashTag else "null")
@@ -511,9 +511,9 @@ class MyFeedAdapter(context: FragmentActivity,
                                             MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
                                             MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
                                             MainActivity.startFeed = 0
-                                            MainActivity.endFeed = 20
+                                            MainActivity.endFeed = 10
                                             MainActivity.start = 0
-                                            MainActivity.end = 20
+                                            MainActivity.end = 10
                                             notifyItemRemoved(holder.adapterPosition)
                                             notifyItemRangeChanged(holder.adapterPosition, feeds.posts.size)
                                             notifyItemChanged(0)
@@ -577,6 +577,10 @@ class MyFeedAdapter(context: FragmentActivity,
             }
         }
 
+
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
 
     }
 

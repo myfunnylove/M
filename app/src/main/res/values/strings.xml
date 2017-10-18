@@ -129,4 +129,5 @@
     <string name="about_app_title">Marvarid для Андроид</string>
     <string name="sendAgain">Отправить заново</string>
     <string name="read_more">читать еще...</string>
+    <string name="close">закрыть</string>
 </resources>

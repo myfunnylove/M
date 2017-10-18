@@ -10,6 +10,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ProgressBar
 import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.FollowAdapter
@@ -39,7 +40,7 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
     var list: RecyclerView     by Delegates.notNull<RecyclerView>()
 
     var searchLay              by Delegates.notNull<Toolbar>()
-
+    var progress:ProgressBar? = null
 
     var headerText = ""
     //var progressLay    by Delegates.notNull<ViewGroup>()
@@ -85,6 +86,7 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
 
         list           = rootView.findViewById<RecyclerView>(R.id.list)
         searchLay      = rootView.findViewById<Toolbar>(R.id.toolbar)
+        progress       = rootView.findViewById<ProgressBar>(R.id.progress)
 
         emptyContainer = EmptyContainer.Builder()
                 .setIcon(R.drawable.account_light)
@@ -96,20 +98,19 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
         list.layoutManager = LinearLayoutManager(activity)
         list.setHasFixedSize(true)
         headerText = arguments.getString("header","")
-
-
+        progress!!.visibility =View.VISIBLE
 
     }
 
     fun swapList(users:ArrayList<Users>){
 
+        progress!!.visibility =View.GONE
         log.d("${users}")
         if (users.size > 0){
             emptyContainer.hide()
             usersList                 = users
             adapter                   = FollowAdapter(Base.get,users,this)
             list.adapter              = adapter
-
 
         }else{
             emptyContainer.show()
@@ -120,6 +121,7 @@ class FFFFragment :BaseFragment() ,AdapterClicker{
 
     }
     fun failedGetList(error:String = ""){
+        progress!!.visibility =View.GONE
 
 //        progressLay.visibility = View.GONE
         log.e("FeedFragment => method => failedGetList errorCode => $error")

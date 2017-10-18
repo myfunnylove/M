@@ -62,7 +62,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     private int mMarginBetweenTxtAndBottom;
 
     private Drawable mExpandDrawable;
-
+    private String open,close;
     private Drawable mCollapseDrawable;
 
     private int mAnimationDuration;
@@ -109,6 +109,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
         mCollapsed = !mCollapsed;
         mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
+        readMoreTitle.setText(mCollapsed ? open : close);
 
         if (mCollapsedStatus != null) {
             mCollapsedStatus.put(mPosition, mCollapsed);
@@ -242,6 +243,8 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         clearAnimation();
         mCollapsed = isCollapsed;
         mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
+        readMoreTitle.setText(mCollapsed ? open : close);
+
         setText(text);
         getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         requestLayout();
@@ -269,10 +272,13 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
         if (mExpandDrawable == null) {
             mExpandDrawable = getDrawable(getContext(), R.drawable.chevron_down);
+            open = getContext().getResources().getString(R.string.read_more);
 
         }
         if (mCollapseDrawable == null) {
             mCollapseDrawable = getDrawable(getContext(), R.drawable.chevron_up);
+            close = getContext().getResources().getString(R.string.close);
+
         }
         typedArray.recycle();
 
@@ -291,6 +297,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
         mButton = findViewById(R.id.expand_collapse);
         mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
+        readMoreTitle.setText(mCollapsed ? open : close);
 
         mButton.setOnClickListener(this);
     }
