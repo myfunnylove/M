@@ -280,5 +280,7 @@ class ForgotPasswordActivity : BaseActivity() , Viewer {
          phoneStr      = null
          smsStr      = null
          userId    = null
+        presenter.ondestroy()
+
     }
 }

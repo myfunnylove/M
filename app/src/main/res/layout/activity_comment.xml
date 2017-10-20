@@ -171,6 +171,58 @@
 
             >
 
+    <LinearLayout
+        android:id="@+id/replyLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="6dp"
+        android:gravity="center|left"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone"
+        >
+        <TextView
+            style="@style/NormalText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:textSize="13sp"
+            android:textColor="@color/silver"
+            android:text="@string/answer_to"
+            android:gravity="center_vertical"
+
+            />
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/replyAvatar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/account"
+            android:layout_marginLeft="2dp"
+
+
+            />
+        <TextView
+            android:id="@+id/replyUsername"
+            style="@style/HeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_gravity="center_vertical"
+            android:textSize="15sp"
+            android:layout_marginLeft="2dp"
+            />
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/cancel"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            app:srcCompat="@drawable/notif_close"
+            />
+    </LinearLayout>
             <LinearLayout
 
                 android:layout_width="match_parent"

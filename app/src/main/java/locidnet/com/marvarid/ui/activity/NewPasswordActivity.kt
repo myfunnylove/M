@@ -155,7 +155,11 @@ class NewPasswordActivity : BaseActivity(), Viewer {
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.ondestroy()
 
+    }
 
 
 

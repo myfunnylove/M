@@ -633,5 +633,11 @@ class SettingsActivity : BaseActivity(), Viewer {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.ondestroy()
+
+    }
+
 
 }

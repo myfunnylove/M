@@ -388,6 +388,8 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
         super.onDestroy()
         MainActivity.musicSubject!!.unsubscribe(this)
         songPosition = -1
+        presenter.ondestroy()
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

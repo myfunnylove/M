@@ -1303,6 +1303,8 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
 
          tablayoutHeight = 0
          unregisterReceiver(notificationReceiver)
+        presenter.ondestroy()
+
     }
 }
 

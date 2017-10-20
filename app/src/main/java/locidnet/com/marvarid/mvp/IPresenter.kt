@@ -7,4 +7,5 @@ import org.json.JSONObject
  */
 interface IPresenter {
     fun requestAndResponse(data: JSONObject, cmd:String)
+    fun ondestroy()
 }

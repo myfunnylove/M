@@ -6,6 +6,7 @@ import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -25,6 +26,7 @@ import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.MainActivity
+import org.reactivestreams.Subscription
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -37,7 +39,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
 
     val model:Model = modeler
     val context = context
-
+    var subscription:Disposable? =null
     override fun requestAndResponse(data:JSONObject, cmd:String){
 
 
@@ -51,7 +53,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
 
         view.initProgress()
         view.showProgress()
-                 Observable.just(model.response(Http.getRequestData(data,cmd)))
+        subscription = Observable.just(model.response(Http.getRequestData(data,cmd)))
 
                            .subscribeOn(Schedulers.io())
                             .flatMap({res -> res})
@@ -196,6 +198,10 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
     }
 
 
+    override fun ondestroy() {
+        if (subscription!= null && !subscription!!.isDisposed)subscription!!.dispose()
+    }
+
     fun filterLogin(editText :AppCompatEditText){
         RxTextView.textChangeEvents(editText)
                 .delay(3, TimeUnit.MILLISECONDS)
@@ -245,7 +251,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
         val user = Base.get.prefs.getUser()
         log.d("upload file ketvotti: ${body.body()!!}")
         val name = RequestBody.create(MediaType.parse("text/plain"),"image/*")
-        Observable.just(model.uploadPhoto(body,name))
+        subscription = Observable.just(model.uploadPhoto(body,name))
                 .subscribeOn(Schedulers.io())
                 .flatMap({res -> res})
                 .observeOn(AndroidSchedulers.mainThread())
@@ -263,7 +269,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
         val user = Base.get.prefs.getUser()
         log.d("upload file ketvotti: ${body.body()!!}")
         val name = RequestBody.create(MediaType.parse("text/plain"),"image/*")
-        Observable.just(model.uploadAvatar(body,name,"avatar",user.userId,user.session))
+      subscription = Observable.just(model.uploadAvatar(body,name,"avatar",user.userId,user.session))
                 .subscribeOn(Schedulers.io())
                 .flatMap({res ->
                     log.d("$res")

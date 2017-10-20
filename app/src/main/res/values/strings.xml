@@ -130,4 +130,7 @@
     <string name="sendAgain">Отправить заново</string>
     <string name="read_more">читать еще...</string>
     <string name="close">закрыть</string>
+    <string name="reply">Oтветить</string>
+    <string name="answer_to">Oтветить:</string>
+    <string name="answered">Ответил(и):</string>
 </resources>

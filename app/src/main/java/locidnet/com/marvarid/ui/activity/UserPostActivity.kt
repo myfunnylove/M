@@ -499,6 +499,8 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
     override fun onDestroy() {
         super.onDestroy()
+        presenter.ondestroy()
+
         MainActivity.musicSubject!!.unsubscribe(this)
 
     }

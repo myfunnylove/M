@@ -510,6 +510,8 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
 
     override fun onDestroy() {
         clearCache()
+        presenter.ondestroy()
+
         super.onDestroy()
     }
 

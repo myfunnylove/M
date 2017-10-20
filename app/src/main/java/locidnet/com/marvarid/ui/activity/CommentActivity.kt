@@ -66,6 +66,9 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
     var postQuoteColor:String?  =null
     var postQuoteSize:String?   =null
     var postUserPhoto:String?   =null
+    var choosedCommId:Int       =0
+    var choosedCommPos:Int      =-1
+    var comment:String? = null
     companion object {
 
         var start = 0
@@ -176,6 +179,7 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
             emptyContainer.visibility = View.VISIBLE
         }
 
+
         sendComment.setOnClickListener {
             if(commentText.text.isNotEmpty()){
 
@@ -232,6 +236,11 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
             false
         })
+
+        cancel.setOnClickListener {
+            replyLay.visibility = View.GONE
+            replyUsername.text = ""
+        }
         manager = LinearLayoutManager(this)
 
         list.layoutManager = manager
@@ -263,6 +272,7 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
             }
 
             override fun disconnected() {
+
             }
 
         })
@@ -274,6 +284,16 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
     }
 
     override fun click(position: Int) {
+        choosedCommPos = position
+        choosedCommId = commentAdapter!!.comments.get(position).commentId.toInt()
+        replyLay.visibility = View.VISIBLE
+        replyUsername.text = commentAdapter!!.comments.get(position).username
+        Glide.with(this)
+                .load(Functions.checkImageUrl(commentAdapter!!.comments.get(position).avatar))
+                .apply(Functions.getGlideOpts())
+                .into(replyAvatar)
+        commentText.requestFocus()
+
     }
 
     override fun showProgress() {
@@ -293,35 +313,42 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
 
         if (from == Http.CMDS.WRITE_COMMENT){
 
-            errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                override fun connected() {
-                    commentText.setText("")
+            if (choosedCommId == 0){
+                errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                    override fun connected() {
+                        commentText.setText("")
 
 
-                    if (commentAdapter != null && commentAdapter!!.comments.size > 0){
-                        val obj =  JS.get()
-                        obj.put("post_id",postId)
-                        start = commentAdapter!!.comments.size
-                        obj.put("comm",    commentAdapter!!.comments[commentAdapter!!.comments.size - 1].commentId)
-                        obj.put("order",  "ASC")
+                        if (commentAdapter != null && commentAdapter!!.comments.size > 0){
+                            val obj =  JS.get()
+                            obj.put("post_id",postId)
+                            start = commentAdapter!!.comments.size
+                            obj.put("comm",    commentAdapter!!.comments[commentAdapter!!.comments.size - 1].commentId)
+                            obj.put("order",  "ASC")
 
-                        presenter.requestAndResponse(obj, Http.CMDS.GET_LAST_COMMENTS)
-                    }else{
-                        val obj =  JS.get()
-                        obj.put("post_id",postId)
+                            presenter.requestAndResponse(obj, Http.CMDS.GET_LAST_COMMENTS)
+                        }else{
+                            val obj =  JS.get()
+                            obj.put("post_id",postId)
 
-                        obj.put("start",  0)
-                        obj.put("end",    end)
-                        obj.put("order",  "DESC")
+                            obj.put("start",  0)
+                            obj.put("end",    end)
+                            obj.put("order",  "DESC")
 
-                        presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
+                            presenter.requestAndResponse(obj, Http.CMDS.GET_COMMENT_LIST)
+                        }
                     }
-                }
 
-                override fun disconnected() {
-                }
+                    override fun disconnected() {
+                    }
 
-            })
+                })
+            }else{
+                commentAdapter!!.swapReplyComment(comment,choosedCommPos)
+                choosedCommId = 0
+                choosedCommPos = -1;
+
+            }
         }else if (from == Http.CMDS.GET_COMMENT_LIST){
             val comment = Gson().fromJson<Comments>(result,Comments::class.java)
             list.visibility           = View.VISIBLE
@@ -423,7 +450,6 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
             emptyContainer.visibility = View.GONE
 
 
-            Collections.reverse(comment.comments)
 
             log.d("COMMENT ADAPTER NULL EMAS")
 
@@ -453,12 +479,16 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
     }
 
     fun send(){
+
+        comment = commentText.text.toString()
+
         val obj =  JS.get()
         obj.put("post_id",postId)
-        obj.put("comm",commentText.text.toString())
-
+        obj.put("comm",comment)
+        obj.put("reply",choosedCommId)
 
         commentText.text.clear()
+        replyLay.visibility = View.GONE
         presenter.requestAndResponse(obj, Http.CMDS.WRITE_COMMENT)
     }
 
@@ -508,6 +538,13 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
                 .start()
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.ondestroy()
+        comment = null
+
+    }
 
     fun View.showKeyboard() {
         this.requestFocus()

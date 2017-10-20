@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.AppCompatImageView
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,10 @@ import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import org.json.JSONObject
+import org.ocpsoft.prettytime.PrettyTime
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: AdapterClicker) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -40,6 +45,8 @@ class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: Adap
     val LOAD_MORE= 2
     var loadMore:SignalListener? = null
     var lastCommentSize = list.size
+    val prettyTime = PrettyTime()
+    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     fun setAdapterClicker(adapterClicker: SignalListener){
         loadMore = adapterClicker
     }
@@ -78,6 +85,11 @@ class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: Adap
             h.comment.text  = comment.comment.replace("\\n","\n")
             h.username.text = comment.username
 
+            val date2 = formatter.parse(comment.date) as Date
+            h.commentDate.text = prettyTime.format(date2)
+            h.reply.setOnClickListener {
+                clicker.click(h.adapterPosition)
+            }
             h.container.setOnClickListener {
 
                 val bundle = Bundle()
@@ -115,6 +127,18 @@ class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: Adap
                     ctx.startActivity(go)
                 }
             }
+
+            if (comment.isReply){
+                h.replyList.visibility = View.VISIBLE
+                h.repliedTitle.visibility = View.VISIBLE
+               h.replyList.layoutManager = LinearLayoutManager(ctx)
+               h.replyList.setHasFixedSize(true)
+                Collections.reverse(comment.replies)
+               h.replyList.adapter = CommentReplyAdapter(ctx, comment.replies,clicker)
+            }else{
+                h.replyList.visibility = View.GONE
+                h.repliedTitle.visibility = View.GONE
+            }
         }
 
     }
@@ -134,6 +158,10 @@ class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: Adap
         val username  = view.findViewById<TextView>(R.id.username)
         val container = view.findViewById<ViewGroup>(R.id.container)
         val comment   = view.findViewById<TextView>(R.id.comment)
+        val commentDate   = view.findViewById<TextView>(R.id.commentDate)
+        val reply   = view.findViewById<TextView>(R.id.reply)
+        val replyList = view.findViewById<RecyclerView>(R.id.replyList)
+        val repliedTitle = view.findViewById<TextView>(R.id.repliedTitle)
     }
 
 
@@ -178,5 +206,25 @@ class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: Adap
         }
 
     }
+
+    fun swapReplyComment(comm: String?, choosedCommPos: Int) {
+        comments.get(choosedCommPos).isReply = true
+        val usr = Prefs.Builder().getUser()
+
+        comments.get(choosedCommPos).replies.add(Comment(
+                usr.userName,
+                usr.userId,
+                usr.profilPhoto,
+                "0",
+                comm!!,
+                "now",
+                false,
+                ArrayList()))
+        Collections.reverse(comments.get(choosedCommPos).replies)
+        notifyItemChanged(choosedCommPos)
+
+        }
+
+
 
 }

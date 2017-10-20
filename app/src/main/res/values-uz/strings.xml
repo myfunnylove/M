@@ -130,4 +130,7 @@
     <string name="sendAgain">Отправить заново</string>
     <string name="read_more">davomini o\'qish...</string>
     <string name="close">yopish</string>
+    <string name="reply">Reply</string>
+    <string name="answer_to">Javob berish:</string>
+    <string name="answered">Javob berdi(berishdi):</string>
 </resources>

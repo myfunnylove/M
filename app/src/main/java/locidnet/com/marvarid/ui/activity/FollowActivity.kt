@@ -669,5 +669,7 @@ class FollowActivity : BaseActivity(),
         super.onDestroy()
         start = 0
         end   = 10
+        presenter.ondestroy()
+
     }
 }

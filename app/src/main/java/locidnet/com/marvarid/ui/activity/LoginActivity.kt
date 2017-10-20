@@ -234,6 +234,13 @@ class LoginActivity : BaseActivity(), Viewer {
         }catch (e:Exception){}
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        try{
+            presenter.ondestroy()
+        }catch (e:Exception){}
+
+    }
     private fun disableAllElements() {
 
 

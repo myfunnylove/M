@@ -263,4 +263,10 @@ class SignActivity : BaseActivity() ,Viewer{
             finish()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.ondestroy()
+
+    }
 }
