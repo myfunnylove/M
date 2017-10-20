@@ -622,8 +622,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                             R.id.change -> {
 
                                 if (changeId == -1) {
-                                    changeId = i
-                                    notifyItemChanged(i)
+                                    changeId = h.adapterPosition
+                                    notifyItemChanged(h.adapterPosition)
                                 }
                             }
 
