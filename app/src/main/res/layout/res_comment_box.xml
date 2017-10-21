@@ -66,6 +66,9 @@
             android:layout_marginTop="8dp"
             android:text="@string/answered"
             android:visibility="gone"
+            style="@style/NormalText"
+            android:textColor="@color/silver"
+
             />
         <android.support.v7.widget.RecyclerView
             android:id="@+id/replyList"

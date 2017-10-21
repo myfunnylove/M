@@ -15,14 +15,17 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import locidnet.com.marvarid.R
+import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.Comment
+import locidnet.com.marvarid.resources.hashtag.HashTagHelper
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
+import locidnet.com.marvarid.ui.activity.SearchByTagActivity
 import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import org.json.JSONObject
 import org.ocpsoft.prettytime.PrettyTime
@@ -81,8 +84,20 @@ class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: Adap
                     .load(Functions.checkImageUrl(comment.avatar))
                     .apply(Functions.getGlideOpts())
                     .into(h.avatar)
-
             h.comment.text  = comment.comment.replace("\\n","\n")
+
+            val hashTag = HashTagHelper.Creator.create(
+                    Base.get.resources.getColor(R.color.hashtag),
+                    object : HashTagHelper.OnHashTagClickListener{
+                        override fun onHashTagClicked(hashTag: String?) {
+                            var intent:Intent? = Intent(ctx, SearchByTagActivity::class.java)
+                            intent!!.putExtra("tag",hashTag!!)
+                            ctx.startActivity(intent)
+                            intent = null
+                        }
+
+                    })
+            hashTag.handle(h.comment)
             h.username.text = comment.username
 
             val date2 = formatter.parse(comment.date) as Date
@@ -131,10 +146,10 @@ class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: Adap
             if (comment.isReply){
                 h.replyList.visibility = View.VISIBLE
                 h.repliedTitle.visibility = View.VISIBLE
-               h.replyList.layoutManager = LinearLayoutManager(ctx)
-               h.replyList.setHasFixedSize(true)
+                h.replyList.layoutManager = LinearLayoutManager(ctx)
+                h.replyList.setHasFixedSize(true)
                 Collections.reverse(comment.replies)
-               h.replyList.adapter = CommentReplyAdapter(ctx, comment.replies,clicker)
+                h.replyList.adapter = CommentReplyAdapter(ctx, comment.replies,clicker)
             }else{
                 h.replyList.visibility = View.GONE
                 h.repliedTitle.visibility = View.GONE

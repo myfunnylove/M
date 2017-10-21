@@ -68,7 +68,7 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
              var scroll: EndlessRecyclerViewScrollListener?              = null
 
     lateinit var emptyContainer: EmptyContainer
-             var feedAdapter: SearchByTagAdapter?                             = null
+             var feedAdapter: SearchByTagAdapter?                        = null
 
              var listSong:ArrayList<Audio>?                              = null
     @Inject

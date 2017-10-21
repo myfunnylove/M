@@ -14,14 +14,17 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import locidnet.com.marvarid.R
+import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.Comment
+import locidnet.com.marvarid.resources.hashtag.HashTagHelper
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.JS
 import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
+import locidnet.com.marvarid.ui.activity.SearchByTagActivity
 import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import org.ocpsoft.prettytime.PrettyTime
 import java.text.DateFormat
@@ -72,6 +75,18 @@ class CommentReplyAdapter(context: Context, list: ArrayList<Comment>, val clicke
                     .into(h.avatar)
 
             h.comment.text  = comment.comment.replace("\\n","\n")
+            val hashTag = HashTagHelper.Creator.create(
+                    Base.get.resources.getColor(R.color.hashtag),
+                    object : HashTagHelper.OnHashTagClickListener{
+                        override fun onHashTagClicked(hashTag: String?) {
+                            var intent:Intent? = Intent(ctx, SearchByTagActivity::class.java)
+                            intent!!.putExtra("tag",hashTag!!)
+                            ctx.startActivity(intent)
+                            intent = null
+                        }
+
+                    })
+            hashTag.handle(h.comment)
             h.username.text = comment.username
 
             val date2 =  if (!comment.date.equals("now"))

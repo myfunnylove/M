@@ -215,7 +215,7 @@ class SearchByTagAdapter(context: FragmentActivity,
                 h.quote.text           = post.quote.text
 
                 var hashTag = HashTagHelper.Creator.create(
-                        Base.get.resources.getColor(R.color.material_pink_300),
+                        Base.get.resources.getColor(R.color.hashtag),
                         object : HashTagHelper.OnHashTagClickListener {
                             override fun onHashTagClicked(hashTag: String?) {
                                 Toaster.info(if (hashTag != null) hashTag else "null")
