@@ -29,5 +29,6 @@ interface MVPComponent {
     fun inject(newPasswordActivity: NewPasswordActivity)
     fun inject(searchActivity: SearchActivity)
     fun inject(reportBugActivity: ReportBugActivity)
+    fun inject(searchByTagActivity: SearchByTagActivity)
 
 }

@@ -133,4 +133,7 @@
     <string name="reply">Reply</string>
     <string name="answer_to">Javob berish:</string>
     <string name="answered">Javob berdi(berishdi):</string>
+    <string name="pushRepliedBody">sizning sharhingizga javob yozdi</string>
+    <string name="pushMentionedBody">sizni eslab o\'tdi</string>
+    <string name="error_empty_result">Нет резултатов</string>
 </resources>

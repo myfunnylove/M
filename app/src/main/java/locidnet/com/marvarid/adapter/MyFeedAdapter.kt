@@ -35,6 +35,7 @@ import locidnet.com.marvarid.resources.hashtag.HashTagHelper
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
+import locidnet.com.marvarid.ui.activity.SearchByTagActivity
 import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
 import locidnet.com.marvarid.ui.fragment.*
 import org.ocpsoft.prettytime.PrettyTime
@@ -214,11 +215,14 @@ class MyFeedAdapter(context: FragmentActivity,
                 h.sendChange.visibility = View.GONE
                 h.quote.text           = post.quote.text
 
-                var hashTag = HashTagHelper.Creator.create(
+                val hashTag = HashTagHelper.Creator.create(
                         Base.get.resources.getColor(R.color.material_pink_300),
                         object : HashTagHelper.OnHashTagClickListener{
                             override fun onHashTagClicked(hashTag: String?) {
-                                Toaster.info(if(hashTag != null ) hashTag else "null")
+                                var intent:Intent? = Intent(ctx,SearchByTagActivity::class.java)
+                                intent!!.putExtra("tag",hashTag!!)
+                                ctx.startActivity(intent)
+                                intent = null
                             }
 
                         })

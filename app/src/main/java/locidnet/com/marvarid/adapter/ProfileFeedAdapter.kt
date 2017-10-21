@@ -277,7 +277,10 @@ class ProfileFeedAdapter(context: FragmentActivity,
                             Base.get.resources.getColor(R.color.material_pink_300),
                                     object : HashTagHelper.OnHashTagClickListener{
                                         override fun onHashTagClicked(hashTag: String?) {
-                                            Toaster.info(if(hashTag != null ) hashTag else "null")
+                                            var intent:Intent? = Intent(ctx,SearchByTagActivity::class.java)
+                                            intent!!.putExtra("tag",hashTag!!)
+                                            ctx!!.startActivity(intent)
+                                            intent = null
                                         }
 
                                     })

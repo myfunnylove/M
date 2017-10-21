@@ -256,7 +256,6 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 log.d("birinchi marta postla yuklandi")
                 cachedSongAdapters = HashMap()
                 feedAdapter = MyFeedAdapter(activity,postList,this,this)
-                feedAdapter!!.activity = activity!!
                 var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
                 slideAdapter!!.setInterpolator(OvershootInterpolator())
                 slideAdapter.setDuration(500)

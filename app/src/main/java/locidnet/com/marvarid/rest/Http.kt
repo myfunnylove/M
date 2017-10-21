@@ -65,6 +65,7 @@ object Http {
         val GET_15_POSTS               = "45"
         val COMPLAINTS                 = "46"
         val REPORT_BUG                 = "47"
+        val SEARCH_BY_TAG              = "49"
 
     }
 

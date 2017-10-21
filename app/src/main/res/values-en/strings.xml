@@ -132,4 +132,7 @@
     <string name="reply">Reply</string>
     <string name="answer_to">Reply to:</string>
     <string name="answered">Replied:</string>
+    <string name="pushRepliedBody">replied your comment</string>
+    <string name="pushMentionedBody">mentioned you</string>
+    <string name="error_empty_result">Нет резултатов</string>
 </resources>

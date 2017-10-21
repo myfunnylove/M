@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:popupTheme="@style/PopupMenu"
+            app:titleTextAppearance="@style/ToolbarTextAppearance.Title"
+            app:subtitleTextAppearance="@style/ToolbarTextAppearance.Subtitle"
+            style="@style/DrawerArrowStyle"
+
+
+            />
+        <ProgressBar
+            android:id="@+id/loading"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_above="@+id/tablayout"
+            android:background="@color/white"
+            android:indeterminate="true"
+            android:maxHeight="4dp"
+            android:minHeight="4dp"
+            android:visibility="gone"
+            />
+    </android.support.design.widget.AppBarLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
+        >
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        </android.support.v4.widget.SwipeRefreshLayout>
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            android:theme="@style/CircularProgress"
+            style="@style/Widget.AppCompat.ProgressBar"
+            />
+        <include layout="@layout/res_error_connection_lay"/>
+        <include layout="@layout/res_empty_container"/>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

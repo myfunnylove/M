@@ -133,4 +133,7 @@
     <string name="reply">Oтветить</string>
     <string name="answer_to">Oтветить:</string>
     <string name="answered">Ответил(и):</string>
+    <string name="pushRepliedBody">ответил на ваш комментарий</string>
+    <string name="pushMentionedBody">упомянул вас</string>
+    <string name="error_empty_result">Нет резултатов</string>
 </resources>

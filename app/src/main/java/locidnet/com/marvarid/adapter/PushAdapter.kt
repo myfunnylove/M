@@ -68,11 +68,13 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder =
             when (viewType) {
 
-                Const.Push.LIKE -> Like(inflater.inflate(R.layout.res_item_push_like, parent, false))
+                Const.Push.LIKE ,
+                Const.Push.COMMENT ,
+                Const.Push.REPLIED ,
+                Const.Push.MENTIONED -> Comment(inflater.inflate(R.layout.res_item_push_like, parent, false))
 
-                Const.Push.COMMENT -> Comment(inflater.inflate(R.layout.res_item_push_like, parent, false))
 
-                Const.Push.FOLLOW -> Requested(inflater.inflate(R.layout.res_item_push_requested, parent, false))
+                Const.Push.FOLLOW ,
                 Const.Push.REQUESTED -> Requested(inflater.inflate(R.layout.res_item_push_requested, parent, false))
 
                 else -> Other(inflater.inflate(R.layout.res_item_push_requested, parent, false))
@@ -84,69 +86,16 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
         val push = list[position]
 
         val date2 = formatter.parse(push.time) as Date
-
+        log.d("onbind ${getItemViewType(position)}")
         when (getItemViewType(position)) {
 
-            Const.Push.LIKE -> {
+            Const.Push.LIKE ,
 
-                val like = holder as Like
+            Const.Push.COMMENT ,
 
+            Const.Push.REPLIED ,
 
-                Glide.with(ctx)
-                        .load(Functions.checkImageUrl(push.user.userPhoto))
-                        .apply(Functions.getGlideOpts())
-                        .into(like.avatar)
-
-                like.avatar.setOnClickListener{
-
-
-                    if (push.user.userId != user.userId){
-                        val type = ProfileFragment.FOLLOW
-
-
-
-                        log.d("user type $type")
-
-
-                        val go = Intent(ctx, FollowActivity::class.java)
-                        val bundle = Bundle()
-                        bundle.putString("username",push.user.userName)
-                        bundle.putString("photo",   if (push.user.userPhoto.isNullOrEmpty()) "" else push.user.userPhoto)
-                        bundle.putString("user_id",  push.user.userId)
-                        bundle.putString(ProfileFragment.F_TYPE,type)
-                        log.d("result from search user -> ${bundle}")
-
-                        go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
-
-                        go.putExtras(bundle)
-                        ctx.startActivity(go)
-                    }
-                }
-
-                like.username.text = push.user.userName
-                like.body.text = ctx.resources.getString(R.string.pushLikeBody)
-
-
-
-
-                like.time.text = prettyTime.format(date2)
-
-
-
-                Glide.with(ctx)
-                        .load(Functions.checkImageUrl(push.action.actionPhoto))
-                        .apply(options)
-                        .into(like.mypost)
-
-
-                like.mypost.setOnClickListener {
-                    val data = Intent(ctx,UserPostActivity::class.java)
-                    data.putExtra("postId",push.action.actionID.toInt())
-                    ctx.startActivity(data)
-                }
-            }
-
-            Const.Push.COMMENT -> {
+            Const.Push.MENTIONED -> {
 
                 val comment = holder as Comment
 
@@ -181,7 +130,14 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                     }
                 }
                 comment.username.text = push.user.userName
-                comment.body.text = ctx.resources.getString(R.string.pushCommentBody)
+                comment.body.text = when(getItemViewType(position)){
+                    Const.Push.COMMENT -> Base.get.resources.getString(R.string.pushCommentBody)
+                    Const.Push.LIKE -> Base.get.resources.getString(R.string.pushLikeBody)
+                    Const.Push.REPLIED -> Base.get.resources.getString(R.string.pushRepliedBody)
+                    Const.Push.MENTIONED -> Base.get.resources.getString(R.string.pushMentionedBody)
+
+                    else ->ctx.resources.getString(R.string.pushCommentBody)
+                }
                 comment.time.text = "${prettyTime.format(date2)}"
 
                 Glide.with(ctx)
@@ -290,7 +246,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
             }
 
-            Const.Push.FOLLOW -> {
+            Const.Push.FOLLOW-> {
 
                 val follow = holder as Requested
 
@@ -443,40 +399,7 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
     }
 
 
-    class Like(view: View) : RecyclerView.ViewHolder(view), AnimateViewHolder {
 
-        val container = view.findViewById<ViewGroup>(R.id.container)
-        val username = view.findViewById<TextView>(R.id.username)
-        val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
-        val body = view.findViewById<TextView>(R.id.body)
-        val time = view.findViewById<TextView>(R.id.time)
-        val mypost = view.findViewById<AppCompatImageView>(R.id.actionPhoto)
-        override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
-            ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
-            ViewCompat.setAlpha(itemView, 0f);
-        }
-
-        override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?) {
-        }
-
-        override fun animateAddImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
-            ViewCompat.animate(itemView)
-                    .translationY(0f)
-                    .alpha(1f)
-                    .setDuration(300)
-                    .setListener(listener)
-                    .start();
-        }
-
-        override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, listener: ViewPropertyAnimatorListener?) {
-            ViewCompat.animate(itemView)
-                    .translationY(-itemView.getHeight() * 0.3f)
-                    .alpha(0f)
-                    .setDuration(300)
-                    .setListener(listener)
-                    .start();
-        }
-    }
 
     class Comment(view: View) : RecyclerView.ViewHolder(view), AnimateViewHolder {
         val container = view.findViewById<ViewGroup>(R.id.container)

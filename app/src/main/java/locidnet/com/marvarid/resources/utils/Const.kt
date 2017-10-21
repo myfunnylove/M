@@ -260,7 +260,8 @@ object Const {
         val COMMENT = 2
         val FOLLOW = 3
         val REQUESTED = 4
-        val OTHER = 5
+        val REPLIED = 5
+        val MENTIONED = 6
     }
 
 
