@@ -37,6 +37,7 @@ import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.customviews.CustomManager
+import locidnet.com.marvarid.resources.hashtag.HashTagHelper
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.fragment.FeedFragment
@@ -235,6 +236,18 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
         quote.visibility     = View.VISIBLE
         quote.text           = post.quote.text
+        var hashTag = HashTagHelper.Creator.create(
+                Base.get.resources.getColor(R.color.hashtag),
+                object : HashTagHelper.OnHashTagClickListener{
+                    override fun onHashTagClicked(hashTag: String?) {
+                        var intent:Intent? = Intent(this@UserPostActivity,SearchByTagActivity::class.java)
+                        intent!!.putExtra("tag",hashTag!!)
+                        this@UserPostActivity.startActivity(intent)
+                        intent = null
+                    }
+
+                })
+        hashTag.handle( quote)
         quoteEdit.visibility = View.GONE
         quoteEdit.clearComposingText()
         sendChange.visibility = View.GONE

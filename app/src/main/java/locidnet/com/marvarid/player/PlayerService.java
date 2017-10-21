@@ -320,8 +320,8 @@ public class PlayerService extends Service implements MusicControlObserver {
 
         private void updateMetadataFromTrack(Audio track) {
             currentAudio = track;
-            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BitmapFactory.decodeResource(getResources(), R.drawable.bg));
-            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BitmapFactory.decodeResource(getResources(), R.drawable.bg));
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BitmapFactory.decodeResource(getResources(), R.drawable.bg_def));
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BitmapFactory.decodeResource(getResources(), R.drawable.bg_def));
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, (track.getTitle().isEmpty()) ? Base.Companion.getGet().getResources().getString(R.string.unknown) : track.getTitle());
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM,(Base.Companion.getGet().getResources().getString(R.string.app_name)));
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, (track.getArtist().isEmpty()) ? Base.Companion.getGet().getResources().getString(R.string.unknown) : track.getArtist());
