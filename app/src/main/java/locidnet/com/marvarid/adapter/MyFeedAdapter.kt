@@ -35,6 +35,7 @@ import locidnet.com.marvarid.resources.hashtag.HashTagHelper
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.CommentActivity
 import locidnet.com.marvarid.ui.activity.MainActivity
+import locidnet.com.marvarid.ui.activity.SearchActivity
 import locidnet.com.marvarid.ui.activity.SearchByTagActivity
 import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
 import locidnet.com.marvarid.ui.fragment.*
@@ -219,14 +220,24 @@ class MyFeedAdapter(context: FragmentActivity,
                         Base.get.resources.getColor(R.color.hashtag),
                         object : HashTagHelper.OnHashTagClickListener{
                             override fun onHashTagClicked(hashTag: String?) {
+
                                 var intent:Intent? = Intent(ctx,SearchByTagActivity::class.java)
                                 intent!!.putExtra("tag",hashTag!!)
                                 ctx.startActivity(intent)
                                 intent = null
                             }
+                            override fun onLoginClicked(login: String?) {
+
+                                var intent:Intent? = Intent(ctx,SearchActivity::class.java)
+                                intent!!.putExtra("login",login!!)
+                                ctx.startActivity(intent)
+                                intent = null
+                            }
 
                         })
+
                 hashTag.handle(h.quote.getmTv())
+                log.d("HASHTAH getallhashtags ${hashTag.getAllHashTags(true)} ")
             }
 
 

@@ -245,6 +245,12 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
                         this@UserPostActivity.startActivity(intent)
                         intent = null
                     }
+                    override fun onLoginClicked(login: String?) {
+                        var intent:Intent? = Intent(this@UserPostActivity,SearchActivity::class.java)
+                        intent!!.putExtra("login",login!!)
+                        this@UserPostActivity.startActivity(intent)
+                        intent = null
+                    }
 
                 })
         hashTag.handle( quote)

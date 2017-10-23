@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public final class HashTagHelper implements ClickableForegroundColorSpan.OnHashT
 
     public interface OnHashTagClickListener{
         void onHashTagClicked(String hashTag);
+        void onLoginClicked(String login);
     }
 
     private final TextWatcher mTextWatcher = new TextWatcher() {
@@ -134,10 +136,16 @@ public final class HashTagHelper implements ClickableForegroundColorSpan.OnHashT
         int startIndexOfNextHashSign;
 
         int index = 0;
+
         while (index < text.length()-  1){
             char sign = text.charAt(index);
+            Log.d("HASHTAH", "setColorsToAllHashTags "+sign);
+
+
             int nextNotLetterDigitCharIndex = index + 1; // we assume it is next. if if was not changed by findNextValidHashTagChar then index will be incremented by 1
-            if(sign == '#'){
+
+
+            if(sign == '#' || sign == '@'){
                 startIndexOfNextHashSign = index;
 
                 nextNotLetterDigitCharIndex = findNextValidHashTagChar(text, startIndexOfNextHashSign);
@@ -155,8 +163,9 @@ public final class HashTagHelper implements ClickableForegroundColorSpan.OnHashT
         for (int index = start + 1; index < text.length(); index++) {
 
             char sign = text.charAt(index);
+            Log.d("HASHTAH", "findNextValidHashTagChar "+sign);
 
-            boolean isValidSign = Character.isLetterOrDigit(sign) || mAdditionalHashTagChars.contains(sign) || sign == '_';
+            boolean isValidSign = Character.isLetterOrDigit(sign) || mAdditionalHashTagChars.contains(sign) || sign == '_' || sign == '@';
             if (!isValidSign) {
                 nonLetterDigitCharIndex = index;
                 break;
@@ -174,6 +183,7 @@ public final class HashTagHelper implements ClickableForegroundColorSpan.OnHashT
         Spannable s = (Spannable) mTextView.getText();
 
         CharacterStyle span;
+        Log.d("HASHTAH", "setColorsToAllHashTags "+mTextView.getText().toString());
 
         if(mOnHashTagClickListener != null){
             span = new ClickableForegroundColorSpan(mHashTagWordColor, this);
@@ -194,6 +204,10 @@ public final class HashTagHelper implements ClickableForegroundColorSpan.OnHashT
         Set<String> hashTags = new LinkedHashSet<>();
 
         for (CharacterStyle span : spannable.getSpans(0, text.length(), CharacterStyle.class)) {
+            Log.d("HASHTAH", "getAllHashTags "+text.substring(!withHashes ? spannable.getSpanStart(span) + 1/*skip "#" sign*/
+                            : spannable.getSpanStart(span),
+                    spannable.getSpanEnd(span)));
+
             hashTags.add(
                     text.substring(!withHashes ? spannable.getSpanStart(span) + 1/*skip "#" sign*/
                                     : spannable.getSpanStart(span),
@@ -210,5 +224,11 @@ public final class HashTagHelper implements ClickableForegroundColorSpan.OnHashT
     @Override
     public void onHashTagClicked(String hashTag) {
         mOnHashTagClickListener.onHashTagClicked(hashTag);
+    }
+
+    @Override
+    public void onLoginClicked(String login) {
+        mOnHashTagClickListener.onLoginClicked(login);
+
     }
 }

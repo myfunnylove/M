@@ -218,7 +218,11 @@ class SearchByTagAdapter(context: FragmentActivity,
                         Base.get.resources.getColor(R.color.hashtag),
                         object : HashTagHelper.OnHashTagClickListener {
                             override fun onHashTagClicked(hashTag: String?) {
-                                Toaster.info(if (hashTag != null) hashTag else "null")
+
+                            }
+                            override fun onLoginClicked(login: String?) {
+
+
                             }
 
                         })

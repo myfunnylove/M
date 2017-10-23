@@ -117,13 +117,13 @@ class SearchActivity :BaseActivity() ,Viewer, AdapterClicker{
                 .setText(R.string.search)
                 .initLayoutForActivity(this)
                 .build()
-
     }
 
     private fun initSearchView() {
         val searchEditText = searchView!!.findViewById<EditText>(android.support.v7.appcompat.R.id.search_src_text)
             searchEditText.setTextColor(getResources().getColor(R.color.normalTextColor));
             searchEditText.setHintTextColor(getResources().getColor(R.color.normalTextColor));
+
         searchView!!.isIconified = false
         searchView!!.setOnCloseListener {
             this@SearchActivity.finish()
@@ -175,6 +175,33 @@ class SearchActivity :BaseActivity() ,Viewer, AdapterClicker{
             }
 
         })
+
+
+        log.d("is login ${intent.getStringExtra("login").isNullOrEmpty()}")
+        if(!intent.getStringExtra("login").isNullOrEmpty()){
+            searchEditText.setText(intent.getStringExtra("login"))
+            try{
+                errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                    override fun connected() {
+                        val reqObj = JS.get()
+                        reqObj.put("start", MainActivity.startSearch)
+                        reqObj.put("end", MainActivity.endSearch)
+                        reqObj.put("user",    intent.getStringExtra("login"))
+                        presenter.requestAndResponse(reqObj, Http.CMDS.SEARCH_USER)
+
+
+
+
+                    }
+
+                    override fun disconnected() {
+                        hideSoftKeyboard()
+                    }
+
+                })
+            }catch (e:Throwable){}
+        }
+
     }
 
 

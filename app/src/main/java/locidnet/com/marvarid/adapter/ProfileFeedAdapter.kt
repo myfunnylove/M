@@ -12,12 +12,6 @@ import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -276,6 +270,13 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     var hashTag = HashTagHelper.Creator.create(
                             Base.get.resources.getColor(R.color.hashtag),
                                     object : HashTagHelper.OnHashTagClickListener{
+                                        override fun onLoginClicked(login: String?) {
+                                            var intent:Intent? = Intent(ctx,SearchActivity::class.java)
+                                            intent!!.putExtra("login",login!!)
+                                            ctx!!.startActivity(intent)
+                                            intent = null
+                                        }
+
                                         override fun onHashTagClicked(hashTag: String?) {
                                             var intent:Intent? = Intent(ctx,SearchByTagActivity::class.java)
                                             intent!!.putExtra("tag",hashTag!!)

@@ -7,6 +7,7 @@ import android.support.annotation.ColorInt;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ public class ClickableForegroundColorSpan extends ClickableSpan {
 
     public interface OnHashTagClickListener {
         void onHashTagClicked(String hashTag);
+        void onLoginClicked(String login);
     }
 
     private final int mColor;
@@ -44,11 +46,14 @@ public class ClickableForegroundColorSpan extends ClickableSpan {
     @Override
     public void onClick(View widget) {
         CharSequence text = ((TextView) widget).getText();
-
         Spanned s = (Spanned) text;
         int start = s.getSpanStart(this);
         int end = s.getSpanEnd(this);
 
+        if(text.charAt(start) == '#')
         mOnHashTagClickListener.onHashTagClicked(text.subSequence(start + 1/*skip "#" sign*/, end).toString());
+        else if(text.charAt(start) == '@')
+        mOnHashTagClickListener.onLoginClicked(text.subSequence(start + 1/*skip "#" sign*/, end).toString());
+
     }
 }

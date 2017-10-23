@@ -20,10 +20,7 @@ import locidnet.com.marvarid.connectors.AdapterClicker
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.model.Comment
 import locidnet.com.marvarid.resources.hashtag.HashTagHelper
-import locidnet.com.marvarid.resources.utils.Functions
-import locidnet.com.marvarid.resources.utils.JS
-import locidnet.com.marvarid.resources.utils.Prefs
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.activity.SearchByTagActivity
 import locidnet.com.marvarid.ui.fragment.ProfileFragment
@@ -95,7 +92,9 @@ class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: Adap
                             ctx.startActivity(intent)
                             intent = null
                         }
-
+                        override fun onLoginClicked(login: String?) {
+                            Toaster.info(login!!)
+                        }
                     })
             hashTag.handle(h.comment)
             h.username.text = comment.username
