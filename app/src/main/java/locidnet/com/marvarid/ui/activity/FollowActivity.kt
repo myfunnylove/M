@@ -245,7 +245,7 @@ class FollowActivity : BaseActivity(),
 
 
         }else if (int == BLOCKED_ME){
-
+            progress.visibility = View.GONE
             if (blocMeFragment == null){
                 blocMeFragment = BlockMeFragment.newInstance(intent.extras)
 
@@ -648,6 +648,8 @@ class FollowActivity : BaseActivity(),
                 }
 
             })
+        }else{
+            progress.visibility = View.GONE
         }
     }
 

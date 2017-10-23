@@ -21,6 +21,7 @@ import locidnet.com.marvarid.model.Comment
 import locidnet.com.marvarid.resources.hashtag.HashTagHelper
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.FollowActivity
+import locidnet.com.marvarid.ui.activity.SearchActivity
 import locidnet.com.marvarid.ui.activity.SearchByTagActivity
 import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import org.ocpsoft.prettytime.PrettyTime
@@ -82,7 +83,10 @@ class CommentReplyAdapter(context: Context, list: ArrayList<Comment>, val clicke
                             intent = null
                         }
                         override fun onLoginClicked(login: String?) {
-                            Toaster.info(login!!)
+                            var intent:Intent? = Intent(ctx, SearchActivity::class.java)
+                            intent!!.putExtra("login",login!!)
+                            ctx.startActivity(intent)
+                            intent = null
                         }
 
                     })

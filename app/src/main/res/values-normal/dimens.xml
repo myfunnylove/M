@@ -3,7 +3,7 @@
 
     <dimen name="buttonTextSize">14sp</dimen>
     <dimen name="headerTextSize">15sp</dimen>
-    <dimen name="normalTextSize">13sp</dimen>
+    <dimen name="normalTextSize">14sp</dimen>
     <dimen name="hintTextSize">12sp</dimen>
     <dimen name="five">2dp</dimen>
     <dimen name="likeSize">28dp</dimen>

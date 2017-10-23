@@ -180,26 +180,7 @@ class SearchActivity :BaseActivity() ,Viewer, AdapterClicker{
         log.d("is login ${intent.getStringExtra("login").isNullOrEmpty()}")
         if(!intent.getStringExtra("login").isNullOrEmpty()){
             searchEditText.setText(intent.getStringExtra("login"))
-            try{
-                errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
-                    override fun connected() {
-                        val reqObj = JS.get()
-                        reqObj.put("start", MainActivity.startSearch)
-                        reqObj.put("end", MainActivity.endSearch)
-                        reqObj.put("user",    intent.getStringExtra("login"))
-                        presenter.requestAndResponse(reqObj, Http.CMDS.SEARCH_USER)
 
-
-
-
-                    }
-
-                    override fun disconnected() {
-                        hideSoftKeyboard()
-                    }
-
-                })
-            }catch (e:Throwable){}
         }
 
     }
@@ -351,7 +332,28 @@ class SearchActivity :BaseActivity() ,Viewer, AdapterClicker{
     override fun onResume() {
         super.onResume()
         log.d("onresume")
+        if(!intent.getStringExtra("login").isNullOrEmpty()){
+            try{
+                errorConn.checkNetworkConnection(object : ErrorConnection.ErrorListener{
+                    override fun connected() {
+                        val reqObj = JS.get()
+                        reqObj.put("start", MainActivity.startSearch)
+                        reqObj.put("end", MainActivity.endSearch)
+                        reqObj.put("user",    intent.getStringExtra("login"))
+                        presenter.requestAndResponse(reqObj, Http.CMDS.SEARCH_USER)
 
+
+
+
+                    }
+
+                    override fun disconnected() {
+                        hideSoftKeyboard()
+                    }
+
+                })
+            }catch (e:Throwable){}
+        }
     }
 
 

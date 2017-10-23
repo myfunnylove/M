@@ -71,14 +71,14 @@ object Prefs {
         return prefs!!.getBoolean("allowNotification", true)
     }
 
-    fun getNotifCount():Int{
-        return prefs!!.getInt("countNotif", 0)
+    fun getNotifCount(type:String = "-1"):Int{
+        return prefs!!.getInt("countNotif$type", 0)
 
     }
-    fun setNotifCount(count:Int) {
+    fun setNotifCount(count:Int,type:String = "-1") {
         synchronized(this@Prefs){
             val editor = prefs!!.edit()
-            editor.putInt("countNotif", count)
+            editor.putInt("countNotif$type", count)
             editor.commit()
         }
     }

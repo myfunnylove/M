@@ -49,6 +49,7 @@
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:text="asd"
+            android:textSize="@dimen/hintTextSize"
 
             />
         <TextView
