@@ -205,6 +205,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
     fun filterLogin(editText :AppCompatEditText){
         RxTextView.textChangeEvents(editText)
                 .delay(3, TimeUnit.MILLISECONDS)
+
                 .filter { beforeText -> beforeText.text().toString().length >= 6 }
                 .map { filteredText ->
 
@@ -216,7 +217,7 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                 .flatMap { data ->
                     log.d("Data : befor decrypt -> $data")
                     model.response(Http.getRequestData(data, Http.CMDS.LOGIN_YOQLIGINI_TEKSHIRISH)) }
-                .cache()
+
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe ( {
 

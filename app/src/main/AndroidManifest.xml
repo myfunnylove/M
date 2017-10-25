@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="locidnet.com.marvarid">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -15,7 +19,6 @@
         />
     <uses-permission android:name="android.permission.WAKE_LOCK"
         />
-
     <application
         android:name=".base.Base"
         android:allowBackup="true"
@@ -201,7 +204,16 @@
 
             />
 
+        <service android:name=".ui.service.NetworkService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+        >
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
 
+        <service android:name=".ui.service.DeleteToken" />
         <service
             android:name=".player.PlayerService"
             android:exported="true"

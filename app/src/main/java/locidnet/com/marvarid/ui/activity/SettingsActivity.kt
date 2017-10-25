@@ -35,6 +35,7 @@ import locidnet.com.marvarid.ui.dialogs.ChangePassFragment
 import locidnet.com.marvarid.ui.dialogs.MailFormFragment
 import locidnet.com.marvarid.ui.dialogs.PhoneFormFragment
 import locidnet.com.marvarid.ui.dialogs.YesNoFragment
+import locidnet.com.marvarid.ui.service.DeleteToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -303,8 +304,7 @@ class SettingsActivity : BaseActivity(), Viewer {
                         MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
                         MainActivity.COMMENT_POST_UPDATE = 0
                         MainActivity.COMMENT_COUNT = 0
-                        Prefs.Builder().setNotifCount(0)
-
+                        startService(Intent(this@SettingsActivity,DeleteToken::class.java))
                         setResult(Const.QUIT)
                         finish()
 //                        val sesion = SessionOut.Builder(this@SettingsActivity)

@@ -19,7 +19,7 @@ class SimpleoAuth private constructor(builder: Builder):SocialNetwork {
     private lateinit var username:String
     private lateinit var  password:String
     object REGEXP {
-        val loginAndPasswordRegExp:String = "[a-zA-Z0-9\\._\\-]{3,}"
+        val loginAndPasswordRegExp:String = "[a-zA-Z0-9\\._\\-]{3,30}"
     }
 
 

@@ -27,9 +27,11 @@ import locidnet.com.marvarid.mvp.Model
 import locidnet.com.marvarid.mvp.Presenter
 import locidnet.com.marvarid.mvp.Viewer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
+import locidnet.com.marvarid.pattern.signInUpBridge.SimpleoAuth
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Toaster
 import locidnet.com.marvarid.resources.utils.log
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 
@@ -44,6 +46,7 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
     var username = ""
     var password = ""
     var from = -1
+    val pattern = Pattern.compile(SimpleoAuth.REGEXP.loginAndPasswordRegExp)
 
     override fun getLayout(): Int = R.layout.activity_login_and_password
 
@@ -71,7 +74,15 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
 
         login.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(s: Editable?) {
-                if(s!!.toString().length >= 6) presenter.filterLogin(login)
+
+
+                if(s!!.toString().length >= 6) {
+                    if (pattern.matcher(s.toString()).matches()){
+                        presenter.filterLogin(login)
+                    }else{
+                        login.setLoginResult(R.drawable.close_circle_outline)
+                    }
+                }
                 else login.setLoginResult()
             }
 
@@ -106,6 +117,9 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
                     }else if(password.length < 6){
 
                         Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.password_field_less_5),Toast.LENGTH_SHORT).show()
+
+                    }else if(pattern.matcher(username).matches()){
+                        Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.username_error),Toast.LENGTH_SHORT).show()
 
                     }else{
                         val obj = JSONObject()
