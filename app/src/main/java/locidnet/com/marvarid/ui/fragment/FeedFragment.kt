@@ -85,7 +85,8 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
     override fun init() {
         Const.TAG = "FeedFragment"
 
-        MainActivity.musicSubject!!.subscribe(this)
+        if(MainActivity.musicSubject != null) MainActivity.musicSubject!!.subscribe(this)
+
 
         progressLay    = rootView.findViewById<ViewGroup>(R.id.progressLay)
 
@@ -253,14 +254,19 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
             listFeed.visibility = View.VISIBLE
 
             if (feedAdapter == null){
-                log.d("birinchi marta postla yuklandi")
-                cachedSongAdapters = HashMap()
-                feedAdapter = MyFeedAdapter(activity,postList,this,this)
-                var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
-                slideAdapter!!.setInterpolator(OvershootInterpolator())
-                slideAdapter.setDuration(500)
-                listFeed.adapter = slideAdapter
-                slideAdapter = null
+                if (postList.posts.size > 0){
+
+                    log.d("birinchi marta postla yuklandi")
+                    cachedSongAdapters = HashMap()
+                    feedAdapter = MyFeedAdapter(activity,postList,this,this)
+                    var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
+                    slideAdapter!!.setInterpolator(OvershootInterpolator())
+                    slideAdapter.setDuration(500)
+                    listFeed.adapter = slideAdapter
+                    slideAdapter = null
+                }else{
+                    emptyContainer.show()
+                }
             }else if (postList.posts.size == 1 && (MainActivity.endFeed == 1 && MainActivity.startFeed == 0)){
                 log.d("post qoshildi postni birinchi elementi update qilinadi")
                 MainActivity.startFeed = feedAdapter!!.feeds.posts.size

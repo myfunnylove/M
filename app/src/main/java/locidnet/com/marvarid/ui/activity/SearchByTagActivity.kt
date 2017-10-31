@@ -161,10 +161,9 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
 
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
-                var lastVisibleItemPosition = 0
+                val lastVisibleItemPosition: Int = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 val totalItemCount = mLayoutManager.itemCount
 
-                lastVisibleItemPosition = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 swipeRefreshLayout.isEnabled = mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
 
 //                log.d("swipe is ${swipeRefreshLayout.isEnabled}")
@@ -258,7 +257,7 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
             }
 
             override fun disconnected() {
-
+                emptyContainer.hide()
             }
 
         })
@@ -282,11 +281,10 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
                         log.d("birinchi marta postla yuklandi")
                         cachedSongAdapters = HashMap()
                         feedAdapter = SearchByTagAdapter(this,postList,this,this)
-                        var slideAdapter: ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
+                        val slideAdapter: ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
                         slideAdapter!!.setInterpolator(OvershootInterpolator())
                         slideAdapter.setDuration(500)
                         list.adapter = slideAdapter
-                        slideAdapter = null
                     }else if (postList.posts.size == 1 && (end == 1 && start == 0)){
                         log.d("post qoshildi postni birinchi elementi update qilinadi")
                         start = feedAdapter!!.feeds.posts.size
@@ -299,13 +297,12 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
                         cachedSongAdapters = HashMap()
 
                         feedAdapter = SearchByTagAdapter(this,postList,this,this)
-                        var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
+                        val slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
 
 
                         slideAdapter!!.setInterpolator(OvershootInterpolator())
                         slideAdapter.setDuration(500)
                         list.adapter = slideAdapter
-                        slideAdapter = null
 
                     }else if((end == 10 && start != 0) && feedAdapter != null){
                         log.d("postni oxirgi 20 ta elementi keldi")

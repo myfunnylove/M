@@ -60,7 +60,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
          options =    RequestOptions()
                     .fallback(ColorDrawable(Color.parseColor("#d5d9dc")))
                     .error(ColorDrawable(Color.WHITE))
-                    .placeholder(ColorDrawable(Color.parseColor("#d5d9dc")))
+                    .placeholder(ColorDrawable(Color.WHITE))
 
         }
       screenSize = JavaCodes.getScreenSize()

@@ -33,6 +33,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         >
+
         <locidnet.com.marvarid.resources.expandableTextView.ExpandableTextView
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
@@ -46,7 +47,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/NormalText"
-
                 />
            <LinearLayout
                android:id="@+id/readMoreLay"
@@ -74,12 +74,7 @@
                    />
            </LinearLayout>
         </locidnet.com.marvarid.resources.expandableTextView.ExpandableTextView>
-        <TextView
-            android:id="@+id/commentText"
-            style="@style/NormalText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+
 
         <EditText
             android:id="@+id/commentEditText"
@@ -89,6 +84,7 @@
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/sendChangedQuote"
             android:visibility="gone"
+            android:maxLength="5000"
 
             />
         <android.support.v7.widget.AppCompatImageButton

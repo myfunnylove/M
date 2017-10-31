@@ -39,6 +39,7 @@ import locidnet.com.marvarid.resources.utils.Prefs
 import locidnet.com.marvarid.resources.utils.log
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.activity.SearchActivity
+import locidnet.com.marvarid.ui.activity.UserPostActivity
 import kotlin.properties.Delegates
 
 /**
@@ -165,11 +166,13 @@ class SearchFragment : BaseFragment(), AdapterClicker{
 
 
     override fun click(position: Int) {
-        val intent = Intent(activity,FollowActivity::class.java)
-        intent.putExtra("user_id",recPosts!!.get(position).userId)
-        intent.putExtra("username",recPosts!!.get(position).username)
-        intent.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
-        startActivity(intent)
+        val data = Intent(context, UserPostActivity::class.java)
+        data.putExtra("postId",recPosts!!.get(position).postId.toInt())
+//        val intent = Intent(activity,FollowActivity::class.java)
+//        intent.putExtra("user_id",recPosts!!.get(position).userId)
+//        intent.putExtra("username",recPosts!!.get(position).username)
+//        intent.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
+        startActivity(data)
     }
 
     override fun data(data: String) {

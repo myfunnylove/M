@@ -121,7 +121,8 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
                 .errorConnModule(ErrorConnModule(this,true))
                 .build()
                 .inject(this)
-        MainActivity.musicSubject!!.subscribe(this)
+        if(MainActivity.musicSubject != null) MainActivity.musicSubject!!.subscribe(this)
+
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)

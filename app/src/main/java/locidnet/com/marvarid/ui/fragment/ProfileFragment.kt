@@ -106,7 +106,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
     override fun init() {
         Const.TAG = "ProfileFragment"
-        MainActivity.musicSubject!!.subscribe(this)
+        if(MainActivity.musicSubject != null) MainActivity.musicSubject!!.subscribe(this)
 //        FOLLOW_TYPE = arguments.getString(F_TYPE)
 
 

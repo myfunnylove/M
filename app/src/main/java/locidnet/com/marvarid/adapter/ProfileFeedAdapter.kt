@@ -95,7 +95,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
     val options: RequestOptions? = RequestOptions()
             .circleCrop()
 
-            .fallback(VectorDrawableCompat.create(ctx!!.resources, R.drawable.account_select, ctx!!.theme))
+            .fallback(ctx!!.resources.getDrawable(R.drawable.default_profile_photo_circle))
 
             .error(VectorDrawableCompat.create(ctx!!.resources, R.drawable.account_select, ctx!!.theme))
 

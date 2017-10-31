@@ -1,6 +1,7 @@
 package locidnet.com.marvarid.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
@@ -15,6 +16,7 @@ import locidnet.com.marvarid.model.RecPost
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
 import locidnet.com.marvarid.resources.utils.Prefs
+import locidnet.com.marvarid.ui.activity.UserPostActivity
 
 class RecommendedAdapter(clicker: AdapterClicker, ctx: Context, list: ArrayList<RecPost>) : RecyclerView.Adapter<RecommendedAdapter.Adapter>() {
     private val adapterClicker = clicker
@@ -24,9 +26,9 @@ class RecommendedAdapter(clicker: AdapterClicker, ctx: Context, list: ArrayList<
 
     private val options: RequestOptions? = RequestOptions()
             .centerCrop()
-            .fallback(VectorDrawableCompat.create(ctx.resources, R.drawable.account, ctx.theme))
+            .fallback(VectorDrawableCompat.create(ctx.resources, R.drawable.image_broken_variant_gray, ctx.theme))
 
-            .error(VectorDrawableCompat.create(ctx.resources, R.drawable.account, ctx.theme))
+            .error(VectorDrawableCompat.create(ctx.resources, R.drawable.image_broken_variant_gray, ctx.theme))
 
     override fun onBindViewHolder(h: Adapter?, i: Int) {
 
@@ -37,6 +39,7 @@ class RecommendedAdapter(clicker: AdapterClicker, ctx: Context, list: ArrayList<
                 .apply(options!!)
                 .into(h!!.photo)
         h.photo.setOnClickListener {
+
             adapterClicker.click(h.adapterPosition)
         }
     }

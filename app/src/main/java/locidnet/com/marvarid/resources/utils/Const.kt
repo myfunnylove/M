@@ -291,4 +291,11 @@ object Const {
         val MEDIUM = "audios/middle/"
         val ORIGINAL  = "audios/high/"
     }
+
+    object ERROR{
+        val SESSION_OUT = "96"
+        val DELETED_USR = "103"
+        val BLOCKED_ME = "104"
+        val CLOSED_USR = "105"
+    }
 }

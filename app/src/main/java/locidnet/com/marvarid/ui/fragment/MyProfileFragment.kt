@@ -105,7 +105,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
         log.d("init profil fragment")
 
-        MainActivity.musicSubject!!.subscribe(this)
+        if(MainActivity.musicSubject != null) MainActivity.musicSubject!!.subscribe(this)
+
 
         progressLay    = rootView.findViewById<ViewGroup>(R.id.progressLay)
         swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)

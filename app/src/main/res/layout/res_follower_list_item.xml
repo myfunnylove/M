@@ -11,7 +11,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/img"
@@ -31,7 +32,7 @@
 
             <TextView
                 android:id="@+id/name"
-                style="@style/HeaderText"
+                style="@style/NormalText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
@@ -43,7 +44,7 @@
 
             <TextView
                 android:id="@+id/login"
-                style="@style/NormalText"
+                style="@style/HeaderText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"

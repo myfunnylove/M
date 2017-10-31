@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:hint="@string/subject"
-                android:maxLength="255"
+                android:maxLength="128"
                 />
             <View
                 android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                 android:inputType="textMultiLine"
                 android:hint="@string/message"
                 android:gravity="top|left"
-                android:maxLength="255"
+                android:maxLength="512"
 
                 />
         </LinearLayout>

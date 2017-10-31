@@ -50,6 +50,8 @@ class FollowActivity : BaseActivity(),
         val FOLLOWERS  = 3
         val FOLLOWING  = 4
         val BLOCKED_ME = 5
+        val DELETED_USR = 6
+        val CLOSED_USR  = 7
         val TYPE      = "type"
 
         var start     = 0
@@ -247,6 +249,7 @@ class FollowActivity : BaseActivity(),
         }else if (int == BLOCKED_ME){
             progress.visibility = View.GONE
             if (blocMeFragment == null){
+                intent.putExtra("text",Functions.getString(R.string.profil_blocked_me_title))
                 blocMeFragment = BlockMeFragment.newInstance(intent.extras)
 
             }
@@ -259,6 +262,28 @@ class FollowActivity : BaseActivity(),
                     transaction!!.show(blocMeFragment)
             } else
                 transaction!!.add(R.id.container, blocMeFragment, BlockMeFragment.TAG)
+
+//            blocMeFragment!!.setText(Functions.getString(R.string.profil_blocked_me_title))
+        }
+
+        else if (int == DELETED_USR){
+            progress.visibility = View.GONE
+            if (blocMeFragment == null){
+                intent.putExtra("text",Functions.getString(R.string.user_not_found))
+
+                blocMeFragment = BlockMeFragment.newInstance(intent.extras)
+
+            }
+
+            if (followersFragment != null && followersFragment!!.isAdded && !followersFragment!!.isHidden) transaction!!.hide(followersFragment)
+            if (profilFragment != null && profilFragment!!.isAdded && !profilFragment!!.isHidden) transaction!!.hide(profilFragment)
+
+            if (blocMeFragment!!.isAdded) {
+                if (blocMeFragment!!.isHidden)
+                    transaction!!.show(blocMeFragment)
+            } else
+                transaction!!.add(R.id.container, blocMeFragment, BlockMeFragment.TAG)
+
 
         }else {
 
@@ -523,7 +548,16 @@ class FollowActivity : BaseActivity(),
 
             Http.CMDS.GET_FOLLOWING     -> Handler().postDelayed({followersFragment!!.failedGetList(message)},1500)
             Http.CMDS.GET_FOLLOWERS     -> Handler().postDelayed({followersFragment!!.failedGetList(message)},1500)
-            Http.CMDS.MY_POSTS ->          progress.visibility = View.VISIBLE
+            Http.CMDS.MY_POSTS ->          {
+                progress.visibility = View.VISIBLE
+                if (erroCode == Const.ERROR.DELETED_USR)
+                    showFragment(DELETED_USR)
+                else if(erroCode == Const.ERROR.BLOCKED_ME)
+                    showFragment(BLOCKED_ME)
+                else if(erroCode == Const.ERROR.CLOSED_USR)
+                    showFragment(CLOSED_USR)
+
+            }
 
 
         }

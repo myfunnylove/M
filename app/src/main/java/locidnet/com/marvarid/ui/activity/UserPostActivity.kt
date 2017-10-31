@@ -1,11 +1,13 @@
 package locidnet.com.marvarid.ui.activity
 
 import android.content.*
+import android.os.Bundle
 import android.os.IBinder
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
@@ -15,10 +17,8 @@ import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
-import com.nineoldandroids.animation.AnimatorSet
 import kotlinx.android.synthetic.main.activity_post.*
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.R.string.post
 import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.adapter.PostPhotoGridAdapter
 import locidnet.com.marvarid.base.Base
@@ -37,12 +37,16 @@ import locidnet.com.marvarid.pattern.builder.EmptyContainer
 import locidnet.com.marvarid.pattern.builder.ErrorConnection
 import locidnet.com.marvarid.player.PlayerService
 import locidnet.com.marvarid.resources.customviews.CustomManager
+import locidnet.com.marvarid.resources.expandableTextView.ExpandableTextView
 import locidnet.com.marvarid.resources.hashtag.HashTagHelper
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.rest.Http
+import locidnet.com.marvarid.ui.dialogs.ComplaintsFragment
 import locidnet.com.marvarid.ui.fragment.FeedFragment
+import locidnet.com.marvarid.ui.fragment.ProfileFragment
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
@@ -88,7 +92,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
     private var audios        by Delegates.notNull<RecyclerView>()
     private var avatar        by Delegates.notNull<AppCompatImageView>()
     private var name          by Delegates.notNull<TextView>()
-    private var quote         by Delegates.notNull<TextView>()
+    private var quote         by Delegates.notNull<ExpandableTextView>()
     private var quoteEdit     by Delegates.notNull<EditText>()
     private var likeCount     by Delegates.notNull<TextSwitcher>()
     private var commentCount  by Delegates.notNull<TextView>()
@@ -98,6 +102,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
     private var popup         by Delegates.notNull<AppCompatImageView>()
     private var likeLay       by Delegates.notNull<LinearLayout>()
     private var commentLay    by Delegates.notNull<LinearLayout>()
+    private var timeLay    by Delegates.notNull<LinearLayout>()
     private var topContainer  by Delegates.notNull<ViewGroup>()
     private var sendChange    by Delegates.notNull<AppCompatImageButton>()
     private val like                  = R.drawable.like_select
@@ -117,14 +122,15 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
-        supportActionBar!!.title = resources.getString(R.string.notifications)
+        supportActionBar!!.title = ""
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
 
             onBackPressed()
 
         }
-        MainActivity.musicSubject!!.subscribe(this)
+        if(MainActivity.musicSubject != null) MainActivity.musicSubject!!.subscribe(this)
+
 
         initViews()
         emptyContainer = EmptyContainer.Builder()
@@ -224,8 +230,6 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
         likeCount.setCurrentText(post.likes)
         supportActionBar!!.title = post.user.username
 
-        val currentLikesCount  = post.likes.toInt()
-        likeCount.setText(currentLikesCount.toString())
 
 
 //           if (likeAnimations.containsKey()){
@@ -253,7 +257,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
                     }
 
                 })
-        hashTag.handle( quote)
+        hashTag.handle( quote.getmTv())
         quoteEdit.visibility = View.GONE
         quoteEdit.clearComposingText()
         sendChange.visibility = View.GONE
@@ -276,7 +280,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
         if (post.quote.textSize != "") {
             try {
-                quote.textSize = post.quote.textSize.toFloat()
+                quote.setTextSize(post.quote.textSize.toFloat())
             } catch (e: Exception) {
             }
         }
@@ -373,6 +377,8 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
 
                 likeLay.setOnClickListener {
+
+
             if (post.like == "0") {
 
                 post.like = "1"
@@ -389,6 +395,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
 //                    notifyDataSetChanged()
 
+                        this.likeCount.setText(post.likes)
 
 
 
@@ -431,17 +438,82 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
                 overridePendingTransition(0, 0)
 
         }
-//           avatar.setOnClickListener{
-//               clicker.click(i)
-//
-//           }
-//           h.topContainer.setOnClickListener {
-//
-//               if (!pOrF) clicker.click(i)
-//
-//           }
+           avatar.setOnClickListener{
+              goProfilePage(post)
+           }
+           topContainer.setOnClickListener {
+               goProfilePage(post)
+           }
+
+        if(user.userId == post.user.userId) {
+            popup.visibility = View.GONE
+            val param = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT)
+            param.rightMargin = 16
+            timeLay.layoutParams = param
+        }
+        popup.setOnClickListener {
+            val popup = PopupMenu(this, popup)
+            if (user.userId != post.user.userId) {
+
+                popup.inflate(R.menu.menu_feed)
+            } else {
+//                popup.inflate(R.menu.menu_own_feed)
+
+            }
+            popup.show()
+            popup.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+
+
+                    R.id.report -> {
+
+                        val dialog = ComplaintsFragment.instance()
+
+                        dialog.setDialogClickListener(object : ComplaintsFragment.DialogClickListener {
+                            override fun click(whichButton: Int) {
+                                val js = JS.get()
+                                js.put("type", whichButton)
+                                js.put("post", post.id)
+
+                                model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
+                                        .enqueue(object : retrofit2.Callback<ResponseData> {
+                                            override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
+                                                log.e("complaint fail $t")
+
+                                            }
+
+                                            override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
+
+                                                log.d("complaint fail ${response!!.body()}")
+                                                Toast.makeText(Base.get, Base.get.resources.getString(R.string.thank_data_sent), Toast.LENGTH_SHORT).show()
+                                            }
+
+                                        })
+                                dialog.dismiss()
+                            }
+                        })
+                        dialog.show(this.supportFragmentManager, "TAG")
+
+                    }
+                }
+                false
+            }
+        }
     }catch (e:Exception){
         onFailure(from,"","")
+    }
+
+    private fun goProfilePage(post: Posts) {
+        val go = Intent(this, FollowActivity::class.java)
+        val bundle = Bundle()
+        bundle.putString("username", post.user.username)
+        bundle.putString("photo",   post.user.photo)
+        bundle.putString("user_id",  post.user.userId)
+        bundle.putString(ProfileFragment.F_TYPE, ProfileFragment.UN_FOLLOW)
+        go.putExtra(FollowActivity.TYPE, FollowActivity.PROFIL_T)
+        go.putExtras(bundle)
+        startActivityForResult(go,Const.FOLLOW)
     }
 
     override fun onFailure(from: String, message: String, erroCode: String) {
@@ -458,7 +530,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
         audios       = findViewById<RecyclerView>(R.id.audios)
         avatar       = findViewById<AppCompatImageView>(R.id.avatar)
         name         = findViewById<TextView>(R.id.name)
-        quote        = findViewById<TextView>(R.id.commentText)
+        quote        = findViewById<ExpandableTextView>(R.id.expand_text_view)
         quoteEdit    = findViewById<EditText>(R.id.commentEditText)
         likeCount    = findViewById<TextSwitcher>(R.id.likeCount)
         commentCount = findViewById<TextView>(R.id.commentCount)
@@ -468,6 +540,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
         popup        = findViewById<AppCompatImageView>(R.id.popup)
         likeLay      = findViewById<LinearLayout>(R.id.likeLay)
         commentLay   = findViewById<LinearLayout>(R.id.commentLay)
+        timeLay      = findViewById<LinearLayout>(R.id.timeLay)
         topContainer = findViewById<ViewGroup>(R.id.topContainer)
         sendChange   = findViewById<AppCompatImageButton>(R.id.sendChangedQuote)
 
@@ -534,4 +607,6 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
             finish()
         }
     }
+
+
 }

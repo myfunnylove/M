@@ -1,6 +1,7 @@
 package locidnet.com.marvarid.resources.utils
 
 import android.Manifest
+import android.Manifest.*
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -135,10 +136,10 @@ object Functions {
     fun checkPermissions(ctx : Activity):Boolean{
         val MULTIPLE_PERMISSIONS = 10
         val permissions = arrayOf(
-                Manifest.permission.CAMERA,
+                permission.CAMERA,
 //                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                permission.READ_EXTERNAL_STORAGE,
+                permission.WRITE_EXTERNAL_STORAGE
 
         )
         var res = 0
@@ -392,23 +393,23 @@ object Functions {
     fun getGlideOpts():RequestOptions{
         return RequestOptions()
                 .circleCrop()
-                .fallback(VectorDrawableCompat.create(Base.get.resources,R.drawable.account_select,Base.get.theme))
+                .fallback(Base.get.resources.getDrawable(R.drawable.default_profile_photo_circle))
                 .error(VectorDrawableCompat.create(Base.get.resources,R.drawable.account_select,Base.get.theme))
 //                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
     }
     fun getGlideOptsForAvatar():RequestOptions{
         return RequestOptions()
                 .circleCrop()
-                .fallback(Base.get.resources.getDrawable(R.drawable.no_photo))
-                .error(Base.get.resources.getDrawable(R.drawable.no_photo))
+                .fallback(Base.get.resources.getDrawable(R.drawable.default_profile_photo_circle))
+                .error(Base.get.resources.getDrawable(R.drawable.default_profile_photo_circle))
 //                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
     }
     fun getGlideOptsBlur():RequestOptions{
         return RequestOptions()
                 .circleCrop()
                 .transform(BlurTransformation(5))
-                .fallback(R.drawable.bg)
-                .error(R.drawable.bg)
+                .fallback(R.drawable.default_profile_photo)
+                .error(R.drawable.default_profile_photo)
 //                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
     }
     fun getDeviceName(): String? {

@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v7.widget.AppCompatImageView
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
@@ -255,9 +256,34 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
         tablayout.addTab(tablayout.newTab().setCustomView(profilView))
 
 
-
         tablayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(p0: TabLayout.Tab?) {
+
+                when(p0!!.position){
+                    Const.FEED_FR -> {
+                            Handler().post {
+                                feedFragment!!.listFeed.scrollToPosition(0)
+                                feedFragment!!.listFeed.layoutManager.scrollToPosition(0)
+                            }
+                    }
+
+                    Const.NOTIF_FR -> {
+                        Handler().post {
+                            if(notificationFragment!!.list != null){
+                                notificationFragment!!.list!!.scrollToPosition(0)
+                                notificationFragment!!.list!!.layoutManager.scrollToPosition(0)
+                            }
+                        }
+                    }
+
+                    Const.PROFIL_FR -> {
+                        Handler().post {
+                                profilFragment!!.postView.scrollToPosition(0)
+                                profilFragment!!.postView.layoutManager.scrollToPosition(0)
+
+                        }
+                    }
+                }
 
             }
 
@@ -1049,9 +1075,9 @@ class MainActivity : BaseActivity(), GoNext, Viewer ,MusicPlayerListener {
                 NOTIF_STATUS = AFTER_UPDATE
                 val pushList:PushList = Gson().fromJson(result,PushList::class.java)
 
-                if(pushList.pushes.size > 0){
+//                if(pushList.pushes.size > 0){
                     notificationFragment!!.swapPushes(pushList)
-                }
+//                }
 //                else{
 //                    notificationFragment!!.onFail("")
 //

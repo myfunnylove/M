@@ -58,10 +58,10 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
         Glide.with(this)
                 .load(Base.get.prefs.getUser().profilPhoto)
                 .apply(RequestOptions()
-                        .circleCrop()
-                        .fallback(ColorDrawable(Color.BLACK))
-                        .error(VectorDrawableCompat.create(resources,R.drawable.account,theme))
-                        .placeholder(ColorDrawable(Color.GRAY)))
+                .circleCrop()
+                .fallback(ColorDrawable(Color.BLACK))
+                .error(VectorDrawableCompat.create(resources,R.drawable.account,theme))
+                .placeholder(ColorDrawable(Color.GRAY)))
                 .into(profilPhoto)
         DaggerMVPComponent
                 .builder()
@@ -118,7 +118,7 @@ class LoginAndPassActivity :BaseActivity(),Viewer{
 
                         Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.password_field_less_5),Toast.LENGTH_SHORT).show()
 
-                    }else if(pattern.matcher(username).matches()){
+                    }else if(!pattern.matcher(username).matches()){
                         Toast.makeText(this@LoginAndPassActivity,resources.getString(R.string.username_error),Toast.LENGTH_SHORT).show()
 
                     }else{

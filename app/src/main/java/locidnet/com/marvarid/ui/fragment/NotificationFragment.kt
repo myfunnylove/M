@@ -156,15 +156,19 @@ class NotificationFragment : BaseFragment(){
         swipeRefreshLayout.isRefreshing = false
         list!!.visibility = View.VISIBLE
         if (adapter == null || (MainActivity.startNotif == 0 && MainActivity.endNotif == 20)){
-            adapter = PushAdapter(activity,pushList.pushes)
-            var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(adapter)
+            if (pushList.pushes.size > 0){
+                adapter = PushAdapter(activity,pushList.pushes)
+                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(adapter)
 
 
-            slideAdapter!!.setFirstOnly(true)
+                slideAdapter!!.setFirstOnly(true)
 
-            slideAdapter.setInterpolator(OvershootInterpolator())
-            slideAdapter.setDuration(500)
-            list!!.adapter = slideAdapter
+                slideAdapter.setInterpolator(OvershootInterpolator())
+                slideAdapter.setDuration(500)
+                list!!.adapter = slideAdapter
+            }else{
+                emptyContainer!!.show()
+            }
         }else {
             adapter!!.swapItems(pushList)
         }

@@ -33,7 +33,7 @@
             android:id="@+id/logo"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:src="@drawable/bg"
+            android:src="@drawable/bg_def"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             />

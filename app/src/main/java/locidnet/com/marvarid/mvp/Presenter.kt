@@ -21,10 +21,7 @@ import locidnet.com.marvarid.model.ResponseData
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.UserInfo
 import locidnet.com.marvarid.pattern.builder.SessionOut
-import locidnet.com.marvarid.resources.utils.Const
-import locidnet.com.marvarid.resources.utils.JS
-import locidnet.com.marvarid.resources.utils.Prefs
-import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.ui.activity.MainActivity
 import org.reactivestreams.Subscription
 import retrofit2.HttpException
@@ -162,12 +159,15 @@ class Presenter(viewer: Viewer, modeler:Model,context:BaseActivity) :IPresenter 
                                     "0"    -> view.onSuccess(cmd, Http.getResponseData(response.prms))
                                     "1996" -> view.onFailure("",Base.get.resources.getString(R.string.error_no_type))
                                     "404"  ->  view.onFailure(cmd,Base.get.resources.getString(R.string.internet_conn_error))
-                                    "96"   -> {
+                                    Const.ERROR.SESSION_OUT   -> {
                                         val sesion = SessionOut.Builder(context)
                                                 .setErrorCode(96)
                                                 .build()
                                         sesion.out()
                                     }
+                                    Const.ERROR.DELETED_USR -> view.onFailure(cmd,Functions.getString(R.string.user_not_found),Const.ERROR.DELETED_USR)
+                                    Const.ERROR.BLOCKED_ME -> view.onFailure(cmd,Functions.getString(R.string.user_not_found),Const.ERROR.BLOCKED_ME)
+                                    Const.ERROR.CLOSED_USR -> view.onFailure(cmd,Functions.getString(R.string.user_not_found),Const.ERROR.CLOSED_USR)
                                      else  -> {
                                          if (response.message != "null")
                                               view.onFailure(cmd,response.message)

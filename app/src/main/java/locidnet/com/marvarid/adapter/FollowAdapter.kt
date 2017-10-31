@@ -129,7 +129,7 @@ class FollowAdapter(context:Context,
 
 
        }else{
-           log.d("${user.userId} -> ${user.username}bir xil ")
+           log.d("${user.userId} -> ${user.username} bir xil ")
 
            h.follow.visibility = View.GONE
 

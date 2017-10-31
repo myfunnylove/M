@@ -42,21 +42,15 @@ class BlockMeFragment : BaseFragment() {
     }
 
 
-    override fun getFragmentView(): Int = R.layout.user_profil_header
+    override fun getFragmentView(): Int = R.layout.empty_profile
 
 
 
 
 
     override fun init() {
-        rootView.findViewById<View>(R.id.follow).visibility = View.GONE
-        rootView.findViewById<View>(R.id.progressUpdateAvatar).visibility = View.GONE
-        rootView.findViewById<ViewGroup>(R.id.postsLay).visibility = View.GONE
-        rootView.findViewById<View>(R.id.playlist).visibility = View.GONE
-        rootView.findViewById<ViewGroup>(R.id.closedProfilLay).visibility = View.VISIBLE
-        val text = rootView.findViewById<TextView>(R.id.emptyText)
 
-        text.text = Functions.getString(R.string.profil_blocked_me_title)
+        rootView.findViewById<TextView>(R.id.emptyText).setText(arguments.getString("text"))
 
         val avatar = rootView.findViewById<AppCompatImageView>(R.id.avatar)
 
@@ -64,18 +58,11 @@ class BlockMeFragment : BaseFragment() {
 
         log.d("photo is ${arguments.getString("photo")}")
 
-        if (!arguments.getString("photo").isNullOrEmpty())
-            photo = arguments.getString("photo")
 
 
 
-        Glide.with(this)
-                .load(photo)
-                .apply(RequestOptions()
-                        .circleCrop()
-                        .fallback(ColorDrawable(Color.BLACK))
-                        .error(VectorDrawableCompat.create(resources,R.drawable.account,activity.theme))
-                        .placeholder(ColorDrawable(Color.GRAY)))
-                .into(avatar)
     }
+
+
 }
+

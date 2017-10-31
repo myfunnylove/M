@@ -61,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:elevation="5dp"
-
+                    android:maxLength="5000"
                     android:gravity="left|top"
                     android:hint="@string/error_empty_quote"
                     android:padding="16dp"
