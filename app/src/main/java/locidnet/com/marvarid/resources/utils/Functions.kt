@@ -99,7 +99,7 @@ object Functions {
                 val size = musicCursor.getColumnIndex(MediaStore.Audio.Media.SIZE)
 
                 val length = musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION)
-
+                val dataAdded = musicCursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED)
 
                 do{
 
@@ -111,11 +111,15 @@ object Functions {
                                     musicCursor.getString(artistColumn),
                                     musicCursor.getLong(durationColumn),
                                     musicCursor.getLong(sizeColumn),
+
                                     false,
-                                    musicCursor.getString(path),
+
+                                            musicCursor.getString(path),
+
                                     0
 
-                            ))
+
+                                    ))
                 }while (musicCursor.moveToNext())
             }
         }catch (e:Exception){

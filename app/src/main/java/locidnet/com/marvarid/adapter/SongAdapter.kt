@@ -6,24 +6,30 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
 import android.widget.TextView
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.connectors.AdapterClicker
+import locidnet.com.marvarid.connectors.SongClicker
 import locidnet.com.marvarid.model.Song
+import locidnet.com.marvarid.resources.searchFilter.AbstractFilter
+import locidnet.com.marvarid.resources.searchFilter.IFilter
 import locidnet.com.marvarid.resources.utils.log
 import java.text.DecimalFormat
 import kotlin.properties.Delegates
 
 
-class SongAdapter(clicker:AdapterClicker, ctx:Context, list:ArrayList<Song>) : RecyclerView.Adapter<SongAdapter.Adapter>() {
+class SongAdapter(clicker:SongClicker, ctx:Context, list:ArrayList<Song>) : RecyclerView.Adapter<SongAdapter.Adapter>(),
+        IFilter<Song> {
     private val adapterClicker = clicker
     val context = ctx
     private var songs = list
+    private var originalList = list
     val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
     override fun onBindViewHolder(h: Adapter?, p1: Int) {
         val song = songs[p1]
-        log.d("${song.songId} ${song.songTitle} ${song.songArtist} ${song.songDuration} ${song.songSize}")
+        log.d("$song")
 
 
         h!!.songArtist.text = song.songArtist
@@ -35,7 +41,7 @@ class SongAdapter(clicker:AdapterClicker, ctx:Context, list:ArrayList<Song>) : R
         h.songSize.text = song.songSize.getSize()
         h.container.setOnClickListener {
                     selecterSong(p1,!h.songCheck.isChecked)
-                    adapterClicker.click(p1)
+                    adapterClicker.songClick(song)
         }
 
 
@@ -138,4 +144,33 @@ class SongAdapter(clicker:AdapterClicker, ctx:Context, list:ArrayList<Song>) : R
         this.notifyDataSetChanged()
     }
 
+    override fun getFilteredResults(): AbstractFilter<Song> {
+        return object : AbstractFilter<Song>(songs) {
+            override fun refresh(abcList: ArrayList<Song>?) {
+                songs = abcList!!
+                this@SongAdapter.notifyDataSetChanged()
+            }
+
+
+            override fun getFilteredResults(constraint: String): ArrayList<Song> {
+                val results = ArrayList<Song>()
+
+
+                for (item in originalList) {
+                    if (item.songTitle.toLowerCase().contains(constraint)) {
+                        results.add(item)
+                    }
+                }
+                return results
+            }
+
+
+        }
+    }
+
+    fun swapItems(songList: ArrayList<Song>?) {
+        songs = songList!!
+        this@SongAdapter.notifyDataSetChanged()
+
+    }
 }

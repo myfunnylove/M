@@ -6,7 +6,17 @@ import android.os.Parcelable
 /**
  * Created by Michaelan on 5/27/2017.
  */
-data class Song(var songId:Long,var songTitle:String, var songArtist:String,var songDuration:Long, var songSize:Long,var selected:Boolean,var songPath:String,var bitRate:Long,  var loaded:Boolean = false, var progress:Int = 0,var onFail:Int = 0) : Parcelable {
+data class Song(var songId:Long,
+                var songTitle:String,
+                var songArtist:String,
+                var songDuration:Long,
+                var songSize:Long,
+                var selected:Boolean,
+                var songPath:String,
+                var bitRate:Long,
+                var loaded:Boolean = false,
+                var progress:Int = 0,
+                var onFail:Int = 0) : Parcelable {
     companion object {
         @JvmField val CREATOR: Parcelable.Creator<Song> = object : Parcelable.Creator<Song> {
             override fun createFromParcel(source: Parcel): Song = Song(source)
@@ -23,6 +33,7 @@ data class Song(var songId:Long,var songTitle:String, var songArtist:String,var 
     1 == source.readInt(),
     source.readString(),
     source.readLong(),
+
     1 == source.readInt(),
     source.readInt()
     )
