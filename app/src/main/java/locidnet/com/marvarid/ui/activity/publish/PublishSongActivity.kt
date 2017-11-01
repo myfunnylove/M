@@ -10,6 +10,7 @@ import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.PopupMenu
 import kotlinx.android.synthetic.main.activity_publish_song.*
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.SongAdapter
@@ -19,6 +20,7 @@ import locidnet.com.marvarid.connectors.SongClicker
 import locidnet.com.marvarid.model.Song
 import locidnet.com.marvarid.resources.utils.Const
 import locidnet.com.marvarid.resources.utils.Functions
+import locidnet.com.marvarid.resources.utils.log
 import java.util.*
 
 /**
@@ -33,9 +35,9 @@ class PublishSongActivity : BaseActivity(), SongClicker {
     var songList:ArrayList<Song>? = null
     var song:Song? = null
     var adapter:SongAdapter? =null
-    override fun getLayout(): Int {
-        return R.layout.activity_publish_song
-    }
+
+
+    override fun getLayout(): Int = R.layout.activity_publish_song
 
     override fun initView() {
         setSupportActionBar(toolbar)
@@ -69,7 +71,7 @@ class PublishSongActivity : BaseActivity(), SongClicker {
     private fun initSearchView() {
 
         searchView.setTextColor(getResources().getColor(R.color.normalTextColor));
-        searchView.setCompoundDrawablesWithIntrinsicBounds(VectorDrawableCompat.create(resources,R.drawable.search_select,theme),null,null,null)
+        searchView.setCompoundDrawablesWithIntrinsicBounds(VectorDrawableCompat.create(resources,R.drawable.search,theme),null,null,null)
         searchView.compoundDrawablePadding = 6
         searchView.addTextChangedListener(object :TextWatcher{
             override fun afterTextChanged(p0: Editable?) {
@@ -95,8 +97,22 @@ class PublishSongActivity : BaseActivity(), SongClicker {
         })
 
 
+        val popup = PopupMenu(this, filter)
+        popup.inflate(R.menu.menu_filter)
+
+        filter.setOnClickListener {
+            popup.setOnMenuItemClickListener { item ->
 
 
+
+                        adapter!!.swap(item.itemId)
+
+
+                false
+
+            }
+            popup.show()
+        }
 
     }
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

@@ -136,4 +136,7 @@
     <string name="pushMentionedBody">mentioned you</string>
     <string name="error_empty_result">Нет резултатов</string>
     <string name="user_not_found">User not found</string>
+    <string name="filter_by_size">By size</string>
+    <string name="filter_by_name">By name</string>
+    <string name="filter_by_date">By date</string>
 </resources>

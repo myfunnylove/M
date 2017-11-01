@@ -15,7 +15,9 @@ import locidnet.com.marvarid.model.Song
 import locidnet.com.marvarid.resources.searchFilter.AbstractFilter
 import locidnet.com.marvarid.resources.searchFilter.IFilter
 import locidnet.com.marvarid.resources.utils.log
+import locidnet.com.marvarid.ui.activity.publish.PublishSongActivity
 import java.text.DecimalFormat
+import java.util.*
 import kotlin.properties.Delegates
 
 
@@ -171,6 +173,19 @@ class SongAdapter(clicker:SongClicker, ctx:Context, list:ArrayList<Song>) : Recy
     fun swapItems(songList: ArrayList<Song>?) {
         songs = songList!!
         this@SongAdapter.notifyDataSetChanged()
+
+    }
+
+    fun swap(bY_SIZE: Int) {
+
+
+        when(bY_SIZE){
+            R.id.byName -> Collections.sort(songs,{ a, b -> a.songTitle.compareTo(b.songTitle)})
+//            R.id.byName_desc -> Collections.sort(songs,{ a, b -> b.songTitle.compareTo(a.songTitle)})
+            R.id.bySize -> Collections.sort(songs,{ a, b -> b.songSize.compareTo(a.songSize)})
+            R.id.byDate -> Collections.sort(songs,{ a, b -> b.dataAdded.compareTo(a.dataAdded)})
+        }
+        this.notifyDataSetChanged()
 
     }
 }

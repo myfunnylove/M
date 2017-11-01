@@ -116,7 +116,8 @@ object Functions {
 
                                             musicCursor.getString(path),
 
-                                    0
+                                    0,
+                                            musicCursor.getLong(dataAdded)
 
 
                                     ))

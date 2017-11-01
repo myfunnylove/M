@@ -14,6 +14,7 @@ data class Song(var songId:Long,
                 var selected:Boolean,
                 var songPath:String,
                 var bitRate:Long,
+                var dataAdded:Long,
                 var loaded:Boolean = false,
                 var progress:Int = 0,
                 var onFail:Int = 0) : Parcelable {
@@ -33,6 +34,7 @@ data class Song(var songId:Long,
     1 == source.readInt(),
     source.readString(),
     source.readLong(),
+            source.readLong(),
 
     1 == source.readInt(),
     source.readInt()
@@ -49,6 +51,7 @@ data class Song(var songId:Long,
         dest.writeInt((if (selected) 1 else 0))
         dest.writeString(songPath)
         dest.writeLong(bitRate)
+        dest.writeLong(dataAdded)
         dest.writeInt((if (loaded) 1 else 0))
         dest.writeInt(progress)
     }
