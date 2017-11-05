@@ -124,8 +124,8 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
         manager = LinearLayoutManagerWithSmoothScroller(Base.get)
         postView.layoutManager = manager
-        postView.setHasFixedSize(true)
-        postView.itemAnimator = ScaleInBottomAnimator()
+//        postView.setHasFixedSize(true)
+//        postView.itemAnimator = ScaleInBottomAnimator()
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 log.d("PROFIL POSTLARI OXIRIGA KELDI ${manager!!.findLastVisibleItemPosition()}")
@@ -304,13 +304,13 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
        if (postAdapter == null){
            postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,fType,isClose)
-           var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
-           slideAdapter!!.setFirstOnly(false)
-           slideAdapter.setDuration(500)
-
-           postView.visibility = View.VISIBLE
-           postView.adapter = slideAdapter
-           slideAdapter = null
+//           var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+//           slideAdapter!!.setFirstOnly(false)
+//           slideAdapter.setDuration(500)
+//
+//           postView.visibility = View.VISIBLE
+           postView.adapter = postAdapter
+//           slideAdapter = null
        }else{
            log.d("update first item $userInfo")
            postAdapter!!.updateFirstItem(userInfo)
@@ -350,15 +350,15 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,FOLLOW_TYPE)
-                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
-
-
-                slideAdapter!!.setFirstOnly(false)
-
-                slideAdapter!!.setInterpolator(OvershootInterpolator())
-                slideAdapter.setDuration(500)
-                postView.adapter = slideAdapter
-                slideAdapter = null
+//                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+//
+//
+//                slideAdapter!!.setFirstOnly(false)
+//
+//                slideAdapter!!.setInterpolator(OvershootInterpolator())
+//                slideAdapter.setDuration(500)
+                postView.adapter = postAdapter
+//                slideAdapter = null
             }else if (postList.posts.size == 1 && (MainActivity.end == 1 && MainActivity.start == 0)){
                 log.d("post qoshildi postni birinchi elementi update qilinadi")
                 MainActivity.start = postAdapter!!.feeds.posts.size
@@ -377,13 +377,13 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
 
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,FOLLOW_TYPE)
-                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
-
-
-                slideAdapter!!.setInterpolator(OvershootInterpolator())
-                slideAdapter.setDuration(500)
-                postView.adapter = slideAdapter
-                slideAdapter = null
+//                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+//
+//
+//                slideAdapter!!.setInterpolator(OvershootInterpolator())
+//                slideAdapter.setDuration(500)
+                postView.adapter = postAdapter
+//                slideAdapter = null
             }else if((MainActivity.end == 10 && MainActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 postAdapter!!.swapLast20Item(postList)
@@ -488,6 +488,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     }
     override fun onDestroy() {
         log.d("ondestroy myprofil")
+        if (postAdapter != null) postAdapter!!.cachedLists.clear()
 
         MainActivity.musicSubject!!.unsubscribe(this)
         super.onDestroy()

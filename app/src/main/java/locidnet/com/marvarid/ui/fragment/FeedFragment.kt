@@ -106,7 +106,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
         listFeed.layoutManager = manager
         listFeed.setHasFixedSize(true)
 //        listFeed.smoothScrollToPosition(-10)
-        listFeed.itemAnimator = SlideInUpAnimator(OvershootInterpolator(1f))
+//        listFeed.itemAnimator = SlideInUpAnimator(OvershootInterpolator(1f))
 
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
@@ -259,11 +259,11 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                     log.d("birinchi marta postla yuklandi")
                     cachedSongAdapters = HashMap()
                     feedAdapter = MyFeedAdapter(activity,postList,this,this)
-                    var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
-                    slideAdapter!!.setInterpolator(OvershootInterpolator())
-                    slideAdapter.setDuration(500)
-                    listFeed.adapter = slideAdapter
-                    slideAdapter = null
+//                    var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
+//                    slideAdapter!!.setInterpolator(OvershootInterpolator())
+//                    slideAdapter.setDuration(500)
+                    listFeed.adapter = feedAdapter
+//                    slideAdapter = null
                 }else{
                     emptyContainer.show()
                 }
@@ -279,13 +279,13 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 cachedSongAdapters = HashMap()
 
                 feedAdapter = MyFeedAdapter(activity,postList,this,this)
-                var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
-
-
-                slideAdapter!!.setInterpolator(OvershootInterpolator())
-                slideAdapter.setDuration(500)
-                listFeed.adapter = slideAdapter
-                slideAdapter = null
+//                var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
+//
+//
+//                slideAdapter!!.setInterpolator(OvershootInterpolator())
+//                slideAdapter.setDuration(500)
+                listFeed.adapter = feedAdapter
+//                slideAdapter = null
 
             }else if((MainActivity.endFeed == 10 && MainActivity.startFeed != 0) && feedAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
@@ -430,7 +430,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
     override fun onDestroy() {
         log.d("ondestroy feed")
         MainActivity.musicSubject!!.unsubscribe(this)
-
+        if (feedAdapter != null) feedAdapter!!.cachedTexts.clear()
         super.onDestroy()
     }
 

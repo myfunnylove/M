@@ -3,6 +3,7 @@ package locidnet.com.marvarid.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.view.ViewCompat
@@ -19,6 +20,11 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequest
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.model.Push
@@ -48,11 +54,7 @@ import java.util.*
 class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    private val options               = RequestOptions()
-            .centerCrop()
-            .fallback(VectorDrawableCompat.create(Base.get.resources,R.drawable.image, Base.get.theme))
-            .error(VectorDrawableCompat.create(Base.get.resources,R.drawable.image, Base.get.theme))
-            .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.image, Base.get.theme))!!
+
 
     val model = Model()
     val user = Prefs.Builder().getUser()
@@ -71,11 +73,71 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                 Const.Push.LIKE ,
                 Const.Push.COMMENT ,
                 Const.Push.REPLIED ,
-                Const.Push.MENTIONED -> Comment(inflater.inflate(R.layout.res_item_push_like, parent, false))
+                Const.Push.MENTIONED -> {
+                    val comment = Comment(inflater.inflate(R.layout.res_item_push_like, parent, false))
+                    comment.avatar.setOnClickListener{
+
+                        val push = list[comment.adapterPosition]
+
+                        if (push.user.userId != user.userId){
+                            val type = ProfileFragment.FOLLOW
+
+
+
+                            log.d("user type $type")
+
+
+                            val go = Intent(ctx, FollowActivity::class.java)
+                            val bundle = Bundle()
+                            bundle.putString("username",push.user.userName)
+                            bundle.putString("photo",   if (push.user.userPhoto.isNullOrEmpty()) "" else push.user.userPhoto)
+                            bundle.putString("user_id",  push.user.userId)
+                            bundle.putString(ProfileFragment.F_TYPE,type)
+                            log.d("result from search user -> ${bundle}")
+
+                            go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
+
+                            go.putExtras(bundle)
+                            ctx.startActivity(go)
+                        }
+                    }
+
+                     comment
+                }
 
 
                 Const.Push.FOLLOW ,
-                Const.Push.REQUESTED -> Requested(inflater.inflate(R.layout.res_item_push_requested, parent, false))
+                Const.Push.REQUESTED ->{
+                    val requested = Requested(inflater.inflate(R.layout.res_item_push_requested, parent, false))
+                    requested.avatar.setOnClickListener{
+                        val push = list[requested.adapterPosition]
+
+
+                        if (push.user.userId != user.userId){
+                            val type = ProfileFragment.FOLLOW
+
+
+
+                            log.d("user type $type")
+
+
+                            val go = Intent(ctx, FollowActivity::class.java)
+                            val bundle = Bundle()
+                            bundle.putString("username",push.user.userName)
+                            bundle.putString("photo",   if (push.user.userPhoto.isNullOrEmpty()) "" else push.user.userPhoto)
+                            bundle.putString("user_id",  push.user.userId)
+                            bundle.putString(ProfileFragment.F_TYPE,type)
+                            log.d("result from search user -> ${bundle}")
+
+                            go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
+
+                            go.putExtras(bundle)
+                            ctx.startActivity(go)
+                        }
+                    }
+
+                    requested
+                }
 
                 else -> Other(inflater.inflate(R.layout.res_item_push_requested, parent, false))
             }
@@ -99,36 +161,22 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
                 val comment = holder as Comment
 
+                comment.avatar.post{
 
-                Glide.with(ctx)
-                        .load(Functions.checkImageUrl(push.user.userPhoto))
-                        .apply(Functions.getGlideOpts())
-                        .into(comment.avatar)
-                comment.avatar.setOnClickListener{
+                    comment.avatar.controller = Fresco.newDraweeControllerBuilder()
+                            .setImageRequest(
+                                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(push.user.userPhoto)))
+                                            .setResizeOptions(ResizeOptions(200,200))
 
+                                            .build())
+                            .setOldController(comment.avatar.controller)
+                            .setAutoPlayAnimations(true)
 
-                    if (push.user.userId != user.userId){
-                        val type = ProfileFragment.FOLLOW
+                            .build()
 
-
-
-                        log.d("user type $type")
-
-
-                        val go = Intent(ctx, FollowActivity::class.java)
-                        val bundle = Bundle()
-                        bundle.putString("username",push.user.userName)
-                        bundle.putString("photo",   if (push.user.userPhoto.isNullOrEmpty()) "" else push.user.userPhoto)
-                        bundle.putString("user_id",  push.user.userId)
-                        bundle.putString(ProfileFragment.F_TYPE,type)
-                        log.d("result from search user -> ${bundle}")
-
-                        go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
-
-                        go.putExtras(bundle)
-                        ctx.startActivity(go)
-                    }
                 }
+
+
                 comment.username.text = push.user.userName
                 comment.body.text = when(getItemViewType(position)){
                     Const.Push.COMMENT -> Base.get.resources.getString(R.string.pushCommentBody)
@@ -139,11 +187,20 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
                     else ->ctx.resources.getString(R.string.pushCommentBody)
                 }
                 comment.time.text = "${prettyTime.format(date2)}"
+                comment.mypost.post {
+                    comment.mypost.controller = Fresco.newDraweeControllerBuilder()
 
-                Glide.with(ctx)
-                        .load(Functions.checkImageUrl(push.action.actionPhoto))
-                        .apply(options)
-                        .into(comment.mypost)
+                            .setImageRequest(
+                                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(push.action.actionPhoto)!!.replace(Const.IMAGE.TITLE, Prefs.Builder().imageRes())))
+//                                            .setResizeOptions(ResizeOptions(width,height))
+                                            .setCacheChoice(ImageRequest.CacheChoice.DEFAULT)
+                                            .build())
+                            .setOldController(comment.mypost.controller)
+                            .setAutoPlayAnimations(true)
+                            .build()
+
+                }
+
 
 
                 comment.mypost.setOnClickListener {
@@ -157,36 +214,22 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
                 val requested = holder as Requested
 
-                Glide.with(ctx)
-                        .load(Functions.checkImageUrl(push.user.userPhoto))
-                        .apply(Functions.getGlideOpts())
-                        .into(requested.avatar)
+                requested.avatar.post{
 
-                requested.avatar.setOnClickListener{
+                    requested.avatar.controller = Fresco.newDraweeControllerBuilder()
+                            .setImageRequest(
+                                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(push.user.userPhoto)))
+                                            .setResizeOptions(ResizeOptions(200,200))
 
+                                            .build())
+                            .setOldController(requested.avatar.controller)
+                            .setAutoPlayAnimations(true)
 
-                    if (push.user.userId != user.userId){
-                        val type = ProfileFragment.FOLLOW
+                            .build()
 
-
-
-                        log.d("user type $type")
-
-
-                        val go = Intent(ctx, FollowActivity::class.java)
-                        val bundle = Bundle()
-                        bundle.putString("username",push.user.userName)
-                        bundle.putString("photo",   if (push.user.userPhoto.isNullOrEmpty()) "" else push.user.userPhoto)
-                        bundle.putString("user_id",  push.user.userId)
-                        bundle.putString(ProfileFragment.F_TYPE,type)
-                        log.d("result from search user -> ${bundle}")
-
-                        go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
-
-                        go.putExtras(bundle)
-                        ctx.startActivity(go)
-                    }
                 }
+
+
 
                 requested.username.text = push.user.userName
 
@@ -250,36 +293,23 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
                 val follow = holder as Requested
 
-                Glide.with(ctx)
-                        .load(Functions.checkImageUrl(push.user.userPhoto))
-                        .apply(Functions.getGlideOpts())
-                        .into(follow.avatar)
+                follow.avatar.post{
+
+                    follow.avatar.controller = Fresco.newDraweeControllerBuilder()
+                            .setImageRequest(
+                                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(push.user.userPhoto)))
+                                            .setResizeOptions(ResizeOptions(200,200))
+
+                                            .build())
+                            .setOldController(follow.avatar.controller)
+                            .setAutoPlayAnimations(true)
+
+                            .build()
+
+                }
 
 //                follow.accept.layoutParams = wrapParams
-                follow.avatar.setOnClickListener{
 
-                    if (push.user.userId != user.userId){
-                        val type = ProfileFragment.FOLLOW
-
-
-
-                        log.d("user type $type")
-
-
-                        val go = Intent(ctx, FollowActivity::class.java)
-                        val bundle = Bundle()
-                        bundle.putString("username",push.user.userName)
-                        bundle.putString("photo",   if (push.user.userPhoto.isNullOrEmpty()) "" else push.user.userPhoto)
-                        bundle.putString("user_id",  push.user.userId)
-                        bundle.putString(ProfileFragment.F_TYPE,type)
-                        log.d("result from search user -> $bundle")
-
-                        go.putExtra(FollowActivity.TYPE,FollowActivity.PROFIL_T)
-
-                        go.putExtras(bundle)
-                        ctx.startActivity(go)
-                    }
-                }
 
                 follow.username.text = push.user.userName
 
@@ -404,11 +434,14 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
     class Comment(view: View) : RecyclerView.ViewHolder(view), AnimateViewHolder {
         val container = view.findViewById<ViewGroup>(R.id.container)
         val username = view.findViewById<TextView>(R.id.username)
-        val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
+        val avatar = view.findViewById<SimpleDraweeView>(R.id.avatar)
         val body = view.findViewById<TextView>(R.id.body)
         val time = view.findViewById<TextView>(R.id.time)
-        val mypost = view.findViewById<AppCompatImageView>(R.id.actionPhoto)
-
+        val mypost = view.findViewById<SimpleDraweeView>(R.id.actionPhoto)
+        init {
+            avatar.hierarchy = Functions.getAvatarHierarchy()
+            mypost.hierarchy = Functions.getBackgroundOptions()
+        }
         override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
             ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
             ViewCompat.setAlpha(itemView, 0f);
@@ -438,13 +471,16 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
     class Requested(view: View) : RecyclerView.ViewHolder(view), AnimateViewHolder {
         val container = view.findViewById<ViewGroup>(R.id.container)
-        val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
+        val avatar = view.findViewById<SimpleDraweeView>(R.id.avatar)
         val username = view.findViewById<TextView>(R.id.username)
         val body = view.findViewById<TextView>(R.id.body)
         val accept = view.findViewById<Button>(R.id.accept)
         val dismiss = view.findViewById<Button>(R.id.dismiss)
         val time = view.findViewById<TextView>(R.id.time)
+        init {
+            avatar.hierarchy = Functions.getAvatarHierarchy()
 
+        }
         override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
             ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
             ViewCompat.setAlpha(itemView, 0f);
@@ -475,12 +511,17 @@ class PushAdapter(private val ctx: Context, private val list: ArrayList<Push>) :
 
     class Other(view: View) : RecyclerView.ViewHolder(view), AnimateViewHolder {
         val container = view.findViewById<ViewGroup>(R.id.container)
-        val avatar = view.findViewById<AppCompatImageView>(R.id.avatar)
+        val avatar = view.findViewById<SimpleDraweeView>(R.id.avatar)
         val username = view.findViewById<TextView>(R.id.username)
         val body = view.findViewById<TextView>(R.id.body)
         val accept = view.findViewById<Button>(R.id.accept)
         val dismiss = view.findViewById<Button>(R.id.dismiss)
         val time = view.findViewById<TextView>(R.id.time)
+
+        init {
+            avatar.hierarchy = Functions.getAvatarHierarchy()
+
+        }
 
         override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?) {
             ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);

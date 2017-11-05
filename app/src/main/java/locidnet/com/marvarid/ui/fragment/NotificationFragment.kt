@@ -73,7 +73,7 @@ class NotificationFragment : BaseFragment(){
         manager = LinearLayoutManager(activity)
         list!!.layoutManager = manager
         list!!.setHasFixedSize(true)
-        list!!.itemAnimator = ScaleInBottomAnimator()
+//        list!!.itemAnimator = ScaleInBottomAnimator()
 
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
@@ -158,14 +158,14 @@ class NotificationFragment : BaseFragment(){
         if (adapter == null || (MainActivity.startNotif == 0 && MainActivity.endNotif == 20)){
             if (pushList.pushes.size > 0){
                 adapter = PushAdapter(activity,pushList.pushes)
-                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(adapter)
-
-
-                slideAdapter!!.setFirstOnly(true)
-
-                slideAdapter.setInterpolator(OvershootInterpolator())
-                slideAdapter.setDuration(500)
-                list!!.adapter = slideAdapter
+//                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(adapter)
+//
+//
+//                slideAdapter!!.setFirstOnly(true)
+//
+//                slideAdapter.setInterpolator(OvershootInterpolator())
+//                slideAdapter.setDuration(500)
+                list!!.adapter = adapter
             }else{
                 emptyContainer!!.show()
             }

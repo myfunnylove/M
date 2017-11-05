@@ -183,5 +183,33 @@
             android:layout_height="45dp" />
     </LinearLayout>
     <include layout="@layout/res_error_connection_lay"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="16dp"
+        >
 
+        <TextView
+            style="@style/HeaderText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="@string/login_page_oferta"
+            />
+
+        <Button
+            android:id="@+id/offerta"
+            style="@style/HeaderText"
+            android:background="@android:color/transparent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/login_page_oferta_link"
+            android:textColor="@color/white"
+            />
+
+    </LinearLayout>
 </RelativeLayout>

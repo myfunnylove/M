@@ -127,8 +127,8 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
         manager = LinearLayoutManagerWithSmoothScroller(Base.get)
         postView!!.layoutManager = manager
-        postView!!.setHasFixedSize(true)
-        postView!!.itemAnimator = ScaleInBottomAnimator()
+//        postView!!.setHasFixedSize(true)
+//        postView!!.itemAnimator = ScaleInBottomAnimator()
         scroll = object : EndlessRecyclerViewScrollListener(manager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 log.d("PROFIL POSTLARI OXIRIGA KELDI ${manager!!.findLastVisibleItemPosition()}")
@@ -269,13 +269,13 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
         if (postAdapter == null){
             postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true,FOLLOW_TYPE,isClose)
-            var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
-            slideAdapter!!.setDuration(500)
-            slideAdapter.setFirstOnly(false)
+//            var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+//            slideAdapter!!.setDuration(500)
+//            slideAdapter.setFirstOnly(false)
 
             postView!!.visibility = View.VISIBLE
-            postView!!.adapter = slideAdapter
-            slideAdapter = null
+            postView!!.adapter = postAdapter
+//            slideAdapter = null
         }else{
             postAdapter!!.updateFirstItem(userInfo)
         }
@@ -321,15 +321,15 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true, FOLLOW_TYPE)
-                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
-
-
-                slideAdapter!!.setFirstOnly(false)
-
-                slideAdapter.setInterpolator(OvershootInterpolator())
-                slideAdapter.setDuration(500)
-                postView!!.adapter = slideAdapter
-                slideAdapter = null
+//                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+//
+//
+//                slideAdapter!!.setFirstOnly(false)
+//
+//                slideAdapter.setInterpolator(OvershootInterpolator())
+//                slideAdapter.setDuration(500)
+                postView!!.adapter = postAdapter
+//                slideAdapter = null
 
             }
 
@@ -340,15 +340,15 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
 
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,null,userInfo,true, FOLLOW_TYPE)
-                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
-
-
-                slideAdapter!!.setFirstOnly(false)
-
-                slideAdapter.setInterpolator(OvershootInterpolator())
-                slideAdapter.setDuration(500)
-                postView!!.adapter = slideAdapter
-                slideAdapter = null
+//                var slideAdapter: ScaleInAnimationAdapter? = ScaleInAnimationAdapter(postAdapter)
+//
+//
+//                slideAdapter!!.setFirstOnly(false)
+//
+//                slideAdapter.setInterpolator(OvershootInterpolator())
+//                slideAdapter.setDuration(500)
+                postView!!.adapter = postAdapter
+//                slideAdapter = null
             }else if((FollowActivity.end == 10 && FollowActivity.start != 0) && postAdapter != null){
                 log.d("postni oxirgi 20 ta elementi keldi")
                 postAdapter!!.swapLast20Item(postList)
@@ -410,6 +410,7 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         MainActivity.musicSubject!!.unsubscribe(this)
         log.d("profileFragmentDestroy")
         log.d("free memory before ${Runtime.getRuntime().freeMemory()}")
+        postAdapter!!.cachedLists.clear()
         postAdapter!!.feeds.posts.clear()
         postAdapter!!.FOLLOW_TYPE = null
         postAdapter!!.activity    = null
@@ -431,7 +432,6 @@ class ProfileFragment : BaseFragment() , View.OnClickListener,AdapterClicker,Mus
         manager                   = null
         userInfo                  = null
         postAdapter               = null
-
         log.d("free memory after ${Runtime.getRuntime().freeMemory()}")
 
         super.onDestroy()

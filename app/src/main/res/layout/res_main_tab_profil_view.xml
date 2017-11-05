@@ -29,6 +29,7 @@
             android:id="@+id/badge"
             android:layout_width="18dp"
             android:layout_height="18dp"
+
             android:layout_alignParentRight="true"
             android:background="@drawable/button_bg"
             android:padding="3dp"

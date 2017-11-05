@@ -1,6 +1,7 @@
 package locidnet.com.marvarid.ui.activity
 
 import android.content.*
+import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.support.graphics.drawable.VectorDrawableCompat
@@ -16,6 +17,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_post.*
 import locidnet.com.marvarid.R
@@ -90,7 +95,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
     private var images        by Delegates.notNull<RecyclerView>()
     private var audios        by Delegates.notNull<RecyclerView>()
-    private var avatar        by Delegates.notNull<AppCompatImageView>()
+    private var avatar        by Delegates.notNull<SimpleDraweeView>()
     private var name          by Delegates.notNull<TextView>()
     private var quote         by Delegates.notNull<ExpandableTextView>()
     private var quoteEdit     by Delegates.notNull<EditText>()
@@ -261,11 +266,20 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
         quoteEdit.visibility = View.GONE
         quoteEdit.clearComposingText()
         sendChange.visibility = View.GONE
+        avatar.post{
 
-        Glide.with(this)
-                .load(Functions.checkImageUrl(post.user.photo))
-                .apply(Functions.getGlideOpts())
-                .into(avatar)
+            avatar.controller = Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(
+                            ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(post.user.photo)))
+                                    .setResizeOptions(ResizeOptions(100,100))
+                                    .build())
+                    .setOldController(avatar.controller)
+                    .setAutoPlayAnimations(true)
+
+                    .build()
+
+        }
+
         quote.tag = post.id
 
         username.text = post.user.username
@@ -528,8 +542,11 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
     private fun initViews(){
         images       = findViewById<RecyclerView>(R.id.images)
         audios       = findViewById<RecyclerView>(R.id.audios)
-        avatar       = findViewById<AppCompatImageView>(R.id.avatar)
+        avatar       = findViewById<SimpleDraweeView>(R.id.avatar)
+        avatar.hierarchy = Functions.getAvatarHierarchy()
+
         name         = findViewById<TextView>(R.id.name)
+
         quote        = findViewById<ExpandableTextView>(R.id.expand_text_view)
         quoteEdit    = findViewById<EditText>(R.id.commentEditText)
         likeCount    = findViewById<TextSwitcher>(R.id.likeCount)
@@ -597,7 +614,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
     }
     override fun playPause(id: String) {
-        adapter!!.notifyDataSetChanged()
+       if(adapter != null)adapter!!.notifyDataSetChanged()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

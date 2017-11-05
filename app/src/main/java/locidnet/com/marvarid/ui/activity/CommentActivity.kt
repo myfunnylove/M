@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -30,6 +31,9 @@ import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.connectors.SignalListener
 import locidnet.com.marvarid.di.DaggerMVPComponent
@@ -288,10 +292,21 @@ class CommentActivity :BaseActivity(),Viewer,AdapterClicker{
         choosedCommId = commentAdapter!!.comments.get(position).commentId.toInt()
         replyLay.visibility = View.VISIBLE
         replyUsername.text = commentAdapter!!.comments.get(position).username
-        Glide.with(this)
-                .load(Functions.checkImageUrl(commentAdapter!!.comments.get(position).avatar))
-                .apply(Functions.getGlideOpts())
-                .into(replyAvatar)
+        replyAvatar.post{
+
+            replyAvatar.controller = Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(
+                            ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(commentAdapter!!.comments.get(position).avatar)))
+                                    .setResizeOptions(ResizeOptions(200,200))
+
+                                    .build())
+                    .setOldController(replyAvatar.controller)
+                    .setAutoPlayAnimations(true)
+
+                    .build()
+
+        }
+
         commentText.requestFocus()
 
     }

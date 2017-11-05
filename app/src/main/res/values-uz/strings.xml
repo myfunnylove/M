@@ -140,4 +140,7 @@
     <string name="filter_by_size">Hajmi bo\'yicha</string>
     <string name="filter_by_name">Nomi bo\'yicha</string>
     <string name="filter_by_date">Sanasi bo\'yicha</string>
+    <string name="offer">Оферта</string>
+    <string name="login_page_oferta">Bu dasturdan foydalanib, Siz quyidagi shartlariga rozilik bildirgan xisoblanasiz!</string>
+    <string name="login_page_oferta_link">Offerta</string>
 </resources>

@@ -3,7 +3,10 @@ package locidnet.com.marvarid.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Handler
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
@@ -12,16 +15,30 @@ import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
+import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.google.gson.Gson
 import com.nineoldandroids.animation.AnimatorSet
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 import org.json.JSONObject
 import locidnet.com.marvarid.R
+import locidnet.com.marvarid.R.string.post
+import locidnet.com.marvarid.adapter.optimize.*
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.AdapterClicker
@@ -43,8 +60,10 @@ import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.properties.Delegates
@@ -65,42 +84,27 @@ class MyFeedAdapter(context: FragmentActivity,
     var feeds                 = feedsMap
     var inflater              = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     var clicker               = adapterClicker
-    private val like                  = R.drawable.like_select
-    private val unLike                = R.drawable.like
+
     val model                 = Model()
     private val pOrF                  = profilOrFeed
     var user                  = Base.get.prefs.getUser()
     private var lastAnimationPosition = -1
     var activity:FragmentActivity?    = context
-    private var disableAnimation      = false
-    var changeId              = -1
     val player                = musicPlayerListener
     private val TYPE_POST             = 0
     private val TYPE_AD               = 1
-
+    val viewPool  = RecyclerView.RecycledViewPool()
+    var cachedTexts:ArrayList<String> = ArrayList()
     companion object {
+        var changeId              = -1
+        private var disableAnimation      = false
 
         val ANIMATED_ITEM_COUNT        = 0
         val likeAnimations             = HashMap<RecyclerView.ViewHolder,AnimatorSet>()
     }
 
 
-//    private fun View.runEnterAnimation(position:Int){
-//        if(disableAnimation || position < lastAnimationPosition){
-//            return
-//        }
-//
-//
-//        if (position > ANIMATED_ITEM_COUNT){
-//            lastAnimationPosition = position
-//            this.translationY =Functions.getScreenHeight(ctx).toFloat()
-//            this.animate()
-//                    .translationY(0f)
-//                    .setInterpolator(DecelerateInterpolator(3f))
-//                    .setDuration(700)
-//                    .start()
-//        }
-//    }
+
 
     override fun getItemCount(): Int = feeds.posts.size
 
@@ -110,19 +114,51 @@ class MyFeedAdapter(context: FragmentActivity,
     override fun getItemViewType(position: Int): Int =
             if(feeds.posts[position].type == "ad") TYPE_AD else TYPE_POST
 
-    override fun onCreateViewHolder(p0: ViewGroup?, viewType: Int): RecyclerView.ViewHolder =
-            when (viewType) {
-                TYPE_POST -> Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
-                TYPE_AD -> Holder(inflater.inflate(R.layout.res_feed_block_ad, p0!!, false))
-                else -> Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
-            }
+    override fun onCreateViewHolder(p0: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
+        val holder = Holder(inflater.inflate(R.layout.res_feed_block_image, p0!!, false))
+        holder.images.recycledViewPool = viewPool
+        holder.audios.recycledViewPool = viewPool
+        holder.likeLay.setOnClickListener(LikeListenClass(feeds,holder,model))
+        holder.sendChange.setOnClickListener {
+
+            val quote:Quote = feeds.posts.get(holder.adapterPosition).quote
+            quote.text = holder.quoteEdit.text.toString()
+
+            val js =  JS.get()
+            js.put("post_id",feeds.posts.get(holder.adapterPosition).id)
+            js.put("quote", JSONObject(Gson().toJson(quote)))
+//                  js.put("user_id", profile.userId )
+//                  js.put("session", profile.session)
+            log.d ("changequote send data $js")
+
+            model.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST)).enqueue(SendChangePost(feeds,holder,this))
+        }
+
+
+        holder.commentLay.setOnClickListener(CommentClass(ctx,feeds,holder))
+        holder.avatar.setOnClickListener{
+            if (!pOrF) clicker.click(holder.adapterPosition)
+
+        }
+        holder.topContainer.setOnClickListener {
+
+            if (!pOrF) clicker.click(holder.adapterPosition)
+
+        }
+
+
+        holder.popup.setOnClickListener(PopupClass(ctx,holder,feeds,this,model))
+        return holder
+    }
+
+
+
 
     @SuppressLint("SimpleDateFormat")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, @SuppressLint("RecyclerView") i: Int) {
 
         val type = getItemViewType(i)
         if (type == TYPE_POST){
-            holder!!.itemView
 
             val h = holder as Holder
             val post = feeds.posts[i]
@@ -143,9 +179,9 @@ class MyFeedAdapter(context: FragmentActivity,
 
 
             val icon = if (post.like == "0")
-                VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme)
+                VectorDrawableCompat.create(Base.get.resources, R.drawable.like, h.likeIcon.context.theme)
             else
-                VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme)
+                VectorDrawableCompat.create(Base.get.resources, R.drawable.like_select, h.likeIcon.context.theme)
 
             h.likeIcon.setImageDrawable(icon)
 
@@ -168,46 +204,7 @@ class MyFeedAdapter(context: FragmentActivity,
                 h.quoteEdit.visibility  = View.VISIBLE
                 h.quoteEdit.setText(post.quote.text)
                 h.sendChange.visibility = View.VISIBLE
-                h.sendChange.setOnClickListener {
 
-                    val quote:Quote = post.quote
-                    quote.text = h.quoteEdit.text.toString()
-
-                    val js =  JS.get()
-                    js.put("post_id",post.id)
-                    js.put("quote", JSONObject(Gson().toJson(quote)))
-//                  js.put("user_id", profile.userId )
-//                  js.put("session", profile.session)
-                    log.d ("changequote send data $js")
-
-                    model.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
-                            .enqueue(object : Callback<ResponseData>{
-                                override fun onResponse(p0: Call<ResponseData>?, response: Response<ResponseData>?) {
-                                    try{
-                                        log.d("result change quote success $response")
-                                        log.d("result change quote success ${response!!.body()}")
-                                        log.d("result after changed ${feeds.posts[changeId]}")
-                                        if (response.body()!!.res == "0"){
-                                            feeds.posts[changeId].quote.text = h.quoteEdit.text.toString()
-                                            val newChange = changeId
-                                            changeId = -1
-                                            notifyItemChanged(newChange)
-                                            MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
-
-                                        }
-                                    }catch (e :Exception){
-
-                                    }
-
-                                }
-
-                                override fun onFailure(p0: Call<ResponseData>?, p1: Throwable?) {
-
-                                    log.d("result change quote failer $p1")
-                                }
-
-                            })
-                }
             }else{
 
                 h.quote.visibility     = View.VISIBLE
@@ -215,36 +212,19 @@ class MyFeedAdapter(context: FragmentActivity,
                 h.quoteEdit.clearComposingText()
                 h.sendChange.visibility = View.GONE
                 h.quote.text           = post.quote.text
+                if (cachedTexts.indexOf(post.quote.text) == -1) {
 
-                val hashTag = HashTagHelper.Creator.create(
-                        Base.get.resources.getColor(R.color.hashtag),
-                        object : HashTagHelper.OnHashTagClickListener{
-                            override fun onHashTagClicked(hashTag: String?) {
+                    log.d("MY OPTIMIZATION nocached")
+                    cachedTexts.add(post.quote.text)
+                    h.initHashtag(ctx)
+                }
 
-                                var intent:Intent? = Intent(ctx,SearchByTagActivity::class.java)
-                                intent!!.putExtra("tag",hashTag!!)
-                                ctx.startActivity(intent)
-                                intent = null
-                            }
-                            override fun onLoginClicked(login: String?) {
-
-                                var intent:Intent? = Intent(ctx,SearchActivity::class.java)
-                                intent!!.putExtra("login",login!!)
-                                ctx.startActivity(intent)
-                                intent = null
-                            }
-
-                        })
-
-                hashTag.handle(h.quote.getmTv())
-                log.d("HASHTAH getallhashtags ${hashTag.getAllHashTags(true)} ")
             }
 
 
-            Glide.with(ctx)
-                    .load(Functions.checkImageUrl(post.user.photo))
-                    .apply(Functions.getGlideOpts())
-                    .into(h.avatar)
+            h.showAvatar(Functions.checkImageUrl(post.user.photo))
+
+
 
 
             if (h.quote.tag == null || h.quote.tag != post.id) {
@@ -252,16 +232,7 @@ class MyFeedAdapter(context: FragmentActivity,
                 h.quote.tag = post.id
 
                 h.username.text = post.user.username
-                //TODO
 
-//                if (!post.user..isNullOrEmpty()){
-//                    h.name.visibility = View.VISIBLE
-//                    h.name.text = userInfo!!.user.info.name
-//
-//                }else{
-//                    h.name.visibility = View.GONE
-//
-//                }
                 val prettyTime = PrettyTime()
                 val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 val date2 = formatter.parse(post.time) as Date
@@ -291,101 +262,17 @@ class MyFeedAdapter(context: FragmentActivity,
                 if (post.images.size > 0) {
 
 
-                    h.images.visibility = View.VISIBLE
-
-                    val span: Int = if ((post.images.size > 1)) {
-                        if (post.images.size == 2) {
-                            2
-                        } else {
-                            (post.images.size - 1)
-                        }
-                    } else {
-                        1
-                    }
-
-                    val manager = CustomManager(ctx, span)
-                    val adapter = PostPhotoGridAdapter(ctx, post.images)
-
-                    manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(i: Int): Int {
-                            return if (i == 0) {
-                                if (post.images.size == 2)
-                                    1
-                                else
-                                    (manager.spanCount)
-                            } else 1
-                        }
-
-                    }
-
-                    h.images.layoutManager = manager
-                    h.images.setHasFixedSize(true)
-                    h.images.adapter = adapter
 
 
 
+                    h.initPhotoAdapter(post,ctx)
 
                 } else {
                     h.images.visibility = View.GONE
                 }
 
                 if (post.audios.size > 0) {
-                    h.audios.visibility = View.VISIBLE
-
-                    val span = 1
-
-
-                    val manager = CustomManager(ctx, span)
-                    post.audios.forEach {
-                        audio ->
-                        audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
-
-                    }
-                    val adapter = PostAudioGridAdapter(ctx, post.audios,object :MusicPlayerListener{
-                        override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-                                player.playClick(listSong,position)
-
-
-                                if (FeedFragment.playedSongPosition != -1 ){
-                                    log.d("position $i => ${FeedFragment.playedSongPosition} $position")
-
-                                    try{
-                                        FeedFragment.cachedSongAdapters!![FeedFragment.playedSongPosition]!!.notifyDataSetChanged()
-                                    }catch (e:Exception){}
-
-                                    FeedFragment.cachedSongAdapters!![i]!!.notifyDataSetChanged()
-
-                                }else{
-                                    FeedFragment.cachedSongAdapters!![i]!!.notifyDataSetChanged()
-
-                                }
-
-                                FeedFragment.playedSongPosition = i
-
-                        }
-
-                    },model)
-                    if (FeedFragment.cachedSongAdapters != null){
-                        FeedFragment.cachedSongAdapters!!.put(i,adapter)
-                    }else{
-                        FeedFragment.cachedSongAdapters = HashMap()
-                        FeedFragment.cachedSongAdapters!!.put(i,adapter)
-                    }
-//            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
-//                override fun getSpanSize(i: Int): Int {
-//                    if (i == 0){
-//                        if (post.images.size == 2)
-//                            return 1
-//                        else
-//                            return (manager.spanCount)
-//                    } else return 1
-//                }
-//
-//            }
-
-                    h.audios.layoutManager = manager
-                    h.audios.setHasFixedSize(true)
-                    h.audios.adapter = adapter
+                    h.initAudioAdapter(post,player,model,ctx)
 
                 } else {
                     h.line.visibility = View.GONE
@@ -393,201 +280,12 @@ class MyFeedAdapter(context: FragmentActivity,
                 }
 
 
-                h.likeLay.setOnClickListener {
-                    if (feeds.posts[i].like == "0") {
-
-                        feeds.posts[i].like = "1"
-                        feeds.posts[i].likes = (feeds.posts[i].likes.toInt() + 1).toString()
-                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme))
-                    } else {
-                        feeds.posts[i].likes = (feeds.posts[i].likes.toInt() - 1).toString()
-
-                        feeds.posts[i].like = "0"
-                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme))
-
-                    }
-
-
-                    disableAnimation = true
-//                    notifyDataSetChanged()
-
-
-
-                    holder.updateLikesCounter(true)
 
 
 
 
-                    val reqObj = JS.get()
-
-                    reqObj.put("post_id", post.id)
-
-                    log.d("request data $reqObj")
-
-                    model.responseCall(Http.getRequestData(reqObj, Http.CMDS.LIKE_BOSISH))
-                            .enqueue(object : retrofit2.Callback<ResponseData> {
-                                override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
-                                    log.d("follow on fail $t")
-                                }
-
-                                override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
-//                                    if (response!!.isSuccessful) {
-//                                        log.d("like on response $response")
-//                                        log.d("like on response ${response.body()!!.res}")
-//                                        log.d("like on response ${Http.getResponseData(response.body()!!.prms)}")
-//
-//
-//                                        try {
-//
-//                                            val req = JSONObject(Http.getResponseData(response.body()!!.prms))
-//                                            if (req.has("likes")) {
-//                                                feeds.posts.get(i).likes = req.optString("likes")
-//                                                if (feeds.posts.get(i).like == "0") {
-//
-//                                                    feeds.posts.get(i).like = "1"
-//
-//                                                } else {
-//
-//                                                    feeds.posts.get(i).like = "0"
-//
-//                                                }
-//                                                log.d("on refresh ${h.quote.tag == null} ${h.quote.tag != post.id} post ${post.id}")
-//                                                disableAnimation = true
-//                                                notifyDataSetChanged()
-//                                            }
-//                                        } catch (e: Exception) {
-//
-//                                        }
-//                                    } else {
-//                                        Toast.makeText(Base.get, Base.get.resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
-//                                    }
-
-                                }
-
-                            })
-                }
-
-                h.commentLay.setOnClickListener {
-                    val goCommentActivity = Intent(ctx, CommentActivity::class.java)
-                    goCommentActivity.putExtra("postId", post.id.toInt())
-                    goCommentActivity.putExtra("postUsername",post.user.username)
-                    goCommentActivity.putExtra("postUserPhoto",post.user.photo)
-                    goCommentActivity.putExtra("postQuoteText",post.quote.text)
-                    goCommentActivity.putExtra("postQuoteColor",post.quote.textColor)
-                    goCommentActivity.putExtra("postQuoteSize",post.quote.textSize)
-
-                    val startingLocation = IntArray(2)
-                    h.commentLay.getLocationOnScreen(startingLocation)
-                    goCommentActivity.putExtra(CommentActivity.LOCATION, startingLocation[1])
-                    if (activity != null){
-                        MainActivity.COMMENT_POST_UPDATE = holder.adapterPosition
-                        activity!!.startActivityForResult(goCommentActivity,Const.GO_COMMENT_ACTIVITY)
-                        activity!!.overridePendingTransition(0, 0)
-                    }else{
-                        ctx.startActivity(goCommentActivity)
-                    }
-                }
-                h.avatar.setOnClickListener{
-                    if (!pOrF) clicker.click(i)
-
-                }
-                h.topContainer.setOnClickListener {
-
-                    if (!pOrF) clicker.click(i)
-
-                }
 
 
-                h.popup.setOnClickListener {
-                    val popup = PopupMenu(ctx, h.popup)
-                    if (user.userId != post.user.userId) {
-
-                        popup.inflate(R.menu.menu_feed)
-                    } else {
-                        popup.inflate(R.menu.menu_own_feed)
-
-                    }
-                    popup.show()
-                    popup.setOnMenuItemClickListener { item ->
-                        when (item.itemId) {
-                            R.id.delete -> {
-                                val reqObj = JS.get()
-
-                                reqObj.put("post_id", post.id)
-
-                                log.d("request data for delete post $reqObj")
-
-                                model.responseCall(Http.getRequestData(reqObj, Http.CMDS.DELETE_POST)).enqueue(object : Callback<ResponseData> {
-                                    override fun onResponse(p0: Call<ResponseData>?, p1: Response<ResponseData>?) {
-                                        try {
-
-
-                                            feeds.posts.removeAt(holder.adapterPosition)
-                                            MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
-                                            MainActivity.MY_POSTS_STATUS = MainActivity.NEED_UPDATE
-                                            MainActivity.startFeed = 0
-                                            MainActivity.endFeed = 10
-                                            MainActivity.start = 0
-                                            MainActivity.end = 10
-                                            notifyItemRemoved(holder.adapterPosition)
-                                            notifyItemRangeChanged(holder.adapterPosition, feeds.posts.size)
-                                            notifyItemChanged(0)
-
-                                            log.d("onresponse from delete post $p1")
-                                        } catch (e: Exception) {
-
-                                        }
-                                    }
-
-                                    override fun onFailure(p0: Call<ResponseData>?, p1: Throwable?) {
-                                        log.d("onfail from delete post $p1")
-                                    }
-
-                                })
-                            }
-
-                            R.id.change -> {
-
-                                if (changeId == -1) {
-                                    changeId = holder.adapterPosition
-                                    notifyItemChanged(holder.adapterPosition)
-                                }
-                            }
-
-                            R.id.report -> {
-
-                                val dialog = ComplaintsFragment.instance()
-
-                                dialog.setDialogClickListener(object : ComplaintsFragment.DialogClickListener {
-                                    override fun click(whichButton: Int) {
-                                        val js = JS.get()
-                                        js.put("type", whichButton)
-                                        js.put("post", post.id)
-
-                                        model.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
-                                                .enqueue(object : retrofit2.Callback<ResponseData> {
-                                                    override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
-                                                        log.e("complaint fail $t")
-
-                                                    }
-
-                                                    override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
-
-                                                        log.d("complaint fail ${response!!.body()}")
-                                                        Toast.makeText(ctx, ctx.resources.getString(R.string.thank_data_sent), Toast.LENGTH_SHORT).show()
-                                                    }
-
-                                                })
-                                        dialog.dismiss()
-                                    }
-                                })
-                                dialog.show(activity!!.supportFragmentManager, "TAG")
-
-                            }
-                        }
-                        false
-                    }
-                }
 
             }
         }
@@ -620,7 +318,7 @@ class MyFeedAdapter(context: FragmentActivity,
         var images        by Delegates.notNull<RecyclerView>()
         var line          by Delegates.notNull<View>()
         var audios        by Delegates.notNull<RecyclerView>()
-        var avatar        by Delegates.notNull<AppCompatImageView>()
+        var avatar        by Delegates.notNull<SimpleDraweeView>()
         var name          by Delegates.notNull<TextView>()
         var quote         by Delegates.notNull<ExpandableTextView>()
         var quoteEdit     by Delegates.notNull<EditText>()
@@ -638,7 +336,8 @@ class MyFeedAdapter(context: FragmentActivity,
             images       = itemView.findViewById<RecyclerView>(R.id.images)
             line         = itemView.findViewById<View>(R.id.line)
             audios       = itemView.findViewById<RecyclerView>(R.id.audios)
-            avatar       = itemView.findViewById<AppCompatImageView>(R.id.avatar)
+            avatar       = itemView.findViewById<SimpleDraweeView>(R.id.avatar)
+            avatar.hierarchy = Functions.getAvatarHierarchy()
             name         = itemView.findViewById<TextView>(R.id.name)
             quote        = itemView.findViewById<ExpandableTextView>(R.id.expand_text_view)
             quoteEdit    = itemView.findViewById<EditText>(R.id.commentEditText)
@@ -679,20 +378,134 @@ class MyFeedAdapter(context: FragmentActivity,
                     .setListener(listener)
                     .start();
         }
-    }
 
 
+        fun showAvatar(url:String?){
+            avatar.post{
+
+                avatar.controller = Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(
+                                ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
+                                        .setResizeOptions(ResizeOptions(100,100))
+                                        .build())
+                        .setOldController(avatar.controller)
+                        .setAutoPlayAnimations(true)
+
+                        .build()
+
+            }
+        }
+
+        fun initPhotoAdapter(post:Posts,ctx:FragmentActivity) {
+            images.visibility = View.VISIBLE
+            val span: Int = if ((post.images.size > 1)) {
+                if (post.images.size == 2) {
+                    2
+                } else {
+                    (post.images.size - 1)
+                }
+            } else {
+                1
+            }
+
+            val manager = CustomManager(Base.get, span)
+            val adapter = PostPhotoGridAdapter(ctx, post.images)
+
+            manager.spanSizeLookup = SpanClass(post,manager)
+
+            images.layoutManager = manager
+            images.setHasFixedSize(true)
+            images.adapter = adapter
+        }
+
+        fun initAudioAdapter(post: Posts,player:MusicPlayerListener,model:Model,ctx:FragmentActivity) {
+            audios.visibility = View.VISIBLE
+
+            val span = 1
 
 
-    private fun Holder.updateLikesCounter(animated:Boolean){
-        val currentLikesCount  = feeds.posts[this.adapterPosition].likes.toInt()
-        if (animated){
-            this.likeCount.setText(currentLikesCount.toString())
-        }else{
-            this.likeCount.setCurrentText(currentLikesCount.toString())
+            val manager = CustomManager(Base.get, span)
+            post.audios.forEach {
+                audio ->
+                audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+
+            }
+            val adapter = PostAudioGridAdapter(ctx, post.audios,MusicPlayer(player,adapterPosition),model)
+            if (FeedFragment.cachedSongAdapters != null){
+                FeedFragment.cachedSongAdapters!!.put(adapterPosition,adapter)
+            }else{
+                FeedFragment.cachedSongAdapters = HashMap()
+                FeedFragment.cachedSongAdapters!!.put(adapterPosition,adapter)
+            }
+
+
+            audios.layoutManager = manager
+            audios.setHasFixedSize(true)
+            audios.adapter = adapter
         }
 
 
+        var hashTag:HashTagHelper? = null
+        fun initHashtag(ctx: FragmentActivity) {
+
+           if (quote.getmTv().text.contains("#") || quote.getmTv().text.contains("@")){
+               Observable.just(quote.getmTv())
+                       .subscribeOn(Schedulers.computation())
+                       .observeOn(AndroidSchedulers.mainThread())
+                       .subscribeWith(object :Observer<TextView>{
+                           override fun onNext(t: TextView) {
+                               hashTag = HashTagHelper.Creator.create(Base.get.resources.getColor(R.color.hashtag),HashtagGenerator(ctx))
+                               hashTag!!.handle(quote.getmTv())
+                           }
+
+                           override fun onComplete() {
+                           }
+
+                           override fun onError(e: Throwable) {
+                           }
+
+                           override fun onSubscribe(d: Disposable) {
+                           }
+
+                       })
+           }
+
+
+
+        }
     }
 
+
+
+
+
+
+
+class HashtagGenerator(context:FragmentActivity) : HashTagHelper.OnHashTagClickListener{
+        val ctx:WeakReference<FragmentActivity> = WeakReference<FragmentActivity>(context)
+        override fun onHashTagClicked(hashTag: String?) {
+
+          if (ctx.get() != null){
+              var intent:Intent? = Intent(ctx.get()!!,SearchByTagActivity::class.java)
+              intent!!.putExtra("tag",hashTag!!)
+              ctx.get()!!.startActivity(intent)
+              intent = null
+          }
+        }
+        override fun onLoginClicked(login: String?) {
+
+            var intent:Intent? = Intent(ctx.get()!!,SearchActivity::class.java)
+            intent!!.putExtra("login",login!!)
+            ctx.get()!!.startActivity(intent)
+            intent = null
+        }
+
+    }
+
+
+
+
 }
+
+
+

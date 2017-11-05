@@ -14,7 +14,7 @@
 
     >
 
-    <android.support.v7.widget.AppCompatImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/repliedAvatar"
         android:layout_width="30dp"
         android:layout_height="30dp"

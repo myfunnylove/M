@@ -3,6 +3,7 @@ package locidnet.com.marvarid.adapter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
@@ -21,12 +22,24 @@ import android.view.animation.OvershootInterpolator
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.postprocessors.IterativeBoxBlurPostProcessor
+import com.facebook.imagepipeline.request.ImageRequest
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.google.gson.Gson
 import com.nineoldandroids.animation.AnimatorSet
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 import org.json.JSONObject
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.R.string.feeds
+import locidnet.com.marvarid.adapter.optimize.*
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.connectors.AdapterClicker
@@ -70,7 +83,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                          closedProfil: Boolean = false
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var ctx: Context? = context
+    var ctx: FragmentActivity? = context
     var feeds = feedsMap
     var inflater: LayoutInflater? = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     var clicker: AdapterClicker? = adapterClicker
@@ -90,17 +103,14 @@ class ProfileFeedAdapter(context: FragmentActivity,
     var closedProfile = closedProfil
     var profileControl: ProfileMusicController? = profileController
     var callback:Call<ResponseData>? = null
-    var changeId = -1
+    val viewPool  = RecyclerView.RecycledViewPool()
+    var cachedTexts:ArrayList<String> = ArrayList()
 
-    val options: RequestOptions? = RequestOptions()
-            .circleCrop()
 
-            .fallback(ctx!!.resources.getDrawable(R.drawable.default_profile_photo_circle))
 
-            .error(VectorDrawableCompat.create(ctx!!.resources, R.drawable.account_select, ctx!!.theme))
 
-    //            .placeholder(ColorDrawable(Color.GRAY))
     companion object {
+        var changeId = -1
 
         val ANIMATED_ITEM_COUNT = 0
         val HEADER = 1
@@ -153,10 +163,41 @@ class ProfileFeedAdapter(context: FragmentActivity,
         if (viewType == HEADER) {
             return ProfileHeaderHolder(inflater!!.inflate(R.layout.user_profil_header, p0!!, false))
 
-        } else if (viewType == BODY) {
-            return Holder(inflater!!.inflate(R.layout.res_feed_block_image, p0!!, false))
         } else {
-            return Holder(inflater!!.inflate(R.layout.res_feed_block_image, p0!!, false))
+            val holder = Holder(inflater!!.inflate(R.layout.res_feed_block_image, p0!!, false))
+            holder.images.recycledViewPool = viewPool
+            holder.audios.recycledViewPool = viewPool
+            holder.likeLay.setOnClickListener(LikeListenClassProfile(feeds,holder,model!!))
+            holder.sendChange.setOnClickListener {
+
+                val quote:Quote = feeds.posts.get(holder.adapterPosition).quote
+                quote.text = holder.quoteEdit.text.toString()
+
+                val js =  JS.get()
+                js.put("post_id",feeds.posts.get(holder.adapterPosition).id)
+                js.put("quote", JSONObject(Gson().toJson(quote)))
+//                  js.put("user_id", profile.userId )
+//                  js.put("session", profile.session)
+                log.d ("changequote send data $js")
+
+                model!!.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST)).enqueue(SendChangePostProfile(feeds,holder,this))
+            }
+
+
+            holder.commentLay.setOnClickListener(CommentClassProfileAdapter(ctx!!,feeds,holder))
+            holder.avatar.setOnClickListener{
+                if (!pOrF) clicker!!.click(holder.adapterPosition)
+
+            }
+            holder.topContainer.setOnClickListener {
+
+                if (!pOrF) clicker!!.click(holder.adapterPosition)
+
+            }
+
+
+            holder.popup.setOnClickListener(PopupClassProfile(ctx!!,holder,feeds,this,model!!))
+            return holder
         }
 
     }
@@ -218,43 +259,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 h.quoteEdit.visibility = View.VISIBLE
                 h.quoteEdit.setText(post.quote.text)
                 h.sendChange.visibility = View.VISIBLE
-                h.sendChange.setOnClickListener {
 
-                    val quote:Quote = post.quote
-                    quote.text = h.quoteEdit.text.toString()
-
-                    val js = JS.get()
-                    js.put("post_id", post.id)
-                    js.put("quote", JSONObject(Gson().toJson(quote)))
-                    log.d("changequote send data $js")
-                    callback = model!!.responseCall(Http.getRequestData(js, Http.CMDS.CHANGE_POST))
-
-                    callback!!.enqueue(object :  Callback<ResponseData> {
-                        val h:WeakReference<Holder> = WeakReference<Holder>(holder)
-                        override fun onResponse(p0: Call<ResponseData>?, response: Response<ResponseData>?) {
-                            try {
-                                log.d("result change quote success $response")
-                                log.d("result change quote success ${response!!.body()}")
-                                log.d("result after changed ${feeds.posts.get(changeId)}")
-                                if (response.body()!!.res == "0") {
-                                    feeds.posts.get(changeId).quote.text = h.quoteEdit.text.toString()
-                                    val newChange = changeId
-                                    changeId = -1
-                                    notifyItemChanged(newChange)
-                                }
-                            } catch (e: Exception) {
-
-                            }
-
-                        }
-
-                        override fun onFailure(p0: Call<ResponseData>?, p1: Throwable?) {
-
-                            log.d("result change quote failer $p1")
-                        }
-
-                    })
-                }
             } else {
 
                 h.quote.visibility = View.VISIBLE
@@ -267,35 +272,18 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
                     h.quote.text = post.quote.text
 
-                    var hashTag = HashTagHelper.Creator.create(
-                            Base.get.resources.getColor(R.color.hashtag),
-                                    object : HashTagHelper.OnHashTagClickListener{
-                                        override fun onLoginClicked(login: String?) {
-                                            var intent:Intent? = Intent(ctx,SearchActivity::class.java)
-                                            intent!!.putExtra("login",login!!)
-                                            ctx!!.startActivity(intent)
-                                            intent = null
-                                        }
+                if (cachedTexts.indexOf(post.quote.text) == -1) {
 
-                                        override fun onHashTagClicked(hashTag: String?) {
-                                            var intent:Intent? = Intent(ctx,SearchByTagActivity::class.java)
-                                            intent!!.putExtra("tag",hashTag!!)
-                                            ctx!!.startActivity(intent)
-                                            intent = null
-                                        }
-
-                                    })
-                    hashTag.handle(h.quote.getmTv())
+                    log.d("MY OPTIMIZATION nocached")
+                    cachedTexts.add(post.quote.text)
+                    h.initHashtag(ctx!!)
+                }
 
 
             }
-            val url = Functions.checkImageUrl(post.user.photo)
 
-            Glide.with(ctx)
-                    .load(url)
+            h.showAvatar(Functions.checkImageUrl(post.user.photo))
 
-                    .apply(options!!)
-                    .into(h.avatar)
 
             if (h.quote.tag == null || h.quote.tag != post.id) {
 
@@ -340,133 +328,17 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 if (post.images.size > 0) {
 
 
-                    h.images.visibility = View.VISIBLE
+                    h.initPhotoAdapter(post,ctx!!)
 
-                    val span = if ((post.images.size > 1)) {
-                        if (post.images.size == 2) {
-                             2
-                        } else {
-                            (post.images.size - 1)
-                        }
-                    } else {
-                         1
-                    }
-
-                    val manager = CustomManager(ctx, span)
-                    var adapter:PostPhotoGridAdapter? = PostPhotoGridAdapter(ctx!!, post.images)
-
-                    manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(i: Int): Int {
-                            if (i == 0) {
-                                if (post.images.size == 2)
-                                    return 1
-                                else
-                                    return (manager.spanCount)
-                            } else return 1
-                        }
-
-                    }
-
-                    h.images.layoutManager = manager
-                    h.images.setHasFixedSize(true)
-                    h.images.adapter = adapter
-
-                    adapter = null
                 } else {
                     h.images.visibility = View.GONE
                 }
 
                 if (post.audios.size > 0) {
-                    h.audios.visibility = View.VISIBLE
 
-                    val span = 1
+                    h.initAudioAdapter(post,player!!,model!!,ctx!!,this,userInfo!!,myProfil)
 
 
-                    val manager = CustomManager(ctx, span)
-
-                    post.audios.forEach {
-                        audio ->
-                        log.d("audio before ")
-                        audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
-                        log.d("audio after ${audio.middlePath} ")
-
-                    }
-                    var adapter:PostAudioGridAdapter? = PostAudioGridAdapter(ctx!!, post.audios, object : MusicPlayerListener {
-                        override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-                                player!!.playClick(listSong, position)
-                        if (myProfil.userId == userInfo!!.user.info.user_id) {
-                            log.d("played song position ${MyProfileFragment.playedSongPosition != -1}")
-                            if (MyProfileFragment.playedSongPosition != -1) {
-                                log.d("position $i => ${MyProfileFragment.playedSongPosition} $position")
-
-                                try {
-                                    MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
-                                } catch (e: Exception) {
-                                    log.d("position $e")
-
-                                }
-                                MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
-                            } else {
-                                log.d("position $i => ${MyProfileFragment.cachedSongAdapters!!.get(i)} $position")
-                                MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
-                            }
-                            notifyItemChanged(0)
-                            MyProfileFragment.playedSongPosition = i
-                        }else{
-                            if (ProfileFragment.playedSongPosition != -1) {
-                                log.d("position $i => ${ProfileFragment.playedSongPosition} $position")
-
-                                try {
-                                    ProfileFragment.cachedSongAdapters!!.get(ProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
-                                } catch (e: Exception) {
-                                }
-                                ProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
-                            } else {
-                                log.d("position $i => ${ProfileFragment.cachedSongAdapters!!.get(i)} $position")
-                                ProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
-                            }
-//                            notifyItemChanged(0)
-                            ProfileFragment.playedSongPosition = i
-                        }
-                        }
-
-                    }, model!!)
-
-                    if (myProfil.userId == userInfo!!.user.info.user_id) {
-                        if (MyProfileFragment.cachedSongAdapters != null) {
-                            MyProfileFragment.cachedSongAdapters!!.put(i, adapter!!)
-                        } else {
-                            MyProfileFragment.cachedSongAdapters = HashMap()
-                            MyProfileFragment.cachedSongAdapters!!.put(i, adapter!!)
-                        }
-                    }else{
-                        if (ProfileFragment.cachedSongAdapters != null) {
-                            ProfileFragment.cachedSongAdapters!!.put(i, adapter!!)
-                        } else {
-                            ProfileFragment.cachedSongAdapters = HashMap()
-                            ProfileFragment.cachedSongAdapters!!.put(i, adapter!!)
-                        }
-                    }
-//            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
-//                override fun getSpanSize(i: Int): Int {
-//                    if (i == 0){
-//                        if (post.images.size == 2)
-//                            return 1
-//                        else
-//                            return (manager.spanCount)
-//                    } else return 1
-//                }
-//
-//            }
-
-                    h.audios.layoutManager = manager
-                    h.audios.setHasFixedSize(true)
-                    h.audios.adapter = adapter
-                    adapter = null
                 } else {
                     h.line.visibility = View.GONE
 
@@ -474,198 +346,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
                 }
 
 
-                h.likeLay.setOnClickListener {
-                    if (feeds.posts.get(i).like == "0") {
-
-                        feeds.posts.get(i).like = "1"
-                        feeds.posts.get(i).likes = (feeds.posts.get(i).likes.toInt() + 1).toString()
-                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, like, h.likeIcon.context.theme))
-                    } else {
-                        feeds.posts.get(i).likes = (feeds.posts.get(i).likes.toInt() - 1).toString()
-
-                        feeds.posts.get(i).like = "0"
-                        h.likeIcon.setImageDrawable(VectorDrawableCompat.create(Base.get.resources, unLike, h.likeIcon.context.theme))
-
-                    }
 
 
-                    disableAnimation = true
-//                    notifyDataSetChanged()
-
-
-                    holder.updateLikesCounter(true)
-
-
-                    val reqObj = JS.get()
-
-                    reqObj.put("post_id", post.id)
-
-                    log.d("request data $reqObj")
-                    callback =model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.LIKE_BOSISH))
-                    callback!!.enqueue(object : retrofit2.Callback<ResponseData> {
-                                override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
-                                    log.d("follow on fail $t")
-                                }
-
-                                override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
-//                                    if (response!!.isSuccessful) {
-//                                        log.d("like on response $response")
-//                                        log.d("like on response ${response.body()!!.res}")
-//                                        log.d("like on response ${Http.getResponseData(response.body()!!.prms)}")
-//
-//
-//                                        try {
-//
-//                                            val req = JSONObject(Http.getResponseData(response.body()!!.prms))
-//                                            if (req.has("likes")) {
-//                                                feeds.posts.get(i).likes = req.optString("likes")
-//                                                if (feeds.posts.get(i).like == "0") {
-//
-//                                                    feeds.posts.get(i).like = "1"
-//
-//                                                } else {
-//
-//                                                    feeds.posts.get(i).like = "0"
-//
-//                                                }
-//                                                log.d("on refresh ${h.quote.tag == null} ${h.quote.tag != post.id} post ${post.id}")
-//                                                disableAnimation = true
-//                                                notifyDataSetChanged()
-//                                            }
-//                                        } catch (e: Exception) {
-//
-//                                        }
-//                                    } else {
-//                                        Toast.makeText(Base.get, Base.get.resources.getString(R.string.internet_conn_error), Toast.LENGTH_SHORT).show()
-//                                    }
-
-                                }
-
-                            })
-
-                }
-
-                h.commentLay.setOnClickListener {
-                    val goCommentActivity = Intent(ctx, CommentActivity::class.java)
-                    goCommentActivity.putExtra("postId", post.id.toInt())
-                    goCommentActivity.putExtra("postUserPhoto",post.user.photo)
-
-                    goCommentActivity.putExtra("postUsername",post.user.username)
-                    goCommentActivity.putExtra("postQuoteText",post.quote.text)
-                    goCommentActivity.putExtra("postQuoteColor",post.quote.textColor)
-                    goCommentActivity.putExtra("postQuoteSize",post.quote.textSize)
-                    val startingLocation = IntArray(2)
-                    h.commentLay.getLocationOnScreen(startingLocation)
-                    goCommentActivity.putExtra(CommentActivity.LOCATION, startingLocation[1])
-                    if (activity != null) {
-                        MainActivity.COMMENT_POST_UPDATE = i
-                        activity!!.startActivityForResult(goCommentActivity, Const.GO_COMMENT_ACTIVITY)
-                        activity!!.overridePendingTransition(0, 0)
-                    } else {
-                        ctx!!.startActivity(goCommentActivity)
-                    }
-                }
-                h.avatar.setOnClickListener {
-                    if (!pOrF) clicker!!.click(i)
-
-                }
-                h.topContainer.setOnClickListener {
-
-                    if (!pOrF) clicker!!.click(i)
-
-                }
-
-
-                h.popup.setOnClickListener {
-
-                    val popup = PopupMenu(ctx, h.popup)
-                    if (pOrF == true && myProfil.userId == userInfo!!.user.info.user_id) {
-                        popup.inflate(R.menu.menu_own_feed)
-                    } else {
-                        popup.inflate(R.menu.menu_feed)
-                    }
-                    popup.setOnMenuItemClickListener { item ->
-                        when (item.itemId) {
-                            R.id.delete -> {
-
-                                val reqObj = JS.get()
-
-                                reqObj.put("post_id", post.id)
-
-                                log.d("request data for delete post $reqObj")
-                                callback = model!!.responseCall(Http.getRequestData(reqObj, Http.CMDS.DELETE_POST))
-                                callback!!.enqueue(object : Callback<ResponseData> {
-                                    override fun onResponse(p0: Call<ResponseData>?, p1: Response<ResponseData>?) {
-                                        try {
-
-
-                                            userInfo!!.user.count.postCount = "${userInfo!!.user.count.postCount.toInt() - 1}"
-                                            feeds.posts.removeAt(holder.adapterPosition)
-                                            MainActivity.FEED_STATUS = MainActivity.NEED_UPDATE
-                                            MainActivity.startFeed = 0
-                                            MainActivity.endFeed = 10
-                                            MainActivity.start = 0
-                                            MainActivity.end = 10
-                                            notifyItemRemoved(holder.adapterPosition)
-                                            notifyItemRangeChanged(holder.adapterPosition, feeds.posts.size)
-                                            notifyItemChanged(0)
-
-                                            log.d("onresponse from delete post $p1")
-                                        } catch (e: Exception) {
-
-                                        }
-                                    }
-
-                                    override fun onFailure(p0: Call<ResponseData>?, p1: Throwable?) {
-                                        log.d("onfail from delete post $p1")
-                                    }
-
-                                })
-                            }
-
-                            R.id.change -> {
-
-                                if (changeId == -1) {
-                                    changeId = h.adapterPosition
-                                    notifyItemChanged(h.adapterPosition)
-                                }
-                            }
-
-                            R.id.report -> {
-
-                                val dialog = ComplaintsFragment.instance()
-
-                                dialog.setDialogClickListener(object : ComplaintsFragment.DialogClickListener {
-                                    override fun click(whichButton: Int) {
-                                        val js = JS.get()
-                                        js.put("type", whichButton)
-                                        js.put("post", post.id)
-                                    callback = model!!.responseCall(Http.getRequestData(js, Http.CMDS.COMPLAINTS))
-                                    callback!!.enqueue(object : retrofit2.Callback<ResponseData> {
-                                                    override fun onFailure(call: Call<ResponseData>?, t: Throwable?) {
-                                                        log.e("complaint fail $t")
-
-                                                    }
-
-                                                    override fun onResponse(call: Call<ResponseData>?, response: Response<ResponseData>?) {
-
-                                                        log.d("complaint fail ${response!!.body()}")
-                                                        Toast.makeText(ctx, ctx!!.resources.getString(R.string.thank_data_sent), Toast.LENGTH_SHORT).show()
-                                                    }
-
-                                                })
-                                        dialog.dismiss()
-                                    }
-                                })
-                                dialog.show(activity!!.supportFragmentManager, "TAG")
-
-                            }
-                        }
-                        false
-                    }
-
-                    popup.show()
-                }
 
             }
 
@@ -732,18 +414,37 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
 
 
+            h.avatar.post{
 
-            Glide.with(ctx)
-                    .load(Functions.checkImageUrl(userInfo!!.user.info.photoOrg))
-                    .apply(Functions.getGlideOptsForAvatar())
-                    .into(h.avatar)
+                h.avatar.controller = Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(
+                                ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(userInfo!!.user.info.photoOrg)))
+                                        .setResizeOptions(ResizeOptions(200,200))
 
-            Glide.with(ctx)
-                    .load(Functions.checkImageUrl(userInfo!!.user.info.photoOrg))
+                                        .build())
+                        .setOldController(h.avatar.controller)
+                        .setAutoPlayAnimations(true)
 
-                    .apply(Functions.getGlideOptsBlur())
+                        .build()
 
-                    .into(h.bg)
+            }
+
+            h.bg.post{
+                h.bg.controller = Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(
+                                ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(userInfo!!.user.info.photoOrg)!!.replace(Const.IMAGE.TITLE, Prefs.Builder().imageRes())))
+//                                            .setResizeOptions(ResizeOptions(width,height))
+                                        .setCacheChoice(ImageRequest.CacheChoice.DEFAULT)
+                                        .setPostprocessor(IterativeBoxBlurPostProcessor(10))
+                                        .build())
+                        .setOldController(h.bg.controller)
+
+                        .setAutoPlayAnimations(true)
+                        .build()
+
+
+            }
+
 
             h.username.text = userInfo!!.user.info.username
             h.posts.text = userInfo!!.user.count.postCount
@@ -945,7 +646,9 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
         var line         by Delegates.notNull<View>()
         var audios       by Delegates.notNull<RecyclerView>()
-        var avatar       by Delegates.notNull<AppCompatImageView>()
+
+        var avatar       by Delegates.notNull<SimpleDraweeView>()
+
         var name         by Delegates.notNull<TextView>()
         var quote        by Delegates.notNull<ExpandableTextView>()
         var quoteEdit    by Delegates.notNull<EditText>()
@@ -964,7 +667,9 @@ class ProfileFeedAdapter(context: FragmentActivity,
             images       = itemView.findViewById<RecyclerView>(R.id.images)
             line         = itemView.findViewById<View>(R.id.line)
             audios       = itemView.findViewById<RecyclerView>(R.id.audios)
-            avatar       = itemView.findViewById<AppCompatImageView>(R.id.avatar)
+            avatar       = itemView.findViewById<SimpleDraweeView>(R.id.avatar)
+            avatar.hierarchy = Functions.getAvatarHierarchy()
+
             name         = itemView.findViewById<TextView>(R.id.name)
             quote        = itemView.findViewById<ExpandableTextView>(R.id.expand_text_view)
             quoteEdit    = itemView.findViewById<EditText>(R.id.commentEditText)
@@ -1006,6 +711,111 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     .setListener(listener)
                     .start();
         }
+
+        fun showAvatar(url:String?){
+            avatar.post{
+
+                avatar.controller = Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(
+                                ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
+                                        .setResizeOptions(ResizeOptions(100,100))
+                                        .build())
+                        .setOldController(avatar.controller)
+                        .setAutoPlayAnimations(true)
+
+                        .build()
+
+            }
+        }
+
+        fun initPhotoAdapter(post:Posts,ctx:FragmentActivity) {
+            images.visibility = View.VISIBLE
+            val span: Int = if ((post.images.size > 1)) {
+                if (post.images.size == 2) {
+                    2
+                } else {
+                    (post.images.size - 1)
+                }
+            } else {
+                1
+            }
+
+            val manager = CustomManager(Base.get, span)
+            val adapter = PostPhotoGridAdapter(ctx, post.images)
+
+            manager.spanSizeLookup = SpanClass(post,manager)
+
+            images.layoutManager = manager
+            images.setHasFixedSize(true)
+            images.adapter = adapter
+        }
+
+        fun initAudioAdapter(post: Posts,player:MusicPlayerListener,model:Model,ctx:FragmentActivity,recycler:RecyclerView.Adapter<RecyclerView.ViewHolder>,userInfo: UserInfo?,myProfil:User) {
+            audios.visibility = View.VISIBLE
+
+            val span = 1
+
+
+            val manager = CustomManager(Base.get, span)
+            post.audios.forEach {
+                audio ->
+                audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+
+            }
+            val adapter = PostAudioGridAdapter(ctx, post.audios, ProfileMusicPlayer(player,adapterPosition,recycler,userInfo),model)
+
+            if (myProfil.userId == userInfo!!.user.info.user_id) {
+                if (MyProfileFragment.cachedSongAdapters != null) {
+                    MyProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
+                } else {
+                    MyProfileFragment.cachedSongAdapters = HashMap()
+                    MyProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
+                }
+            }else{
+                if (ProfileFragment.cachedSongAdapters != null) {
+                    ProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
+                } else {
+                    ProfileFragment.cachedSongAdapters = HashMap()
+                    ProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
+                }
+            }
+
+
+            audios.layoutManager = manager
+            audios.setHasFixedSize(true)
+            audios.adapter = adapter
+
+        }
+
+
+        var hashTag:HashTagHelper? = null
+        fun initHashtag(ctx: FragmentActivity) {
+
+            if (quote.getmTv().text.contains("#") || quote.getmTv().text.contains("@")){
+                Observable.just(quote.getmTv())
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(object : Observer<TextView> {
+                            override fun onNext(t: TextView) {
+                                hashTag = HashTagHelper.Creator.create(Base.get.resources.getColor(R.color.hashtag), MyFeedAdapter.HashtagGenerator(ctx))
+                                hashTag!!.handle(quote.getmTv())
+                            }
+
+                            override fun onComplete() {
+                            }
+
+                            override fun onError(e: Throwable) {
+                            }
+
+                            override fun onSubscribe(d: Disposable) {
+                            }
+
+                        })
+            }
+
+
+
+        }
     }
 
 
@@ -1018,8 +828,8 @@ class ProfileFeedAdapter(context: FragmentActivity,
         val playlist = rootView.findViewById<AppCompatImageView>(R.id.playlist)
         val play = rootView.findViewById<AppCompatImageView>(R.id.play)
         val next = rootView.findViewById<AppCompatImageView>(R.id.next)
-        val avatar = rootView.findViewById<AppCompatImageView>(R.id.avatar)
-        val bg = rootView.findViewById<ImageView>(R.id.bg)
+        var avatar by Delegates.notNull<SimpleDraweeView>()
+        val bg = rootView.findViewById<SimpleDraweeView>(R.id.bg)
         val followers = rootView.findViewById<TextView>(R.id.followers)
         val following = rootView.findViewById<TextView>(R.id.following)
         val username = rootView.findViewById<TextView>(R.id.username)
@@ -1027,7 +837,12 @@ class ProfileFeedAdapter(context: FragmentActivity,
         val posts = rootView.findViewById<TextView>(R.id.posts)
         val follow = rootView.findViewById<Button>(R.id.follow)
         val progress = rootView.findViewById<ProgressBar>(R.id.progressUpdateAvatar)
+        init {
+            avatar  = rootView.findViewById<SimpleDraweeView>(R.id.avatar)
+            avatar.hierarchy = Functions.getAvatarHierarchy()
+            bg.hierarchy = Functions.getBackgroundOptions()
 
+        }
 
     }
 

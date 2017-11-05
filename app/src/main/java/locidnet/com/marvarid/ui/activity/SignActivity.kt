@@ -1,6 +1,8 @@
 package locidnet.com.marvarid.ui.activity
 
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.view.View
 import android.widget.Toast
 import locidnet.com.marvarid.R
@@ -41,6 +43,8 @@ class SignActivity : BaseActivity() ,Viewer{
 
         progressLay.visibility = View.VISIBLE
         disableAllElements()
+
+
     }
 
 
@@ -214,7 +218,21 @@ class SignActivity : BaseActivity() ,Viewer{
 
         }
 
+        offerta.setOnClickListener {
+            val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                resources.configuration.locales.get(0);
+            } else{
+                //noinspection deprecation
+                resources.configuration.locale;
+            }
+            var url = "http://marvarid.me/offer_en.html"
+            if (locale.language.equals("ru"))
+                url = "http://marvarid.me/offer_ru.html"
 
+            val browserIntent = Intent(Intent.ACTION_VIEW,
+                    Uri.parse(url))
+            startActivity(browserIntent)
+        }
     }
 
 

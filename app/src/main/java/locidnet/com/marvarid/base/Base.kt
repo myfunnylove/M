@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.graphics.Point
 import android.os.Environment
 import android.support.multidex.MultiDex
 import android.support.v7.app.AppCompatDelegate
+import android.view.WindowManager
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -21,7 +23,6 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.facebook.imagepipeline.decoder.SimpleProgressiveJpegConfig
 import com.facebook.imagepipeline.core.ImagePipelineConfig
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import locidnet.com.marvarid.PlayListRoom.AppDB
 import locidnet.com.marvarid.rest.API
 import locidnet.com.marvarid.di.DaggerAppComponent
@@ -36,7 +37,6 @@ import javax.inject.Inject
 
 
 class Base : Application (){
-
 
     @Inject
     lateinit var APIClient: API
@@ -74,7 +74,11 @@ class Base : Application (){
     override fun onCreate() {
         super.onCreate()
         MultiDex.install(this)
-
+        val manager = getApplicationContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        if (manager != null) {
+            val display = manager.getDefaultDisplay()
+            display.getSize(SCREEN_SIZE);
+        }
         get = this
         DaggerAppComponent
                 .builder()
@@ -89,8 +93,6 @@ class Base : Application (){
 
 
 
-        val conf = ImageLoaderConfiguration.Builder(context)
-                .build()
 
 
         vkAccessTokenTracker.startTracking()
@@ -123,6 +125,7 @@ class Base : Application (){
 
 
     companion object {
+        val SCREEN_SIZE = Point()
 
 
         @SuppressLint("StaticFieldLeak")

@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
@@ -13,6 +14,10 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.connectors.AdapterClicker
@@ -28,6 +33,7 @@ import org.ocpsoft.prettytime.PrettyTime
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.properties.Delegates
 
 class CommentReplyAdapter(context: Context, list: ArrayList<Comment>, val clicker: AdapterClicker) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -66,11 +72,21 @@ class CommentReplyAdapter(context: Context, list: ArrayList<Comment>, val clicke
             h.itemView.runEnterAnimation(i)
 
             val comment = comments.get(i)
+        h.avatar.post{
 
-            Glide.with(ctx)
-                    .load(Functions.checkImageUrl(comment.avatar))
-                    .apply(Functions.getGlideOpts())
-                    .into(h.avatar)
+            h.avatar.controller = Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(
+                            ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(comment.avatar)))
+                                    .setResizeOptions(ResizeOptions(100,100))
+                                    .build())
+                    .setOldController(h.avatar.controller)
+                    .setAutoPlayAnimations(true)
+
+                    .build()
+
+        }
+
+
 
             h.comment.text  = comment.comment.replace("\\n","\n")
             val hashTag = HashTagHelper.Creator.create(
@@ -152,11 +168,15 @@ class CommentReplyAdapter(context: Context, list: ArrayList<Comment>, val clicke
     override fun getItemCount(): Int = comments.size
 
     class Holder(view: View) : RecyclerView.ViewHolder(view){
-        val avatar    = view.findViewById<AppCompatImageView>(R.id.repliedAvatar)
+        var avatar by Delegates.notNull<SimpleDraweeView>()
         val username  = view.findViewById<TextView>(R.id.repliedUsername)
         val container = view.findViewById<ViewGroup>(R.id.repliedContainer)
         val comment   = view.findViewById<TextView>(R.id.repliedComment)
         val commentDate   = view.findViewById<TextView>(R.id.repliedDate)
+
+        init {
+            avatar    = view.findViewById<SimpleDraweeView>(R.id.repliedAvatar)
+        }
     }
 
 

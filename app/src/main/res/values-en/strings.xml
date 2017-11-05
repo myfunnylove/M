@@ -139,4 +139,8 @@
     <string name="filter_by_size">By size</string>
     <string name="filter_by_name">By name</string>
     <string name="filter_by_date">By date</string>
+    <string name="offer">Оферта</string>
+    <string name="login_page_oferta">Using the app, you agree to</string>
+    <string name="login_page_oferta_link">Offer</string>
+
 </resources>

@@ -1,15 +1,11 @@
 package locidnet.com.marvarid.resources.utils
 
-import android.Manifest
 import android.Manifest.*
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.database.Cursor
-import android.graphics.Bitmap
-import android.graphics.BlurMaskFilter
-import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
@@ -30,17 +26,14 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.MultiTransformation
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.Request
-import com.bumptech.glide.request.RequestOptions
-import io.reactivex.Observable
-import jp.wasabeef.glide.transformations.BlurTransformation
+import com.facebook.drawee.generic.GenericDraweeHierarchy
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
+import com.facebook.drawee.generic.RoundingParams
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.model.Song
 import locidnet.com.marvarid.model.UserInfo
+import locidnet.com.marvarid.resources.CircleProgressDrawable
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.ui.activity.FollowActivity
 import locidnet.com.marvarid.ui.fragment.ProfileFragment
@@ -384,9 +377,9 @@ object Functions {
 
     fun checkImageUrl(photo:String?):String? {
 
-        if (photo == null) return null
+        if (photo == null) return ""
 
-        if (photo.isNullOrEmpty())  return null
+        if (photo.isNullOrEmpty())  return ""
 
         if (photo.startsWith("http"))
             return photo
@@ -395,28 +388,51 @@ object Functions {
     }
 
 
-    fun getGlideOpts():RequestOptions{
-        return RequestOptions()
-                .circleCrop()
-                .fallback(Base.get.resources.getDrawable(R.drawable.default_profile_photo_circle))
-                .error(VectorDrawableCompat.create(Base.get.resources,R.drawable.account_select,Base.get.theme))
-//                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
+    fun getAvatarHierarchy(): GenericDraweeHierarchy {
+        return GenericDraweeHierarchyBuilder.newInstance(Base.get.resources)
+                .setFailureImage(Base.get.resources.getDrawable(R.drawable.default_profile_photo_circle))
+                .setPlaceholderImage(Base.get.resources.getDrawable(R.drawable.default_profile_photo_circle))
+                .setRoundingParams(getCicrleOptions())
+                .build()
+
     }
-    fun getGlideOptsForAvatar():RequestOptions{
-        return RequestOptions()
-                .circleCrop()
-                .fallback(Base.get.resources.getDrawable(R.drawable.default_profile_photo_circle))
-                .error(Base.get.resources.getDrawable(R.drawable.default_profile_photo_circle))
-//                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
+
+
+    fun getPostPhotoHierarchy():GenericDraweeHierarchy{
+        val  progressBarDrawable =  CircleProgressDrawable()
+
+            progressBarDrawable.setColor(Base.get.resources.getColor(R.color.material_grey_300))
+            progressBarDrawable.setBackgroundColor(Base.get.resources.getColor(R.color.material_grey_100))
+            progressBarDrawable
+                .setRadius(30);
+        return GenericDraweeHierarchyBuilder.newInstance(Base.get.resources)
+                .setProgressBarImage(progressBarDrawable)
+
+                .setFailureImage(VectorDrawableCompat.create(Base.get.resources, R.drawable.image, null))
+                .build()
+
+
     }
-    fun getGlideOptsBlur():RequestOptions{
-        return RequestOptions()
-                .circleCrop()
-                .transform(BlurTransformation(5))
-                .fallback(R.drawable.default_profile_photo)
-                .error(R.drawable.default_profile_photo)
-//                .placeholder(VectorDrawableCompat.create(Base.get.resources,R.drawable.account,Base.get.theme))
+
+
+    fun getBackgroundOptions():GenericDraweeHierarchy{
+        val  progressBarDrawable =  CircleProgressDrawable()
+
+        progressBarDrawable.setColor(Base.get.resources.getColor(R.color.material_grey_300))
+        progressBarDrawable.setBackgroundColor(Base.get.resources.getColor(R.color.material_grey_100))
+        progressBarDrawable
+                .setRadius(30);
+        return GenericDraweeHierarchyBuilder.newInstance(Base.get.resources)
+                .setProgressBarImage(progressBarDrawable)
+
+                .setFailureImage(Base.get.resources.getDrawable(R.drawable.default_profile_photo))
+                .build()
+
+
     }
+    fun getCicrleOptions(): RoundingParams = RoundingParams.asCircle()
+
+
     fun getDeviceName(): String? {
         val manufacturer = Build.MANUFACTURER
         val model = Build.MODEL

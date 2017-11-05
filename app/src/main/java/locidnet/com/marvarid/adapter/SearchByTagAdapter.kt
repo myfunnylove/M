@@ -3,6 +3,7 @@ package locidnet.com.marvarid.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
@@ -17,6 +18,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.google.gson.Gson
 import com.nineoldandroids.animation.AnimatorSet
 import locidnet.com.marvarid.R
@@ -228,12 +233,21 @@ class SearchByTagAdapter(context: FragmentActivity,
                         })
                 hashTag.handle(h.quote.getmTv())
             }
+            h.avatar.post{
+
+                h.avatar.controller = Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(
+                                ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(post.user.photo)))
+                                        .setResizeOptions(ResizeOptions(100,100))
+                                        .build())
+                        .setOldController(h.avatar.controller)
+                        .setAutoPlayAnimations(true)
+
+                        .build()
+
+            }
 
 
-            Glide.with(ctx)
-                    .load(Functions.checkImageUrl(post.user.photo))
-                    .apply(Functions.getGlideOpts())
-                    .into(h.avatar)
 
 
             if (h.quote.tag == null || h.quote.tag != post.id) {
@@ -610,7 +624,7 @@ class SearchByTagAdapter(context: FragmentActivity,
         var images        by Delegates.notNull<RecyclerView>()
         var line          by Delegates.notNull<View>()
         var audios        by Delegates.notNull<RecyclerView>()
-        var avatar        by Delegates.notNull<AppCompatImageView>()
+        var avatar        by Delegates.notNull<SimpleDraweeView>()
         var name          by Delegates.notNull<TextView>()
         var quote         by Delegates.notNull<ExpandableTextView>()
         var quoteEdit     by Delegates.notNull<EditText>()
@@ -628,7 +642,10 @@ class SearchByTagAdapter(context: FragmentActivity,
             images       = itemView.findViewById<RecyclerView>(R.id.images)
             line         = itemView.findViewById<View>(R.id.line)
             audios       = itemView.findViewById<RecyclerView>(R.id.audios)
-            avatar       = itemView.findViewById<AppCompatImageView>(R.id.avatar)
+            avatar       = itemView.findViewById<SimpleDraweeView>(R.id.avatar)
+            avatar.hierarchy = Functions.getAvatarHierarchy()
+
+
             name         = itemView.findViewById<TextView>(R.id.name)
             quote        = itemView.findViewById<ExpandableTextView>(R.id.expand_text_view)
             quoteEdit    = itemView.findViewById<EditText>(R.id.commentEditText)

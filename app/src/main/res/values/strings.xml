@@ -140,4 +140,7 @@
     <string name="filter_by_size">По размеру</string>
     <string name="filter_by_name">По названию</string>
     <string name="filter_by_date">По датам</string>
+    <string name="offer">Оферта</string>
+    <string name="login_page_oferta">Используя приложение, Вы соглашаетесь с</string>
+    <string name="login_page_oferta_link">Офертой</string>
 </resources>

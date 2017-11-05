@@ -2,9 +2,10 @@ package locidnet.com.marvarid.adapter
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.support.constraint.ConstraintLayout
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.percent.PercentFrameLayout
 import android.support.v7.widget.AppCompatImageView
@@ -13,23 +14,26 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.ImageViewTarget
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.drawable.ScalingUtils
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
+import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequest
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.rest.Http
 import locidnet.com.marvarid.model.Image
+import locidnet.com.marvarid.resources.AspectRatioImageView
 import locidnet.com.marvarid.resources.utils.*
 import locidnet.com.marvarid.resources.zoomimageview.ImageViewer
+import kotlin.properties.Delegates
 
 
 class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -48,6 +52,9 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
     private var h4 = 500
     val ONE = 1
     val MORE = 2
+    val SQUARE = 3
+    val ONE_UZUN  =4
+    val ONE_KALTA = 5
     //var cachedImages:ArrayList<Bitmap>? = null
     init {
         setHasStableIds(true)
@@ -160,16 +167,27 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                 }
 
 //                val reqbuilder = Glide.with(context).load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, "blur"))
-                Glide.with(context)
-
-                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.TITLE, Prefs.Builder().imageRes()))
-                        .thumbnail(0.1f)
-
-                        .apply(options!!.diskCacheStrategy(DiskCacheStrategy.RESOURCE))
-                        .into(h.photo)
 
 
 
+
+
+                val width = img.resolution.orig.substring(0,img.resolution.orig.indexOf(',')).toInt();
+                val height = img.resolution.orig.substring(img.resolution.orig.indexOf(',') + 1).toInt();
+                h.photo.post{
+                    h.photo.controller = Fresco.newDraweeControllerBuilder()
+                            .setImageRequest(
+                                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.TITLE, Prefs.Builder().imageRes())))
+//                                            .setResizeOptions(ResizeOptions(width,height))
+                                            .setCacheChoice(ImageRequest.CacheChoice.DEFAULT)
+
+                                            .build())
+                            .setOldController(h.photo.controller)
+                            .setAutoPlayAnimations(true)
+                            .build()
+
+
+                }
                 h.photo.setOnClickListener {
 
                     ImageViewer.Builder(context,images)
@@ -191,29 +209,22 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
                 val h = holder as OneHolder
 
 
-                h3 = img.height.toInt()
 
-                  val laParams = h.photo.layoutParams as PercentFrameLayout.LayoutParams
-                laParams.percentLayoutInfo.aspectRatio = img.width.toFloat() / img.height.toFloat()
-                h.photo.layoutParams = laParams
-//                val reqbuilder = Glide.with(context).load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.ORIGINAL, "blur"))
+                val width = img.resolution.orig.substring(0,img.resolution.orig.indexOf(',')).toInt();
+                val height = img.resolution.orig.substring(img.resolution.orig.indexOf(',') + 1).toInt();
+                h.photo.post {
+                    h.photo.controller = Fresco.newDraweeControllerBuilder()
 
+                            .setImageRequest(
+                                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.TITLE, Prefs.Builder().imageRes())))
+//                                            .setResizeOptions(ResizeOptions(width,height))
+                                            .setCacheChoice(ImageRequest.CacheChoice.DEFAULT)
+                                            .build())
+                            .setOldController(h.photo.controller)
+                            .setAutoPlayAnimations(true)
+                            .build()
 
-                Glide.with(context)
-
-                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.TITLE, Prefs.Builder().imageRes()))
-                        .thumbnail(0.1f)
-                        .apply(options!!.diskCacheStrategy(DiskCacheStrategy.RESOURCE))
-                        .into(h.photo)
-//                Base.get.picassoBuilder
-//
-//                        .load(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.LOW, Prefs.Builder().imageRes()))
-//                        .tag(context)
-////                        .placeholder(ColorDrawable(Color.WHITE))
-//                        .noFade()
-//                        .error(ColorDrawable(Color.WHITE))
-//
-//                        .into(h.photo)
+                }
 
 
 
@@ -296,32 +307,39 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
     }
 
     override fun getItemViewType(p1: Int): Int {
-        log.d("type is ${images[p1].width} ${images[p1].height} ${images.size}")
-      return if (images[p1].width != "0"
-              &&
-              images[p1].width.toInt() > images[p1].height.toInt()
-              &&
-              images.size == 1
+        val width = images[p1].resolution.orig.substring(0, images[p1].resolution.orig.indexOf(',')).toInt()
+        val height = images[p1].resolution.orig.substring(images[p1].resolution.orig.indexOf(',') + 1).toInt()
+        log.d("${Functions.checkImageUrl(images[p1].image)} resolution ${images[p1].resolution} ratio ${Math.abs(width / height)}")
 
-                     )
-          ONE
-      else
-          MORE
+        return if (images.size == 1)
+
+            ONE_KALTA
+        else
+            MORE
     }
-    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): RecyclerView.ViewHolder{
-        return if(p1 == ONE)
-              OneHolder(inflater.inflate(R.layout.res_post_photo_item_2,p0,false))
-              else
-              Holder(inflater.inflate(R.layout.res_post_photo_item,p0,false))
-              }
+    override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): RecyclerView.ViewHolder {
+
+        return if (p1 == ONE_KALTA)
+            OneHolder(inflater.inflate(R.layout.res_post_photo_item_uzun_width, p0, false))
+        else
+        Holder(inflater.inflate(R.layout.res_post_photo_item, p0, false))
+    }
     class Holder(view: View) : RecyclerView.ViewHolder(view) {
 
         var container:RelativeLayout = view.findViewById<RelativeLayout>(R.id.container)
-        var photo:AppCompatImageView = view.findViewById<AppCompatImageView>(R.id.photo)
+        var photo:SimpleDraweeView by Delegates.notNull<SimpleDraweeView>()
+        init {
+           photo = view.findViewById<SimpleDraweeView>(R.id.photo)
+            photo.hierarchy = Functions.getPostPhotoHierarchy()
+        }
     }
 
     class OneHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var container:PercentFrameLayout = view.findViewById<PercentFrameLayout>(R.id.container)
-        var photo:AppCompatImageView = view.findViewById<AppCompatImageView>(R.id.photo)
+//        var container:ConstraintLayout = view.findViewById<ConstraintLayout>(R.id.container)
+        var photo:AspectRatioImageView by Delegates.notNull<AspectRatioImageView>()
+        init {
+           photo =  view.findViewById<AspectRatioImageView>(R.id.photo)
+            photo.hierarchy = Functions.getPostPhotoHierarchy()
+        }
     }
 }

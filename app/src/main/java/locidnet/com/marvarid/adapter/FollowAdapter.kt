@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Typeface
+import android.net.Uri
 import android.support.v4.view.ViewCompat
 import android.support.v4.view.ViewPropertyAnimatorListener
 import android.support.v7.widget.AppCompatImageView
@@ -17,6 +18,10 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 
 import org.json.JSONObject
 import locidnet.com.marvarid.R
@@ -71,10 +76,20 @@ class FollowAdapter(context:Context,
 
 
 
-        Glide.with(ctx)
-                .load(Functions.checkImageUrl(user.photo150))
-                .apply(Functions.getGlideOpts())
-                .into(h.img)
+
+        h.img.post{
+
+            h.img.controller = Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(
+                            ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(user.photo150)))
+                                    .setResizeOptions(ResizeOptions(100,100))
+                                    .build())
+                    .setOldController(h.img.controller)
+                    .setAutoPlayAnimations(true)
+
+                    .build()
+
+        }
 
        if (which == 0 && user.userId != Base.get.prefs.getUser().userId){
            if(user.close == 1 && user.follow == 0 && user.request == 0){
@@ -234,14 +249,16 @@ class FollowAdapter(context:Context,
 
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) , AnimateViewHolder {
 
-        var img by Delegates.notNull<AppCompatImageView>()
+        var img by Delegates.notNull<SimpleDraweeView>()
         var name by Delegates.notNull<TextView>()
         var login by Delegates.notNull<TextView>()
         var follow by Delegates.notNull<Button>()
         var container by Delegates.notNull<ViewGroup>()
 
         init {
-            img = itemView.findViewById<AppCompatImageView>(R.id.img)
+            img = itemView.findViewById<SimpleDraweeView>(R.id.img)
+            img.hierarchy = Functions.getAvatarHierarchy()
+
             name = itemView.findViewById<TextView>(R.id.name)
             login = itemView.findViewById<TextView>(R.id.login)
             follow = itemView.findViewById<Button>(R.id.follow)

@@ -222,7 +222,11 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
                   if (PlayerService.songs != null && PlayerService.songs.size > 0){
                       mediaController!!.transportControls.play()
                   }else{
-                          playClick(adapter.audios,0)
+                          try{
+                              playClick(adapter.audios,0)
+                          }catch (e:Exception){
+                              Toaster.errror(resources.getString(R.string.error_something))
+                          }
 
                   }
 

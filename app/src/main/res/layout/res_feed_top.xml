@@ -8,13 +8,15 @@
 
     >
 
-    <android.support.v7.widget.AppCompatImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/avatar"
         android:layout_width="@dimen/avatar"
         android:layout_height="@dimen/avatar"
         android:layout_gravity="center_horizontal"
+        app:roundAsCircle="true"
+        app:roundingBorderWidth="1dp"
+        app:roundingBorderColor="@color/normalTextColor"
 
-        app:srcCompat="@drawable/account"
         />
 
     <LinearLayout

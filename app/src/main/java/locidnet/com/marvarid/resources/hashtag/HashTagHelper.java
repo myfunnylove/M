@@ -82,7 +82,7 @@ public final class HashTagHelper implements ClickableForegroundColorSpan.OnHashT
         }
     };
 
-    private HashTagHelper(int color, OnHashTagClickListener listener, char... additionalHashTagCharacters) {
+    public HashTagHelper(int color, OnHashTagClickListener listener, char... additionalHashTagCharacters) {
         mHashTagWordColor = color;
         mOnHashTagClickListener = listener;
         mAdditionalHashTagChars = new ArrayList<>();
