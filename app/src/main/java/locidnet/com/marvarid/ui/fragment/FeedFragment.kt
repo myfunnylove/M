@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.MyFeedAdapter
-import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
 import locidnet.com.marvarid.connectors.AdapterClicker
@@ -61,7 +60,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
             return newsFragment
         }
 
-        var cachedSongAdapters:HashMap<Int,PostAudioGridAdapter>? = null
+//        var cachedSongAdapters:HashMap<Int,PostAudioGridAdapter>? = null
         var playedSongPosition  = -1
         var listSong:ArrayList<Audio>? = null
 
@@ -257,7 +256,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 if (postList.posts.size > 0){
 
                     log.d("birinchi marta postla yuklandi")
-                    cachedSongAdapters = HashMap()
+//                    cachedSongAdapters = HashMap()
                     feedAdapter = MyFeedAdapter(activity,postList,this,this)
 //                    var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
 //                    slideAdapter!!.setInterpolator(OvershootInterpolator())
@@ -276,7 +275,7 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
                 listFeed.scrollToPosition(0)
             }else if ((MainActivity.endFeed == 10 && MainActivity.startFeed == 0) && feedAdapter != null){
                 log.d("postni boshidan update qisin")
-                cachedSongAdapters = HashMap()
+//                cachedSongAdapters = HashMap()
 
                 feedAdapter = MyFeedAdapter(activity,postList,this,this)
 //                var slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
@@ -314,19 +313,19 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
     override fun playClick(songs: ArrayList<Audio>, position: Int) {
         if (feedAdapter != null){
             var key = -1
-            for (i in feedAdapter!!.feeds.posts.indices) {
-                if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
-                    key = i
-                }
-            }
+//            for (i in feedAdapter!!.feeds.posts.indices) {
+//                if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
+//                    key = i
+//                }
+//            }
 
-            if (key != -1){
-                try{
-                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
-                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
-                    playedSongPosition = key
-                }catch (e:Exception){}
-            }
+//            if (key != -1){
+//                try{
+//                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+//                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+//                    playedSongPosition = key
+//                }catch (e:Exception){}
+//            }
 
         }
         listSong = songs
@@ -363,9 +362,9 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
             log.d("PATTERN OBSERVER CALLED FEEDFRAGMENT")
 //
 
-                if (FeedFragment.cachedSongAdapters != null) {
-                    FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
-                }
+//                if (FeedFragment.cachedSongAdapters != null) {
+//                    FeedFragment.cachedSongAdapters!!.get(FeedFragment.playedSongPosition)!!.notifyDataSetChanged()
+//                }
 
             } catch (e: Exception) {
 
@@ -384,39 +383,39 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
     fun update(){
         var key = -1
-        for (i in feedAdapter!!.feeds.posts.indices) {
-            if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
-                key = i
-            }
-        }
+//        for (i in feedAdapter!!.feeds.posts.indices) {
+//            if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong){
+//                key = i
+//            }
+//        }
 
         if (key != -1){
-            try{
-                if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
-                cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
-                playedSongPosition = key
-            }catch (e:Exception){}
+//            try{
+//                if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+//                cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+//                playedSongPosition = key
+//            }catch (e:Exception){}
         }else{
-            for (i in feedAdapter!!.feeds.posts.indices) {
-                for(j in feedAdapter!!.feeds.posts.get(i).audios.indices){
-                    if (!PlayerService.PLAYING_SONG_URL.isNullOrEmpty() &&
-                            feedAdapter!!.feeds.posts.get(i).audios.get(j).middlePath
-                                    ==
-                                    PlayerService.PLAYING_SONG_URL
-                            ){
-                        key = i
-                    }
-                }
+//            for (i in feedAdapter!!.feeds.posts.indices) {
+//                for(j in feedAdapter!!.feeds.posts.get(i).audios.indices){
+//                    if (!PlayerService.PLAYING_SONG_URL.isNullOrEmpty() &&
+//                            feedAdapter!!.feeds.posts.get(i).audios.get(j).middlePath
+//                                    ==
+//                                    PlayerService.PLAYING_SONG_URL
+//                            ){
+//                        key = i
+//                    }
+//                }
 
             }
 
             if (key != -1){
                 try{
-                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
-
-                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
-
-                    playedSongPosition = key
+//                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+//
+//                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+//
+//                    playedSongPosition = key
 
                 }catch (e:Exception){
 
@@ -425,7 +424,8 @@ class FeedFragment : BaseFragment(), AdapterClicker,MusicPlayerListener, MusicCo
 
             }
         }
-    }
+
+
 
     override fun onDestroy() {
         log.d("ondestroy feed")

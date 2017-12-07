@@ -197,6 +197,8 @@ class CommentAdapter(context:Context, list:ArrayList<Comment>, val clicker: Adap
         val repliedTitle = view.findViewById<TextView>(R.id.repliedTitle)
         init {
             avatar    = view.findViewById<SimpleDraweeView>(R.id.avatar)
+            avatar.hierarchy = Functions.getAvatarHierarchy()
+
         }
     }
 

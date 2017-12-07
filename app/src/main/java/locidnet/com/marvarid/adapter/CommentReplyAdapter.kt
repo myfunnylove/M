@@ -176,6 +176,8 @@ class CommentReplyAdapter(context: Context, list: ArrayList<Comment>, val clicke
 
         init {
             avatar    = view.findViewById<SimpleDraweeView>(R.id.repliedAvatar)
+            avatar.hierarchy = Functions.getAvatarHierarchy()
+
         }
     }
 

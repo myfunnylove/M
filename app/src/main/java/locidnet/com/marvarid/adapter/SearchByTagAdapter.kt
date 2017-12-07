@@ -134,7 +134,7 @@ class SearchByTagAdapter(context: FragmentActivity,
             log.wtf("=============== start => ")
 
             log.wtf("post id:       ${post.id}")
-            log.wtf("post audios:   ${post.audios}")
+//            log.wtf("post audios:   ${post.audios}")
             log.wtf("post images:   ${post.images}")
             log.wtf("post quote:    ${post.quote}")
             log.wtf("post comments: ${post.comments}")
@@ -332,49 +332,49 @@ class SearchByTagAdapter(context: FragmentActivity,
                     h.images.visibility = View.GONE
                 }
 
-                if (post.audios.size > 0) {
-                    h.audios.visibility = View.VISIBLE
+//                if (post.audios.size > 0) {
+//                    h.audios.visibility = View.VISIBLE
 
                     val span = 1
 
 
                     val manager = CustomManager(ctx, span)
-                    post.audios.forEach {
-                        audio ->
-                        audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.audioRes())
-
-                    }
-                    val adapter = PostAudioGridAdapter(ctx, post.audios, object : MusicPlayerListener {
-                        override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-                            player.playClick(listSong, position)
-
-
-                            if (SearchByTagActivity.playedSongPosition != -1) {
-                                log.d("position $i => ${FeedFragment.playedSongPosition} $position")
-
-                                try {
-                                    SearchByTagActivity.cachedSongAdapters!![SearchByTagActivity.playedSongPosition]!!.notifyDataSetChanged()
-                                } catch (e: Exception) {
-                                }
-
-                                SearchByTagActivity.cachedSongAdapters!![i]!!.notifyDataSetChanged()
-
-                            } else {
-                                SearchByTagActivity.cachedSongAdapters!![i]!!.notifyDataSetChanged()
-
-                            }
-
-                            SearchByTagActivity.playedSongPosition = i
-
-                        }
-
-                    }, model)
-                    if (SearchByTagActivity.cachedSongAdapters != null){
-                        SearchByTagActivity.cachedSongAdapters!!.put(i,adapter)
-                    }else{
-                        SearchByTagActivity.cachedSongAdapters = HashMap()
-                        SearchByTagActivity.cachedSongAdapters!!.put(i,adapter)
-                    }
+//                    post.audios.forEach {
+//                        audio ->
+//                        audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.audioRes())
+//
+//                    }
+//                    val adapter = PostAudioGridAdapter(ctx, post.audios, object : MusicPlayerListener {
+//                        override fun playClick(listSong: ArrayList<Audio>, position: Int) {
+//                            player.playClick(listSong, position)
+//
+//
+//                            if (SearchByTagActivity.playedSongPosition != -1) {
+//                                log.d("position $i => ${FeedFragment.playedSongPosition} $position")
+//
+//                                try {
+//                                    SearchByTagActivity.cachedSongAdapters!![SearchByTagActivity.playedSongPosition]!!.notifyDataSetChanged()
+//                                } catch (e: Exception) {
+//                                }
+//
+//                                SearchByTagActivity.cachedSongAdapters!![i]!!.notifyDataSetChanged()
+//
+//                            } else {
+//                                SearchByTagActivity.cachedSongAdapters!![i]!!.notifyDataSetChanged()
+//
+//                            }
+//
+//                            SearchByTagActivity.playedSongPosition = i
+//
+//                        }
+//
+//                    }, model)
+//                    if (SearchByTagActivity.cachedSongAdapters != null){
+//                        SearchByTagActivity.cachedSongAdapters!!.put(i,adapter)
+//                    }else{
+//                        SearchByTagActivity.cachedSongAdapters = HashMap()
+//                        SearchByTagActivity.cachedSongAdapters!!.put(i,adapter)
+//                    }
 //            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
 //                override fun getSpanSize(i: Int): Int {
 //                    if (i == 0){
@@ -389,12 +389,12 @@ class SearchByTagAdapter(context: FragmentActivity,
 
                     h.audios.layoutManager = manager
                     h.audios.setHasFixedSize(true)
-                    h.audios.adapter = adapter
+//                    h.audios.adapter = adapter
 
-                } else {
+//                } else {
                     h.line.visibility = View.GONE
                     h.audios.visibility = View.GONE
-                }
+//                }
 
 
                 h.likeLay.setOnClickListener {

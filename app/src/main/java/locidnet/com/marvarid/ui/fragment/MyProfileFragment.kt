@@ -11,7 +11,6 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import io.reactivex.Observable
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.adapter.ProfileFeedAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseFragment
@@ -81,7 +80,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         var FOLLOWERS                     = "0"
         var FOLLOWING                     = "0"
         var POST_COUNT                    = "0"
-        var cachedSongAdapters:HashMap<Int, PostAudioGridAdapter>? = null
+//        var cachedSongAdapters:HashMap<Int, PostAudioGridAdapter>? = null
         var playedSongPosition  = -1
 
     }
@@ -256,7 +255,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
 
             val emptyPost = ArrayList<Posts>()
-            emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","",PostUser("","","")))
+            emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Image>(),"0","0","","",PostUser("","","")))
 
 
 //            val isClose = fType == ProfileFragment.REQUEST || fType == ProfileFragment.CLOSE
@@ -296,7 +295,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
 
         val emptyPost = ArrayList<Posts>()
-        emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","",PostUser("","","")))
+        emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Image>(),"0","0","","",PostUser("","","")))
 
         val postList = PostList(emptyPost)
 
@@ -346,7 +345,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
             if (postAdapter == null){
                 log.d("birinchi marta postla yuklandi size: ${postList.posts.size}")
-                if(MyProfileFragment.cachedSongAdapters == null) MyProfileFragment.cachedSongAdapters = HashMap()
+//                if(MyProfileFragment.cachedSongAdapters == null) MyProfileFragment.cachedSongAdapters = HashMap()
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
                 postAdapter = ProfileFeedAdapter(activity,postList,this,this,this,userInfo,true,FOLLOW_TYPE)
@@ -371,7 +370,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
             else if ((MainActivity.end == 10 && MainActivity.start == 0) && postAdapter != null){
                 log.d("postni boshidan update qisin  F type -> $FOLLOW_TYPE")
-                if(MyProfileFragment.cachedSongAdapters == null) MyProfileFragment.cachedSongAdapters = HashMap()
+//                if(MyProfileFragment.cachedSongAdapters == null) MyProfileFragment.cachedSongAdapters = HashMap()
 
 
                 if (postList.posts.get(0).id != "-1") postList.posts.add(0,postList.posts.get(0))
@@ -439,18 +438,18 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
     override fun playClick(songs: ArrayList<Audio>, position: Int) {
         if (postAdapter != null){
             var key = -1
-            for (i in postAdapter!!.feeds.posts.indices) {
-                if (postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
-                    key = i
-                }
-            }
+//            for (i in postAdapter!!.feeds.posts.indices) {
+//                if (postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
+//                    key = i
+//                }
+//            }
 
             if (key != -1){
-                try{
-                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
-                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
-                    playedSongPosition = key
-                }catch (e:Exception){}
+//                try{
+//                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+//                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+//                    playedSongPosition = key
+//                }catch (e:Exception){}
             }
 
         }
@@ -466,9 +465,9 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
         try {
 //
 
-            if (MyProfileFragment.cachedSongAdapters != null) {
-                MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
-            }
+//            if (MyProfileFragment.cachedSongAdapters != null) {
+//                MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
+//            }
             log.d("play button pressed")
             if (PlayerService.PLAY_STATUS == PlayerService.PLAYING)
                 postAdapter!!.updateMusicController(ProfileFeedAdapter.PAUSE)
@@ -508,22 +507,22 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
 
        
 
-        for (i in postAdapter!!.feeds.posts.indices) {
-
-            if (postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
-                key = i
-            }
-
-        }
+//        for (i in postAdapter!!.feeds.posts.indices) {
+//
+//            if (postAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
+//                key = i
+//            }
+//
+//        }
 
 
 
         if (key != -1){
 
             try{
-                if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
-
-                cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+//                if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+//
+//                cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
 
                 playedSongPosition = key
                 postAdapter
@@ -532,24 +531,24 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
             }
         }else {
 
-            for (i in postAdapter!!.feeds.posts.indices) {
-                for(j in postAdapter!!.feeds.posts.get(i).audios.indices){
-                    if (!PlayerService.PLAYING_SONG_URL.isNullOrEmpty() &&
-                            postAdapter!!.feeds.posts.get(i).audios.get(j).middlePath
-                                    ==
-                            PlayerService.PLAYING_SONG_URL
-                            ){
-                     key = i
-                    }
-                }
-
-            }
+//            for (i in postAdapter!!.feeds.posts.indices) {
+//                for(j in postAdapter!!.feeds.posts.get(i).audios.indices){
+//                    if (!PlayerService.PLAYING_SONG_URL.isNullOrEmpty() &&
+//                            postAdapter!!.feeds.posts.get(i).audios.get(j).middlePath
+//                                    ==
+//                            PlayerService.PLAYING_SONG_URL
+//                            ){
+//                     key = i
+//                    }
+//                }
+//
+//            }
 
             if (key != -1){
                 try{
-                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
-
-                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+//                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+//
+//                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
 
                     playedSongPosition = key
 
@@ -583,7 +582,7 @@ class MyProfileFragment : BaseFragment() , View.OnClickListener, AdapterClicker,
                 ,Count("0","0","0"),0,0,"0","0"))
 
         val emptyPost = ArrayList<Posts>()
-        emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Audio>(),ArrayList<Image>(),"0","0","","",PostUser("","","")))
+        emptyPost.add(Posts("-1", Quote("","",""),ArrayList<Image>(),"0","0","","",PostUser("","","")))
 
         val postList = PostList(emptyPost)
 

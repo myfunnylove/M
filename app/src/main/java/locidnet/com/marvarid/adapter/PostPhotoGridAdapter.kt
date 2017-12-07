@@ -3,6 +3,7 @@ package locidnet.com.marvarid.adapter
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.drawable.Animatable
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.support.constraint.ConstraintLayout
@@ -19,10 +20,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.controller.BaseControllerListener
 import com.facebook.drawee.drawable.ScalingUtils
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
 import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.image.ImageInfo
 import com.facebook.imagepipeline.request.ImageRequest
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 
@@ -212,16 +215,21 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
                 val width = img.resolution.orig.substring(0,img.resolution.orig.indexOf(',')).toInt();
                 val height = img.resolution.orig.substring(img.resolution.orig.indexOf(',') + 1).toInt();
+//                h.photo.setAspectRatio(width.toFloat() / height.toFloat());
                 h.photo.post {
                     h.photo.controller = Fresco.newDraweeControllerBuilder()
 
                             .setImageRequest(
                                     ImageRequestBuilder.newBuilderWithSource(Uri.parse(Functions.checkImageUrl(img.image)!!.replace(Const.IMAGE.TITLE, Prefs.Builder().imageRes())))
 //                                            .setResizeOptions(ResizeOptions(width,height))
-                                            .setCacheChoice(ImageRequest.CacheChoice.DEFAULT)
+//                                            .setCacheChoice(ImageRequest.CacheChoice.DEFAULT)
+
                                             .build())
                             .setOldController(h.photo.controller)
+
+//                            .setControllerListener(MController((width.toFloat() / height.toFloat()),h))
                             .setAutoPlayAnimations(true)
+
                             .build()
 
                 }
@@ -322,7 +330,7 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
         return if (p1 == ONE_KALTA)
             OneHolder(inflater.inflate(R.layout.res_post_photo_item_uzun_width, p0, false))
         else
-        Holder(inflater.inflate(R.layout.res_post_photo_item, p0, false))
+       return Holder(inflater.inflate(R.layout.res_post_photo_item, p0, false))
     }
     class Holder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -336,10 +344,20 @@ class PostPhotoGridAdapter(ctx:Context,list:ArrayList<Image>) : RecyclerView.Ada
 
     class OneHolder(view: View) : RecyclerView.ViewHolder(view) {
 //        var container:ConstraintLayout = view.findViewById<ConstraintLayout>(R.id.container)
-        var photo:AspectRatioImageView by Delegates.notNull<AspectRatioImageView>()
+        var photo:SimpleDraweeView by Delegates.notNull<SimpleDraweeView>()
         init {
            photo =  view.findViewById<AspectRatioImageView>(R.id.photo)
             photo.hierarchy = Functions.getPostPhotoHierarchy()
+        }
+    }
+
+    class MController(val aspect:Float,val h:OneHolder) : BaseControllerListener<ImageInfo>() {
+        override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
+            h.photo.setAspectRatio(aspect);
+
+        }
+
+        override fun onFailure(id: String?, throwable: Throwable?) {
         }
     }
 }

@@ -222,7 +222,7 @@ class ProfileFeedAdapter(context: FragmentActivity,
             log.wtf("=============== start => ")
 
             log.wtf("post id:       ${post.id}")
-            log.wtf("post audios:   ${post.audios}")
+//            log.wtf("post audios:   ${post.audios}")
             log.wtf("post images:   ${post.images}")
             log.wtf("post quote:    ${post.quote}")
             log.wtf("post comments: ${post.comments}")
@@ -334,16 +334,16 @@ class ProfileFeedAdapter(context: FragmentActivity,
                     h.images.visibility = View.GONE
                 }
 
-                if (post.audios.size > 0) {
-
-                    h.initAudioAdapter(post,player!!,model!!,ctx!!,this,userInfo!!,myProfil)
-
-
-                } else {
+//                if (post.audios.size > 0) {
+//
+//                    h.initAudioAdapter(post,player!!,model!!,ctx!!,this,userInfo!!,myProfil)
+//
+//
+//                } else {
                     h.line.visibility = View.GONE
 
                     h.audios.visibility = View.GONE
-                }
+//                }
 
 
 
@@ -366,21 +366,21 @@ class ProfileFeedAdapter(context: FragmentActivity,
             /*AGAR MY PROFIL BOSA PLAYLIST*/
             if (FOLLOW_TYPE == ProfileFragment.SETTINGS) {
 
-                h.playlist.visibility = View.VISIBLE
-                h.playlist.setOnClickListener {
-
-                    val goCommentActivity = Intent(ctx, PlaylistActivity::class.java)
-
-                    val startingLocation = IntArray(2)
-//                    h.playlist.getLocationOnScreen(startingLocation)
-//                    goCommentActivity.putExtra(CommentActivity.LOCATION, startingLocation[1])
-                    if (activity != null) {
-                        activity!!.startActivityForResult(goCommentActivity, Const.GO_PLAY_LIST)
-                        activity!!.overridePendingTransition(0, 0)
-                    } else {
-                        ctx!!.startActivity(goCommentActivity)
-                    }
-                }
+                h.playlist.visibility = View.GONE
+//                h.playlist.setOnClickListener {
+//
+//                    val goCommentActivity = Intent(ctx, PlaylistActivity::class.java)
+//
+//                    val startingLocation = IntArray(2)
+////                    h.playlist.getLocationOnScreen(startingLocation)
+////                    goCommentActivity.putExtra(CommentActivity.LOCATION, startingLocation[1])
+//                    if (activity != null) {
+//                        activity!!.startActivityForResult(goCommentActivity, Const.GO_PLAY_LIST)
+//                        activity!!.overridePendingTransition(0, 0)
+//                    } else {
+//                        ctx!!.startActivity(goCommentActivity)
+//                    }
+//                }
                 log.d("play status $playStatus ${PlayerService.PLAY_STATUS == PlayerService.PLAYING}")
                 if (playStatus != -1 || PlayerService.PLAY_STATUS == PlayerService.PLAYING){
                     h.play.visibility = View.VISIBLE
@@ -757,33 +757,33 @@ class ProfileFeedAdapter(context: FragmentActivity,
 
 
             val manager = CustomManager(Base.get, span)
-            post.audios.forEach {
-                audio ->
-                audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+//            post.audios.forEach {
+//                audio ->
+//                audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+//
+//            }
+//            val adapter = PostAudioGridAdapter(ctx, post.audios, ProfileMusicPlayer(player,adapterPosition,recycler,userInfo),model)
 
-            }
-            val adapter = PostAudioGridAdapter(ctx, post.audios, ProfileMusicPlayer(player,adapterPosition,recycler,userInfo),model)
-
-            if (myProfil.userId == userInfo!!.user.info.user_id) {
-                if (MyProfileFragment.cachedSongAdapters != null) {
-                    MyProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
-                } else {
-                    MyProfileFragment.cachedSongAdapters = HashMap()
-                    MyProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
-                }
-            }else{
-                if (ProfileFragment.cachedSongAdapters != null) {
-                    ProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
-                } else {
-                    ProfileFragment.cachedSongAdapters = HashMap()
-                    ProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
-                }
-            }
+//            if (myProfil.userId == userInfo!!.user.info.user_id) {
+//                if (MyProfileFragment.cachedSongAdapters != null) {
+//                    MyProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
+//                } else {
+//                    MyProfileFragment.cachedSongAdapters = HashMap()
+//                    MyProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
+//                }
+//            }else{
+//                if (ProfileFragment.cachedSongAdapters != null) {
+//                    ProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
+//                } else {
+//                    ProfileFragment.cachedSongAdapters = HashMap()
+//                    ProfileFragment.cachedSongAdapters!!.put(adapterPosition, adapter)
+//                }
+//            }
 
 
             audios.layoutManager = manager
             audios.setHasFixedSize(true)
-            audios.adapter = adapter
+//            audios.adapter = adapter
 
         }
 

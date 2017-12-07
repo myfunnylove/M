@@ -19,7 +19,6 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_search_by_tag.*
 import locidnet.com.marvarid.R
 import locidnet.com.marvarid.adapter.MyFeedAdapter
-import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.adapter.SearchByTagAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
@@ -81,7 +80,7 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
     var user = Base.get.prefs.getUser()
 
     companion object {
-        var cachedSongAdapters:HashMap<Int, PostAudioGridAdapter>?  = null
+//        var cachedSongAdapters:HashMap<Int, PostAudioGridAdapter>?  = null
         var playedSongPosition                                      = -1
         var start          = 0
         var end            = 10
@@ -279,7 +278,7 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
 
                     if (feedAdapter == null){
                         log.d("birinchi marta postla yuklandi")
-                        cachedSongAdapters = HashMap()
+//                        cachedSongAdapters = HashMap()
                         feedAdapter = SearchByTagAdapter(this,postList,this,this)
                         val slideAdapter: ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
                         slideAdapter!!.setInterpolator(OvershootInterpolator())
@@ -294,7 +293,7 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
                         list.scrollToPosition(0)
                     }else if ((end == 10 && start== 0) && feedAdapter != null){
                         log.d("postni boshidan update qisin")
-                        cachedSongAdapters = HashMap()
+//                        cachedSongAdapters = HashMap()
 
                         feedAdapter = SearchByTagAdapter(this,postList,this,this)
                         val slideAdapter:ScaleInAnimationAdapter? =ScaleInAnimationAdapter(feedAdapter)
@@ -356,17 +355,17 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
     override fun playClick(listSong: ArrayList<Audio>, position: Int) {
         if (feedAdapter != null){
             var key = -1
-            for (i in feedAdapter!!.feeds.posts.indices) {
-                if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong ||
-                        feedAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
-                    key = i
-                }
-            }
+//            for (i in feedAdapter!!.feeds.posts.indices) {
+//                if (feedAdapter!!.feeds.posts.get(i).audios == MyProfileFragment.listSong ||
+//                        feedAdapter!!.feeds.posts.get(i).audios == FeedFragment.listSong){
+//                    key = i
+//                }
+//            }
 
             if (key != -1){
                 try{
-                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
-                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
+//                    if (playedSongPosition != -1) cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+//                    cachedSongAdapters!!.get(key)!!.notifyDataSetChanged()
                     playedSongPosition = key
                 }catch (e:Exception){}
             }
@@ -419,9 +418,9 @@ class SearchByTagActivity : BaseActivity(), GoNext,Viewer, MusicPlayerListener, 
             log.d("PATTERN OBSERVER CALLED FEEDFRAGMENT")
 //
 
-            if (cachedSongAdapters != null) {
-                cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
-            }
+//            if (cachedSongAdapters != null) {
+//                cachedSongAdapters!!.get(playedSongPosition)!!.notifyDataSetChanged()
+//            }
 
         } catch (e: Exception) {
 

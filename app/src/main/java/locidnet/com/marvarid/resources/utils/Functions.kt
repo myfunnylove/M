@@ -26,6 +26,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import com.facebook.drawee.drawable.ScalingUtils
 import com.facebook.drawee.generic.GenericDraweeHierarchy
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
 import com.facebook.drawee.generic.RoundingParams
@@ -424,7 +425,7 @@ object Functions {
                 .setRadius(30);
         return GenericDraweeHierarchyBuilder.newInstance(Base.get.resources)
                 .setProgressBarImage(progressBarDrawable)
-
+                .setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP)
                 .setFailureImage(Base.get.resources.getDrawable(R.drawable.default_profile_photo))
                 .build()
 

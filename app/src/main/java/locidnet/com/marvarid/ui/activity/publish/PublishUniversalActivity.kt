@@ -111,7 +111,7 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
                                 val post = Post(user!!.userId,
                                         user!!.session,
                                         loadedAudioIds,
-                                        loadedImagesIds,
+//                                        loadedImagesIds,
                                         quote)
                                 val reqJSOBJ = Gson().toJson(post)
 
@@ -189,21 +189,21 @@ class PublishUniversalActivity :BaseActivity(),Viewer , LifecycleOwner{
 
         initQuoteSettings()
 
-        var icon = VectorDrawableCompat.create(resources,R.drawable.music,publishMusic.context.theme)
-
-        publishMusic.setIconDrawable(icon!!)
-            publishMusic.setOnClickListener {
-                commentText.hideKeyboard()
-
-                actionMenu.collapse()
-
-                quoteSettings.visibility = View.GONE
-                                 visibly = false
-
-                val intent = Intent(this,PublishSongActivity().javaClass)
-                startActivityForResult(intent,Const.PICK_AUDIO)
-            }
-        icon = VectorDrawableCompat.create(resources,R.drawable.image,publishMusic.context.theme)
+//        var icon = VectorDrawableCompat.create(resources,R.drawable.music,publishMusic.context.theme)
+//
+//        publishMusic.setIconDrawable(icon!!)
+//            publishMusic.setOnClickListener {
+//                commentText.hideKeyboard()
+//
+//                actionMenu.collapse()
+//
+//                quoteSettings.visibility = View.GONE
+//                                 visibly = false
+//
+//                val intent = Intent(this,PublishSongActivity().javaClass)
+//                startActivityForResult(intent,Const.PICK_AUDIO)
+//            }
+        var icon = VectorDrawableCompat.create(resources,R.drawable.image,publishImage.context.theme)
         publishImage.setIconDrawable(icon!!)
 
         publishImage.setOnClickListener {

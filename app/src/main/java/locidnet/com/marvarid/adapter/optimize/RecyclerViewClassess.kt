@@ -163,24 +163,24 @@ class Jaloba : Callback<ResponseData> {
 class MusicPlayer(p: MusicPlayerListener, val i:Int) : MusicPlayerListener {
     val player: WeakReference<MusicPlayerListener> = WeakReference<MusicPlayerListener>(p)
     override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-        player.get()!!.playClick(listSong,position)
-
-
-        if (FeedFragment.playedSongPosition != -1 ){
-            log.d("position $i => ${FeedFragment.playedSongPosition} $position")
-
-            try{
-                FeedFragment.cachedSongAdapters!![FeedFragment.playedSongPosition]!!.notifyDataSetChanged()
-            }catch (e:Exception){}
-
-            FeedFragment.cachedSongAdapters!![i]!!.notifyDataSetChanged()
-
-        }else{
-            FeedFragment.cachedSongAdapters!![i]!!.notifyDataSetChanged()
-
-        }
-
-        FeedFragment.playedSongPosition = i
+//        player.get()!!.playClick(listSong,position)
+//
+//
+//        if (FeedFragment.playedSongPosition != -1 ){
+//            log.d("position $i => ${FeedFragment.playedSongPosition} $position")
+//
+//            try{
+//                FeedFragment.cachedSongAdapters!![FeedFragment.playedSongPosition]!!.notifyDataSetChanged()
+//            }catch (e:Exception){}
+//
+//            FeedFragment.cachedSongAdapters!![i]!!.notifyDataSetChanged()
+//
+//        }else{
+//            FeedFragment.cachedSongAdapters!![i]!!.notifyDataSetChanged()
+//
+//        }
+//
+//        FeedFragment.playedSongPosition = i
     }
 
 }
@@ -190,45 +190,45 @@ class ProfileMusicPlayer(p: MusicPlayerListener, val i:Int,val adapter: Recycler
     var myProfil = Base.get.prefs.getUser()
 
     override fun playClick(listSong: ArrayList<Audio>, position: Int) {
-        player.get()!!.playClick(listSong, position)
-        if (myProfil.userId == userInfo!!.user.info.user_id) {
-            log.d("played song position ${MyProfileFragment.playedSongPosition != -1}")
-            if (MyProfileFragment.playedSongPosition != -1) {
-                log.d("position $i => ${MyProfileFragment.playedSongPosition} $position")
-
-                try {
-                    MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
-                } catch (e: Exception) {
-                    log.d("position $e")
-
-                }
-                MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
-            } else {
-                log.d("position $i => ${MyProfileFragment.cachedSongAdapters!!.get(i)} $position")
-                MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
-            }
-            adapter.notifyItemChanged(0)
-            MyProfileFragment.playedSongPosition = i
-        }else{
-            if (ProfileFragment.playedSongPosition != -1) {
-                log.d("position $i => ${ProfileFragment.playedSongPosition} $position")
-
-                try {
-                    ProfileFragment.cachedSongAdapters!!.get(ProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
-                } catch (e: Exception) {
-                }
-                ProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
-            } else {
-                log.d("position $i => ${ProfileFragment.cachedSongAdapters!!.get(i)} $position")
-                ProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
-
-            }
-//                            notifyItemChanged(0)
-            ProfileFragment.playedSongPosition = i
-        }
+//        player.get()!!.playClick(listSong, position)
+//        if (myProfil.userId == userInfo!!.user.info.user_id) {
+//            log.d("played song position ${MyProfileFragment.playedSongPosition != -1}")
+//            if (MyProfileFragment.playedSongPosition != -1) {
+//                log.d("position $i => ${MyProfileFragment.playedSongPosition} $position")
+//
+//                try {
+//                    MyProfileFragment.cachedSongAdapters!!.get(MyProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
+//                } catch (e: Exception) {
+//                    log.d("position $e")
+//
+//                }
+//                MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+//
+//            } else {
+//                log.d("position $i => ${MyProfileFragment.cachedSongAdapters!!.get(i)} $position")
+//                MyProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+//
+//            }
+//            adapter.notifyItemChanged(0)
+//            MyProfileFragment.playedSongPosition = i
+//        }else{
+//            if (ProfileFragment.playedSongPosition != -1) {
+//                log.d("position $i => ${ProfileFragment.playedSongPosition} $position")
+//
+//                try {
+//                    ProfileFragment.cachedSongAdapters!!.get(ProfileFragment.playedSongPosition)!!.notifyDataSetChanged()
+//                } catch (e: Exception) {
+//                }
+//                ProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+//
+//            } else {
+//                log.d("position $i => ${ProfileFragment.cachedSongAdapters!!.get(i)} $position")
+//                ProfileFragment.cachedSongAdapters!!.get(i)!!.notifyDataSetChanged()
+//
+//            }
+////                            notifyItemChanged(0)
+//            ProfileFragment.playedSongPosition = i
+//        }
     }
 
 }

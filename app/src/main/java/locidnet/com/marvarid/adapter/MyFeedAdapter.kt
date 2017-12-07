@@ -167,7 +167,7 @@ class MyFeedAdapter(context: FragmentActivity,
             log.wtf("=============== start => ")
 
             log.wtf("post id:       ${post.id}")
-            log.wtf("post audios:   ${post.audios}")
+//            log.wtf("post audios:   ${post.audios}")
             log.wtf("post images:   ${post.images}")
             log.wtf("post quote:    ${post.quote}")
             log.wtf("post comments: ${post.comments}")
@@ -271,13 +271,13 @@ class MyFeedAdapter(context: FragmentActivity,
                     h.images.visibility = View.GONE
                 }
 
-                if (post.audios.size > 0) {
-                    h.initAudioAdapter(post,player,model,ctx)
-
-                } else {
+//                if (post.audios.size > 0) {
+//                    h.initAudioAdapter(post,player,model,ctx)
+//
+//                } else {
                     h.line.visibility = View.GONE
                     h.audios.visibility = View.GONE
-                }
+//                }
 
 
 
@@ -425,23 +425,23 @@ class MyFeedAdapter(context: FragmentActivity,
 
 
             val manager = CustomManager(Base.get, span)
-            post.audios.forEach {
-                audio ->
-                audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
-
-            }
-            val adapter = PostAudioGridAdapter(ctx, post.audios,MusicPlayer(player,adapterPosition),model)
-            if (FeedFragment.cachedSongAdapters != null){
-                FeedFragment.cachedSongAdapters!!.put(adapterPosition,adapter)
-            }else{
-                FeedFragment.cachedSongAdapters = HashMap()
-                FeedFragment.cachedSongAdapters!!.put(adapterPosition,adapter)
-            }
+//            post.audios.forEach {
+//                audio ->
+//                audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+//
+//            }
+//            val adapter = PostAudioGridAdapter(ctx, post.audios,MusicPlayer(player,adapterPosition),model)
+//            if (FeedFragment.cachedSongAdapters != null){
+//                FeedFragment.cachedSongAdapters!!.put(adapterPosition,adapter)
+//            }else{
+//                FeedFragment.cachedSongAdapters = HashMap()
+//                FeedFragment.cachedSongAdapters!!.put(adapterPosition,adapter)
+//            }
 
 
             audios.layoutManager = manager
             audios.setHasFixedSize(true)
-            audios.adapter = adapter
+//            audios.adapter = adapter
         }
 
 

@@ -129,13 +129,13 @@
             app:fab_labelStyle="@style/menu_labels_style"
             app:fab_labelsPosition="left">
 
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/publishMusic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_colorNormal="@color/colorAccent"
-                app:fab_colorPressed="@color/colorPrimary"
-                />
+            <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
+                <!--android:id="@+id/publishMusic"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--app:fab_colorNormal="@color/colorAccent"-->
+                <!--app:fab_colorPressed="@color/colorPrimary"-->
+                <!--/>-->
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/publishImage"

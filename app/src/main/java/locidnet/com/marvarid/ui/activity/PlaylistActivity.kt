@@ -17,7 +17,6 @@ import com.google.android.exoplayer2.util.RepeatModeUtil
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_playlist.*
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
 import locidnet.com.marvarid.connectors.MusicPlayerListener
@@ -57,7 +56,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
     @Inject
     lateinit var errorConn: ErrorConnection
 
-    lateinit var adapter:PostAudioGridAdapter
+//    lateinit var adapter:PostAudioGridAdapter
     lateinit var emptyContainer: EmptyContainer
     private lateinit var songTitle:TextView
     private lateinit var artist:TextView
@@ -95,9 +94,9 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
             audio -> audio.isFeatured = 1
             audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
         }
-        adapter =  PostAudioGridAdapter(this,features.audios,this,model,true)
+//        adapter =  PostAudioGridAdapter(this,features.audios,this,model,true)
 
-        list.adapter = adapter
+//        list.adapter = adapter
     }
 
     override fun onFailure(from: String, message: String, erroCode: String) {
@@ -223,7 +222,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
                       mediaController!!.transportControls.play()
                   }else{
                           try{
-                              playClick(adapter.audios,0)
+//                              playClick(adapter.audios,0)
                           }catch (e:Exception){
                               Toaster.errror(resources.getString(R.string.error_something))
                           }
@@ -386,7 +385,7 @@ class PlaylistActivity : BaseActivity(),Viewer , MusicPlayerListener,MusicContro
             artist.text = if (musicSrv!!.currentAudio.artist.isEmpty()) Base.get.resources.getString(R.string.unknown) else musicSrv!!.currentAudio.artist
         }
 
-        adapter.notifyDataSetChanged()
+//        adapter.notifyDataSetChanged()
     }
 
     override fun onDestroy() {

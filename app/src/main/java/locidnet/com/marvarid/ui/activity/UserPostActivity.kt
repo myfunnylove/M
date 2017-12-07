@@ -24,7 +24,6 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_post.*
 import locidnet.com.marvarid.R
-import locidnet.com.marvarid.adapter.PostAudioGridAdapter
 import locidnet.com.marvarid.adapter.PostPhotoGridAdapter
 import locidnet.com.marvarid.base.Base
 import locidnet.com.marvarid.base.BaseActivity
@@ -112,7 +111,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
     private var sendChange    by Delegates.notNull<AppCompatImageButton>()
     private val like                  = R.drawable.like_select
     private val unLike                = R.drawable.like
-    var adapter:PostAudioGridAdapter? = null
+//    var adapter:PostAudioGridAdapter? = null
     override fun initView() {
 
         DaggerMVPComponent
@@ -219,6 +218,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
     }
 
     override fun onSuccess(from: String, result: String) = try{
+        log.d("post keldi $result")
         postContainer.visibility = View.VISIBLE
 
 
@@ -360,34 +360,35 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
         *
         * */
 
-        if (post.audios.size > 0) {
-            audios.visibility = View.VISIBLE
+//        if (post.audios.size > 0) {
+//            audios.visibility = View.VISIBLE
 
             val span = 1
 
 
             val manager = CustomManager(this, span)
-            post.audios.forEach {
-                audio ->
-                audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+//            post.audios.forEach {
+//                audio ->
+//                audio.middlePath = audio.middlePath.replace(Const.AUDIO.MEDIUM, Prefs.Builder().audioRes())
+//
+//            }
 
-            }
-            adapter = PostAudioGridAdapter(this, post.audios,this,model)
-            if (FeedFragment.cachedSongAdapters != null){
-                FeedFragment.cachedSongAdapters!!.put(0,adapter!!)
-            }else{
-                FeedFragment.cachedSongAdapters = HashMap()
-                FeedFragment.cachedSongAdapters!!.put(0,adapter!!)
-            }
+//            adapter = PostAudioGridAdapter(this, post.audios,this,model)
+//            if (FeedFragment.cachedSongAdapters != null){
+//                FeedFragment.cachedSongAdapters!!.put(0,adapter!!)
+//            }else{
+//                FeedFragment.cachedSongAdapters = HashMap()
+//                FeedFragment.cachedSongAdapters!!.put(0,adapter!!)
+//            }
 
 
             audios.layoutManager = manager
             audios.setHasFixedSize(true)
-            audios.adapter = adapter
+//            audios.adapter = adapter
 
-        } else {
+//        } else {
             audios.visibility = View.GONE
-        }
+//        }
 
 
                 likeLay.setOnClickListener {
@@ -614,7 +615,7 @@ class UserPostActivity : BaseActivity() ,Viewer , MusicPlayerListener, MusicCont
 
     }
     override fun playPause(id: String) {
-       if(adapter != null)adapter!!.notifyDataSetChanged()
+//       if(adapter != null)adapter!!.notifyDataSetChanged()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

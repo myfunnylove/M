@@ -15,7 +15,7 @@ data class PostList(@SerializedName("posts")     var posts:ArrayList<Posts>
 
 data class Posts(      @SerializedName("id")     var id:String,
                        @SerializedName("quote")  var quote:Quote,
-                       @SerializedName("audios") var audios:ArrayList<Audio>,
+//                       @SerializedName("audios") var audios:ArrayList<Audio>,
                        @SerializedName("images") var images:ArrayList<Image>,
                        @SerializedName("like")   var like:String,
                        @SerializedName("likes")  var likes:String,
